@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,16 +17,21 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
-import org.springframework.util.StringUtils;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -67,10 +73,30 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    SessionRegistry adminSessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
+        return new ServletListenerRegistrationBean<>(new HttpSessionEventPublisher());
+    }
+
+    @Bean
+    CookieCsrfTokenRepository csrfTokenRepository() {
+        CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        repository.setCookiePath("/");
+        repository.setCookieHttpOnly(true);
+        repository.setCookieCustomizer(cookie -> cookie.sameSite("Lax"));
+        return repository;
+    }
+
+    @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, RateLimitService rateLimitService,
-                                            AuthenticationProvider adminAuthenticationProvider) throws Exception {
-        CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        csrfTokenRepository.setCookiePath("/");
+                                            AuthenticationProvider adminAuthenticationProvider,
+                                            AdminCaptchaService adminCaptchaService,
+                                            CookieCsrfTokenRepository csrfTokenRepository,
+                                            SessionRegistry adminSessionRegistry) throws Exception {
 
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/adminportal").permitAll()
@@ -90,14 +116,43 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .failureHandler(adminLoginFailureHandler(rateLimitService))
                         .permitAll())
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers
+                        .referrerPolicy(referrerPolicy -> referrerPolicy
+                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                        .addHeaderWriter(new StaticHeadersWriter(
+                                "Cross-Origin-Opener-Policy", "same-origin-allow-popups"))
+                        .addHeaderWriter(new StaticHeadersWriter(
+                                "Cross-Origin-Embedder-Policy", "credentialless"))
+                        .addHeaderWriter(new StaticHeadersWriter(
+                                "Cross-Origin-Resource-Policy", "same-origin"))
+                        .addHeaderWriter(new StaticHeadersWriter("Content-Security-Policy",
+                                "default-src 'self'; "
+                                        + "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; "
+                                        + "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net "
+                                        + "https://code.jquery.com https://cdn.tailwindcss.com https://www.youtube.com "
+                                        + "https://www.youtube-nocookie.com https://www.gstatic.com; "
+                                        + "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+                                        + "img-src 'self' data: blob: https:; "
+                                        + "font-src 'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com; "
+                                        + "connect-src 'self' https://cdn.tailwindcss.com https://www.youtube.com https://www.youtube-nocookie.com; "
+                                        + "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com; "
+                                        + "media-src 'self' blob: https:")))
                 .logout(logout -> logout
                         .logoutUrl("/admin/logout")
                         .logoutSuccessUrl("/adminportal?logout=true")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                        .permitAll());
+                        .permitAll())
+                .sessionManagement(session -> session
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(false)
+                        .expiredUrl("/adminportal?sessionExpired=true")
+                        .sessionRegistry(adminSessionRegistry));
 
         http.authenticationProvider(adminAuthenticationProvider);
+        http.addFilterBefore(new AdminCaptchaFilter(adminCaptchaService, rateLimitService),
+                UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CsrfCookieHardeningFilter(csrfTokenRepository), CsrfFilter.class);
 
         http.csrf(csrf -> csrf.ignoringRequestMatchers(request -> {
             String path = request.getServletPath();
@@ -152,7 +207,6 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     private static final class SpaCsrfTokenRequestHandler implements CsrfTokenRequestHandler {
-        private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
         private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
 
         @Override
@@ -164,10 +218,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         @Override
         public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
-            String headerValue = request.getHeader(csrfToken.getHeaderName());
-            return StringUtils.hasText(headerValue)
-                    ? plain.resolveCsrfTokenValue(request, csrfToken)
-                    : xor.resolveCsrfTokenValue(request, csrfToken);
+            return xor.resolveCsrfTokenValue(request, csrfToken);
         }
     }
 

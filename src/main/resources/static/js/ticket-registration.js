@@ -123,8 +123,38 @@ function requiredMark(extra){return /(?:^|\\s)required(?:\\s|$)/.test(extra)?' <
 const FIELD_MAX_LENGTH={officialName:150,academiaType:100,collegeName:200,collegeDistrict:100,collegeState:100,universityName:200,academiaRole:100,registerNumber:100,centralMinistry:200,stateName:100,stateDepartment:200,organizationName:200,organizationLocation:255,designation:150,industryOrStartup:100,passportNumber:50,passportValidUntil:10,passportName:150};
 const FIELD_PLACEHOLDERS={collegeName:'Enter your institution name',collegeDistrict:'Enter your district',collegeState:'Enter your state or union territory',universityName:'Enter your university name',registerNumber:'Enter your student or staff ID number',organizationName:'Enter your organization name',organizationLocation:'Enter your city or office location',designation:'Enter your designation',industryOrStartup:'Select organization type',passportNumber:'Enter your passport number',passportName:'Enter your full name as shown on your passport'};
 const SELECT_PROMPTS={academiaRole:'Select participant role',centralMinistry:'Select a ministry',stateName:'Select a state or union territory',stateDepartment:'Select a department',industryOrStartup:'Select organization type'};
+const FREE_TEXT_VALIDATION={
+ officialName:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’\-]{0,149}$/u,message:'Use letters, spaces, periods, apostrophes, commas, or hyphens for your name.'},
+ academiaType:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,99}$/u,message:'Enter a valid academia type.'},
+ collegeName:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,199}$/u,message:'Institution name may contain letters, numbers, spaces, and common punctuation (& . , apostrophe - / # + parentheses).'},
+ collegeDistrict:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’()/-]{0,99}$/u,message:'Enter a valid district name using letters and common punctuation.'},
+ collegeState:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’()/-]{0,99}$/u,message:'Enter a valid state or union territory name using letters and common punctuation.'},
+ universityName:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,199}$/u,message:'University name may contain letters, numbers, spaces, and common punctuation (& . , apostrophe - / # + parentheses).'},
+ registerNumber:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} _./#-]{0,99}$/u,message:'Student ID may contain letters, numbers, spaces, and these separators: _ . / # -.'},
+ organizationName:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,199}$/u,message:'Organization name may contain letters, numbers, spaces, and common punctuation (& . , apostrophe - / # + parentheses).'},
+ organizationLocation:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} .,'’()/-]{0,254}$/u,message:'Enter a valid city or office location using letters, numbers, spaces, and common punctuation.'},
+ designation:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,149}$/u,message:'Designation may contain letters, numbers, spaces, and common punctuation.'},
+ passportNumber:{pattern:/^[A-Za-z0-9][A-Za-z0-9-]{0,49}$/,message:'Passport number may contain letters, numbers, and hyphens.'},
+ passportName:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’\-]{0,149}$/u,message:'Use letters, spaces, periods, apostrophes, commas, or hyphens for the passport name.'}
+};
+const CITIES=[
+ 'Agartala','Agra','Ahmedabad','Aizawl','Ajmer','Aligarh','Alappuzha','Amaravati','Amritsar','Anand','Anantapur','Asansol','Ayodhya',
+ 'Bareilly','Bathinda','Begusarai','Belagavi','Bengaluru','Berhampur','Bharatpur','Bhagalpur','Bhavnagar','Bhilai','Bhopal','Bhubaneswar','Bikaner','Bilaspur','Bokaro',
+ 'Chandigarh','Chennai','Chhatrapati Sambhajinagar','Coimbatore','Cuttack',
+ 'Daman','Darjeeling','Davangere','Dehradun','Delhi','Dewas','Dhanbad','Dharamshala','Dibrugarh','Dindigul','Durg','Durgapur',
+ 'Erode','Faridabad','Gandhinagar','Gangtok','Gaya','Ghaziabad','Gorakhpur','Guntur','Gurugram','Guwahati','Gwalior',
+ 'Haldwani','Haridwar','Hisar','Hosur','Howrah','Hubballi-Dharwad','Hyderabad','Imphal','Indore','Itanagar','Jabalpur','Jaipur','Jaisalmer','Jalandhar','Jalgaon','Jammu','Jamnagar','Jamshedpur','Jhansi','Jodhpur','Jorhat',
+ 'Kadapa','Kakinada','Kalaburagi','Kannur','Kanpur','Kanchipuram','Karimnagar','Karnal','Kasaragod','Kharagpur','Kochi','Kohima','Kolhapur','Kolkata','Kollam','Kota','Kottayam','Kozhikode','Kurnool',
+ 'Leh','Lucknow','Ludhiana','Madurai','Malappuram','Mangaluru','Manali','Margao','Mathura','Meerut','Mirzapur','Mohali','Moradabad','Mumbai','Muzaffarpur','Mysuru',
+ 'Nagercoil','Nagpur','Nanded','Nashik','Navi Mumbai','Nellore','Nizamabad','Noida',
+ 'Panaji','Panipat','Pathankot','Patiala','Patna','Puducherry','Pune','Puri','Prayagraj',
+ 'Raipur','Rajahmundry','Rajkot','Ranchi','Rishikesh','Rohtak','Roorkee','Rourkela',
+ 'Salem','Sambalpur','Sangli','Satna','Shillong','Shimla','Shivamogga','Siliguri','Silchar','Sikar','Solapur','Srinagar','Surat',
+ 'Thanjavur','Thane','Thiruvananthapuram','Thoothukudi','Thrissur','Tiruchirappalli','Tirunelveli','Tiruppur','Tirupati','Udaipur','Ujjain','Vadodara','Varanasi','Vasco da Gama','Vellore','Vijayawada','Visakhapatnam','Warangal'
+].sort((a,b)=>a.localeCompare(b));
 function field(label,name,type='text',extra=''){const maxLength=FIELD_MAX_LENGTH[name],placeholder=FIELD_PLACEHOLDERS[name];return `<label class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]">${label}${requiredMark(extra)}<input class="form-control mt-2 rounded-3 border-secondary-subtle py-3" name="${name}" type="${type}" ${maxLength?`maxlength="${maxLength}"`:''} ${placeholder?`placeholder="${placeholder}"`:''} ${extra}></label>`}
 function select(label,name,opts,extra=''){return `<label class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]">${label}${requiredMark(extra)}<select class="form-select mt-2 rounded-3 border-secondary-subtle" name="${name}" ${extra}><option value="">${SELECT_PROMPTS[name]||'Select an option'}</option>${opts.map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')}</select></label>`}
+function cityField(){return `<div class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]"><label for="organizationLocationChoice">City / office location${requiredMark('required')}</label><select id="organizationLocationChoice" class="form-select mt-2 rounded-3 border-secondary-subtle" name="organizationLocationChoice" required><option value="">Select a city</option>${CITIES.map(city=>`<option value="${esc(city)}">${esc(city)}</option>`).join('')}<option value="__OTHER__">Other</option></select><div id="organizationLocationOtherWrap" class="mt-3" hidden><label for="organizationLocationOther">Enter city / office location</label><input id="organizationLocationOther" class="form-control mt-2 rounded-3 border-secondary-subtle py-3" name="organizationLocationOther" type="text" maxlength="255" placeholder="Enter your city or office location" disabled></div></div>`}
 function renderConditional(){
  const cat=$('#category').value, box=$('#conditional'); let h='';
  if(cat==='ACADEMIA'){
@@ -138,16 +168,16 @@ function renderConditional(){
  } else if(cat==='CENTRAL_GOVERNMENT'){
   h='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">Central Government</div><div class="tr-grid row">';
   h+=select('Ministry / department','centralMinistry',ministries,'required')+field('Organization / office name','organizationName','text','required');
-  h+=field('Designation / job title','designation','text','required')+field('City / office location','organizationLocation','text','required')+'</div>';
+  h+=field('Designation / job title','designation','text','required')+cityField()+'</div>';
  } else if(cat==='STATE_GOVERNMENT'){
   h='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">State Government</div><div class="tr-grid row">';
   h+=select('State / Union Territory','stateName',states,'required')+select('Department','stateDepartment',departments,'required');
   h+=field('Organization / office name','organizationName','text','required')+field('Designation / job title','designation','text','required');
-  h+=field('City / office location','organizationLocation','text','required')+'</div>';
+  h+=cityField()+'</div>';
  } else if(cat==='INDUSTRY_STARTUP'){
   h='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">Industry / Startup</div><div class="tr-grid row">';
   h+=select('Organization type','industryOrStartup',['Startup','Mid-sized Company','MNC','Industry / Enterprise'],'required')+field('Organization name','organizationName','text','required');
-  h+=field('City / office location','organizationLocation','text','required')+field('Designation / job title','designation','text','required')+'</div>';
+  h+=cityField()+field('Designation / job title','designation','text','required')+'</div>';
  } else if(['VIP_SPECIAL_INVITEE','SPEAKER','ORGANIZER'].includes(cat)){
   const labels={VIP_SPECIAL_INVITEE:'VIP / Special Invitee',SPEAKER:'Speaker',ORGANIZER:'Organizer'};
   h=`<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">${labels[cat]}</div>`;
@@ -172,7 +202,7 @@ function renderPassport(){
  } else if(box) box.remove();
 }
 function collect(){
- const fd=new FormData($('#detailsForm')); const o=Object.fromEntries(fd.entries()); o.email=$('#email').value.trim().toLowerCase();o.phone=$('#phone').value.trim();o.officialName=$('#verifyName').value.trim();
+ const fd=new FormData($('#detailsForm')); const o=Object.fromEntries(fd.entries());if(o.organizationLocationChoice){o.organizationLocation=o.organizationLocationChoice==='__OTHER__'?(o.organizationLocationOther||'').trim():o.organizationLocationChoice;delete o.organizationLocationChoice;delete o.organizationLocationOther;}o.email=$('#email').value.trim().toLowerCase();o.phone=$('#phone').value.trim();o.officialName=$('#verifyName').value.trim();
  o.password=$('#password').value; o.confirmPassword=$('#confirmPassword').value;
  o.attendanceDays=fd.getAll('attendanceDays'); return o;
 }
@@ -188,6 +218,7 @@ function validateTicketFields(form){
   else if(el.name==='password'&&(value.length<8||value.length>64||!/[A-Z]/.test(value)||!/[0-9]/.test(value)||!/[\u0021-\u002f\u003a-\u0040\u005b-\u0060\u007b-\u007e]/.test(value)))el.setCustomValidity('Use 8–64 characters with at least one uppercase letter, one number, and one special symbol.');
   else if(el.name==='confirmPassword'&&value!==$('#password').value)el.setCustomValidity('Password and confirm password must match.');
   else if(el.name==='officialName'&&value.length>150)el.setCustomValidity('Name must be 150 characters or fewer.');
+  else if(value&&FREE_TEXT_VALIDATION[el.name]&&!FREE_TEXT_VALIDATION[el.name].pattern.test(value))el.setCustomValidity(FREE_TEXT_VALIDATION[el.name].message);
   const ok=el.checkValidity();
   el.setAttribute('aria-invalid',String(!ok));
   if(!ok){valid=false;firstInvalid ||= el;}
@@ -206,7 +237,7 @@ $('#sendOtp').onclick=async()=>{
  if(window.jQuery && !window.jQuery('#ticketVerifyForm').valid())return;
  const btn=$('#sendOtp'); const name=$('#verifyName').value.trim(),email=$('#email').value.trim(),phone=$('#phone').value.trim(),password=$('#password').value,confirmPassword=$('#confirmPassword').value,m=$('#verifyMsg');
  if(!name||!email||!phone||!password||!confirmPassword){msg(m,'Enter your name, email, phone number, and password.');return;}
- if(!/^[A-Za-z][A-Za-z .'-]{1,149}$/.test(name)){msg(m,'Enter a valid name.');return;}
+ if(!/^[\p{L}\p{M}][\p{L}\p{M} .,'’\-]{1,149}$/u.test(name)){msg(m,'Use letters, spaces, periods, apostrophes, commas, or hyphens for your name.');return;}
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg(m,'Enter a valid email address.');return;}
  if(!/^(?:\+91[-\s]?)?[6-9]\d{9}$/.test(phone)){msg(m,'Enter a valid 10-digit Indian mobile number.');return;}
  if(password.length>64){msg(m,'Password must be 64 characters or fewer.');return;}
@@ -279,17 +310,9 @@ $('#verifyOtp').onclick=async()=>{
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
 };
 $('#category').onchange=()=>{renderConditional();renderPassport();};$('#citizenship').onchange=renderPassport;
-document.querySelector('#conditional').addEventListener('change',e=>{if(e.target.name==='academiaRole')updateAcademiaRoleFields();});
+document.querySelector('#conditional').addEventListener('change',e=>{if(e.target.name==='academiaRole')updateAcademiaRoleFields();if(e.target.name==='organizationLocationChoice'){const other=e.target.value==='__OTHER__',wrap=$('#organizationLocationOtherWrap'),input=$('#organizationLocationOther');if(wrap&&input){wrap.hidden=!other;input.disabled=!other;input.required=other;if(!other)input.value='';}}});
+document.querySelector('#conditional').addEventListener('input',e=>{const rule=FREE_TEXT_VALIDATION[e.target.name];if(!rule)return;const value=e.target.value.trim();e.target.setCustomValidity(value&&!rule.pattern.test(value)?rule.message:'');if(e.target.hasAttribute('aria-invalid'))e.target.setAttribute('aria-invalid',String(!e.target.validity.valid));});
 $('#backVerify').onclick=()=>show('verify');
-$('#resetDetails').onclick=()=>{
- const form=$('#detailsForm');
- form.reset();
- $('#conditional').replaceChildren();
- $('#detailsMsg').textContent='';
- $('#detailsMsg').className='tr-msg';
- form.querySelectorAll('[aria-invalid]').forEach(el=>el.removeAttribute('aria-invalid'));
- form.querySelectorAll('input,select,textarea').forEach(el=>el.setCustomValidity(''));
-};
 $('#detailsForm').onsubmit=e=>{e.preventDefault();const days=$$('input[name="attendanceDays"]:checked');const m=$('#detailsMsg');if(!validateTicketFields(e.currentTarget))return;if(!$('#category').value){msg(m,'Choose your registration type.');return;}if(!days.length){msg(m,'Select at least one participation day.');return;}if(days.length===2){days[0].checked=false;days[1].checked=false;const both=$$('input[name="attendanceDays"]')[2];both.checked=true;}preview();};
 $$('input[name="attendanceDays"]').forEach(i=>i.onchange=()=>{if(i.value==='BOTH'&&i.checked)$$('input[name="attendanceDays"]').slice(0,2).forEach(x=>x.checked=false);else if(i.checked)$$('input[name="attendanceDays"]')[2].checked=false;});
 $('#editForm').onclick=()=>show('details');
@@ -305,28 +328,37 @@ function renderRefDigits(ref){
  });
 }
 
-const externalScriptLoads=new Map();
-function loadExternalScript(src,available){
- if(available())return Promise.resolve();
- if(externalScriptLoads.has(src))return externalScriptLoads.get(src);
- const loading=new Promise((resolve,reject)=>{
-  const script=document.createElement('script');script.src=src;script.async=true;
-  script.onload=resolve;script.onerror=()=>{externalScriptLoads.delete(src);reject(new Error('Unable to load a required file.'));};
-  document.head.appendChild(script);
- });
- externalScriptLoads.set(src,loading);return loading;
-}
-
-function fireConfetti(){
- if(typeof confetti!=='function'){
-  loadExternalScript('https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js',()=>typeof confetti==='function')
-   .then(fireConfetti).catch(()=>{});
-  return;
- }
- const colors=['#0b8a65','#ffb36b','#3aa0ff','#0b6b68'];
- confetti({particleCount:90,spread:75,startVelocity:38,origin:{y:.4},colors,scalar:.9});
- setTimeout(()=>confetti({particleCount:60,angle:60,spread:65,origin:{x:0,y:.5},colors}),180);
- setTimeout(()=>confetti({particleCount:60,angle:120,spread:65,origin:{x:1,y:.5},colors}),260);
+function showRegistrationCelebration(){
+ document.querySelector('[data-registration-celebration]')?.remove();
+ const popup=document.createElement('div');
+ popup.dataset.registrationCelebration='';
+ popup.setAttribute('role','dialog');
+ popup.setAttribute('aria-modal','true');
+ popup.setAttribute('aria-labelledby','registrationCelebrationTitle');
+ popup.style.cssText='position:fixed;inset:0;display:grid;place-items:center;padding:24px;background:rgba(8,18,35,.68);backdrop-filter:blur(5px);z-index:2147483000';
+ const card=document.createElement('div');
+ card.style.cssText='width:min(440px,100%);padding:36px 28px;border-radius:24px;background:#fff;color:#12213a;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.35);font-family:system-ui,sans-serif';
+ const icon=document.createElement('div');
+ icon.textContent='\u{1F389}';
+ icon.style.cssText='font-size:56px;line-height:1;margin-bottom:18px';
+ const title=document.createElement('h2');
+ title.id='registrationCelebrationTitle';
+ title.textContent='Registration successful!';
+ title.style.cssText='margin:0 0 10px;font-size:26px;font-weight:800';
+ const message=document.createElement('p');
+ message.textContent='Your registration has been submitted. We look forward to seeing you at TecVerse 2026.';
+ message.style.cssText='margin:0 0 24px;color:#536174;font-size:16px;line-height:1.5';
+ const close=document.createElement('button');
+ close.type='button';
+ close.textContent='Continue';
+ close.style.cssText='border:0;border-radius:12px;padding:12px 28px;background:#f97316;color:#fff;font-size:16px;font-weight:700;cursor:pointer';
+ const dismiss=()=>{popup.remove();if(typeof window.celebrateRegistration==='function')window.celebrateRegistration();};
+ close.addEventListener('click',dismiss);
+ popup.addEventListener('click',event=>{if(event.target===popup)dismiss();});
+ card.append(icon,title,message,close);
+ popup.appendChild(card);
+ document.body.appendChild(popup);
+ close.focus();
 }
 
 function launchIdCard(data,payload){
@@ -360,7 +392,6 @@ function launchIdCard(data,payload){
  const card=$('#idCard');
  card.classList.remove('is-in'); void card.offsetWidth;
  card.classList.add('is-in');
- fireConfetti();
 }
 
 $('#submitFinal').onclick=async()=>{
@@ -369,7 +400,7 @@ $('#submitFinal').onclick=async()=>{
  if(!validateTicketFields($('#detailsForm'))){show('details');return;}
  if(!window.ticketPayload?.attendanceDays?.length){msg(m,'Select at least one participation day.');show('details');return;}
  setLoading(btn,true); overlay(true,'Submitting your registration…');
- try{const result=await post(API.register,window.ticketPayload);const data=result.data||result;$('#completeEmail').textContent=data.email;$('#confirmationEmailStatus').textContent=data.confirmationEmailSent?'Your confirmation email is on its way to':'Thanks for registering for TecVerse 2026. Further details will be shared at';show('complete');launchIdCard(data,window.ticketPayload);}
+ try{const result=await post(API.register,window.ticketPayload);const data=result.data||result;$('#completeEmail').textContent=data.email;$('#confirmationEmailStatus').textContent=data.confirmationEmailSent?'Your confirmation email is on its way to':'Thanks for registering for TecVerse 2026. Further details will be shared at';show('complete');showRegistrationCelebration();launchIdCard(data,window.ticketPayload);}
  catch(e){msg(m,e.message);}
  finally{setLoading(btn,false);overlay(false);}
 };

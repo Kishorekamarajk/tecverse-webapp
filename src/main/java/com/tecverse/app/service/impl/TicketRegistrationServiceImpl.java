@@ -22,7 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.mail.MessagingException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import java.util.List;
+import java.util.Comparator;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,16 +40,19 @@ public class TicketRegistrationServiceImpl implements TicketRegistrationService 
     private final PasswordEncoder passwordEncoder;
     private final com.tecverse.app.service.TicketRegistrationReferenceService referenceService;
     private final ApplicationEventPublisher eventPublisher;
+    private final Validator validator;
 
     public TicketRegistrationServiceImpl(TicketRegistrationRepository repo, JavaMailSender mailSender, TicketOtpService otpService, PasswordEncoder passwordEncoder,
                                          com.tecverse.app.service.TicketRegistrationReferenceService referenceService,
                                          ApplicationEventPublisher eventPublisher,
+                                         Validator validator,
                                          @Value("${spring.mail.username:}") String fromAddress) {
-        this.repo=repo; this.mailSender=mailSender; this.otpService=otpService; this.passwordEncoder=passwordEncoder; this.referenceService=referenceService; this.eventPublisher=eventPublisher; this.fromAddress=fromAddress;
+        this.repo=repo; this.mailSender=mailSender; this.otpService=otpService; this.passwordEncoder=passwordEncoder; this.referenceService=referenceService; this.eventPublisher=eventPublisher; this.validator=validator; this.fromAddress=fromAddress;
     }
 
     @Transactional
     public TicketRegistrationResponse register(TicketRegistrationRequest r) {
+        validateRequest(r);
         String email=normEmail(r.getEmail()), phone=ValidationUtil.normalizeIndianMobile(r.getPhone());
         if (!r.getPassword().equals(r.getConfirmPassword())) throw new IllegalArgumentException("Password and confirm password must match.");
         validateCategoryDetails(r);
@@ -75,6 +81,16 @@ public class TicketRegistrationServiceImpl implements TicketRegistrationService 
         }
         if(repo.existsByEmail(email)) throw new IllegalArgumentException("This email is already registered.");
         throw new IllegalArgumentException("This phone number is already registered.");
+    }
+
+    private void validateRequest(TicketRegistrationRequest request) {
+        List<String> errors = validator.validate(request).stream()
+                .sorted(Comparator.comparing(v -> v.getPropertyPath().toString()))
+                .map(ConstraintViolation::getMessage)
+                .toList();
+        if (!errors.isEmpty()) {
+            throw new IllegalArgumentException(String.join(" ", errors));
+        }
     }
 
     private void validateCategoryDetails(TicketRegistrationRequest r) {

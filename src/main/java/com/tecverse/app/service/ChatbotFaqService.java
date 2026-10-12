@@ -26,8 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class ChatbotFaqService {
 
     private static final String[] WORKBOOK_LOCATIONS = {
-            "classpath:/static/docs/chatbot.xlsx",
-            "classpath:/static/docs/Chatbot.xlsx"
+            "classpath:/chatbot/Chatbot.xlsx"
     };
 
     private final ResourceLoader resourceLoader;
@@ -60,13 +59,14 @@ public class ChatbotFaqService {
             List<ChatbotFaq> faqs = new ArrayList<>();
             for (int rowIndex = 1; rowIndex < rows.size(); rowIndex++) {
                 Map<Integer, String> row = rows.get(rowIndex);
+                String category = cellText(row, categoryColumn);
                 String question = cellText(row, questionColumn);
                 String answer = cellText(row, answerColumn);
-                if (question.isBlank() || answer.isBlank()) {
+                if (question.isBlank() || answer.isBlank() || isTechnicalFaq(category)) {
                     continue;
                 }
 
-                faqs.add(new ChatbotFaq(cellText(row, categoryColumn), question, answer));
+                faqs.add(new ChatbotFaq(category, question, answer));
             }
 
             return faqs;
@@ -75,6 +75,10 @@ public class ChatbotFaqService {
         } catch (Exception ex) {
             throw new IllegalStateException("Unable to parse chatbot questions from Excel.", ex);
         }
+    }
+
+    private static boolean isTechnicalFaq(String category) {
+        return "technical".equalsIgnoreCase(category.trim());
     }
 
     private Resource findWorkbook() {

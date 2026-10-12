@@ -74,53 +74,6 @@
         window.setInterval(update, 1000);
     }
 
-    function disableHeroCaptions() {
-        var iframe = document.querySelector('[data-hero-video]');
-        if (!iframe) return;
-
-        function unloadCaptions(player) {
-            ['captions', 'cc'].forEach(function (moduleName) {
-                try {
-                    player.unloadModule(moduleName);
-                } catch (error) {
-                    // The player may not expose a caption module for this video.
-                }
-            });
-        }
-
-        function createPlayer() {
-            if (!window.YT || !window.YT.Player) return;
-            new window.YT.Player(iframe, {
-                playerVars: { controls: 0, cc_load_policy: 0 },
-                events: {
-                    onReady: function (event) {
-                        unloadCaptions(event.target);
-                    },
-                    onStateChange: function (event) {
-                        unloadCaptions(event.target);
-                    }
-                }
-            });
-        }
-
-        if (window.YT && window.YT.Player) {
-            createPlayer();
-            return;
-        }
-
-        var previousReady = window.onYouTubeIframeAPIReady;
-        window.onYouTubeIframeAPIReady = function () {
-            if (typeof previousReady === 'function') previousReady();
-            createPlayer();
-        };
-
-        if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
-            var script = document.createElement('script');
-            script.src = 'https://www.youtube.com/iframe_api';
-            document.head.appendChild(script);
-        }
-    }
-
     ready(function () {
         var revealItems = document.querySelectorAll('[data-hero-reveal]');
         var videoWrap = document.querySelector('[data-hero-video-wrap]');
@@ -128,7 +81,6 @@
 
         sizeHeroVideo();
         initHeroCountdown();
-        disableHeroCaptions();
         window.addEventListener('resize', sizeHeroVideo);
 
         if (reduceMotion) {

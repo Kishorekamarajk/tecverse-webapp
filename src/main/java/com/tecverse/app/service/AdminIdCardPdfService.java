@@ -3,6 +3,7 @@ package com.tecverse.app.service;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.BasicStroke;
@@ -20,13 +21,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @Service
 public class AdminIdCardPdfService {
@@ -40,6 +36,7 @@ public class AdminIdCardPdfService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Transactional
     public GeneratedCard generate(String name, String designation, String organization, String category, byte[] photoBytes) throws IOException {
         String reference = nextReference(category);
         String qrValue = "TECVERSE 2026 ID CARD\nReference: " + reference + "\nCategory: " + category
@@ -86,54 +83,33 @@ public class AdminIdCardPdfService {
     }
 
     private String nextReference(String category) {
-        String counterKey = switch (category) {
-            case "SPEAKER" -> "speaker";
-            case "ORGANIZER" -> "organizer";
-            case "VIP" -> "vip";
-            default -> throw new IllegalArgumentException("Unsupported card category.");
-        };
         String prefix = switch (category) {
             case "SPEAKER" -> "TV26SP";
             case "ORGANIZER" -> "TV26OG";
             case "VIP" -> "TV26VP";
             default -> throw new IllegalArgumentException("Unsupported card category.");
         };
-        Path counterFile = Path.of("uploads", "admin-id-card-counters.properties").toAbsolutePath();
-        Path parent = counterFile.getParent();
-        try {
-            Files.createDirectories(parent);
-            Path lockFile = parent.resolve("admin-id-card-counters.lock");
-            try (FileChannel channel = FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-                 FileLock ignored = channel.lock()) {
-                Properties counters = new Properties();
-                if (Files.exists(counterFile)) {
-                    try (var input = Files.newInputStream(counterFile)) {
-                        counters.load(input);
-                    }
-                }
-                long current = Long.parseLong(counters.getProperty(counterKey, "0")) + 1;
-                if (current > 999_999) {
-                    throw new IllegalStateException("The " + category.toLowerCase(java.util.Locale.ROOT) + " ID card reference sequence is exhausted.");
-                }
-                counters.setProperty(counterKey, Long.toString(current));
-                Path temporaryFile = Files.createTempFile(parent, "admin-id-card-counters-", ".tmp");
-                try {
-                    try (var output = Files.newOutputStream(temporaryFile, StandardOpenOption.TRUNCATE_EXISTING)) {
-                        counters.store(output, "TECVERSE 2026 admin ID card counters");
-                    }
-                    try {
-                        Files.move(temporaryFile, counterFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-                    } catch (java.nio.file.AtomicMoveNotSupportedException ignoredMove) {
-                        Files.move(temporaryFile, counterFile, StandardCopyOption.REPLACE_EXISTING);
-                    }
-                } finally {
-                    Files.deleteIfExists(temporaryFile);
-                }
-                return prefix + String.format(java.util.Locale.ROOT, "%06d", current);
-            }
-        } catch (IOException | NumberFormatException exception) {
-            throw new IllegalStateException("Could not allocate an ID card reference number.", exception);
+        int categoryLock = switch (category) {
+            case "SPEAKER" -> 1;
+            case "ORGANIZER" -> 2;
+            case "VIP" -> 3;
+            default -> throw new IllegalArgumentException("Unsupported card category.");
+        };
+
+        // Serialize reference allocation per category across all app instances.
+        // The lock is transaction-scoped and releases after saveCardDetails commits.
+        jdbcTemplate.query("SELECT pg_advisory_xact_lock(20261012, ?)", rs -> { }, categoryLock);
+        String pattern = "^" + prefix + "[0-9]{6}$";
+        Long highest = jdbcTemplate.queryForObject("""
+                SELECT COALESCE(MAX(CAST(SUBSTRING(reference_number FROM 7) AS BIGINT)), 0)
+                FROM admin_id_cards
+                WHERE reference_number ~ ?
+                """, Long.class, pattern);
+        long current = (highest == null ? 0 : highest) + 1;
+        if (current > 999_999) {
+            throw new IllegalStateException("The " + category.toLowerCase(java.util.Locale.ROOT) + " ID card reference sequence is exhausted.");
         }
+        return prefix + String.format(java.util.Locale.ROOT, "%06d", current);
     }
 
     private BufferedImage drawCard(String name, String designation, String organization, String category,

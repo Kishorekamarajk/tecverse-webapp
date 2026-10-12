@@ -1,29 +1,45 @@
 (function () {
     var safeMethods = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
+    var originalFetch = window.fetch.bind(window);
+    var script = Array.from(document.scripts).find(function (item) {
+        try { return new URL(item.src, window.location.href).pathname.endsWith('/js/main.js'); }
+        catch (_) { return false; }
+    });
+    var scriptPath = script ? new URL(script.src, window.location.href).pathname : '';
+    var appContext = scriptPath.endsWith('/js/main.js')
+        ? scriptPath.slice(0, -'/js/main.js'.length)
+        : '';
+    var csrfEndpoint = appContext + '/csrf';
+    var csrfTokenRequest = null;
 
-    function csrfCookieValue() {
-        var prefix = 'XSRF-TOKEN=';
-        var cookie = document.cookie.split(';').map(function (part) {
-            return part.trim();
-        }).find(function (part) {
-            return part.indexOf(prefix) === 0;
-        });
-        return cookie ? decodeURIComponent(cookie.substring(prefix.length)) : null;
+    function loadCsrfToken() {
+        if (!csrfTokenRequest) {
+            csrfTokenRequest = originalFetch(csrfEndpoint, {
+                method: 'GET',
+                credentials: 'same-origin',
+                cache: 'no-store',
+                headers: { 'Accept': 'application/json' }
+            }).then(function (response) {
+                if (!response.ok) throw new Error('Could not load the request security token.');
+                return response.json();
+            }).catch(function (error) {
+                csrfTokenRequest = null;
+                throw error;
+            });
+        }
+        return csrfTokenRequest;
     }
 
-    var originalFetch = window.fetch.bind(window);
-    window.fetch = function (input, init) {
+    window.fetch = async function (input, init) {
         init = init || {};
         var method = (init.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
         var requestUrl = new URL(typeof input === 'string' ? input : input.url, window.location.href);
 
         if (requestUrl.origin === window.location.origin && safeMethods.indexOf(method) < 0) {
-            var token = csrfCookieValue();
-            if (token) {
-                var headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
-                if (!headers.has('X-XSRF-TOKEN')) headers.set('X-XSRF-TOKEN', token);
-                init = Object.assign({}, init, { headers: headers });
-            }
+            var csrf = await loadCsrfToken();
+            var headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
+            if (!headers.has(csrf.headerName)) headers.set(csrf.headerName, csrf.token);
+            init = Object.assign({}, init, { headers: headers });
         }
 
         return originalFetch(input, init);

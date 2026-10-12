@@ -26,6 +26,7 @@ import com.tecverse.app.repository.NewsUpdateRepository;
 import com.tecverse.app.repository.ThematicDomainCardRepository;
 import com.tecverse.app.service.GalleryStorageService;
 import com.tecverse.app.service.AdminDashboardService;
+import com.tecverse.app.security.AdminCaptchaService;
 
 import jakarta.validation.Valid;
 
@@ -37,21 +38,25 @@ public class AdminNewsController {
     private final ThematicDomainCardRepository thematicDomainCardRepository;
     private final GalleryStorageService galleryStorageService;
     private final AdminDashboardService adminDashboardService;
+    private final AdminCaptchaService adminCaptchaService;
 
     public AdminNewsController(ConferenceScheduleItemRepository conferenceScheduleItemRepository,
                                NewsUpdateRepository newsUpdateRepository,
                                ThematicDomainCardRepository thematicDomainCardRepository,
                                GalleryStorageService galleryStorageService,
-                               AdminDashboardService adminDashboardService) {
+                               AdminDashboardService adminDashboardService,
+                               AdminCaptchaService adminCaptchaService) {
         this.conferenceScheduleItemRepository = conferenceScheduleItemRepository;
         this.newsUpdateRepository = newsUpdateRepository;
         this.thematicDomainCardRepository = thematicDomainCardRepository;
         this.galleryStorageService = galleryStorageService;
         this.adminDashboardService = adminDashboardService;
+        this.adminCaptchaService = adminCaptchaService;
     }
 
     @GetMapping("/adminportal")
-    public String login() {
+    public String login(Model model, jakarta.servlet.http.HttpSession session) {
+        model.addAttribute("adminCaptcha", adminCaptchaService.newChallenge(session));
         return "admin/login";
     }
 
