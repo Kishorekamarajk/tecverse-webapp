@@ -1,0 +1,365 @@
+/* Bootstrap 5 handles positioning, flex layout, scrolling, controls and
+   accessible labels. Keep brand colors, exact dimensions and motion here. */
+.tecverse-floating-actions,
+.tecverse-chatbot {
+    --tecverse-chatbot-orange: #F47A20;
+    --tecverse-chatbot-orange-dark: #E45F13;
+    --tecverse-chatbot-green: #35AA75;
+    --tecverse-chatbot-green-dark: #0F3D36;
+    --tecverse-chatbot-ink: #07182F;
+    --tecverse-chatbot-muted: #4B5563;
+    --tecverse-chatbot-line: #DDE7EF;
+    --tecverse-chatbot-surface: #F3F7FA;
+    --tecverse-chatbot-z: 1055;
+    --tecverse-floating-bottom: 24px;
+    --tecverse-floating-gap: 14px;
+    --tecverse-floating-button-size: 62px;
+    --tecverse-chatbot-panel-gap: 12px;
+    --tecverse-chatbot-panel-bottom: calc(var(--tecverse-floating-bottom) + var(--tecverse-floating-button-size) + var(--tecverse-floating-gap) + var(--tecverse-floating-button-size) + var(--tecverse-chatbot-panel-gap));
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.tecverse-floating-actions {
+    right: 22px;
+    bottom: var(--tecverse-floating-bottom);
+    z-index: var(--tecverse-chatbot-z);
+    gap: var(--tecverse-floating-gap);
+}
+
+.tecverse-floating-actions__button {
+    width: var(--tecverse-floating-button-size);
+    height: var(--tecverse-floating-button-size);
+    border: 0;
+    color: #FFFFFF;
+    box-shadow: 0 18px 38px rgba(7, 24, 47, 0.24);
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.tecverse-floating-actions__button:hover {
+    transform: translateY(-2px) scale(1.06);
+    box-shadow: 0 22px 46px rgba(7, 24, 47, 0.3);
+    filter: brightness(1.03);
+}
+
+.tecverse-floating-actions__button:focus-visible,
+.tecverse-chatbot__close:focus-visible,
+.tecverse-chatbot__input:focus-visible,
+.tecverse-chatbot__send:focus-visible,
+.tecverse-chatbot__quick-button:focus-visible {
+    outline: 3px solid rgba(244, 122, 32, 0.45);
+    outline-offset: 3px;
+}
+
+.tecverse-floating-actions__button i {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.tecverse-floating-actions__button--chat {
+    background: linear-gradient(135deg, var(--tecverse-chatbot-orange), var(--tecverse-chatbot-orange-dark));
+}
+
+.tecverse-floating-actions__button--whatsapp {
+    background: #25D366;
+}
+
+.tecverse-chatbot {
+    right: 22px;
+    bottom: var(--tecverse-chatbot-panel-bottom);
+    z-index: calc(var(--tecverse-chatbot-z) + 1);
+    height: min(560px, calc(100vh - var(--tecverse-chatbot-panel-bottom) - 24px));
+    max-height: calc(100vh - var(--tecverse-chatbot-panel-bottom) - 24px);
+    border: 1px solid rgba(221, 231, 239, 0.9);
+    border-radius: 24px;
+    background: #FFFFFF;
+    box-shadow: 0 26px 80px rgba(7, 24, 47, 0.28);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(18px) scale(0.96);
+    transform-origin: bottom right;
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.tecverse-chatbot.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.tecverse-chatbot__header {
+    padding: 18px 20px 16px;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, var(--tecverse-chatbot-green-dark), #061933);
+}
+
+.tecverse-chatbot__eyebrow {
+    margin: 0 0 4px;
+    color: var(--tecverse-chatbot-orange);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+}
+
+.tecverse-chatbot__header h2 {
+    margin: 0;
+    color: #FFFFFF !important;
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.tecverse-chatbot__close {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 26px;
+    line-height: 1;
+    transition: background 160ms ease, transform 160ms ease;
+}
+
+.tecverse-chatbot__close:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: scale(1.04);
+}
+
+.tecverse-chatbot__messages {
+    min-height: 0;
+    flex: 1 1 auto;
+    gap: 12px;
+    padding: 18px 18px 12px;
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--tecverse-chatbot-surface) 100%);
+}
+
+.tecverse-chatbot__message {
+    max-width: 84%;
+    animation: tecverseChatbotMessageIn 180ms ease both;
+}
+
+.tecverse-chatbot__bubble {
+    border-radius: 18px;
+    padding: 11px 13px;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.tecverse-chatbot__message--user .tecverse-chatbot__bubble {
+    border-bottom-right-radius: 6px;
+    color: #FFFFFF;
+    background: var(--tecverse-chatbot-orange);
+}
+
+.tecverse-chatbot__message--assistant .tecverse-chatbot__bubble {
+    border: 1px solid var(--tecverse-chatbot-line);
+    border-bottom-left-radius: 6px;
+    color: var(--tecverse-chatbot-ink);
+    background: #FFFFFF;
+}
+
+.tecverse-chatbot__time {
+    margin-top: 5px;
+    color: #6B7280;
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+.tecverse-chatbot__typing {
+    min-width: 58px;
+}
+
+.tecverse-chatbot__typing span {
+    width: 7px;
+    height: 7px;
+    background: var(--tecverse-chatbot-green);
+    animation: tecverseChatbotTyping 900ms ease-in-out infinite;
+}
+
+.tecverse-chatbot__typing span:nth-child(2) {
+    animation-delay: 120ms;
+}
+
+.tecverse-chatbot__typing span:nth-child(3) {
+    animation-delay: 240ms;
+}
+
+.tecverse-chatbot__quick-questions {
+    flex: 0 0 auto;
+    max-height: 114px;
+    padding: 0 18px 14px;
+    background: var(--tecverse-chatbot-surface);
+    scrollbar-width: thin;
+}
+
+.tecverse-chatbot__quick-button {
+    flex: 0 1 auto;
+    border: 1px solid rgba(53, 170, 117, 0.3);
+    padding: 8px 12px;
+    color: #233373;
+    background: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.tecverse-chatbot__quick-button:hover {
+    border-color: var(--tecverse-chatbot-orange);
+    color: var(--tecverse-chatbot-orange-dark);
+    transform: translateY(-1px);
+}
+
+.tecverse-chatbot__form {
+    flex: 0 0 auto;
+    gap: 10px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--tecverse-chatbot-line);
+    background: #FFFFFF;
+}
+
+.tecverse-chatbot__input {
+    min-width: 0;
+    height: 44px;
+    border: 1px solid var(--tecverse-chatbot-line);
+    padding: 0 16px;
+    color: var(--tecverse-chatbot-ink);
+    background: #FFFFFF;
+    font-size: 14px;
+}
+
+.tecverse-chatbot__input::placeholder {
+    color: #8A94A6;
+}
+
+.tecverse-chatbot__send {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    color: #FFFFFF;
+    background: var(--tecverse-chatbot-orange);
+    transition: transform 160ms ease, background 160ms ease;
+}
+
+.tecverse-chatbot__send:hover {
+    background: var(--tecverse-chatbot-orange-dark);
+    transform: translateY(-1px);
+}
+
+@keyframes tecverseChatbotMessageIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes tecverseChatbotTyping {
+    0%, 80%, 100% {
+        transform: translateY(0);
+        opacity: 0.45;
+    }
+    40% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .tecverse-floating-actions,
+    .tecverse-chatbot {
+        --tecverse-floating-bottom: 14px;
+        --tecverse-floating-gap: 9px;
+        --tecverse-floating-button-size: 46px;
+        --tecverse-chatbot-panel-gap: 10px;
+    }
+
+    body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .tecverse-floating-actions,
+    body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .tecverse-chatbot {
+        --tecverse-floating-bottom: calc(72px + env(safe-area-inset-bottom));
+    }
+
+    .tecverse-floating-actions {
+        right: 10px;
+    }
+
+    .tecverse-floating-actions__button i {
+        font-size: 20px;
+    }
+
+    .tecverse-chatbot {
+        right: 10px;
+        max-height: calc(100vh - var(--tecverse-chatbot-panel-bottom) - 18px);
+        border-radius: 20px;
+    }
+
+    .tecverse-chatbot__header {
+        padding: 18px;
+    }
+
+    .tecverse-chatbot__header h2 {
+        font-size: 20px;
+    }
+
+    .tecverse-chatbot__message {
+        max-width: 90%;
+    }
+}
+
+@media (min-width: 768px) and (max-height: 760px) {
+    .tecverse-chatbot {
+        height: min(500px, calc(100vh - var(--tecverse-chatbot-panel-bottom) - 18px));
+        max-height: calc(100vh - var(--tecverse-chatbot-panel-bottom) - 18px);
+    }
+
+    .tecverse-chatbot__quick-questions {
+        max-height: 88px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tecverse-floating-actions__button,
+    .tecverse-chatbot,
+    .tecverse-chatbot__message,
+    .tecverse-chatbot__typing span {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Preserve branded controls through Bootstrap hover, focus and active states. */
+.tecverse-floating-actions .btn,
+.tecverse-chatbot .btn {
+    --bs-btn-color: #FFFFFF;
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-disabled-color: #FFFFFF;
+    --bs-btn-focus-shadow-rgb: 244, 122, 32;
+}
+.tecverse-floating-actions__button--chat,
+.tecverse-chatbot__send {
+    --bs-btn-active-bg: var(--tecverse-chatbot-orange-dark);
+    --bs-btn-active-border-color: transparent;
+}
+.tecverse-floating-actions__button--whatsapp {
+    --bs-btn-active-bg: #25D366;
+    --bs-btn-active-border-color: transparent;
+}
+.tecverse-chatbot__close {
+    --bs-btn-active-bg: rgba(255, 255, 255, 0.18);
+    --bs-btn-active-border-color: rgba(255, 255, 255, 0.24);
+}
+.tecverse-chatbot .tecverse-chatbot__quick-button {
+    --bs-btn-color: #233373;
+    --bs-btn-hover-color: var(--tecverse-chatbot-orange-dark);
+    --bs-btn-active-color: var(--tecverse-chatbot-orange-dark);
+    --bs-btn-active-bg: #FFFFFF;
+    --bs-btn-active-border-color: var(--tecverse-chatbot-orange);
+}
+.tecverse-chatbot__input:focus {
+    border-color: var(--tecverse-chatbot-orange);
+    box-shadow: 0 0 0 .25rem rgba(244, 122, 32, .15);
+}

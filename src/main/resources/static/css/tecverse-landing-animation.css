@@ -1,0 +1,433 @@
+.tecverse-landing-animation {
+    position: relative;
+    isolation: isolate;
+    --tecverse-split-y: calc(50% + clamp(76px, 12vh, 124px));
+    min-height: 100vh;
+    overflow: hidden;
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.tecverse-landing-animation::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(circle at 50% 47%, rgba(255, 114, 0, 0.24), transparent 28%),
+        radial-gradient(circle at 74% 58%, rgba(53, 170, 117, 0.14), transparent 32%),
+        linear-gradient(180deg, #000000 0%, #03070d 50%, #000000 100%);
+}
+
+.tecverse-landing-animation::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 114, 0, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, transparent, rgba(255, 114, 0, 0.18), transparent);
+    background-size: 46px 46px, 46px 46px, 42% 100%;
+    background-position: 0 0, 0 0, -45vw 0;
+    mask-image: radial-gradient(circle at center, black, transparent 76%);
+    animation: tecverseLandingScan 2.8s ease-in-out infinite;
+}
+
+.tecverse-title-mask-video {
+    position: absolute;
+    inset: -8%;
+    z-index: 3;
+    overflow: hidden;
+    opacity: 0.95;
+    filter: saturate(1.3) contrast(1.12) brightness(1.05);
+    pointer-events: none;
+}
+
+.tecverse-title-mask-video iframe {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(120vw, 178vh);
+    height: max(68vw, 100vh);
+    transform: translate(-50%, -50%);
+}
+
+.tecverse-title-video-mask {
+    position: absolute;
+    left: 50%;
+    top: calc(50% - clamp(44px, 7vh, 78px));
+    z-index: 4;
+    display: block;
+    width: min(96vw, 1380px);
+    height: clamp(128px, 16vw, 230px);
+    overflow: visible;
+    transform: translate(-50%, -50%);
+    filter:
+        drop-shadow(0 0 18px rgba(255, 114, 0, 0.55))
+        drop-shadow(0 22px 54px rgba(0, 0, 0, 0.76));
+    pointer-events: none;
+}
+
+.tecverse-title-mask-text {
+    fill: #000000;
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 124px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+@keyframes tecverseLandingScan {
+    0%, 100% {
+        background-position: 0 0, 0 0, -45vw 0;
+        opacity: 0.64;
+    }
+    50% {
+        background-position: 0 0, 0 0, 110vw 0;
+        opacity: 1;
+    }
+}
+
+.tecverse-split-panel {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    width: 100%;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.01)),
+        rgba(0, 0, 0, 0.78);
+    border-color: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.tecverse-split-panel--left {
+    top: 0;
+    height: var(--tecverse-split-y);
+    border-bottom: 1px solid rgba(255, 114, 0, 0.46);
+    box-shadow: 0 1px 18px rgba(255, 114, 0, 0.16);
+}
+
+.tecverse-split-panel--right {
+    top: var(--tecverse-split-y);
+    bottom: 0;
+    border-top: 1px solid rgba(255, 114, 0, 0.24);
+}
+
+.tecverse-animation-container {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(5.5rem, 9vh, 8rem) 1.25rem 2rem;
+    text-align: center;
+    pointer-events: none;
+}
+
+.tecverse-countdown-destination {
+    position: fixed;
+    top: clamp(92px, 10vh, 118px);
+    left: 50%;
+    z-index: 1050;
+    width: min(360px, calc(100vw - 32px));
+    height: 64px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.tecverse-landing-kicker {
+    display: none;
+    margin: 0 0 1rem;
+    color: #FF9A3D;
+    font-size: clamp(0.72rem, 1.1vw, 0.92rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.tecverse-landing-title {
+    position: relative;
+    display: block;
+    width: min(96vw, 1380px);
+    height: clamp(94px, 13vw, 166px);
+    margin: 0;
+    color: transparent;
+    font-size: clamp(3.2rem, 8vw, 8.4rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: 0;
+    text-shadow: none;
+}
+
+.tecverse-landing-title-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.tecverse-landing-title-mask {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.tecverse-landing-title-mask text,
+.tecverse-countdown-value-mask text {
+    font-family: "Inter", Arial, sans-serif;
+    font-weight: 900;
+}
+
+.tecverse-landing-title-mask text {
+    font-size: 118px;
+}
+
+.tecverse-landing-title-mask video,
+.tecverse-countdown-value-mask video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(1.18) contrast(1.08) saturate(1.14);
+}
+
+.tecverse-countdown {
+    position: fixed;
+    left: 50%;
+    top: calc(50% + clamp(196px, 27vh, 252px));
+    z-index: 1060;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(74px, 1fr));
+    gap: clamp(0.7rem, 1.8vw, 1.25rem);
+    width: min(680px, calc(100vw - 32px));
+    padding: 1rem;
+    color: #FFFFFF;
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
+    pointer-events: none;
+}
+
+.tecverse-countdown-item {
+    min-width: 0;
+    padding: 0.85rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.tecverse-countdown-value,
+.tecverse-countdown-label {
+    display: block;
+}
+
+.tecverse-countdown-value {
+    position: relative;
+    color: #FFFFFF;
+    font-size: clamp(1.8rem, 4.4vw, 4.2rem);
+    font-weight: 900;
+    line-height: 0.98;
+}
+
+.tecverse-countdown-value-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.tecverse-countdown-value-mask {
+    display: block;
+    width: 100%;
+    height: 1.04em;
+}
+
+.tecverse-countdown-value-mask text {
+    font-size: 84px;
+}
+
+.tecverse-countdown-label {
+    margin-top: 0.46rem;
+    color: #FF9A3D;
+    font-size: clamp(0.62rem, 0.9vw, 0.82rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.12em;
+}
+
+.tecverse-countdown.is-compact {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.22rem;
+    width: min(210px, calc(100vw - 24px));
+    min-width: 0;
+    min-height: 48px;
+    padding: 0.42rem 0.5rem;
+    border: 1px solid rgba(244, 122, 32, 0.22);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 10px 24px rgba(7, 24, 47, 0.13);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    align-items: center;
+    justify-content: center;
+}
+
+.tecverse-countdown.is-floating {
+    position: fixed;
+    z-index: 1070;
+    pointer-events: none;
+}
+
+.tecverse-countdown.is-compact .tecverse-countdown-item {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.1rem;
+    padding: 0.18rem 0.05rem;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.tecverse-countdown.is-compact .tecverse-countdown-value {
+    color: var(--ink);
+    font-size: 0.82rem;
+    line-height: 1;
+}
+
+.tecverse-countdown.is-compact .tecverse-countdown-value-mask {
+    height: 1em;
+}
+
+.tecverse-countdown.is-compact .tecverse-countdown-value-mask text {
+    font-size: 78px;
+}
+
+.tecverse-countdown.is-compact .tecverse-countdown-label {
+    margin-top: 0;
+    color: var(--brand-accent);
+    font-size: 0.68rem;
+    letter-spacing: 0;
+}
+
+.tecverse-countdown.is-complete {
+    grid-template-columns: 1fr;
+}
+
+.tecverse-countdown.is-complete .tecverse-countdown-item:not(:first-child) {
+    display: none;
+}
+
+.tecverse-countdown.is-complete .tecverse-countdown-label {
+    font-size: 0.7rem;
+}
+
+@media (max-width: 991.98px) {
+    .tecverse-landing-animation {
+        --tecverse-split-y: calc(50% + 92px);
+    }
+
+    .tecverse-countdown {
+        grid-template-columns: repeat(4, minmax(58px, 1fr));
+        top: calc(50% + clamp(180px, 27vh, 220px));
+        width: min(540px, calc(100vw - 24px));
+        padding: 0.75rem;
+    }
+
+    .tecverse-countdown-item {
+        padding: 0.68rem 0.48rem;
+    }
+
+    .tecverse-countdown.is-compact {
+        transform-origin: center center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .tecverse-landing-animation {
+        --tecverse-split-y: calc(50% + 64px);
+    }
+
+    .tecverse-landing-title {
+        font-size: clamp(2.6rem, 15vw, 4.8rem);
+    }
+
+    .tecverse-title-video-mask {
+        top: calc(50% - 54px);
+        height: 126px;
+    }
+
+    .tecverse-title-mask-text {
+        font-size: 100px;
+    }
+
+    .tecverse-countdown {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.55rem;
+        top: calc(50% + 210px);
+        width: min(330px, calc(100vw - 24px));
+    }
+
+    .tecverse-countdown.is-compact {
+        grid-template-columns: repeat(4, auto);
+        width: min(180px, calc(100vw - 24px));
+        max-width: calc(100vw - 24px);
+        overflow: hidden;
+    }
+
+    .tecverse-countdown.is-compact .tecverse-countdown-value {
+        font-size: 0.78rem;
+    }
+
+    .tecverse-countdown.is-compact .tecverse-countdown-label {
+        font-size: 0.54rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tecverse-landing-animation {
+        min-height: 68vh;
+    }
+
+    .tecverse-split-panel {
+        display: none;
+    }
+
+    .tecverse-title-video-mask,
+    .tecverse-title-mask-video {
+        display: none;
+    }
+
+    .tecverse-landing-title {
+        color: #FFFFFF;
+        text-shadow: 0 18px 55px rgba(0, 0, 0, 0.38);
+    }
+
+    .tecverse-countdown {
+        position: static;
+        margin-top: 1.5rem;
+        transform: none;
+    }
+
+    .tecverse-animation-container {
+        position: relative;
+        min-height: 68vh;
+    }
+}

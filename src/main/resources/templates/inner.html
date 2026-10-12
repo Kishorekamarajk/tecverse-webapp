@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{about.title}">Tec-verse | About</title>
+    <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="no-hero">
+
+<div th:replace="~{fragments/navbar :: navbar('about')}"></div>
+
+<!-- Page header (no video, navbar stays solid) -->
+<header class="page-header">
+    <div class="container">
+        <h1 class="fw-bold" th:text="#{about.pagetitle}">About Tec-verse</h1>
+        <p class="lead mb-0" th:text="#{about.tagline}">A quick look at who we are and what we build.</p>
+    </div>
+</header>
+
+<section class="content-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-md-6">
+                <h2 class="fw-bold mb-3" th:text="#{about.story.heading}">Our Story</h2>
+                <p class="text-muted" th:text="#{about.story.p1}">
+                    Tec-verse started as a simple idea: give teams a clean, modern starting point
+                    for their web presence, built on solid, well-known tools like Spring Boot,
+                    Thymeleaf, and Bootstrap.
+                </p>
+                <p class="text-muted" th:text="#{about.story.p2}">
+                    This inner page reuses the same navbar and footer fragments as the home page,
+                    so any change you make to those is reflected everywhere automatically.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <div class="ratio ratio-4x3 bg-light rounded shadow-sm d-flex align-items-center justify-content-center">
+                    <span class="text-muted" th:text="#{about.placeholder}">Image / content placeholder</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content-section bg-light">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <h3 class="fw-bold">12+</h3>
+                <p class="text-muted mb-0" th:text="#{stats.projects}">Projects shipped</p>
+            </div>
+            <div class="col-md-4">
+                <h3 class="fw-bold">8</h3>
+                <p class="text-muted mb-0" th:text="#{stats.team}">Team members</p>
+            </div>
+            <div class="col-md-4">
+                <h3 class="fw-bold">3 yrs</h3>
+                <p class="text-muted mb-0" th:text="#{stats.years}">Building products</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

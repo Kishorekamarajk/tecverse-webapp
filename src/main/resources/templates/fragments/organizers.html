@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<section th:fragment="organizers" id="organizers" aria-labelledby="organizers-heading" class="relative isolate overflow-hidden bg-white">
+
+    <div class="container-custom py-12 lg:py-16">
+
+        <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1fr)_2fr]">
+
+            <div data-reveal="fade-up">
+                <h2 id="organizers-heading" class="text-[22px] font-bold tracking-tight text-ink sm:text-[31px]" th:text="#{organizers.heading}">Organized By</h2>
+                <span class="section-heading-rule !mx-0 overflow-hidden" aria-hidden="true"><span></span><span></span><span></span></span>
+                <p class="mt-2 text-base leading-8 text-muted sm:text-[18px]">
+                    <span th:text="#{organizers.description}">Tec-verse is coordinated by national technology institutions with a focus on public digital infrastructure, research collaboration, startup enablement, and industry participation.</span>
+                </p>
+            </div>
+
+            <div class="organizers-grid d-flex justify-content-center">
+                <div data-reveal="zoom" data-reveal-delay="80"
+                     class="group flex aspect-square items-center justify-center p-6 transition-all duration-300 ease-out hover:-translate-y-1">
+                    <img th:src="@{/images/1.svg}" alt="C-DAC logo" class="h-full w-full object-contain" loading="lazy" />
+                </div>
+                <div data-reveal="zoom" data-reveal-delay="160"
+                     class="group flex aspect-square items-center justify-center p-6 transition-all duration-300 ease-out hover:-translate-y-1">
+                    <img th:src="@{/images/2.svg}" alt="SAMEER logo" class="h-full w-full object-contain" loading="lazy" />
+                </div>
+                <div data-reveal="zoom" data-reveal-delay="240"
+                     class="group flex aspect-square items-center justify-center p-6 transition-all duration-300 ease-out hover:-translate-y-1">
+                    <img th:src="@{/images/3.svg}" alt="C-MET logo" class="h-full w-full object-contain" loading="lazy" />
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+</body>
+</html>

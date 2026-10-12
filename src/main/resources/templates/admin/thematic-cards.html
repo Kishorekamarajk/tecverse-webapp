@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thematic Areas Admin | Tec-verse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body class="admin-dashboard-page overflow-x-hidden">
+<div class="admin-app-shell min-vh-100 overflow-x-hidden">
+<div th:replace="~{admin/fragments/admin-layout :: sidebar('thematic')}"></div>
+<div class="admin-main-panel">
+<div th:replace="~{admin/fragments/admin-layout :: topbar('Thematic Areas')}"></div>
+<main class="admin-shell container-fluid mx-auto">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <a class="text-decoration-none small fw-semibold text-success" th:href="@{/admin}"><i class="bi bi-arrow-left"></i> Dashboard</a>
+            <h1 class="h3 mt-2 mb-0">Thematic Areas</h1>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <form th:action="@{/admin/thematic-cards/reset-original}" method="post" onsubmit="return confirm('Replace current thematic cards with original key terms?');">
+                <button class="btn btn-outline-primary fw-bold" type="submit">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Restore Defaults
+                </button>
+            </form>
+            <a class="btn btn-success fw-bold" th:href="@{/admin/thematic-cards/new}"><i class="bi bi-plus-lg me-1"></i> Add Thematic Area</a>
+        </div>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Saved.</div>
+
+    <section class="table-card bg-white overflow-hidden">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0 table-hover">
+                <thead class="table-light">
+                <tr>
+                    <th>Institution</th>
+                    <th>Title</th>
+                    <th>Icon</th>
+                    <th>Order</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(thematicCards)}">
+                    <td colspan="6" class="py-5 text-center text-muted">No thematic areas found. Add one to display it on the home page.</td>
+                </tr>
+                <tr th:each="item : ${thematicCards}">
+                    <td class="fw-semibold" th:text="${item.institutionLabel}">C-DAC</td>
+                    <td th:text="${item.title}">Quantum Computing</td>
+                    <td><i th:class="${'bi bi-' + item.icon}"></i> <span th:text="${item.icon}">stars</span></td>
+                    <td th:text="${item.displayOrder}">0</td>
+                    <td>
+                        <span th:if="${item.active}" class="badge text-bg-success rounded-pill">Published</span>
+                        <span th:unless="${item.active}" class="badge text-bg-secondary rounded-pill">Hidden</span>
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/thematic-cards/{id}/edit(id=${item.id})}" title="Edit" aria-label="Edit thematic area">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <form class="d-inline" th:action="@{/admin/thematic-cards/{id}/toggle(id=${item.id})}" method="post">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit" th:title="${item.active} ? 'Hide on home page' : 'Publish on home page'" th:aria-label="${item.active} ? 'Hide thematic area' : 'Publish thematic area'">
+                                <i th:class="${item.active} ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                            </button>
+                        </form>
+                        <form class="d-inline" th:action="@{/admin/thematic-cards/{id}/delete(id=${item.id})}" method="post"
+                              onsubmit="return confirm('Delete this thematic area?');">
+                            <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Delete thematic area">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+ </div>
+ </div>
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

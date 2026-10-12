@@ -1,0 +1,378 @@
+(function(){
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const contextPath=((document.body&&document.body.dataset.contextPath)||'').replace(/\/$/,'');
+const apiPath=path=>(contextPath==='/'?'':contextPath)+path;
+const API={send:apiPath('/ticket/send-otp'),verify:apiPath('/ticket/verify-otp'),register:apiPath('/ticket/register')};
+$$('.password-toggle').forEach(button=>button.addEventListener('click',()=>{
+ const input=$('#'+button.dataset.passwordTarget);
+ const showing=input.type==='password';
+ input.type=showing?'text':'password';
+ button.setAttribute('aria-label',showing?'Hide password':'Show password');
+ button.setAttribute('aria-pressed',String(showing));
+ button.innerHTML=`<i class="bi ${showing?'bi-eye-slash':'bi-eye'}" aria-hidden="true"></i>`;
+}));
+const ministries=[
+"Ministry of Agriculture and Farmers Welfare","Ministry of Ayush","Ministry of Chemicals and Fertilizers","Ministry of Civil Aviation",
+"Ministry of Coal","Ministry of Commerce and Industry","Ministry of Communications","Ministry of Consumer Affairs, Food and Public Distribution",
+"Ministry of Cooperation","Ministry of Corporate Affairs","Ministry of Culture","Ministry of Defence","Ministry of Development of North Eastern Region",
+"Ministry of Earth Sciences","Ministry of Education","Ministry of Electronics and Information Technology","Ministry of Environment, Forest and Climate Change",
+"Ministry of External Affairs","Ministry of Finance","Ministry of Fisheries, Animal Husbandry and Dairying","Ministry of Food Processing Industries",
+"Ministry of Health and Family Welfare","Ministry of Heavy Industries","Ministry of Home Affairs","Ministry of Housing and Urban Affairs",
+"Ministry of Information and Broadcasting","Ministry of Jal Shakti","Ministry of Labour and Employment","Ministry of Law and Justice",
+"Ministry of Micro, Small and Medium Enterprises","Ministry of Mines","Ministry of Minority Affairs","Ministry of New and Renewable Energy",
+"Ministry of Panchayati Raj","Ministry of Parliamentary Affairs","Ministry of Personnel, Public Grievances and Pensions","Ministry of Petroleum and Natural Gas",
+"Ministry of Ports, Shipping and Waterways","Ministry of Power","Ministry of Planning","Ministry of Railways","Ministry of Road Transport and Highways",
+"Ministry of Rural Development","Ministry of Science and Technology","Ministry of Skill Development and Entrepreneurship","Ministry of Social Justice and Empowerment",
+"Ministry of Statistics and Programme Implementation","Ministry of Steel","Ministry of Textiles","Ministry of Tourism",
+"Ministry of Tribal Affairs","Ministry of Women and Child Development","Ministry of Youth Affairs and Sports"];
+const states=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
+const departments=["General Administration","Finance","Home","Education","Higher Education","School Education","Health and Family Welfare","Industries and Commerce","Information Technology / Electronics","Science and Technology","Agriculture","Animal Husbandry and Fisheries","Co-operation","Rural Development","Urban Development / Municipal Administration","Revenue","Transport","Public Works","Water Resources","Energy","Environment and Forests","Labour and Employment","Skill Development","Tourism and Culture","Social Welfare","Women and Child Development","Tribal Welfare","Food and Civil Supplies","Information and Public Relations","Planning","Law","Personnel","Other"];
+let verified=false, timer=null, rateLimitTimer=null;
+
+function msg(el,text,ok=false){el.textContent=text;el.className='tr-msg small fw-semibold mt-3 '+(ok?'text-success':'text-danger');}
+
+function setLoading(btn,on,loadingLabel){
+  if(!btn)return;
+  if(on){
+    if(!btn.dataset.label)btn.dataset.label=btn.innerHTML;
+    if(!btn.dataset.loadingMarkup)btn.dataset.loadingMarkup=`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span>${loadingLabel||'Please wait…'}</span>`;
+    btn.innerHTML=btn.dataset.loadingMarkup;btn.classList.add('is-loading');btn.disabled=true;btn.setAttribute('aria-busy','true');
+  } else {
+    if(btn.dataset.label)btn.innerHTML=btn.dataset.label;
+    btn.classList.remove('is-loading');btn.disabled=false;btn.removeAttribute('aria-busy');btn.removeAttribute('aria-label');
+  }
+}
+function overlay(on,text){const o=$('#trOverlay');if(!o)return;if(!window.bootstrap?.Modal)return;if(text)$('#trOverlayText').textContent=text;const modal=window.bootstrap.Modal.getOrCreateInstance(o);if(on)modal.show();else modal.hide();}
+function shakeOtp(){$$('.tr-otp-inputs input').forEach(i=>{i.classList.remove('tr-shake');void i.offsetWidth;i.classList.add('tr-shake');});}
+
+const STEP_N={verify:1,details:2,preview:3,complete:4};
+function show(view){
+  const current=$('.tr-view:not([hidden])');
+  const target=$(`[data-view="${view}"]`);
+  const n=STEP_N[view];
+  const fill=$('#progressFill'); if(fill) fill.style.width=((n-1)/3*100)+'%';
+  $$('[data-step-dot]').forEach(x=>{
+    const d=+x.dataset.stepDot, badge=x.querySelector('b'), completed=d<n, current=d===n;
+    x.classList.toggle('active',current);x.classList.toggle('done',completed);
+    x.classList.toggle('text-primary',current);x.classList.toggle('text-success',completed);x.classList.toggle('text-secondary',d>n);
+    if(badge){
+      if(!badge.dataset.label)badge.dataset.label=badge.textContent.trim();
+      badge.classList.toggle('bg-primary',current);badge.classList.toggle('bg-success',completed);badge.classList.toggle('bg-white',d>n);
+      badge.classList.toggle('text-white',d<=n);badge.classList.toggle('text-secondary',d>n);badge.classList.toggle('border',d>n);
+      badge.innerHTML=completed?'<i class="bi bi-check-lg"></i>':badge.dataset.label;
+    }
+  });
+  const swap=()=>{$$('.tr-view').forEach(v=>{v.hidden=true;v.classList.remove('tr-leaving');});target.hidden=false;};
+  if(current&&current!==target&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    current.classList.add('tr-leaving');
+    setTimeout(swap,180);
+  } else swap();
+  if (window.gsap) {
+    const viewNodes = $$('.tr-view');
+    viewNodes.forEach((node) => node.hidden && node.classList.remove('is-visible'));
+    if (target) {
+      target.hidden = false;
+      gsap.fromTo(target, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.45, ease: 'power3.out' });
+    }
+    const progressFill = document.getElementById('progressFill');
+    if (progressFill) {
+      gsap.fromTo(progressFill, { width: '0%' }, { width: ((n - 1) / 3 * 100) + '%', duration: 0.6, ease: 'power2.out' });
+    }
+  }
+}
+function initGsapAnimations(){
+  if (!window.gsap) return;
+  if (window.ScrollTrigger) {
+    gsap.registerPlugin(window.ScrollTrigger);
+  }
+  gsap.from('.ticket-hero__eyebrow', { y: 24, opacity: 0, duration: 0.7, ease: 'power3.out' });
+  gsap.from('.ticket-hero__copy h1, .ticket-hero__text, .ticket-hero__meta, .ticket-hero__cta', {
+    y: 28,
+    opacity: 0,
+    stagger: 0.12,
+    duration: 0.8,
+    ease: 'power3.out',
+    delay: 0.1
+  });
+  gsap.from('.ticket-hero__visual', {
+    x: 40,
+    opacity: 0,
+    duration: 1,
+    ease: 'power3.out',
+    delay: 0.2
+  });
+  gsap.from('.tr-registration-summary, .tr-card', {
+    y: 40,
+    opacity: 0,
+    duration: 0.9,
+    stagger: 0.12,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '#registration', start: 'top 80%' }
+  });
+  gsap.from('.tr-step', {
+    scale: 0.85,
+    opacity: 0,
+    duration: 0.35,
+    stagger: 0.08,
+    ease: 'back.out(1.7)'
+  });
+}
+window.addEventListener('load', initGsapAnimations);
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function requiredMark(extra){return /(?:^|\\s)required(?:\\s|$)/.test(extra)?' <span class="tr-required-star text-danger" aria-hidden="true">*</span>':'';}
+const FIELD_MAX_LENGTH={officialName:150,academiaType:100,collegeName:200,collegeDistrict:100,collegeState:100,universityName:200,academiaRole:100,registerNumber:100,centralMinistry:200,stateName:100,stateDepartment:200,organizationName:200,organizationLocation:255,designation:150,industryOrStartup:100,passportNumber:50,passportValidUntil:10,passportName:150};
+const FIELD_PLACEHOLDERS={collegeName:'Enter your institution name',collegeDistrict:'Enter your district',collegeState:'Enter your state or union territory',universityName:'Enter your university name',registerNumber:'Enter your student or staff ID number',organizationName:'Enter your organization name',organizationLocation:'Enter your city or office location',designation:'Enter your designation',industryOrStartup:'Select organization type',passportNumber:'Enter your passport number',passportName:'Enter your full name as shown on your passport'};
+const SELECT_PROMPTS={academiaRole:'Select participant role',centralMinistry:'Select a ministry',stateName:'Select a state or union territory',stateDepartment:'Select a department',industryOrStartup:'Select organization type'};
+function field(label,name,type='text',extra=''){const maxLength=FIELD_MAX_LENGTH[name],placeholder=FIELD_PLACEHOLDERS[name];return `<label class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]">${label}${requiredMark(extra)}<input class="form-control mt-2 rounded-3 border-secondary-subtle py-3" name="${name}" type="${type}" ${maxLength?`maxlength="${maxLength}"`:''} ${placeholder?`placeholder="${placeholder}"`:''} ${extra}></label>`}
+function select(label,name,opts,extra=''){return `<label class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]">${label}${requiredMark(extra)}<select class="form-select mt-2 rounded-3 border-secondary-subtle" name="${name}" ${extra}><option value="">${SELECT_PROMPTS[name]||'Select an option'}</option>${opts.map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')}</select></label>`}
+function renderConditional(){
+ const cat=$('#category').value, box=$('#conditional'); let h='';
+ if(cat==='ACADEMIA'){
+  h='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">Academia</div><div class="tr-grid row">';
+  h+=select('Participant role','academiaRole',['Student','Professor / Faculty','Research Scholar'],'required');
+  h+=field('Institution name','collegeName','text','list="collegeList" required');
+  h+='<datalist id="collegeList"><option value="Anna University"><option value="Indian Institute of Technology Madras"><option value="University of Delhi"><option value="Indian Institute of Science"><option value="Amrita Vishwa Vidyapeetham"></datalist>';
+  h+=field('District','collegeDistrict','text','required')+field('State / Union Territory','collegeState','text','required');
+  h+=field('University / affiliating institution','universityName','text','required');
+  h+='</div>';
+ } else if(cat==='CENTRAL_GOVERNMENT'){
+  h='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">Central Government</div><div class="tr-grid row">';
+  h+=select('Ministry / department','centralMinistry',ministries,'required')+field('Organization / office name','organizationName','text','required');
+  h+=field('Designation / job title','designation','text','required')+field('City / office location','organizationLocation','text','required')+'</div>';
+ } else if(cat==='STATE_GOVERNMENT'){
+  h='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">State Government</div><div class="tr-grid row">';
+  h+=select('State / Union Territory','stateName',states,'required')+select('Department','stateDepartment',departments,'required');
+  h+=field('Organization / office name','organizationName','text','required')+field('Designation / job title','designation','text','required');
+  h+=field('City / office location','organizationLocation','text','required')+'</div>';
+ } else if(cat==='INDUSTRY_STARTUP'){
+  h='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">Industry / Startup</div><div class="tr-grid row">';
+  h+=select('Organization type','industryOrStartup',['Startup','Mid-sized Company','MNC','Industry / Enterprise'],'required')+field('Organization name','organizationName','text','required');
+  h+=field('City / office location','organizationLocation','text','required')+field('Designation / job title','designation','text','required')+'</div>';
+ } else if(['VIP_SPECIAL_INVITEE','SPEAKER','ORGANIZER'].includes(cat)){
+  const labels={VIP_SPECIAL_INVITEE:'VIP / Special Invitee',SPEAKER:'Speaker',ORGANIZER:'Organizer'};
+  h=`<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">${labels[cat]}</div>`;
+ }
+ box.innerHTML=h;
+}
+function updateAcademiaRoleFields(){
+ const role=$('#conditional [name="academiaRole"]')?.value;
+ const idField=$('#conditional [name="registerNumber"]');
+ if(role==='Student'&&!idField){
+  const holder=document.createElement('div');
+  holder.innerHTML=field('Student ID number','registerNumber','text','required');
+  $('#conditional .tr-grid').appendChild(holder.firstElementChild);
+ } else if(role!=='Student'&&idField){
+  idField.closest('label')?.remove();
+ }
+}
+function renderPassport(){
+ const c=$('#citizenship').value, box=document.querySelector('#conditional .tr-passport');
+ if(c==='FOREIGNER'){
+  if(!box){const d=document.createElement('div');d.className='tr-passport';d.innerHTML='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">Passport details</div><div class="tr-grid row">'+field('Passport number','passportNumber','text','required')+field('Passport expiry date','passportValidUntil','date','required')+field('Full name as shown on passport','passportName','text','required')+'</div>';$('#conditional').appendChild(d);}
+ } else if(box) box.remove();
+}
+function collect(){
+ const fd=new FormData($('#detailsForm')); const o=Object.fromEntries(fd.entries()); o.email=$('#email').value.trim().toLowerCase();o.phone=$('#phone').value.trim();o.officialName=$('#verifyName').value.trim();
+ o.password=$('#password').value; o.confirmPassword=$('#confirmPassword').value;
+ o.attendanceDays=fd.getAll('attendanceDays'); return o;
+}
+function validateTicketFields(form){
+ let valid=true, firstInvalid=null;
+ form.querySelectorAll('input,select,textarea').forEach(el=>{
+  if(el.type==='checkbox'||el.type==='file'||el.type==='button'||el.type==='submit')return;
+  el.setCustomValidity('');
+  const value=el.value.trim();
+  if(el.required&&!value)el.setCustomValidity(el.name==='academiaRole'?'Select your participant role: Student, Professor / Faculty, or Research Scholar.':'This field is required.');
+  else if(el.name==='email'&&value&&!el.validity.valid)el.setCustomValidity('Enter a valid email address.');
+  else if(el.name==='phone'&&value&&!/^(?:\+91[-\s]?)?[6-9]\d{9}$/.test(value))el.setCustomValidity('Enter a valid 10-digit Indian mobile number.');
+  else if(el.name==='password'&&(value.length<8||value.length>64||!/[A-Z]/.test(value)||!/[0-9]/.test(value)||!/[\u0021-\u002f\u003a-\u0040\u005b-\u0060\u007b-\u007e]/.test(value)))el.setCustomValidity('Use 8–64 characters with at least one uppercase letter, one number, and one special symbol.');
+  else if(el.name==='confirmPassword'&&value!==$('#password').value)el.setCustomValidity('Password and confirm password must match.');
+  else if(el.name==='officialName'&&value.length>150)el.setCustomValidity('Name must be 150 characters or fewer.');
+  const ok=el.checkValidity();
+  el.setAttribute('aria-invalid',String(!ok));
+  if(!ok){valid=false;firstInvalid ||= el;}
+ });
+ if(!valid){firstInvalid.reportValidity();firstInvalid.focus();}
+ return valid;
+}
+function preview(){
+ const o=collect(); const labels={category:'Registration category',officialName:'Full name',email:'Email address',phone:'Mobile number',citizenshipStatus:'Citizenship / residency status',academiaType:'Academia type',collegeName:'Institution',collegeDistrict:'District',collegeState:'State / Union Territory',universityName:'University',academiaRole:'Participant role',registerNumber:'Student / staff ID number',centralMinistry:'Ministry / department',stateName:'State / Union Territory',stateDepartment:'Department',organizationName:'Organization / office',organizationLocation:'City / office location',designation:'Designation / job title',industryOrStartup:'Organization type',passportNumber:'Passport number',passportValidUntil:'Passport expiry date',passportName:'Name as shown on passport'};
+ $('#preview').innerHTML=Object.entries(labels).filter(([k])=>o[k]).map(([k,l])=>`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">${esc(l)}</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o[k])}</strong></div>`).join('')+`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">Participation Preference</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o.attendanceDays.join(', '))}</strong></div>`;
+ window.ticketPayload=o; show('preview');
+}
+async function post(url,data){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const j=await r.json().catch(()=>({}));if(!r.ok){const error=new Error(j.message||j.error||'Request failed');error.status=r.status;error.retryAfter=Number(r.headers.get('Retry-After'))||0;throw error;}return j;}
+
+$('#sendOtp').onclick=async()=>{
+ if(window.jQuery && !window.jQuery('#ticketVerifyForm').valid())return;
+ const btn=$('#sendOtp'); const name=$('#verifyName').value.trim(),email=$('#email').value.trim(),phone=$('#phone').value.trim(),password=$('#password').value,confirmPassword=$('#confirmPassword').value,m=$('#verifyMsg');
+ if(!name||!email||!phone||!password||!confirmPassword){msg(m,'Enter your name, email, phone number, and password.');return;}
+ if(!/^[A-Za-z][A-Za-z .'-]{1,149}$/.test(name)){msg(m,'Enter a valid name.');return;}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg(m,'Enter a valid email address.');return;}
+ if(!/^(?:\+91[-\s]?)?[6-9]\d{9}$/.test(phone)){msg(m,'Enter a valid 10-digit Indian mobile number.');return;}
+ if(password.length>64){msg(m,'Password must be 64 characters or fewer.');return;}
+ if(password.length<8||!/[A-Z]/.test(password)||!/[0-9]/.test(password)||!/[\u0021-\u002f\u003a-\u0040\u005b-\u0060\u007b-\u007e]/.test(password)){
+  msg(m,'Use 8–64 characters with at least one uppercase letter, one number, and one special symbol.');return;
+ }
+ if(password!==confirmPassword){msg(m,'Password and confirm password must match.');return;}
+ let retryAfterSeconds=0;
+ setLoading(btn,true);
+ try{await post(API.send,{fullName:name,email,phone,passType:'Tec-verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;msg(m,'OTP sent. Check your email.',true);startTimer();$$('.tr-otp-inputs input')[0]?.focus();}
+ catch(e){msg(m,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
+ finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
+};
+function startTimer(){let n=60;$('#resendOtp').disabled=true;clearInterval(timer);timer=setInterval(()=>{n--;$('#resendOtp').textContent=n>0?`Resend OTP (${n}s)`:'Resend OTP';if(n<=0){clearInterval(timer);$('#resendOtp').disabled=false;}},1000);$('#resendOtp').textContent='Resend OTP (60s)';}
+function startRateLimitCountdown(button,seconds){
+ const message=$('#verifyMsg');
+ let remaining=Math.max(1,seconds);
+ clearInterval(rateLimitTimer);
+ const originalLabel=button.dataset.label||button.innerHTML;
+ const update=()=>{
+  button.disabled=remaining>0;
+  button.textContent=remaining>0?`Please wait (${remaining}s)`:originalLabel.replace(/<[^>]*>/g,'').trim();
+  message.textContent=remaining>0?`Too many requests. Please wait ${remaining} seconds before trying again.`:'You can request an OTP again now.';
+  message.className='tr-msg small fw-semibold mt-3 '+(remaining>0?'text-danger':'text-success');
+ };
+ update();
+ rateLimitTimer=setInterval(()=>{remaining--;update();if(remaining<=0){clearInterval(rateLimitTimer);button.innerHTML=originalLabel;}},1000);
+}
+$('#resendOtp').onclick=()=>$('#sendOtp').click();
+const otpInputs=$$('.tr-otp-inputs input');
+otpInputs.forEach((input,index)=>{
+ input.autocomplete=index===0?'one-time-code':'off';
+ input.oninput=()=>{
+  const digits=input.value.replace(/\D/g,'');
+  if(digits.length>1){
+   [...digits].slice(0,otpInputs.length-index).forEach((digit,offset)=>{otpInputs[index+offset].value=digit;});
+   otpInputs[Math.min(index+digits.length,otpInputs.length)-1].focus();
+  }else{
+   input.value=digits;
+   if(digits&&otpInputs[index+1])otpInputs[index+1].focus();
+  }
+ };
+ input.onkeydown=event=>{
+  if(event.key==='Backspace'){
+   if(input.value){input.value='';event.preventDefault();}
+   else if(otpInputs[index-1]){otpInputs[index-1].focus();otpInputs[index-1].value='';event.preventDefault();}
+  }else if(event.key==='Delete'&&input.value){input.value='';event.preventDefault();}
+  else if(event.key==='ArrowLeft'&&otpInputs[index-1]){otpInputs[index-1].focus();event.preventDefault();}
+  else if(event.key==='ArrowRight'&&otpInputs[index+1]){otpInputs[index+1].focus();event.preventDefault();}
+ };
+});
+$('#verifyOtp').onclick=async()=>{
+ const btn=$('#verifyOtp'); const otp=$$('.tr-otp-inputs input').map(x=>x.value).join(''),m=$('#verifyMsg');
+ if(otp.length!==6){msg(m,'Enter the complete 6-digit OTP.');shakeOtp();return;}
+ let retryAfterSeconds=0;
+ setLoading(btn,true);
+ try{
+  await post(API.verify,{email:$('#email').value.trim(),otp});
+  verified=true;
+  const verifiedName=$('#verifyName').value.trim();
+  $('#detailsForm [name="officialName"]').value=verifiedName;
+  $('#verifyName').readOnly=true;
+  $('#email').readOnly=true;
+  $('#phone').readOnly=true;
+  $('#detailsForm [name="officialName"]').readOnly=true;
+  msg(m,'Email verified successfully. Your verified name, email, and phone number are locked.',true);
+  show('details');
+ }
+ catch(e){msg(m,e.message);shakeOtp();if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
+ finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
+};
+$('#category').onchange=()=>{renderConditional();renderPassport();};$('#citizenship').onchange=renderPassport;
+document.querySelector('#conditional').addEventListener('change',e=>{if(e.target.name==='academiaRole')updateAcademiaRoleFields();});
+$('#backVerify').onclick=()=>show('verify');
+$('#resetDetails').onclick=()=>{
+ const form=$('#detailsForm');
+ form.reset();
+ $('#conditional').replaceChildren();
+ $('#detailsMsg').textContent='';
+ $('#detailsMsg').className='tr-msg';
+ form.querySelectorAll('[aria-invalid]').forEach(el=>el.removeAttribute('aria-invalid'));
+ form.querySelectorAll('input,select,textarea').forEach(el=>el.setCustomValidity(''));
+};
+$('#detailsForm').onsubmit=e=>{e.preventDefault();const days=$$('input[name="attendanceDays"]:checked');const m=$('#detailsMsg');if(!validateTicketFields(e.currentTarget))return;if(!$('#category').value){msg(m,'Choose your registration type.');return;}if(!days.length){msg(m,'Select at least one participation day.');return;}if(days.length===2){days[0].checked=false;days[1].checked=false;const both=$$('input[name="attendanceDays"]')[2];both.checked=true;}preview();};
+$$('input[name="attendanceDays"]').forEach(i=>i.onchange=()=>{if(i.value==='BOTH'&&i.checked)$$('input[name="attendanceDays"]').slice(0,2).forEach(x=>x.checked=false);else if(i.checked)$$('input[name="attendanceDays"]')[2].checked=false;});
+$('#editForm').onclick=()=>show('details');
+const categoryLabels={ACADEMIA:'Academia',CENTRAL_GOVERNMENT:'Central Government',STATE_GOVERNMENT:'State Government',INDUSTRY_STARTUP:'Industry / Startup',VIP_SPECIAL_INVITEE:'VIP / Special Invitee',SPEAKER:'Speaker',ORGANIZER:'Organizer'};
+const dayLabels={DAY_1:'Day 1 · 26 Nov',DAY_2:'Day 2 · 27 Nov',BOTH:'Both Days · 26 & 27 Nov'};
+
+function renderRefDigits(ref){
+ const box=$('#referenceNumber'); box.innerHTML='';
+ String(ref||'').split('').forEach((ch,i)=>{
+  const s=document.createElement('span'); s.textContent=ch;
+  s.style.animationDelay=(0.55+i*0.045)+'s';
+  box.appendChild(s);
+ });
+}
+
+const externalScriptLoads=new Map();
+function loadExternalScript(src,available){
+ if(available())return Promise.resolve();
+ if(externalScriptLoads.has(src))return externalScriptLoads.get(src);
+ const loading=new Promise((resolve,reject)=>{
+  const script=document.createElement('script');script.src=src;script.async=true;
+  script.onload=resolve;script.onerror=()=>{externalScriptLoads.delete(src);reject(new Error('Unable to load a required file.'));};
+  document.head.appendChild(script);
+ });
+ externalScriptLoads.set(src,loading);return loading;
+}
+
+function fireConfetti(){
+ if(typeof confetti!=='function'){
+  loadExternalScript('https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js',()=>typeof confetti==='function')
+   .then(fireConfetti).catch(()=>{});
+  return;
+ }
+ const colors=['#0b8a65','#ffb36b','#3aa0ff','#0b6b68'];
+ confetti({particleCount:90,spread:75,startVelocity:38,origin:{y:.4},colors,scalar:.9});
+ setTimeout(()=>confetti({particleCount:60,angle:60,spread:65,origin:{x:0,y:.5},colors}),180);
+ setTimeout(()=>confetti({particleCount:60,angle:120,spread:65,origin:{x:1,y:.5},colors}),260);
+}
+
+function launchIdCard(data,payload){
+ renderRefDigits(data.referenceNumber);
+ const fullName=(payload&&payload.officialName)||'YOUR NAME';
+ const designation=(payload&&typeof payload.designation==='string'?payload.designation:'').trim();
+ const category=(payload&&payload.category)||'';
+ const organization=(payload&&payload.organizationName)
+  || (category==='ACADEMIA'&&payload&&payload.universityName)
+  || (category==='ACADEMIA'&&payload&&payload.collegeName)
+  || (category==='CENTRAL_GOVERNMENT'&&payload&&payload.centralMinistry)
+  || (category==='STATE_GOVERNMENT'&&payload&&payload.stateDepartment)
+  || 'Organization / Institution';
+ const categoryKey=category || 'INDUSTRY_STARTUP';
+ const badgeText=(categoryLabels[categoryKey] || 'Delegate').trim();
+ const safeName=fullName.trim()||'YOUR NAME';
+ $('#cardName').textContent=safeName.toUpperCase();
+ const designationNode=$('#cardDesignation');
+ designationNode.textContent=designation;
+ designationNode.hidden=!designation;
+ const organizationNode=$('#cardOrganization');
+ organizationNode.textContent=(organization||'').trim();
+ organizationNode.hidden=!organizationNode.textContent;
+ $('#cardCategory').innerHTML=`<span>${esc(badgeText)}</span>`;
+ const qr=$('#cardQr'), qrError=$('#cardQrError');
+ qr.hidden=false;
+ qrError.hidden=true;
+ qr.onerror=()=>{qr.hidden=true;qrError.hidden=false;};
+ qr.onload=()=>{qr.hidden=false;qrError.hidden=true;};
+ qr.src=apiPath('/ticket/qr')+'?token='+encodeURIComponent(data.scanToken);
+ const card=$('#idCard');
+ card.classList.remove('is-in'); void card.offsetWidth;
+ card.classList.add('is-in');
+ fireConfetti();
+}
+
+$('#submitFinal').onclick=async()=>{
+ const btn=$('#submitFinal'); const m=$('#previewMsg');
+ if(!verified){msg(m,'Email verification is required.');show('verify');return;}
+ if(!validateTicketFields($('#detailsForm'))){show('details');return;}
+ if(!window.ticketPayload?.attendanceDays?.length){msg(m,'Select at least one participation day.');show('details');return;}
+ setLoading(btn,true); overlay(true,'Submitting your registration…');
+ try{const result=await post(API.register,window.ticketPayload);const data=result.data||result;$('#completeEmail').textContent=data.email;$('#confirmationEmailStatus').textContent=data.confirmationEmailSent?'Your confirmation email is on its way to':'Thanks for registering for TecVerse 2026. Further details will be shared at';show('complete');launchIdCard(data,window.ticketPayload);}
+ catch(e){msg(m,e.message);}
+ finally{setLoading(btn,false);overlay(false);}
+};
+
+
+})();

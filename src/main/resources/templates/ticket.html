@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Delegate Registration | Tec-verse 2026</title>
+<link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<script>
+window.tailwind = window.tailwind || {};
+tailwind.config = { corePlugins: { preflight: false }, theme: { extend: { colors: { saffron: '#E8710A', india: '#138A5B', navy: '#0E2442' } } } };
+</script>
+<script defer src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jquery-validation@1.22.1/dist/jquery.validate.min.js"></script>
+<script defer th:src="@{/js/jquery-form-validation.js}"></script>
+<style>
+.rg{--bg:#F6F8FC;--fg:#0E2442;--mut:#5C6B80;--bd:#E0E7F0;--pri:#E8710A;--pri-d:#CC6006;--grn:#138A5B;--acc:#E6F5EE;--err:#D92D20;--r:12px;
+  font-family:'Figtree',system-ui,sans-serif;color:var(--fg);background:var(--bg)}
+body.ticket-page{background:#F6F8FC}
+.rg *{box-sizing:border-box}
+.rg-flag{height:4px;background:linear-gradient(90deg,#E8710A 0 33.3%,#0E2442 33.3% 66.6%,#138A5B 66.6%)}
+#rgScroll{position:fixed;top:0;left:0;height:3px;width:0;z-index:2000;background:var(--pri)}
+
+/* Hero */
+.rg-hero{padding:64px 0 48px;position:relative;overflow:hidden}
+.rg-hero::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px 320px at 92% 8%,rgba(232,113,10,.13),transparent 70%),radial-gradient(480px 320px at 4% 90%,rgba(19,138,91,.11),transparent 70%)}
+.rg-hero .container{position:relative}
+.rg-hero h1{font-size:clamp(2.1rem,4.8vw,3.5rem);font-weight:800;letter-spacing:-.035em;line-height:1.06;margin:16px 0 14px}
+.rg-hero h1 span{color:var(--pri)}
+.rg-lead{color:var(--mut);font-size:1.06rem;max-width:33rem;line-height:1.65;margin-bottom:22px}
+.rg-pill{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:999px;background:#fff;border:1px solid var(--bd);font-size:.82rem;font-weight:600}
+.rg-pill i{color:var(--pri)}
+.rg-pill--g{background:var(--acc);border-color:transparent;color:#0F6E48}.rg-pill--g i{color:var(--grn)}
+.rg-photo{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--bd);background:linear-gradient(135deg,#FFE9D6,#DDF2E8);aspect-ratio:16/11;box-shadow:0 30px 60px -30px rgba(14,36,66,.35)}
+.rg-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.rg-photo-tag{position:absolute;left:16px;bottom:16px;right:16px;display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.93);font-size:.82rem;font-weight:600}
+.rg-photo-tag i{color:var(--pri);font-size:1.2rem}
+.rg-btn-main{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 26px;border-radius:var(--r);background:var(--pri);color:#fff;font-weight:700;text-decoration:none;box-shadow:0 12px 24px -10px rgba(232,113,10,.7);transition:transform .2s,background .2s}
+.rg-btn-main:hover{background:var(--pri-d);color:#fff;transform:translateY(-2px)}
+
+/* Process */
+.rg-flow{padding:8px 0 40px}
+.rg-flow-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:767px){.rg-flow-grid{grid-template-columns:1fr}}
+.rg-flow-item{display:flex;gap:14px;align-items:flex-start;padding:20px;background:#fff;border:1px solid var(--bd);border-radius:18px;transition:transform .25s,box-shadow .25s}
+.rg-flow-item:hover{transform:translateY(-3px);box-shadow:0 18px 30px -20px rgba(14,36,66,.3)}
+.rg-flow-item b{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#0E2442;color:#fff;font-size:.9rem}
+.rg-flow-item h3{font-size:1rem;font-weight:700;margin:0 0 4px}
+.rg-flow-item p{font-size:.85rem;color:var(--mut);margin:0}
+
+/* Section */
+.rg-shell{padding:16px 0 80px}
+.rg-head{margin-bottom:28px}
+.rg-head h2{font-weight:800;letter-spacing:-.025em;font-size:1.9rem;margin:0 0 6px}
+.rg-head p{color:var(--mut);margin:0}
+.rg-card{background:#fff;border:1px solid var(--bd);border-radius:24px;box-shadow:0 1px 2px rgba(14,36,66,.04),0 24px 48px -28px rgba(14,36,66,.2);padding:40px}
+@media(max-width:575px){.rg-card{padding:22px;border-radius:18px}}
+
+/* Form */
+.rg-sec{display:flex;align-items:center;gap:14px;margin:0 0 24px}
+.rg-sec>i{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:12px;background:rgba(232,113,10,.12);color:var(--pri);font-size:1.2rem}
+.rg-sec h3{font-size:1.2rem;font-weight:800;margin:0;letter-spacing:-.01em}
+.rg-sec small{display:block;color:var(--mut);font-weight:400;font-size:.84rem;margin-top:2px}
+.rg label.rg-f{display:block;font-size:.82rem;font-weight:700;margin:0}
+.rg .tr-required-star{color:var(--err);margin-left:2px}
+.rg .form-control,.rg .form-select{height:48px;margin-top:8px;border:1px solid var(--bd);border-radius:var(--r);font-size:.93rem;padding:0 14px;background-color:#FBFCFE;box-shadow:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.rg .form-control:focus,.rg .form-select:focus{background:#fff;border-color:var(--pri);box-shadow:0 0 0 4px rgba(232,113,10,.15)}
+.rg .input-group{margin-top:8px;flex-wrap:nowrap}
+.rg .input-group>.form-control{min-width:0;margin-top:0;border-radius:var(--r) 0 0 var(--r)}
+.rg .input-group>.form-control:focus{position:relative;z-index:3}
+.rg .password-toggle{height:48px;min-width:50px;display:inline-flex;align-items:center;justify-content:center;margin-top:0;padding:0 14px;border:1px solid var(--bd);border-left:0;border-radius:0 var(--r) var(--r) 0;background:#FBFCFE;color:#687386}
+.rg .password-toggle:hover,.rg .password-toggle:focus{background:#fff;color:var(--pri);border-color:var(--bd);box-shadow:none}
+.rg .password-toggle i{font-size:1.1rem}
+.rg .form-select{padding-right:2.25rem}
+.rg label.error,.rg .error{color:var(--err);font-size:.75rem;font-weight:500;margin-top:4px;display:block}
+.rg .form-control.error{border-color:var(--err)}
+.rg .tr-primary,.rg .tr-secondary,.rg .tr-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border-radius:var(--r);font-weight:700;font-size:.92rem;border:1px solid transparent;text-decoration:none;transition:transform .15s,background .2s}
+.rg .tr-primary{background:var(--pri);color:#fff;box-shadow:0 10px 20px -10px rgba(232,113,10,.8)}
+.rg .tr-primary:hover{background:var(--pri-d);color:#fff}
+.rg .tr-secondary,.rg .tr-link{background:#fff;border-color:var(--bd);color:var(--fg)}
+.rg .tr-secondary:hover,.rg .tr-link:hover{background:#F1F5FA}
+.rg .btn:active{transform:scale(.97)}
+.rg-actions{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:32px;padding-top:24px;border-top:1px solid var(--bd)}
+.rg-actions .rg-reset{margin-right:auto;color:#64748b;border-color:#d7dee8}
+@media(max-width:575px){.rg-actions{flex-direction:column-reverse}.rg-actions .btn{width:100%}}
+.rg-note{display:flex;gap:12px;padding:16px 18px;border-radius:14px;background:var(--acc);color:#0F6E48;font-size:.86rem;margin-bottom:26px;line-height:1.55}
+.rg-note i{margin-top:2px}
+.tr-msg{font-size:.86rem;margin-top:14px}.tr-msg:empty{display:none}
+.tr-msg.error,.tr-msg.text-danger{color:var(--err)}.tr-msg.success{color:var(--grn)}
+.tr-view:not([hidden]){animation:rgIn .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes rgIn{from{opacity:0;transform:translateY(16px)}}
+.tr-otp{min-width:0;margin-top:24px;padding:22px;border-radius:16px;background:#F3F7FB;border:1px solid var(--bd)}
+.tr-otp p{margin:0 0 14px;font-size:.9rem;overflow-wrap:anywhere}
+.tr-otp-inputs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;width:100%;min-width:0;margin-bottom:18px}
+.tr-otp-inputs .form-control{width:100%;min-width:0;height:54px;margin:0;padding:0;text-align:center;font-weight:800;font-size:1.25rem}
+.rg-otp-actions{display:flex;flex-wrap:wrap;gap:12px}
+@media(max-width:575px){.tr-otp{padding:14px}.tr-otp-inputs{gap:clamp(5px,2vw,8px)}.rg-otp-actions{flex-direction:column;gap:8px}.rg-otp-actions .btn{width:100%;padding-inline:12px}}
+@media(max-width:360px){.rg-card{padding:16px}.tr-otp-inputs .form-control{height:48px;font-size:1.1rem}}
+.tr-fieldset{border:0;padding:0;margin:32px 0 0}
+.tr-fieldset legend{font-size:1.1rem;font-weight:800;margin-bottom:4px;float:none;width:auto}
+.tr-fieldset>p{color:var(--mut);font-size:.86rem;margin-bottom:16px}
+.rg-days{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:767px){.rg-days{grid-template-columns:1fr}}
+.tr-check{display:flex;align-items:center;gap:12px;margin:0;padding:16px 18px;min-height:64px;border:1px solid var(--bd);border-radius:14px;cursor:pointer;font-size:.88rem;font-weight:600;background:#FBFCFE;transition:.2s}
+.tr-check .form-check-input{margin:0;float:none;flex:none;width:18px;height:18px}
+.tr-check .form-check-input:checked{background-color:var(--pri);border-color:var(--pri)}
+.tr-check:hover{border-color:var(--pri)}
+.tr-check:has(input:checked){border-color:var(--pri);background:rgba(232,113,10,.07)}
+
+/* ===== PREVIEW TABLE ===== */
+.rg-prev-note{display:flex;gap:12px;align-items:center;padding:14px 18px;margin-bottom:22px;border-radius:14px;background:#FFF6EC;color:#9A4A04;font-size:.86rem}
+.rg #preview{display:none!important}
+.rg-table-wrap{border:1px solid var(--bd);border-radius:18px;overflow:hidden;background:#fff}
+.rg-table{width:100%;border-collapse:collapse;font-size:.93rem}
+.rg-table thead th{background:#0E2442;color:#fff;font-weight:700;font-size:.8rem;padding:14px 20px;text-align:left;vertical-align:middle}
+.rg-table thead th:first-child,.rg-table td.sn{width:88px;min-width:88px;text-align:center;white-space:nowrap}
+.rg-table tbody th.rg-grp{background:#F1F5FA;color:var(--fg);font-weight:800;font-size:.82rem;padding:12px 20px;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.rg-table tbody td{padding:16px 20px;border-bottom:1px solid var(--bd);vertical-align:top;line-height:1.5;word-break:break-word}
+.rg-table tbody tr:last-child td{border-bottom:0}
+.rg-table td.sn{color:var(--mut);font-weight:600}
+.rg-table td.lb{width:36%;color:var(--mut);font-weight:600}
+.rg-table td.vl{font-weight:700;color:var(--fg)}
+.rg-table tbody tr.rg-row:hover td{background:#FAFBFE}
+@media(max-width:640px){
+  .rg-table thead{display:none}
+  .rg-table,.rg-table tbody,.rg-table tr,.rg-table td,.rg-table th{display:block;width:100%}
+  .rg-table td.sn{display:none}
+  .rg-table td.lb{width:100%;padding:14px 18px 0;border:0;font-size:.74rem}
+  .rg-table td.vl{padding:2px 18px 14px}
+}
+
+/* Sidebar */
+.rg-side{position:sticky;top:96px;display:flex;align-items:stretch;justify-content:center}
+@media(max-width:991.98px){.rg-side{position:static}}
+.rg-pass{position:relative;overflow:hidden;border-radius:22px;padding:22px;color:#fff;background:linear-gradient(145deg,#0E2442,#17406B);box-shadow:0 28px 50px -26px rgba(14,36,66,.7)}
+.rg-pass::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(232,113,10,.55),transparent 70%)}
+.rg-pass>*{position:relative;z-index:1}
+.rg-pass-top{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:.95rem;margin-bottom:26px}
+.rg-pass-top span{font-weight:600;font-size:.72rem;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.16)}
+.rg-pass small{display:block;font-size:.68rem;opacity:.7;font-weight:600}
+.rg-pass strong{display:block;font-size:1.25rem;line-height:1.2;margin:2px 0 16px;word-break:break-word}
+.rg-pass-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rg-pass-row b{font-size:.88rem;font-weight:700}
+.rg-pass-foot{margin-top:18px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.3);font-size:.74rem;opacity:.85;display:flex;gap:8px;align-items:center}
+.rg-info{width:100%;max-width:400px;height:auto;margin-inline:auto;padding:11px;background:linear-gradient(145deg,#fff,#f7faff);border:1px solid #e5edf8;border-radius:22px;box-shadow:0 22px 48px -24px rgba(65,110,167,.28);display:flex;flex-direction:column;gap:10px}
+@media(max-width:991.98px){.rg-info{max-width:100%}}
+.rg-info-banner{position:relative;display:flex;align-items:center;gap:12px;min-height:82px;padding:13px 16px;overflow:hidden;border-radius:16px;background:linear-gradient(115deg,#102b66,#073c82 68%,#087abd);color:#fff}
+.rg-info-banner::after{content:"";position:absolute;width:120px;height:120px;right:-25px;top:-34px;border:1px solid rgba(102,220,255,.4);border-radius:50%;box-shadow:0 0 0 10px rgba(65,189,255,.08),0 0 0 22px rgba(65,189,255,.06)}
+.rg-info-banner img{position:relative;z-index:1;width:52px;height:52px;padding:4px;flex:none;object-fit:contain;border-radius:50%;background:#fff}
+.rg-info .rg-info-banner h2{position:relative;z-index:1;margin:0;color:#fff!important;font-size:clamp(1.2rem,1.8vw,1.5rem);font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.rg-info .rg-info-banner h2 span{color:#51d2ff!important}
+.rg-info-banner p{position:relative;z-index:1;margin:4px 0 0;font-size:.76rem;color:rgba(255,255,255,.88)}
+.rg-info-content{padding:0 2px}
+.rg-info h3{font-size:1.1rem;font-weight:800;margin:0 0 2px;letter-spacing:-.025em;color:var(--fg)}
+.rg-info-intro{margin:0 0 9px;color:#64748b;font-size:.84rem;line-height:1.4}
+.rg-info-list{display:flex;flex-direction:column;gap:6px}
+.rg-info-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:#fff3eb;color:#34435d}
+.rg-info-item:nth-child(2){background:#edf5ff}.rg-info-item:nth-child(3){background:#f3efff}.rg-info-item:nth-child(4){background:#eaf8f2}
+.rg-info-icon{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:10px;background:#ffe1d1;color:#f05b1b;font-size:1.05rem}
+.rg-info-item:nth-child(2) .rg-info-icon{background:#dcecff;color:#1672e8}.rg-info-item:nth-child(3) .rg-info-icon{background:#e6dcff;color:#7548dc}.rg-info-item:nth-child(4) .rg-info-icon{background:#d6f2e4;color:#07804a}
+.rg-info-item strong{display:block;color:#172d50;font-size:.83rem;line-height:1.25}
+.rg-info-item p{margin:2px 0 0;color:#596a85;font-size:.74rem;line-height:1.3}
+.rg-info-carousel .carousel-item{padding:0 2px}
+.rg-info-carousel .carousel-indicators{position:static;display:flex;gap:7px;margin:10px 0 0}
+.rg-info-carousel .carousel-indicators [data-bs-target]{box-sizing:content-box;width:8px;height:8px;margin:0;padding:0;border:0;border-radius:999px;background:#c4cfde;opacity:1;text-indent:-999px;transition:width .2s,background-color .2s}
+.rg-info-carousel .carousel-indicators .active{width:22px;background:#1672e8}
+.rg-venue{position:relative;display:flex;flex-direction:column;gap:9px;padding:10px 12px;border:1px solid #d4f0e1;border-radius:14px;background:linear-gradient(120deg,#effaf5,#e5f7ef);font-size:.8rem;line-height:1.35;overflow:hidden}
+.rg-venue::after{content:"";position:absolute;right:8px;bottom:-20px;width:100px;height:100px;border:8px solid rgba(35,170,111,.045);border-radius:22px;transform:rotate(12deg);pointer-events:none}
+.rg-venue div{position:relative;z-index:1;display:flex;align-items:center;gap:12px;min-width:0}
+.rg-venue i{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:10px;background:#d4f2e2;color:#087344;font-size:1.05rem}
+.rg-venue span{display:block;flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.rg-venue strong,.rg-venue a{display:block;color:#0f6e48;font-weight:700}
+.rg-venue a{color:#34435d;text-decoration:none}.rg-venue a:hover{text-decoration:underline}
+@media(prefers-reduced-motion:reduce){.rg-info-carousel .carousel-item{transition:none}}
+
+/* Complete */
+.tr-complete{position:relative;text-align:center}
+.tr-check-burst{width:76px;height:76px;margin:0 auto 16px;border-radius:50%;background:var(--grn);color:#fff;display:grid;place-items:center;font-size:2.3rem;animation:rgPop .6s cubic-bezier(.2,1.4,.4,1)}
+@keyframes rgPop{from{transform:scale(0)}}
+.tr-confetti-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.tr-complete h2{font-size:1.6rem;font-weight:800}
+.tr-complete-intro p{color:var(--mut);font-size:.92rem}
+.id-card-stage{display:flex;flex-direction:column;align-items:center;margin:30px 0}
+.id-card{position:relative;width:100%;max-width:370px;min-height:0;overflow:hidden;background:#fff;border:1px solid rgba(92,79,186,.22);border-radius:22px;box-shadow:0 24px 44px -30px rgba(45,28,117,.45);transform:translateY(0)}
+.id-card__top-cap{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:78%;height:34px;border-radius:18px;background:linear-gradient(90deg,#f6f6f8,#dfe4f4,#f9f9fb);box-shadow:0 10px 18px rgba(18,23,46,.18);}
+.id-card__top-cap::before,.id-card__top-cap::after{content:"";position:absolute;top:12px;width:28px;height:12px;border-radius:12px;background:#eef1f8;box-shadow:inset 0 0 0 2px rgba(52,60,87,.05)}
+.id-card__top-cap::before{left:16px}.id-card__top-cap::after{right:16px}
+.id-card__header{position:relative;padding:22px 18px 14px;background:linear-gradient(135deg,#081d42 3%,#0d2d65 20%,#3d1b8a 52%,#5a2ac4 100%);border-bottom:1px solid rgba(255,255,255,.12);overflow:hidden}
+.id-card__header::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(circle at 50% 18%, rgba(90, 240, 255, .35), transparent 26%),
+  radial-gradient(circle at 90% 10%, rgba(154,92,255,.7), transparent 18%),
+  linear-gradient(180deg, transparent 0%, rgba(255,255,255,.04) 100%);pointer-events:none}
+.id-card__header::after{display:none}
+.id-card__planet{position:relative;z-index:1;width:76px;height:76px;margin:0 auto 10px;border-radius:50%;background:#fff;display:grid;place-items:center;}
+.id-card__logo{display:block;width:86%;height:86%;object-fit:contain;border-radius:50%}
+.id-card__planet-core,.id-card__planet-ring{display:none}
+.id-card__planet-ring{position:absolute;left:50%;top:50%;width:146px;height:86px;border:6px solid rgba(79,244,255,.9);border-top-color:transparent;border-left-color:transparent;border-right-color:rgba(79,244,255,.8);border-radius:50%;transform:translate(-50%,-50%) rotate(12deg);}
+.id-card__title-wrap{position:relative;z-index:1;text-align:center;padding:0 6px}
+.id-card__title{margin:0;font-size:clamp(1.8rem,5vw,2.35rem);line-height:1.02;letter-spacing:-.04em;font-weight:800;color:#fff;font-family:'Segoe UI',sans-serif}
+.id-card__subtitle{margin:7px 0 0;color:rgba(255,255,255,.88);font-size:clamp(.75rem,1.8vw,.9rem);font-weight:500;line-height:1.3}
+.id-card__content{position:relative;z-index:2;padding:14px 18px 14px;margin:0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.id-card__qr-shell{width:112px;height:112px;padding:7px;border-radius:14px;border:1.5px solid rgba(93,79,200,.3);background:#fff;box-shadow:0 5px 14px rgba(36,20,84,.1);display:grid;place-items:center;}
+.id-card__qr-shell img{display:block;width:100%;height:100%;object-fit:contain}
+.id-card__qr-error{font-size:.8rem;color:#a12622;text-align:center}
+.id-card__identity{text-align:center;padding:0 8px;width:100%}
+.id-card__identity h2{margin:0;color:#1b2749;font-size:clamp(1.45rem,3.6vw,1.85rem);line-height:1.12;letter-spacing:-.035em;font-weight:800;text-transform:uppercase;overflow-wrap:anywhere}
+.id-card__designation{margin-top:5px;font-size:.92rem;font-weight:600;color:#3f4a6d;line-height:1.25;overflow-wrap:anywhere}
+.id-card__designation:empty{display:none}
+.id-card__organization{margin-top:4px;font-size:.88rem;font-weight:600;color:#1d1d32;line-height:1.3;overflow-wrap:anywhere}
+.id-card__badge-wrap{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:18px;padding:8px 12px;margin-top:0;background:linear-gradient(90deg,#5b35d9,#3c17b0 46%,#2f0f8d);box-shadow:inset 0 8px 14px rgba(255,255,255,.06)}
+.id-card__badge-crown{display:none}
+.id-card__badge{display:flex;align-items:center;justify-content:center;min-width:0;width:100%;min-height:42px;color:#fff;font-size:1rem;font-weight:800;letter-spacing:-.02em;text-align:center;white-space:normal;overflow-wrap:anywhere}
+.id-card__badge span{display:block;line-height:1.05;max-width:85%;margin:auto}
+.id-card__footer{position:relative;z-index:2;display:flex;align-items:center;gap:8px;justify-content:center;padding:10px 10px 12px;background:#f8f7fc;color:#46516d;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;flex-wrap:wrap}
+.id-card__footer strong{font-size:.82rem;letter-spacing:.1em;color:#1d2d4d;overflow-wrap:anywhere}
+.id-card__shine,.id-card__glow{display:none}
+.id-card__hint{margin:14px 0 0;font-size:.8rem;color:var(--mut)}
+.id-card-notice{width:min(100%,470px);margin:20px auto 0;padding:24px 22px;border:1px solid #e4e5ed;border-radius:18px;background:#f8f8fc;color:#252631;box-shadow:0 8px 24px rgba(28,34,62,.06);text-align:left}
+.id-card-notice__title{display:flex;align-items:center;gap:10px;margin:0 0 18px;font-size:1.08rem;font-weight:800;color:#252631}
+.id-card-notice__title i{font-size:1.15rem;color:#5442a8}
+.id-card-notice p{margin:0;font-size:.94rem;line-height:1.6}
+.id-card-notice p+p{margin-top:14px}
+.id-card-notice__details{margin:0 0 18px;padding:14px 16px;border:1px solid #d9dae3;border-radius:12px;background:#fff}
+.id-card-notice__details p+p{margin-top:8px}
+@media (max-width: 480px){.id-card{max-width:370px}.id-card__header{padding-top:20px}.id-card__planet{width:72px;height:72px}.id-card__title{font-size:1.9rem}.id-card__qr-shell{width:108px;height:108px}}.tr-document-box{max-width:480px;margin:0 auto 28px;padding:22px;border:1px solid var(--bd);border-radius:18px;text-align:left;background:#FAFCFE}
+.tr-doc-box-header{display:flex;gap:12px;align-items:center;margin-bottom:6px}
+.tr-doc-box-header i{font-size:1.6rem;color:var(--pri)}
+.tr-doc-box-header h3{font-size:1rem;font-weight:800;margin:0}
+.tr-doc-box-description{font-size:.85rem;color:var(--mut);margin:0 0 16px}
+.tr-doc-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:50px;border-radius:var(--r);border:1px solid var(--grn);background:var(--acc);color:#0F6E48;font-weight:700;font-size:.9rem}
+.tr-doc-btn small{display:none}.tr-doc-btn:hover{background:#D5EEE2}
+
+/* Document viewer */
+.tr-document-viewer{position:fixed;inset:0;z-index:9999;background:rgba(14,36,66,.7);display:flex;flex-direction:column}
+.tr-document-viewer[style*="none"]{display:none!important}
+.tr-document-header{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;background:#fff;border-bottom:1px solid var(--bd)}
+.tr-document-header h3{font-size:1rem;margin:0;font-weight:700}
+.tr-document-actions{display:flex;gap:10px}
+.tr-document-actions button{height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--bd);background:#fff;font-weight:600;font-size:.85rem}
+.tr-document-content{flex:1;overflow:auto;padding:32px 16px;display:flex;justify-content:center;align-items:flex-start}
+.tr-document-card{background:#fff;border-radius:18px;padding:40px;max-width:860px;width:100%}
+.tr-doc-header{text-align:center;border-bottom:2px solid var(--pri);padding-bottom:20px;margin-bottom:24px}
+.tr-doc-logo{height:56px;margin-bottom:10px}
+.tr-doc-title{font-size:1.6rem;font-weight:800;margin:0}
+.tr-doc-subtitle{color:var(--mut);font-size:.85rem;margin:6px 0 0}
+.tr-doc-section{margin-bottom:24px}
+.tr-doc-section-title{font-size:.85rem;font-weight:800;color:var(--pri);margin-bottom:12px}
+.tr-doc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:575px){.tr-doc-grid{grid-template-columns:1fr}.tr-document-card{padding:24px}}
+.tr-doc-field-label{font-size:.72rem;color:var(--mut)}.tr-doc-field-value{font-weight:700}
+.tr-doc-footer{border-top:1px solid var(--bd);padding-top:16px;text-align:center;font-size:.75rem;color:var(--mut)}
+@media print{.tr-document-header{display:none}.tr-document-viewer{background:#fff;position:static}}
+
+/* Reveal (only when JS has started, so content is never stuck hidden) */
+.js .rg-reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.js .rg-reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rg *{animation:none!important;transition:none!important}.js .rg-reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body class="ticket-page no-hero" th:attr="data-context-path=@{/}">
+<script th:inline="none">document.body.classList.add('js');</script>
+<div id="rgScroll"></div>
+<div th:replace="~{fragments/navbar :: navbar('ticket')}"></div>
+
+<main class="rg" th:style="|background-image:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,.22)),url('@{/images/registerback.png}');background-size:cover;background-position:center;background-repeat:no-repeat;|">
+  <div class="rg-flag"></div>
+
+<section>
+  <br><br>  <br><br>  
+</section>
+
+  <section id="registration" class="rg-shell" aria-labelledby="registration-title">
+    <div class="container">
+      <div class="rg-head rg-reveal">
+        <h2 id="registration-title" th:text="#{footer.link.delegate}">Registration</h2>
+        <!-- <p>Fields marked <span class="text-danger fw-bold">*</span> are mandatory. Enter details exactly as per your Government-issued ID.</p> -->
+      </div>
+
+      <div class="row g-4 align-items-stretch">
+        <div class="col-12 col-lg-7 rg-reveal">
+          <div class="rg-card tr-card">
+
+            <div class="d-none" aria-hidden="true">
+              <div id="progressFill"></div>
+              <span class="tr-step active" data-step-dot="1"></span><span class="tr-step" data-step-dot="2"></span><span class="tr-step" data-step-dot="3"></span><span class="tr-step" data-step-dot="4"></span>
+            </div>
+
+            <form id="ticketVerifyForm" class="tr-view" data-view="verify" data-jquery-validate novalidate>
+              <!-- <div class="rg-sec"><i class="bi bi-shield-lock"></i><h3>Email Verification<small>Your information is collected only for TecVerse 2026 purposes and will be kept private and secure.</small></h3></div>
+              <div class="rg-note"><i class="bi bi-info-circle"></i><span> It will not be shared with external organisations.</span></div> -->
+              <div class="row g-3">
+                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.fullName}">Full Name</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="verifyName" name="verifyName" type="text" autocomplete="name" th:placeholder="#{ticket.verify.placeholder.fullName}" maxlength="150" required></label></div>
+                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.email}">Email Address</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="email" name="email" type="email" autocomplete="email" th:placeholder="#{ticket.verify.placeholder.email}" maxlength="150" required></label></div>
+                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.createPassword}">Create Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="8+ characters" required><button class="btn password-toggle" type="button" data-password-target="password" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span><small class="text-secondary fw-normal d-block mt-1">Use 8+ characters with an uppercase letter, a number, and a symbol.</small></label></div>
+                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.confirmPassword}">Confirm Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="64" th:placeholder="#{ticket.verify.placeholder.confirmPassword}" required><button class="btn btn-outline-secondary password-toggle" type="button" data-password-target="confirmPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span></label></div>
+                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required></label></div>
+                <div class="col-12 col-md-6 d-flex align-items-end"><button type="button" id="sendOtp" class="btn tr-primary w-100"><span th:text="#{ticket.verify.sendOtp}">Send OTP</span> <i class="bi bi-send"></i></button></div>
+              </div>
+              <div id="otpBox" class="tr-otp" hidden>
+                <p>Enter the 6-digit OTP sent to <strong id="otpEmail"></strong>.</p>
+                <div class="tr-otp-inputs">
+                  <input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric">
+                </div>
+                <div class="rg-otp-actions">
+                  <button type="button" id="verifyOtp" class="btn tr-primary">Verify &amp; Proceed</button>
+                  <button id="resendOtp" class="btn tr-link" type="button">Resend OTP</button>
+                </div>
+              </div>
+              <div id="verifyMsg" class="tr-msg" role="status" aria-live="polite"></div>
+            </form>
+
+            <form id="detailsForm" class="tr-view" data-view="details" hidden>
+              <div class="rg-sec"><i class="bi bi-person-vcard"></i><h3>Details</h3></div>
+              <div class="row g-3">
+                <div class="col-12"><label class="rg-f">Full Name <span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" name="officialName" placeholder="Full name" required maxlength="150"></label></div>
+                <div class="col-12 col-md-6"><label class="rg-f">Category of Participation<span class="tr-required-star" aria-hidden="true">*</span>
+                  <select class="form-select" name="category" id="category" required>
+                    <option value="">Select category</option>
+                    <option value="ACADEMIA">Academia</option>
+                    <option value="CENTRAL_GOVERNMENT">Central Government</option>
+                    <option value="STATE_GOVERNMENT">State Government</option>
+                    <option value="INDUSTRY_STARTUP">Industry / Business</option>
+                    <!--
+                    <option value="VIP_SPECIAL_INVITEE">VIP / Special Invitee</option>
+                    <option value="SPEAKER">Speaker</option>
+                    <option value="ORGANIZER">Organizer</option>
+                    -->
+                  </select></label></div>
+                <div class="col-12 col-md-6"><label class="rg-f">Nationality / Residency Status<span class="tr-required-star" aria-hidden="true">*</span>
+                  <select class="form-select" name="citizenshipStatus" id="citizenship" required>
+                    <option value="">Select status</option>
+                    <option value="INDIAN">Indian National</option>
+                    <option value="NRI">Non-Resident Indian (NRI)</option>
+                    <option value="FOREIGNER">Foreign National</option>
+                  </select></label></div>
+              </div>
+
+              <div id="conditional" class="mt-3"></div>
+
+              <fieldset class="tr-fieldset">
+                <legend>Preferred Day(s) <span class="tr-required-star" aria-hidden="true">*</span></legend>
+                <p>Select the day(s) you will attend.</p>
+                <div class="rg-days">
+                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="DAY_1"><span>Day 1 – 26 November 2026</span></label>
+                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="DAY_2"><span>Day 2 – 27 November 2026</span></label>
+                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="BOTH"><span>Both Days – 26 &amp; 27 November 2026</span></label>
+                </div>
+              </fieldset>
+              <div id="detailsMsg" class="tr-msg"></div>
+              <div class="rg-actions">
+                <button type="button" id="resetDetails" class="btn tr-secondary rg-reset"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reset form</button>
+                <button type="button" id="backVerify" class="btn tr-secondary"><i class="bi bi-arrow-left"></i> Back</button>
+                <button type="submit" class="btn tr-primary">Review Application <i class="bi bi-arrow-right"></i></button>
+              </div>
+            </form>
+
+            <div class="tr-view" data-view="preview" hidden>
+              <div class="rg-sec"><i class="bi bi-table"></i><h3>Review Application</h3></div>
+              <div class="rg-prev-note"><i class="bi bi-exclamation-circle"></i><span>Details cannot be changed after submission. Select <strong>Edit Details</strong> to correct any entry.</span></div>
+              <div id="rgPreviewTable"></div>
+              <div id="preview" class="tr-preview row g-0"></div>
+              <div id="previewMsg" class="tr-msg"></div>
+              <div class="rg-actions">
+                <button id="editForm" class="btn tr-secondary"><i class="bi bi-pencil"></i> Edit Details</button>
+                <button id="submitFinal" class="btn tr-primary">Submit Application <i class="bi bi-check2-circle"></i></button>
+              </div>
+            </div>
+
+            <div class="tr-view tr-complete" data-view="complete" hidden>
+              <canvas id="confettiCanvas" class="tr-confetti-canvas" aria-hidden="true"></canvas>
+              <div class="tr-complete-intro">
+                <div class="tr-check-burst"><i class="bi bi-check-lg"></i></div>
+                <h2>Registration Successful</h2>
+                <p><span id="confirmationEmailStatus">An acknowledgement email is being prepared for your registration.</span> <strong id="completeEmail"></strong></p>
+              </div>
+
+              <div class="id-card-stage" id="idCardStage">
+                <div class="id-card" id="idCard">
+                  <div class="id-card__top-cap" aria-hidden="true"></div>
+                  <div class="id-card__header">
+                    <div class="id-card__planet">
+                      <img class="id-card__logo" th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo">
+                      <div class="id-card__planet-core"></div>
+                      <div class="id-card__planet-ring"></div>
+                    </div>
+                    <div class="id-card__title-wrap">
+                      <h1 class="id-card__title">Tec-Verse 2026</h1>
+                      <p class="id-card__subtitle">Driving Progress Through Innovation</p>
+                    </div>
+                  </div>
+
+                  <div class="id-card__content">
+                    <div class="id-card__qr-shell" aria-label="Registration QR code">
+                      <img id="cardQr" alt="Scannable QR code containing a secure registration pass link">
+                      <span id="cardQrError" class="id-card__qr-error" hidden>QR code unavailable</span>
+                    </div>
+
+                    <div class="id-card__identity">
+                      <h2 id="cardName">YOUR NAME</h2>
+                      <div id="cardDesignation" class="id-card__designation"></div>
+                      <div id="cardOrganization" class="id-card__organization"></div>
+                    </div>
+                  </div>
+
+                  <div class="id-card__badge-wrap">
+                    <div class="id-card__badge-crown" aria-hidden="true"><i class="bi bi-crown-fill"></i></div>
+                    <div class="id-card__badge" id="cardCategory"><span>VIP</span></div>
+                  </div>
+
+                  <div class="id-card__footer" aria-hidden="true">
+                    <span class="id-card__footer-text">Reference</span>
+                    <strong id="referenceNumber">TV26-0000</strong>
+                  </div>
+                  <div class="id-card__shine"></div>
+                  <div class="id-card__glow"></div>
+                </div>
+              </div>
+
+              <aside class="id-card-notice" role="note" aria-label="ID card and app information">
+                <h3 class="id-card-notice__title"><i class="bi bi-info-circle-fill" aria-hidden="true"></i>Important Information</h3>
+                <div class="id-card-notice__details">
+                  <p><strong>Registration details:</strong> Scan the QR code on your ID card to view your registration information.</p>
+                  <p><strong>Event gate pass:</strong> Download the Tec-Verse app from the Play Store for easy venue access.</p>
+                </div>
+                <!-- <p>Keep your ID card handy and use the QR code when you arrive at the venue.</p> -->
+              </aside>
+
+              <div class="d-flex justify-content-center">
+                <a th:href="@{/}" class="btn tr-primary">Return to Home <i class="bi bi-arrow-right"></i></a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <aside class="col-12 col-lg-5 rg-reveal d-flex" aria-label="Registration information">
+          <div class="rg-side w-100">
+            <div class="rg-info">
+              <header class="rg-info-banner">
+                <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo">
+                <div><h2>Tec-<span>Verse</span> 2026</h2><p>Driving Progress Through Innovation</p></div>
+              </header>
+              <div id="registrationInfoCarousel" class="carousel slide rg-info-carousel" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="hover" data-bs-touch="true" aria-label="Registration information">
+                <div class="carousel-inner">
+                  <section class="carousel-item active" role="group" aria-roledescription="slide" aria-label="1 of 2">
+                    <div class="rg-info-content" aria-labelledby="registrationInfoTitle">
+                      <h3 id="registrationInfoTitle" th:text="#{ticket.info.requiredTitle}">Information Required</h3>
+                      <p class="rg-info-intro">Please keep the following details ready before registration.</p>
+                      <div class="rg-info-list">
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-person-vcard" aria-hidden="true"></i></span><div><strong>Name as per Government-issued ID</strong><p>Use your official name as per Aadhaar / Passport / Government ID.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-envelope-paper" aria-hidden="true"></i></span><div><strong>Valid email address</strong><p>A valid email address is required for OTP verification.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-building" aria-hidden="true"></i></span><div><strong>Institution, department or organisation details</strong><p>Provide your current affiliation details.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-passport" aria-hidden="true"></i></span><div><strong>Passport details (Foreign Nationals)</strong><p>Required for international participants.</p></div></div>
+                      </div>
+                    </div>
+                  </section>
+                  <section class="carousel-item" role="group" aria-roledescription="slide" aria-label="2 of 2">
+                    <div class="rg-info-content" aria-labelledby="registrationAfterTitle">
+                      <h3 id="registrationAfterTitle" th:text="#{ticket.info.afterRegistration}">After Registration</h3>
+                      <p class="rg-info-intro">Keep these details handy for your visit.</p>
+                      <div class="rg-info-list">
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-upc-scan" aria-hidden="true"></i></span><div><strong>Registration reference</strong><p>Keep your reference number for entry and future assistance.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-calendar2-check" aria-hidden="true"></i></span><div><strong>Preferred event days</strong><p>Your selected dates will be included in your confirmation.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-geo-alt" aria-hidden="true"></i></span><div><strong>Chennai Trade Centre</strong><p>Nandambakkam, Chennai.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-envelope-check" aria-hidden="true"></i></span><div><strong>Confirmation email</strong><p>Check your inbox for your registration details.</p></div></div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+                <div class="carousel-indicators" aria-label="Information slides">
+                  <button type="button" data-bs-target="#registrationInfoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1: Information required"></button>
+                  <button type="button" data-bs-target="#registrationInfoCarousel" data-bs-slide-to="1" aria-label="Slide 2: After registration"></button>
+                </div>
+              </div>
+              <section class="rg-venue" aria-label="Event dates and helpdesk">
+                <div><i class="bi bi-calendar-event" aria-hidden="true"></i><span><strong>Event Dates</strong><span th:text="#{ticket.info.eventDates}">26 &amp; 27 November 2026</span></span></div>
+                <div><i class="bi bi-envelope-fill" aria-hidden="true"></i><span><strong>Helpdesk</strong><a href="mailto:tec-verse@cdac.in">tec-verse@cdac.in</a></span></div>
+              </section>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div id="documentViewer" class="tr-document-viewer" style="display:none;">
+    <div class="tr-document-header">
+      <h3><i class="bi bi-file-earmark-pdf"></i> Registration Acknowledgement</h3>
+      <div class="tr-document-actions">
+        <button type="button" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+        <button type="button" class="tr-document-close" onclick="document.getElementById('documentViewer').style.display='none'"><i class="bi bi-x-lg"></i></button>
+      </div>
+    </div>
+    <div class="tr-document-content">
+      <div class="tr-document-card">
+        <div class="tr-doc-header">
+          <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse" class="tr-doc-logo">
+          <h1 class="tr-doc-title" th:text="#{contact.title}">Tec-verse 2026</h1>
+          <p class="tr-doc-subtitle">Registration Acknowledgement</p>
+        </div>
+        <div class="tr-doc-section">
+          <div class="tr-doc-section-title">Registration Details</div>
+          <div class="tr-doc-grid">
+            <div><div class="tr-doc-field-label">Reference Number</div><div class="tr-doc-field-value" id="docRefNumber">-</div></div>
+            <div><div class="tr-doc-field-label" th:text="#{sponsor.field.name}">Name</div><div class="tr-doc-field-value" id="docName">-</div></div>
+            <div><div class="tr-doc-field-label" th:text="#{register.field.email}">Email Address</div><div class="tr-doc-field-value" id="docEmail">-</div></div>
+            <div><div class="tr-doc-field-label">Category</div><div class="tr-doc-field-value" id="docCategory">-</div></div>
+          </div>
+        </div>
+        <div class="tr-doc-section">
+          <div class="tr-doc-section-title">Event Information</div>
+          <div class="tr-doc-grid">
+            <div><div class="tr-doc-field-label">Event Date</div><div class="tr-doc-field-value">26 &amp; 27 November 2026</div></div>
+            <div><div class="tr-doc-field-label">Venue</div><div class="tr-doc-field-value" th:text="#{venue.name}">Chennai Trade Centre</div></div>
+            <div><div class="tr-doc-field-label">Location</div><div class="tr-doc-field-value">Chennai, Tamil Nadu</div></div>
+            <div><div class="tr-doc-field-label">Preferred Days</div><div class="tr-doc-field-value" id="docDays">-</div></div>
+          </div>
+        </div>
+        <div class="tr-doc-section">
+          <div class="tr-doc-section-title">Important Instructions</div>
+          <ul class="small text-secondary" style="line-height:1.9;padding-left:20px;margin:0">
+            <li>Carry a valid Government-issued photo ID on the day of the event.</li>
+            <li>The registration desk closes 15 minutes before the session starts.</li>
+            <li>Retain this acknowledgement for your records.</li>
+            <li>Present this acknowledgement (screenshot or printout) at check-in.</li>
+            <li>For queries, contact: tec-verse@cdac.in</li>
+          </ul>
+        </div>
+        <div class="tr-doc-footer"><p class="mb-0">This is a system-generated acknowledgement from the Tec-verse 2026 registration portal.<br>Generated on: <span id="docDate"></span></p></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="trOverlay" class="modal fade" tabindex="-1" aria-labelledby="trOverlayText" aria-describedby="trOverlayDescription" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-fullscreen m-0">
+    <div class="modal-content border-0 rounded-0 bg-white bg-opacity-75">
+      <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-4 text-center">
+        <div class="spinner-border text-warning" role="status" aria-hidden="true"></div>
+        <div>
+          <p id="trOverlayText" class="h5 fw-bold text-dark mb-1">Submitting your registration…</p>
+          <p id="trOverlayDescription" class="small text-secondary mb-0">Please wait while we save your details.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/ticket-faq :: ticket-faq}"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script defer th:src="@{/js/main.js}"></script>
+<script defer th:src="@{/js/ticket-registration.js}"></script>
+<script th:inline="none">
+/* Presentation only: scroll line, reveal, live pass, preview table. Does not touch your form logic. */
+(function () {
+  function q(s) { return document.querySelector(s); }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  window.addEventListener('scroll', function () {
+    var h = document.documentElement, bar = document.getElementById('rgScroll');
+    if (bar) { bar.style.width = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100) + '%'; }
+  }, { passive: true });
+
+  function dayText() {
+    var out = [];
+    document.querySelectorAll('input[name=attendanceDays]:checked').forEach(function (i) {
+      out.push(i.value === 'DAY_1' ? 'Day 1 (26 November 2026)' : i.value === 'DAY_2' ? 'Day 2 (27 November 2026)' : 'Both Days (26 & 27 November 2026)');
+    });
+    return out.join(', ');
+  }
+  function selText(id) {
+    var e = document.getElementById(id);
+    return (e && e.value) ? e.options[e.selectedIndex].text : '';
+  }
+  function fieldLabel(inp) {
+    var lab = inp.closest('label'), t = '';
+    if (lab) {
+      lab.childNodes.forEach(function (n) {
+        if (n.nodeType === 3) { t += n.textContent; }
+        else if (n.nodeType === 1 && !/^(INPUT|SELECT|TEXTAREA|LABEL)$/.test(n.tagName) && !n.classList.contains('tr-required-star') && !n.classList.contains('error')) { t += n.textContent; }
+      });
+    }
+    t = t.replace(/\*/g, '').trim();
+    return t || inp.getAttribute('placeholder') || inp.name || 'Additional detail';
+  }
+  function pass() {
+    var o = q('[name=officialName]'), v = q('#verifyName');
+    var n = (o && o.value.trim()) || (v && v.value.trim()) || '';
+    var lpName = q('#lpName'), lpCat = q('#lpCat'), lpDays = q('#lpDays');
+    if (!lpName || !lpCat || !lpDays) { return; }
+    lpName.textContent = n || 'Your name appears here';
+    lpCat.textContent = selText('category') || 'Delegate';
+    var d = dayText();
+    lpDays.textContent = d ? d.replace(/ \([^)]*\)/g, '') : 'To be selected';
+  }
+
+  function renderTable() {
+    var host = q('#rgPreviewTable');
+    if (!host) { return; }
+    var o = q('[name=officialName]'), v = q('#verifyName'), em = q('#email'), ph = q('#phone');
+    var groups = [
+      ['Participant Information', [
+        ['Participant Name', (o && o.value.trim()) || (v && v.value.trim()) || '-'],
+        ['Email Address', (em && em.value.trim()) || '-'],
+        ['Mobile Number', (ph && ph.value.trim()) || '-']
+      ]],
+      ['Participation Details', [
+        ['Category of Participation', selText('category') || '-'],
+        ['Nationality / Residency Status', selText('citizenship') || '-']
+      ]],
+      ['Attendance & Event', [
+        ['Preferred Days', dayText() || '-'],
+        ['Event Dates', '26 & 27 November 2026'],
+        ['Venue', 'Chennai Trade Centre, Chennai, Tamil Nadu']
+      ]]
+    ];
+    document.querySelectorAll('#conditional input, #conditional select, #conditional textarea').forEach(function (f) {
+      var val = f.tagName === 'SELECT' ? (f.value ? f.options[f.selectedIndex].text : '') : f.value.trim();
+      if (val && f.type !== 'checkbox' && f.type !== 'hidden') { groups[1][1].push([fieldLabel(f), val]); }
+    });
+    var n = 0, html = '<div class="rg-table-wrap"><table class="rg-table"><thead><tr><th>S.No.</th><th>Particulars</th><th>Details</th></tr></thead><tbody>';
+    groups.forEach(function (g) {
+      html += '<tr><th class="rg-grp" colspan="3">' + esc(g[0]) + '</th></tr>';
+      g[1].forEach(function (r) {
+        n += 1;
+        html += '<tr class="rg-row"><td class="sn">' + n + '</td><td class="lb">' + esc(r[0]) + '</td><td class="vl">' + esc(r[1]) + '</td></tr>';
+      });
+    });
+    host.innerHTML = html + '</tbody></table></div>';
+  }
+
+  /* Safety net: closes the "Submitting your registration" overlay once the success screen is shown.
+     Fixes the Bootstrap race where hide() is ignored if it runs before the modal finished opening. */
+  function closeOverlay() {
+    var el = document.getElementById('trOverlay');
+    if (!el) { return; }
+    try {
+      if (window.bootstrap && window.bootstrap.Modal) {
+        var m = window.bootstrap.Modal.getInstance(el);
+        if (m) { m.hide(); }
+      }
+    } catch (err) { /* ignore */ }
+    setTimeout(function () {
+      if (el.classList.contains('show')) {
+        el.classList.remove('show');
+        el.style.display = 'none';
+        el.setAttribute('aria-hidden', 'true');
+        el.removeAttribute('aria-modal');
+        el.removeAttribute('role');
+      }
+      document.querySelectorAll('.modal-backdrop').forEach(function (b) { b.remove(); });
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('padding-right');
+    }, 450);
+  }
+
+  /* Scroll back to the top of the form whenever the step (view) changes */
+  function scrollToForm() {
+    var target = document.getElementById('registration') || document.body;
+    var navOffset = 90; /* adjust to your navbar height */
+    var y = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var cv = q('[data-view=complete]');
+    if (cv) {
+      new MutationObserver(function () { if (!cv.hasAttribute('hidden')) { closeOverlay(); } })
+        .observe(cv, { attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
+    }
+    var els = document.querySelectorAll('.rg-reveal');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0.08 });
+      els.forEach(function (e) { io.observe(e); });
+    } else { els.forEach(function (e) { e.classList.add('in'); }); }
+
+    document.addEventListener('input', pass);
+    document.addEventListener('change', pass);
+
+    var pv = q('[data-view=preview]');
+    if (pv) {
+      new MutationObserver(function () { if (!pv.hasAttribute('hidden')) { renderTable(); } })
+        .observe(pv, { attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
+      var box = q('#preview');
+      if (box) { new MutationObserver(function () { if (!pv.hasAttribute('hidden')) { renderTable(); } }).observe(box, { childList: true }); }
+    }
+
+    /* Watch every step: when one goes from hidden to visible, scroll to the top of the form */
+    document.querySelectorAll('.tr-view').forEach(function (view) {
+      var wasHidden = view.hasAttribute('hidden');
+      new MutationObserver(function () {
+        var isHidden = view.hasAttribute('hidden');
+        if (wasHidden && !isHidden) { scrollToForm(); }
+        wasHidden = isHidden;
+      }).observe(view, { attributes: true, attributeFilter: ['hidden'] });
+    });
+  });
+})();
+</script>
+</body>
+</html>

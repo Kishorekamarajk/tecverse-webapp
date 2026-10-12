@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Exhibitor Registration | Tec-verse 2026</title>
+    <link rel="icon" th:href="@{/images/tecverselogo.png}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <script>
+        window.tailwind = window.tailwind || {};
+        tailwind.config = {
+            corePlugins: { preflight: false },
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#0b1f3a',
+                        blue: {
+                            deep: '#0a2c6b',
+                            main: '#1d5fe0',
+                            sky: '#3f8cf3',
+                            ice: '#eaf3ff',
+                        },
+                    },
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        body: ['"Inter"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/jquery-validation@1.22.1/dist/jquery.validate.min.js"></script>
+    <script defer th:src="@{/js/jquery-form-validation.js}"></script>
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-bg-strong: rgba(255, 255, 255, 0.74);
+            --glass-border: rgba(255, 255, 255, 0.85);
+            --b-deep: #0a2c6b;
+            --b-main: #1d5fe0;
+            --b-sky: #3f8cf3;
+            --b-ice: #eaf3ff;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #0b1f3a;
+            background:
+                radial-gradient(1100px 620px at 6% -8%, #cfe2ff 0%, transparent 55%),
+                radial-gradient(950px 720px at 100% 6%, #dceaff 0%, transparent 55%),
+                radial-gradient(850px 800px at 40% 110%, #e6f1ff 0%, transparent 55%),
+                linear-gradient(180deg, #f2f7ff 0%, #eaf2ff 45%, #f4f8ff 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, .font-display { font-family: 'Space Grotesk', sans-serif; }
+
+        /* ---------- Glass primitives ---------- */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(18px) saturate(160%);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(10, 44, 107, 0.10), inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+        .glass-strong {
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(22px) saturate(160%);
+            -webkit-backdrop-filter: blur(22px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(10, 44, 107, 0.16), inset 0 1px 0 rgba(255,255,255,0.7);
+        }
+
+        /* ---------- Ambient orbs ---------- */
+        .orb {
+            position: absolute;
+            border-radius: 999px;
+            filter: blur(60px);
+            opacity: 0.55;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes float-a { 0%,100% { transform: translate(0,0) } 50% { transform: translate(24px,-30px) } }
+        @keyframes float-b { 0%,100% { transform: translate(0,0) } 50% { transform: translate(-30px,26px) } }
+
+        /* ---------- Circuit trace signature ---------- */
+        .trace-line {
+            position: absolute;
+            top: 22px;
+            left: 44px;
+            right: 44px;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #cfe0fa 0 10px, transparent 10px 18px);
+            z-index: 0;
+        }
+        .trace-fill {
+            position: absolute;
+            top: 22px;
+            left: 44px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--b-main), var(--b-sky));
+            z-index: 1;
+            transition: width .5s cubic-bezier(.4,0,.2,1);
+            box-shadow: 0 0 10px rgba(29,95,224,0.55);
+        }
+        .step-node {
+            width: 46px; height: 46px;
+            border-radius: 999px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            position: relative; z-index: 2;
+            transition: all .35s ease;
+            background: #fff;
+            border: 2px solid #d3e2fb;
+            color: #6d87b8;
+        }
+        .step-node.active {
+            background: linear-gradient(135deg, var(--b-main), var(--b-sky));
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 0 0 6px rgba(29,95,224,0.14), 0 8px 20px rgba(29,95,224,0.35);
+        }
+        .step-node.done {
+            background: #fff;
+            border-color: var(--b-main);
+            color: var(--b-main);
+        }
+
+        /* ---------- Form controls ---------- */
+        .field label {
+            display: flex; flex-direction: column; gap: 6px;
+            font-size: 0.82rem; font-weight: 600; color: #234b8a;
+        }
+        .field input, .field select, .field textarea {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #0b1f3a;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(29,95,224,0.16);
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(6px);
+            outline: none;
+            transition: all .2s ease;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus {
+            border-color: var(--b-main);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(29,95,224,0.14);
+        }
+        .field textarea { resize: vertical; min-height: 74px; }
+
+        /* Stall card tilt */
+        .stall-card { transition: transform .35s ease, box-shadow .35s ease; }
+        .stall-card:hover { transform: translateY(-8px) rotate(-0.3deg); }
+        .stall-card.selected {
+            border-color: var(--b-main) !important;
+            box-shadow: 0 0 0 3px rgba(29,95,224,0.25), 0 20px 45px rgba(29,95,224,0.22);
+        }
+
+        .form-step { display: none; }
+        .form-step.active { display: block; animation: rise .5s ease; }
+        @keyframes rise { from { opacity:0; transform: translateY(14px);} to {opacity:1; transform:translateY(0);} }
+
+        .exv-modal.hidden { display: none; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--b-main), var(--b-sky));
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(29,95,224,0.35);
+        }
+        .btn-primary:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+        ::selection { background: rgba(29,95,224,0.25); }
+
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+            outline: 3px solid var(--b-sky);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .orb, .stall-card, .form-step.active { animation: none !important; transition: none !important; }
+        }
+
+        /* Ticket-page visual language: navy structure, warm orange highlights and clean white cards. */
+        :root { --b-deep: #07182f; --b-main: #ff5f05; --b-sky: #ff8a3d; --b-ice: #fff2e9; }
+        body.ticket-page { color: #07182f; background: #f6f8fb; }
+        .ticket-page .glass { background: #fff; border-color: rgba(7,24,47,.10); box-shadow: 0 12px 30px rgba(7,24,47,.08); }
+        .ticket-page .glass-strong { background: #fff; border-color: rgba(7,24,47,.10); box-shadow: 0 22px 54px rgba(7,24,47,.12); }
+        .ticket-page .btn-primary { background: #ff5f05; box-shadow: 0 10px 24px rgba(255,95,5,.24); }
+        .ticket-page .btn-primary:hover { background: #e85200; }
+        .ticket-page .ticket-hero__cta { display: inline-flex; align-items: center; gap: .55rem; align-self: flex-start; margin-top: 30px; padding: 13px 20px; border-radius: 12px; background: #ff5f05; color: #fff; font-weight: 800; text-decoration: none; box-shadow: 0 10px 24px rgba(255,95,5,.24); transition: transform .2s, background .2s; }
+        .ticket-page .ticket-hero__cta:hover { background: #e85200; color: #fff; transform: translateY(-2px); }
+        .ticket-page .field label { color: #263747; }
+        .ticket-page .field input, .ticket-page .field select, .ticket-page .field textarea { background: #fff; border-color: #ccd8e1; color: #07182f; }
+        .ticket-page .field input:focus, .ticket-page .field select:focus, .ticket-page .field textarea:focus { border-color: #ff6b1a; box-shadow: 0 0 0 4px rgba(255,107,26,.12); }
+        .ticket-page .step-node.active { background: #07182f; box-shadow: 0 0 0 6px rgba(7,24,47,.10), 0 8px 20px rgba(7,24,47,.25); }
+        .ticket-page .step-node.done { border-color: #ff5f05; color: #ff5f05; }
+        .ticket-page .trace-fill { background: linear-gradient(90deg, #07182f, #ff5f05); box-shadow: 0 0 10px rgba(255,95,5,.42); }
+        .ticket-page .stall-card.selected { border-color: #ff5f05 !important; box-shadow: 0 0 0 3px rgba(255,95,5,.18), 0 20px 45px rgba(7,24,47,.16); }
+        .ticket-page .stall-visual { background: linear-gradient(135deg, #fff4ed, #fff) !important; }
+        .ticket-page .text-blue-main, .ticket-page .text-blue-deep { color: #ff5f05 !important; }
+        .ticket-page .text-blue-main\/70, .ticket-page .text-blue-deep\/80 { color: rgba(255,95,5,.70) !important; }
+        .ticket-page .bg-gradient-to-br.from-blue-main.to-blue-sky { background: #ff5f05 !important; }
+        .ticket-page .site-navbar .navbar-brand-text,
+        .ticket-page .site-navbar .nav-link,
+        .ticket-page .site-navbar .navbar-language-switcher,
+        .ticket-page .site-navbar .navbar-language-btn,
+        .ticket-page .site-navbar .navbar-language-separator {
+            color: var(--exhibitor-nav-color, #07182f) !important;
+            transition: color .12s linear;
+        }
+        .ticket-page .site-navbar .navbar-toggler { transition: background-color .12s linear, border-color .12s linear; }
+
+        /* Responsive registration layout: phone (320px+), tablet, and desktop. */
+        .ticket-page { overflow-x: hidden; }
+        .ticket-page img { max-width: 100%; }
+        .ticket-page .email-row { min-width: 0; }
+        .ticket-page .field input, .ticket-page .field select, .ticket-page .field textarea { width: 100%; min-width: 0; }
+        .ticket-page .exv-modal { overflow-y: auto; align-items: flex-start; }
+        .ticket-page .modal-card { margin: auto; }
+
+        @media (max-width: 991.98px) {
+            .ticket-page .exv-section { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+            .ticket-page .flow-section > div { padding: 1.75rem; }
+            .ticket-page .stall-card.featured { transform: none; }
+            .ticket-page .package-details { grid-template-columns: minmax(0, 1fr); }
+            .ticket-page .package-image-stage { min-height: 220px; }
+        }
+
+        @media (max-width: 575.98px) {
+            .ticket-page .exv-section { padding: 2.75rem 1rem; }
+            .ticket-page .flow-section > div { padding: 1.25rem; border-radius: 1.25rem; }
+            .ticket-page .flow-top { margin-bottom: 1.5rem; }
+            .ticket-page .stepper { margin: 0 0 2rem; padding: 0; }
+            .ticket-page .step-node { width: 36px; height: 36px; font-size: .85rem; }
+            .ticket-page .trace-line, .ticket-page .trace-fill { top: 17px; left: 28px; right: 28px; }
+            .ticket-page .step-title { gap: .75rem; }
+            .ticket-page .step-title > span { font-size: 2rem; }
+            .ticket-page .field-grid { gap: 1rem; }
+            .ticket-page .email-row { flex-direction: column; }
+            .ticket-page .email-row button { width: 100%; min-height: 46px; }
+            .ticket-page .form-nav { gap: .75rem; }
+            .ticket-page .form-nav .back, .ticket-page .form-nav .next { flex: 1 1 100%; justify-content: center; }
+            .ticket-page .package-choice { gap: .75rem; }
+            .ticket-page .choice { width: 100%; text-align: left; }
+            .ticket-page .package-details { margin-top: 1rem; padding: 1rem; }
+            .ticket-page .package-stall-image { max-height: 180px; width: auto; margin: 0 auto; }
+            .ticket-page .modal-card { width: 100%; max-height: calc(100dvh - 2rem); padding: 1.5rem; border-radius: 1.25rem; }
+            .ticket-page .modal-actions { gap: .75rem; }
+            .ticket-page .modal-actions button { width: 100%; }
+        }
+
+        @media (max-width: 374.98px) {
+            .ticket-page .ticket-hero__copy { padding: 28px 18px 34px; }
+            .ticket-page .ticket-hero h1 { font-size: 3.15rem; }
+            .ticket-page .step-node { width: 32px; height: 32px; }
+            .ticket-page .trace-line, .ticket-page .trace-fill { top: 15px; left: 24px; right: 24px; }
+            .ticket-page .flow-section > div { padding: 1rem; }
+        }
+
+        /* Keep the exhibitor application comfortably usable on compact phones. */
+        @media (max-width: 575.98px) {
+            .ticket-page .exv-section > .max-w-7xl { width: 100%; }
+            .ticket-page .stall-grid { gap: 1rem; }
+            .ticket-page .stall-card-body { padding: 1.15rem; }
+            .ticket-page .stall-card.featured { margin-top: 0; margin-bottom: 0; }
+            .ticket-page .field-grid label,
+            .ticket-page .email-row,
+            .ticket-page .package-choice,
+            .ticket-page .preview-content { min-width: 0; }
+            .ticket-page .field-grid input[type="file"] {
+                min-height: 54px;
+                padding: .5rem !important;
+                font-size: .76rem !important;
+            }
+            .ticket-page .email-row button,
+            .ticket-page .form-nav button,
+            .ticket-page .modal-actions button { min-height: 48px; }
+            .ticket-page .success.modal-card { padding: 1.5rem 1.15rem !important; }
+            .ticket-page .close-modal { top: .75rem; right: .75rem; }
+        }
+
+        @media (max-width: 374.98px) {
+            .ticket-page .exv-section { padding-left: .75rem; padding-right: .75rem; }
+            .ticket-page .flow-top h2 { font-size: 1.35rem !important; }
+            .ticket-page .step-title { gap: .7rem !important; }
+            .ticket-page .step-title > span { width: 40px; height: 40px; min-width: 40px; }
+        }
+    </style>
+</head>
+
+<body class="ticket-page font-body" th:attr="data-context-path=@{/}">
+    <div th:replace="~{fragments/navbar :: navbar('exhibitor-registration')}"></div>
+
+    <main class="exv-page">
+
+        <!-- ============ HERO ============ -->
+        <section class="ticket-hero-section" aria-labelledby="exhibitor-hero-title">
+            <div class="container">
+                <div class="ticket-hero align-items-stretch overflow-hidden">
+                    <div class="ticket-hero__copy d-flex flex-column justify-content-center gap-[0]">
+                        <p class="ticket-hero__eyebrow font-[900] leading-[0.95] text-uppercase">Become an</p>
+                        <h1 id="exhibitor-hero-title">Exhibitor</h1>
+                        <p class="ticket-hero__text max-w-[460px] font-[600] leading-[1.75]">Choose your stall, present your innovation, and connect with the technology ecosystem shaping what is next.</p>
+                        <div class="ticket-hero__meta flex-wrap" aria-label="Event details">
+                            <span><i class="bi bi-calendar-event-fill"></i> 26 - 27 November 2026</span>
+                            <span><i class="bi bi-geo-alt-fill"></i> Chennai Trade Centre</span>
+                        </div>
+                        <a href="#exhibitor-flow" class="ticket-hero__cta">Start application <i class="bi bi-arrow-down-circle"></i></a>
+                    </div>
+                    <div class="ticket-hero__visual overflow-hidden">
+                        <img th:src="@{/images/stall-6x6.png}" alt="Tec-verse exhibitor stall">
+                        <div class="ticket-hero__stage-label position-absolute text-center" aria-hidden="true"><strong>Tec-verse</strong><span>EXHIBITOR 2026</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ PACKAGES ============ -->
+        <section id="packages" class="exv-section relative px-5 sm:px-8 py-16">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center max-w-xl mx-auto mb-12">
+                    <span class="text-xs font-bold tracking-widest text-blue-main uppercase">Choose your space</span>
+                    <h2 class="font-display font-bold text-3xl sm:text-4xl text-ink mt-3">Pick your exhibitor package</h2>
+                    <p class="text-ink/60 mt-3">Tap a stall to explore its setup and inclusions. Your selection follows you through the application.</p>
+                </div>
+
+                <div class="stall-grid grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="stallGrid">
+                    <article class="stall-card glass rounded-3xl overflow-hidden cursor-pointer border border-white/70" data-package="3x3">
+                        <div class="stall-visual aspect-[4/3] bg-gradient-to-br from-blue-main/10 to-white/40 flex items-center justify-center">
+                            <img th:src="@{/images/stall-3x3.png}" alt="3 by 3 metre stall" class="max-h-[70%] object-contain" onerror="this.style.display='none'">
+                            <i class="bi bi-box2-heart text-5xl text-blue-main/30"></i>
+                        </div>
+                        <div class="stall-card-body p-6">
+                            <span class="text-[11px] font-bold tracking-widest text-blue-main/70 uppercase">Compact</span>
+                            <h3 class="font-display font-bold text-xl text-ink mt-1">3 × 3 Mtr.</h3>
+                            <p class="text-sm text-ink/60 mt-1">Focused product display and meetings.</p>
+                            <button type="button" class="select-package mt-4 w-full rounded-xl py-2.5 font-semibold text-sm border border-blue-main/30 text-blue-main hover:bg-blue-main hover:text-white transition flex items-center justify-center gap-2">
+                                Select 3 × 3 <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                    <article class="stall-card featured glass-strong rounded-3xl overflow-hidden cursor-pointer border-2 border-blue-main/40 relative lg:-translate-y-3" data-package="3x6">
+                        <div class="absolute top-4 right-4 bg-gradient-to-br from-blue-main to-blue-sky text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full z-10">Popular</div>
+                        <div class="stall-visual aspect-[4/3] bg-gradient-to-br from-blue-main/15 to-blue-sky/10 flex items-center justify-center">
+                            <img th:src="@{/images/stall-3x6.png}" alt="3 by 6 metre stall" class="max-h-[70%] object-contain" onerror="this.style.display='none'">
+                            <i class="bi bi-columns-gap text-5xl text-blue-main/40"></i>
+                        </div>
+                        <div class="stall-card-body p-6">
+                            <span class="text-[11px] font-bold tracking-widest text-blue-main uppercase">Expanded</span>
+                            <h3 class="font-display font-bold text-xl text-ink mt-1">3 × 6 Mtr.</h3>
+                            <p class="text-sm text-ink/60 mt-1">More room for engagement and demos.</p>
+                            <button type="button" class="select-package mt-4 w-full rounded-xl py-2.5 font-semibold text-sm btn-primary flex items-center justify-center gap-2">
+                                Select 3 × 6 <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                    <article class="stall-card glass rounded-3xl overflow-hidden cursor-pointer border border-white/70" data-package="6x6">
+                        <div class="stall-visual aspect-[4/3] bg-gradient-to-br from-blue-deep/10 to-white/40 flex items-center justify-center">
+                            <img th:src="@{/images/stall-6x6.png}" alt="6 by 6 metre stall" class="max-h-[70%] object-contain" onerror="this.style.display='none'">
+                            <i class="bi bi-building text-5xl text-blue-deep/40"></i>
+                        </div>
+                        <div class="stall-card-body p-6">
+                            <span class="text-[11px] font-bold tracking-widest text-blue-deep/80 uppercase">Flagship</span>
+                            <h3 class="font-display font-bold text-xl text-ink mt-1">6 × 6 Mtr.</h3>
+                            <p class="text-sm text-ink/60 mt-1">Premium showcase and networking zone.</p>
+                            <button type="button" class="select-package mt-4 w-full rounded-xl py-2.5 font-semibold text-sm border border-blue-deep/30 text-blue-deep hover:bg-blue-deep hover:text-white transition flex items-center justify-center gap-2">
+                                Select 6 × 6 <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ APPLICATION FLOW ============ -->
+        <section id="exhibitor-flow" class="exv-section flow-section relative px-5 sm:px-8 py-16">
+            <div class="max-w-5xl mx-auto glass-strong rounded-[2rem] p-6 sm:p-10">
+
+                <div class="flow-top flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
+                    <div>
+                        <span class="text-xs font-bold tracking-widest text-blue-main uppercase" th:text="#{register.application.badge}">Exhibitor application</span>
+                        <h2 class="font-display font-bold text-2xl sm:text-3xl text-ink mt-2">Tell us about your company</h2>
+                    </div>
+                </div>
+
+                <!-- Stepper / circuit trace -->
+                <div class="stepper relative flex justify-between items-center mb-10 px-2" id="stepper">
+                    <div class="trace-line"></div>
+                    <div class="trace-fill" id="traceFill" style="width:0%;"></div>
+                    <b class="step-node active" data-step="1">1</b>
+                    <b class="step-node" data-step="2">2</b>
+                    <b class="step-node" data-step="3">3</b>
+                    <b class="step-node" data-step="4">4</b>
+                </div>
+
+                <form id="exhibitorForm" class="exv-form" novalidate>
+
+                    <!-- STEP 1 -->
+                    <div class="form-step active" data-step="1">
+                        <div class="step-title flex items-start gap-4 mb-6">
+                            <span class="font-display font-bold text-3xl text-blue-main/25">01</span>
+                            <div>
+                                <h3 class="font-display font-semibold text-xl text-ink">Quick verification</h3>
+                                <p class="text-ink/60 text-sm mt-1">Start with your company, contact and official email.</p>
+                            </div>
+                        </div>
+                        <div class="field-grid field grid sm:grid-cols-2 gap-5">
+                            <label>Company / Organization name*<input name="companyName" required maxlength="200"></label>
+                            <label>Company type / industry*<input name="industry" required maxlength="100"></label>
+                            <label>Contact person's name*<input name="fullName" required maxlength="150"></label>
+                            <label>Designation*<input name="designation" required maxlength="100"></label>
+                            <label>Mobile number*<input name="phone" type="tel" required maxlength="15"></label>
+                            <label class="wide sm:col-span-2">Official email ID*
+                                <div class="email-row flex gap-2">
+                                    <input id="email" name="email" type="email" required class="flex-1" maxlength="254">
+                                    <button type="button" id="sendOtp" class="btn-primary rounded-xl px-5 font-semibold text-sm whitespace-nowrap">Verify email</button>
+                                </div>
+                            </label>
+                            <label id="otpWrap" class="wide sm:col-span-2 hidden">Enter 6-digit OTP
+                                <div class="email-row flex gap-2">
+                                    <input id="otp" inputmode="numeric" maxlength="6" class="flex-1">
+                                    <button type="button" id="verifyOtp" class="rounded-xl px-5 font-semibold text-sm border border-blue-main/30 text-blue-main hover:bg-blue-main hover:text-white transition whitespace-nowrap">Confirm OTP</button>
+                                </div>
+                                <small id="otpStatus" class="text-xs font-medium text-blue-main"></small>
+                            </label>
+                        </div>
+                        <div class="form-nav flex justify-end mt-8">
+                            <button type="button" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2">Continue <i class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 -->
+                    <div class="form-step" data-step="2">
+                        <div class="step-title flex items-start gap-4 mb-6">
+                            <span class="font-display font-bold text-3xl text-blue-main/25">02</span>
+                            <div>
+                                <h3 class="font-display font-semibold text-xl text-ink">Company profile</h3>
+                                <p class="text-ink/60 text-sm mt-1">Help visitors understand your organization.</p>
+                            </div>
+                        </div>
+                        <div class="field-grid field grid sm:grid-cols-2 gap-5">
+                            <label>Website<input name="website" type="url" placeholder="https://" maxlength="255"></label>
+                            <label>GST / Tax registration number<input name="gst" maxlength="15"></label>
+                            <label class="wide sm:col-span-2">Company address<textarea name="companyAddress" maxlength="500"></textarea></label>
+                            <label>City*<input name="city" required maxlength="100"></label>
+                            <label>State*<input name="state" required maxlength="100"></label>
+                            <label>Country*<input name="country" value="India" required maxlength="100"></label>
+                            <label>Company registration number<input name="companyRegistrationNumber" maxlength="100"></label>
+                            <label>Social media / LinkedIn<input name="linkedin" maxlength="255"></label>
+                            <label>WhatsApp number<input name="whatsappNumber" maxlength="15"></label>
+                            <label>Alternate contact person<input name="alternateContactPerson" maxlength="150"></label>
+                            <label>Alternate mobile number<input name="alternateMobileNumber" maxlength="15"></label>
+                            <label class="wide sm:col-span-2">Short company description<textarea name="companyDescription" maxlength="1000"></textarea></label>
+                            <label>Product/service category<input name="productServiceCategory" maxlength="150"></label>
+                            <label class="wide sm:col-span-2">Company document (PDF, max 1 MB) <input id="logoFile" name="logoFile" type="file" accept="application/pdf,.pdf" class="!p-2 !bg-white/50"></label>
+                            <label class="wide sm:col-span-2">Supporting document (PDF, max 1 MB) <input id="documents" name="documents" type="file" accept="application/pdf,.pdf" class="!p-2 !bg-white/50"></label>
+                        </div>
+                        <div class="form-nav flex justify-between mt-8">
+                            <button type="button" class="back rounded-xl px-6 py-3 font-semibold text-ink/70 border border-ink/15 hover:bg-white/60 transition" th:text="#{register.back}">Back</button>
+                            <button type="button" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2">Continue <i class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3 -->
+                    <div class="form-step" data-step="3">
+                        <div class="step-title flex items-start gap-4 mb-6">
+                            <span class="font-display font-bold text-3xl text-blue-main/25">03</span>
+                            <div>
+                                <h3 class="font-display font-semibold text-xl text-ink">Your exhibition</h3>
+                                <p class="text-ink/60 text-sm mt-1">Describe what you are bringing to Tec-verse.</p>
+                            </div>
+                        </div>
+                        <div class="field-grid field grid sm:grid-cols-2 gap-5">
+                            <label>What are you exhibiting?*
+                                <select name="products" required>
+                                    <option value="">Select</option>
+                                    <option>Product</option>
+                                    <option>Technology</option>
+                                    <option>Service</option>
+                                    <option>Research project</option>
+                                    <option>Live demonstration</option>
+                                </select>
+                            </label>
+                            <label>Product / technology name<input name="productTechnologyName" maxlength="150"></label>
+                            <label>Product category<input name="productCategory" maxlength="100"></label>
+                            <label>Stage
+                                <select name="productStage">
+                                    <option>Prototype</option>
+                                    <option>Commercial product</option>
+                                    <option>Research project</option>
+                                    <option>Demonstration</option>
+                                </select>
+                            </label>
+                            <label class="wide sm:col-span-2">Brief description<textarea name="productDescription" maxlength="2000"></textarea></label>
+                            <label>Special equipment required<input name="specialRequirements" maxlength="500"></label>
+                            <label>Machinery/equipment brought<input name="machineryEquipment" maxlength="500"></label>
+                            <label>Equipment dimensions<input name="equipmentDimensions" placeholder="L × W × H" maxlength="100"></label>
+                            <label>Equipment weight<input name="equipmentWeight" maxlength="100"></label>
+                            <label class="sm:col-span-2">Compressed air / water / utilities<textarea name="utilityRequirements" maxlength="1000"></textarea></label>
+                            <label class="sm:col-span-2">Heat, noise, smoke, vibration etc.<textarea name="equipmentImpact" maxlength="1000"></textarea></label>
+                        </div>
+                        <div class="form-nav flex justify-between mt-8">
+                            <button type="button" class="back rounded-xl px-6 py-3 font-semibold text-ink/70 border border-ink/15 hover:bg-white/60 transition" th:text="#{register.back}">Back</button>
+                            <button type="button" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2">Choose package <i class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4 -->
+                    <div class="form-step" data-step="4">
+                        <div class="step-title flex items-start gap-4 mb-6">
+                            <span class="font-display font-bold text-3xl text-blue-main/25">04</span>
+                            <div>
+                                <h3 class="font-display font-semibold text-xl text-ink" th:text="#{register.field.stallPackage}">Stall package</h3>
+                                <p class="text-ink/60 text-sm mt-1">Select the space that matches your exhibition plan.</p>
+                            </div>
+                        </div>
+                        <div class="package-choice grid sm:grid-cols-3 gap-4" id="packageChoice"></div>
+                        <div id="packageDetails" class="package-details mt-6 glass rounded-2xl p-5 text-sm text-ink/70 hidden"></div>
+                        <div class="form-nav flex justify-between mt-8">
+                            <button type="button" class="back rounded-xl px-6 py-3 font-semibold text-ink/70 border border-ink/15 hover:bg-white/60 transition" th:text="#{register.back}">Back</button>
+                            <button type="button" id="previewBtn" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2">Preview application <i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============ PREVIEW MODAL ============ -->
+    <div id="previewModal" class="exv-modal hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/40 backdrop-blur-sm">
+        <div class="modal-card glass-strong rounded-3xl w-full max-w-2xl max-h-[85vh] overflow-y-auto p-7 sm:p-9 relative">
+            <button class="close-modal absolute top-5 right-5 w-9 h-9 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-ink/60 text-xl leading-none">×</button>
+            <span class="text-xs font-bold tracking-widest text-blue-main uppercase">Final review</span>
+            <h2 class="font-display font-bold text-2xl text-ink mt-2 mb-5">Confirm your exhibitor application</h2>
+            <div id="previewContent" class="preview-content text-sm text-ink/70 space-y-2"></div>
+            <div class="modal-actions flex flex-col-reverse sm:flex-row justify-end gap-3 mt-7">
+                <button class="edit-modal rounded-xl px-6 py-3 font-semibold text-ink/70 border border-ink/15 hover:bg-white/60 transition">Go back &amp; edit</button>
+                <button id="confirmSubmit" class="confirm btn-primary rounded-xl px-6 py-3 font-semibold flex items-center justify-center gap-2">Confirm &amp; submit <i class="bi bi-check2"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ SUCCESS MODAL ============ -->
+    <div id="successModal" class="exv-modal hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/40 backdrop-blur-sm">
+        <div class="modal-card success glass-strong rounded-3xl w-full max-w-md p-9 text-center">
+            <div class="success-icon w-16 h-16 rounded-full bg-gradient-to-br from-blue-main to-blue-sky text-white text-3xl flex items-center justify-center mx-auto mb-4">✓</div>
+            <span class="text-xs font-bold tracking-widest text-blue-main uppercase">Application received</span>
+            <h2 class="font-display font-bold text-2xl text-ink mt-2">You are registered as an exhibitor</h2>
+            <p class="text-ink/60 mt-3 text-sm">Your entered details and reference number have been sent to your official email.</p>
+            <div id="referenceBox" class="glass rounded-xl py-3 mt-5 font-display font-bold text-blue-main tracking-wide"></div>
+            <button class="close-modal confirm btn-primary rounded-xl px-6 py-3 font-semibold mt-6 w-full">Done</button>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}" class="relative z-10 text-center text-ink/40 text-xs py-8" th:text="#{footer.copyright}">
+        &copy; 2026 Tec-verse. All rights reserved.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        (function () {
+            const navbar = document.querySelector('.site-navbar');
+            if (!navbar) return;
+            function updateNavbarTone() {
+                const progress = Math.min(window.scrollY / 180, 1);
+                const red = Math.round(7 + (255 - 7) * progress);
+                const green = Math.round(24 + (255 - 24) * progress);
+                const blue = Math.round(47 + (255 - 47) * progress);
+                navbar.style.setProperty('--exhibitor-nav-color', `rgb(${red}, ${green}, ${blue})`);
+            }
+            updateNavbarTone();
+            window.addEventListener('scroll', updateNavbarTone, { passive: true });
+        })();
+    </script>
+
+    <script type="application/x-disabled">
+        // ---- Demo interaction layer (replace with exhibitor-registration.js in production) ----
+        (function () {
+            const steps = Array.from(document.querySelectorAll('.form-step'));
+            const nodes = Array.from(document.querySelectorAll('.step-node'));
+            const traceFill = document.getElementById('traceFill');
+            let current = 1;
+            const total = steps.length;
+
+            function paintStepper() {
+                const pct = ((current - 1) / (total - 1)) * 100;
+                traceFill.style.width = pct + '%';
+                nodes.forEach(n => {
+                    const s = Number(n.dataset.step);
+                    n.classList.remove('active', 'done');
+                    if (s === current) n.classList.add('active');
+                    else if (s < current) n.classList.add('done');
+                });
+            }
+
+            function goTo(step) {
+                current = Math.min(Math.max(step, 1), total);
+                steps.forEach(s => s.classList.toggle('active', Number(s.dataset.step) === current));
+                paintStepper();
+                document.getElementById('exhibitor-flow').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            document.querySelectorAll('.next').forEach(btn => btn.addEventListener('click', () => goTo(current + 1)));
+            document.querySelectorAll('.back').forEach(btn => btn.addEventListener('click', () => goTo(current - 1)));
+            nodes.forEach(n => n.addEventListener('click', () => goTo(Number(n.dataset.step))));
+            paintStepper();
+
+            // OTP UI
+            const sendOtp = document.getElementById('sendOtp');
+            const otpWrap = document.getElementById('otpWrap');
+            const verifyOtp = document.getElementById('verifyOtp');
+            const otpStatus = document.getElementById('otpStatus');
+            sendOtp?.addEventListener('click', () => {
+                otpWrap.classList.remove('hidden');
+                otpStatus.textContent = 'OTP sent to your email.';
+            });
+            verifyOtp?.addEventListener('click', () => {
+                otpStatus.textContent = 'Email verified successfully.';
+                otpStatus.classList.add('text-green-600');
+            });
+
+            // Package selection (synced between hero grid & step 4)
+            const packages = {
+                '3x3': { label: '3 × 3 Mtr. — Compact', desc: 'Focused product display and meetings.' },
+                '3x6': { label: '3 × 6 Mtr. — Expanded', desc: 'More room for engagement and demos.' },
+                '6x6': { label: '6 × 6 Mtr. — Flagship', desc: 'Premium showcase and networking zone.' },
+            };
+            let selectedPackage = null;
+
+            function renderPackageChoice() {
+                const wrap = document.getElementById('packageChoice');
+                wrap.innerHTML = '';
+                Object.entries(packages).forEach(([key, val]) => {
+                    const card = document.createElement('button');
+                    card.type = 'button';
+                    card.className = 'glass rounded-2xl p-5 text-left border border-white/70 hover:border-blue-main/50 transition' + (selectedPackage === key ? ' selected' : '');
+                    card.innerHTML = `<span class="font-display font-semibold text-ink">${val.label}</span><p class="text-xs text-ink/60 mt-1">${val.desc}</p>`;
+                    card.addEventListener('click', () => selectPackage(key));
+                    wrap.appendChild(card);
+                });
+            }
+
+            function selectPackage(key) {
+                selectedPackage = key;
+                renderPackageChoice();
+                const details = document.getElementById('packageDetails');
+                details.classList.remove('hidden');
+                details.innerHTML = `<strong class="text-ink">${packages[key].label}</strong><br>${packages[key].desc}`;
+            }
+
+            document.querySelectorAll('.stall-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.select-package')) return;
+                    selectPackage(card.dataset.package);
+                });
+                card.querySelector('.select-package')?.addEventListener('click', () => {
+                    selectPackage(card.dataset.package);
+                    goTo(4);
+                });
+            });
+            renderPackageChoice();
+
+            // Preview / submit modals
+            const previewModal = document.getElementById('previewModal');
+            const successModal = document.getElementById('successModal');
+            const previewBtn = document.getElementById('previewBtn');
+            const form = document.getElementById('exhibitorForm');
+
+            previewBtn?.addEventListener('click', () => {
+                const data = new FormData(form);
+                const rows = [];
+                for (const [key, val] of data.entries()) {
+                    if (!val) continue;
+                    rows.push(`<div class="flex justify-between gap-4 py-1 border-b border-ink/5"><span class="text-ink/50">${key}</span><span class="font-medium text-ink text-right">${val}</span></div>`);
+                }
+                if (selectedPackage) {
+                    rows.push(`<div class="flex justify-between gap-4 py-1 border-b border-ink/5"><span class="text-ink/50">package</span><span class="font-medium text-ink text-right">${packages[selectedPackage].label}</span></div>`);
+                }
+                document.getElementById('previewContent').innerHTML = rows.join('') || '<p>No fields filled yet.</p>';
+                previewModal.classList.remove('hidden');
+            });
+
+            document.getElementById('confirmSubmit')?.addEventListener('click', () => {
+                previewModal.classList.add('hidden');
+                document.getElementById('referenceBox').textContent = 'REF-TV26-' + Math.floor(100000 + Math.random() * 900000);
+                successModal.classList.remove('hidden');
+            });
+
+            document.querySelectorAll('.close-modal, .edit-modal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    previewModal.classList.add('hidden');
+                    successModal.classList.add('hidden');
+                });
+            });
+        })();
+    </script>
+    <script th:src="@{/js/exhibitor-registration.js}"></script>
+</body>
+
+</html>

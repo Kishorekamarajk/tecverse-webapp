@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<style>
+    @keyframes faqAnswerIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<section th:fragment="faq" id="faq" aria-labelledby="faq-heading"
+         class="relative isolate overflow-hidden bg-white pb-[104px] pt-[40px] sm:pb-[112px] sm:pt-[48px]">
+
+    <div class="pointer-events-none absolute inset-0 hidden overflow-hidden lg:block" aria-hidden="true">
+        <span class="absolute left-[50px] top-0 h-[34px] w-[62px] bg-[#E7FFF7] [clip-path:polygon(50%_0,0_100%,100%_100%)]"></span>
+        <span class="absolute left-[190px] top-0 h-[44px] w-[46px] bg-[#FF8C42] [clip-path:polygon(50%_100%,0_0,100%_0)]"></span>
+        <span class="absolute left-[300px] top-2 h-[66px] w-[64px] rotate-[-10deg] bg-[#E7FFF7] [clip-path:polygon(50%_0,0_100%,100%_82%)]"></span>
+        <span class="absolute left-0 top-[192px] h-[152px] w-[136px] bg-[#E7FFF7] [clip-path:polygon(0_0,100%_52%,0_100%)]"></span>
+        <span class="absolute right-[460px] top-0 h-[32px] w-[48px] rotate-[-16deg] bg-[#E7FFF7] [clip-path:polygon(50%_0,0_100%,100%_100%)]"></span>
+        <span class="absolute right-[424px] top-0 h-[34px] w-[34px] bg-[#E7FFF7] [clip-path:polygon(50%_0,0_100%,100%_100%)]"></span>
+        <span class="absolute right-[310px] top-0 h-[44px] w-[48px] bg-[#FF8C42] [clip-path:polygon(50%_100%,0_0,100%_0)]"></span>
+        <span class="absolute right-[420px] top-0 h-[52px] w-[58px] rotate-[16deg] bg-[#E7FFF7] [clip-path:polygon(50%_0,0_70%,100%_100%)]"></span>
+        <span class="absolute right-0 top-[192px] h-[160px] w-[138px] bg-[#E7FFF7] [clip-path:polygon(100%_0,0_50%,100%_100%)]"></span>
+        <span class="absolute right-[82px] bottom-[68px] h-[74px] w-[74px] rotate-[14deg] bg-[#FF8C42] [clip-path:polygon(50%_0,0_100%,100%_82%)]"></span>
+    </div>
+
+    <div class="container-custom relative">
+        <div class="text-center" data-reveal="fade-up">
+            <h2 id="faq-heading" class="section-heading font-sans text-uppercase">
+                <span th:text="#{faq.heading}">FAQS</span>
+            </h2>
+
+            <div class="section-heading-rule overflow-hidden" aria-hidden="true">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <div class="mt-[68px] grid grid-cols-1 gap-x-[60px] gap-y-[9px] lg:grid-cols-2" data-reveal="fade-up" data-reveal-delay="120">
+            <div th:if="${#lists.isEmpty(homeFaqs)}" class="col-span-full rounded-lg bg-[#F8F9FB] px-7 py-8 text-center text-[#666666]">
+                FAQs will be updated soon.
+            </div>
+
+            <details th:each="faq : ${homeFaqs}"
+                     class="group overflow-hidden rounded-lg bg-[#F8F9FB] transition-all duration-300 ease-out open:scale-[1.01] open:bg-white open:shadow-[0_16px_38px_rgba(15,23,42,0.08)]">
+                <summary class="flex min-h-[76px] cursor-pointer list-none items-center justify-between gap-5 px-7 py-4 text-left marker:hidden sm:px-9">
+                    <span class="text-[16px] font-extrabold leading-snug text-[#0F3D36] sm:text-[18px]" th:text="${#messages.msgOrNull('faq.dynamic.question.' + faq.question) ?: faq.question}">What is Tec-verse 2026?</span>
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] border border-[#EAEAEA] bg-white text-[#0F3D36] transition-all duration-300 group-open:rotate-45 group-open:border-[#0F3D36]">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" class="h-4 w-4">
+                            <path stroke-linecap="round" d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </span>
+                </summary>
+                <p class="px-7 pb-6 text-[15px] leading-7 text-[#666666] [animation:faqAnswerIn_260ms_ease-out] sm:px-9" th:text="${#messages.msgOrNull('faq.dynamic.answer.' + faq.answer) ?: faq.answer}">
+                    FAQ answer.
+                </p>
+            </details>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

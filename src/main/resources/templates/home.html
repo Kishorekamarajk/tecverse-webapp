@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{home.title}">Home</title>
+    <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <!-- Tailwind CSS (footer component only) - preflight disabled so it doesn't reset the Bootstrap-based page above the footer -->
+    <script>
+        window.tailwind = window.tailwind || {};
+        tailwind.config = {
+            corePlugins: { preflight: false },
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#F47A20', light: '#FF9A3D' },
+                        govt: { DEFAULT: '#35AA75', dark: '#061933', soft: '#EAF8F1' },
+                        ink: '#07182F',
+                        muted: '#4B5563',
+                        line: '#DDE7EF'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="home-page">
+<!-- Initial Tec-verse landing animation -->
+<div id="site-intro" class="site-intro" aria-label="Tec-verse introduction">
+    <div class="site-intro__splash d-grid">
+        <div class="site-intro__splash-grid position-absolute" aria-hidden="true"></div>
+        <div class="site-intro__splash-glow site-intro__splash-glow--one position-absolute max-w-[620px] rounded-[50%]" aria-hidden="true"></div>
+        <div class="site-intro__splash-glow site-intro__splash-glow--two position-absolute max-w-[620px] rounded-[50%]" aria-hidden="true"></div>
+
+        <div class="site-intro__splash-content position-relative d-flex flex-column align-items-center text-center">
+            <img class="site-intro__splash-logo" th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo">
+            <div class="site-intro__splash-eyebrow" th:text="#{contact.title}">Tec-verse 2026</div>
+            <div class="site-intro__splash-word mt-[20px] font-[900] leading-[.82] tracking-[-.075em]">Tec-verse</div>
+            <div class="site-intro__splash-date">STARTS ON 26 NOVEMBER 2026</div>
+        </div>
+    </div>
+
+    <div id="site-intro-countdown-panel" class="site-intro__countdown-panel text-center" aria-hidden="true">
+        <div class="site-intro__countdown-label mb-[28px]">Tec-verse STARTS IN</div>
+
+        <div class="site-intro__countdown-grid d-grid">
+            <div class="site-intro__time-unit">
+                <div id="cd-days" class="site-intro__time-value font-[800] leading-[.85] tracking-[-.06em]">00</div>
+                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]">DAYS</div>
+            </div>
+            <div class="site-intro__time-unit">
+                <div id="cd-hours" class="site-intro__time-value font-[800] leading-[.85] tracking-[-.06em]">00</div>
+                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]">HOURS</div>
+            </div>
+            <div class="site-intro__time-unit">
+                <div id="cd-minutes" class="site-intro__time-value font-[800] leading-[.85] tracking-[-.06em]">00</div>
+                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]">MINUTES</div>
+            </div>
+            <div class="site-intro__time-unit">
+                <div id="cd-seconds" class="site-intro__time-value font-[800] leading-[.85] tracking-[-.06em]">00</div>
+                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]">SECONDS</div>
+            </div>
+        </div>
+
+        <div class="site-intro__event-date">STARTS ON 26 NOVEMBER 2026</div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/navbar :: navbar('home')}"></div>
+
+<!-- Hero -->
+<section id="video-section" class="relative isolate flex h-screen w-screen items-center justify-center overflow-hidden bg-gradient-to-br from-black via-neutral-900 to-black text-white">
+
+    <!-- Background video (YouTube embed): brightened, contrasted, saturated for a vivid, alive feel -->
+   <div data-hero-video-wrap class="pointer-events-none absolute inset-0 overflow-hidden opacity-0 brightness-[1.08] contrast-[1.06] saturate-[1.12] transition-opacity duration-[1400ms] ease-out">
+    <iframe data-hero-video
+            src="https://www.youtube.com/embed/y9z789Sitrs?autoplay=1&mute=1&loop=1&playlist=y9z789Sitrs&controls=0&disablekb=1&playsinline=1&modestbranding=1&rel=0&fs=0&cc_load_policy=0&iv_load_policy=3&enablejsapi=1"
+            allow="autoplay; encrypted-media; fullscreen"
+            frameborder="0"
+            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+    </iframe>
+</div>
+
+    <div class="hero-video-shade pointer-events-none absolute inset-0 z-[1]" aria-hidden="true"></div>
+
+    <div class="container-custom hero-video-content relative z-10 d-flex flex-column align-items-start min-h-[100vh] text-start">
+        <span data-hero-reveal class="hero-video-badge opacity-0 scale-75 transition-all duration-700 ease-out d-inline-flex align-items-center font-[900] leading-[1] text-uppercase">
+            <span class="hero-video-badge__dot rounded-[50%]" aria-hidden="true"></span>
+            <span th:text="#{hero.badge}">Tec-verse 26-27 NOV 2026</span>
+        </span>
+
+        <h1 data-hero-reveal class="hero-video-title opacity-0 translate-y-8 delay-150 transition-all duration-700 ease-out m-0 font-[900] tracking-[0] leading-[0.96]">
+            <span th:text="#{hero.title.line1}">Driving Progress</span>
+            <span th:text="#{hero.title.line2}">Through Innovation</span>
+        </h1>
+
+        <div data-hero-reveal class="hero-video-countdown opacity-0 translate-y-6 delay-300 transition-all duration-700 ease-out flex-wrap" data-hero-countdown>
+            <div class="hero-video-countdown__item d-inline-flex gap-[7px] text-uppercase">
+                <strong data-hero-countdown-unit="days">00</strong>
+                <span>DAYS</span>
+            </div>
+            <div class="hero-video-countdown__item d-inline-flex gap-[7px] text-uppercase">
+                <strong data-hero-countdown-unit="hours">00</strong>
+                <span>HRS</span>
+            </div>
+            <div class="hero-video-countdown__item d-inline-flex gap-[7px] text-uppercase">
+                <strong data-hero-countdown-unit="minutes">00</strong>
+                <span>MIN</span>
+            </div>
+            <div class="hero-video-countdown__item d-inline-flex gap-[7px] text-uppercase">
+                <strong data-hero-countdown-unit="seconds">00</strong>
+                <span>SEC</span>
+            </div>
+        </div>
+
+        <p data-hero-reveal class="hero-video-meta opacity-0 translate-y-6 delay-300 transition-all duration-700 ease-out font-[800] font-size-[1.25rem]" th:text="#{venue.name}">
+            Chennai Trade Centre
+        </p>
+
+        <!-- <div data-hero-reveal class="hero-video-actions opacity-0 translate-y-6 [transition-delay:450ms] transition-all duration-700 ease-out d-flex align-items-center">
+            <a class="hero-video-btn hero-video-btn--primary d-inline-flex align-items-center justify-content-center gap-[0.6rem] min-h-[48px] rounded-[999px] font-[900] leading-[1]" th:href="@{/become-sponsor}">
+                <span>Become a Sponsor</span>
+                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+            </a>
+        </div> -->
+    </div>
+</section>
+
+
+<div th:replace="~{fragments/about-section :: about-section}"></div>
+
+
+<!-- Thematic Areas / Institutional Triangle -->
+<section id="thematic-areas" class="institution-triangle-section overflow-hidden">
+    <div class="institution-triangle-orbit position-absolute" aria-hidden="true"></div>
+    <div class="institution-triangle-particles position-absolute" aria-hidden="true"></div>
+
+    <div class="container position-relative">
+        <div class="institution-triangle-heading text-center position-relative" data-reveal="fade-up">
+            <span class="institution-triangle-kicker d-block mb-[.45rem] font-[900] leading-[1.4]">THREE INSTITUTIONS · ONE TECHNOLOGY ECOSYSTEM</span>
+            <h2 class="section-heading text-uppercase" th:text="#{thematic.heading}">THEMATIC AREAS</h2>
+            <span class="section-heading-rule overflow-hidden" aria-hidden="true"><span></span><span></span><span></span></span>
+        </div>
+
+        <div class="institution-triangle-stage" aria-label="Tec-verse institutional thematic domains">
+            <div class="institution-orbit-slogan institution-orbit-slogan--left position-absolute gap-[.35rem] font-[900] tracking-[.42em] leading-[1.2] text-uppercase" aria-hidden="true">
+                <span>Innovate</span>
+                <span>Collaborate</span>
+                <span>Transform</span>
+            </div>
+            <div class="institution-orbit-slogan institution-orbit-slogan--right position-absolute gap-[.35rem] font-[900] tracking-[.42em] leading-[1.2] text-uppercase text-end" aria-hidden="true">
+                <span>A Stronger</span>
+                <span>Digital India</span>
+                <span>Together</span>
+            </div>
+            <div class="triangle-energy triangle-energy--one position-absolute rounded-[50%]" aria-hidden="true"></div>
+            <div class="triangle-energy triangle-energy--two position-absolute rounded-[50%]" aria-hidden="true"></div>
+
+            <svg class="institution-triangle-lines position-absolute w-100" viewBox="0 0 1400 760" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                    <linearGradient id="triangleLineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#0a7d5b" />
+                        <stop offset="50%" stop-color="#ff711b" />
+                        <stop offset="100%" stop-color="#1769aa" />
+                    </linearGradient>
+                    <filter id="triangleGlow">
+                        <feGaussianBlur stdDeviation="3" result="blur"></feGaussianBlur>
+                        <feMerge>
+                            <feMergeNode in="blur"></feMergeNode>
+                            <feMergeNode in="SourceGraphic"></feMergeNode>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <ellipse class="triangle-line triangle-line-main" cx="700" cy="380" rx="510" ry="245" />
+                <ellipse class="triangle-line triangle-line-inner" cx="700" cy="380" rx="360" ry="172" />
+
+                <circle class="triangle-node-pulse" cx="700" cy="135" r="9" />
+                <circle class="triangle-node-pulse" cx="260" cy="500" r="9" />
+                <circle class="triangle-node-pulse" cx="1140" cy="500" r="9" />
+            </svg>
+
+            <button type="button"
+                    class="institution-node institution-node--cdac"
+                    data-institution="cdac"
+                    aria-controls="institution-domain-panel"
+                    aria-expanded="false"
+                    aria-pressed="false">
+                <span class="institution-node-glow position-absolute"></span>
+                <span class="institution-logo-wrap">
+                    <img th:src="@{/images/1.svg}" alt="C-DAC logo" />
+                </span>
+            </button>
+
+            <button type="button"
+                    class="institution-node institution-node--sameer"
+                    data-institution="sameer"
+                    aria-controls="institution-domain-panel"
+                    aria-expanded="false"
+                    aria-pressed="false">
+                <span class="institution-node-glow position-absolute"></span>
+                <span class="institution-logo-wrap">
+                    <img th:src="@{/images/2.svg}" alt="SAMEER logo" />
+                </span>
+            </button>
+
+            <button type="button"
+                    class="institution-node institution-node--cmet"
+                    data-institution="cmet"
+                    aria-controls="institution-domain-panel"
+                    aria-expanded="false"
+                    aria-pressed="false">
+                <span class="institution-node-glow position-absolute"></span>
+                <span class="institution-logo-wrap" >
+                    <img th:src="@{/images/3.svg}" alt="C-MET logo" />
+                </span>
+            </button>
+
+            <div class="institution-triangle-core align-items-center justify-content-center" aria-hidden="true">
+                <span class="core-logo align-items-center justify-content-center">
+                    <img th:src="@{/images/meity.svg}"
+                         alt="Ministry of Electronics and Information Technology logo" />
+                </span>
+            </div>
+
+        </div>
+
+        <div id="institution-domain-panel"
+             class="institution-domain-panel"
+             data-active-institution="cdac"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="institution-panel-title"
+             aria-live="polite"
+             tabindex="-1"
+             hidden>
+
+            <div class="institution-panel-head justify-content-between">
+                <div>
+                    <span class="institution-panel-kicker" th:text="#{institution.panel.selected}">Selected Institution</span>
+                    <h3 id="institution-panel-title">C-DAC</h3>
+                </div>
+
+                <button type="button"
+                        class="institution-panel-close"
+                        th:attr="aria-label=#{institution.panel.close}"
+                        data-institution-panel-close>
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div id="institution-domain-list"
+                 class="institution-domain-list"
+                 role="list"></div>
+
+            <div id="institution-content"
+                 class="institution-domain-content">
+                <div class="domain-content-placeholder">
+                    <span class="domain-content-icon">
+                        <i class="bi bi-stars"></i>
+                    </span>
+                    <div>
+                        <strong th:text="#{institution.panel.selectDomain}">Select a domain</strong>
+                        <p th:text="#{institution.panel.chooseDomain}">Choose a thematic domain above to view its focus.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/guests-dates :: guests-dates}"></div>
+
+
+<div th:replace="~{fragments/speakers :: speakers}"></div>
+
+<div th:replace="~{fragments/exhibitors :: exhibitors}"></div>
+
+<div th:replace="~{fragments/venue :: venue}"></div>
+
+<!-- <div th:replace="~{fragments/schedule-section:: schedule-section}"></div> -->
+
+<!-- <div th:replace="~{fragments/speakers :: speakers}"></div> -->
+
+
+<div th:replace="~{fragments/organizers :: organizers}"></div>
+
+<div th:replace="~{fragments/testimonials :: testimonials}"></div>
+
+<div th:replace="~{fragments/media-coverage :: media-coverage}"></div>
+
+<div th:replace="~{fragments/faq :: faq}"></div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/site-intro.js}"></script>
+<script th:src="@{/js/hero.js}"></script>
+<script th:src="@{/js/about-section.js}"></script>
+<script th:src="@{/js/testimonials.js}"></script>
+<script th:inline="javascript">
+    window.TECVERSE_THEMATIC_DOMAINS = /*[[${thematicDomainItems}]]*/ [];
+    window.TECVERSE_INSTITUTION_MESSAGES = {
+        noCards: /*[[#{institution.panel.noCards}]]*/ 'No thematic cards found',
+        addCards: /*[[#{institution.panel.addCards}]]*/ 'Add cards for {0} from the admin panel.',
+        thematicDomain: /*[[#{institution.panel.thematicDomain}]]*/ 'THEMATIC DOMAIN',
+        domainTitles: {
+            'Exascale Computing (HPC)': /*[[#{institution.domain.title.exascale}]]*/ 'Exascale Computing (HPC)',
+            'Quantum Computing': /*[[#{institution.domain.title.quantum}]]*/ 'Quantum Computing',
+            'IIoT Sensors, graphene and 2D materials': /*[[#{institution.domain.title.iiot}]]*/ 'IIoT Sensors, graphene and 2D materials',
+            'RoHS': /*[[#{institution.domain.title.rohs}]]*/ 'RoHS',
+            'Internet of Things (IoT)': /*[[#{institution.domain.title.iot}]]*/ 'Internet of Things (IoT)',
+            'Next-Gen Cyber security': /*[[#{institution.domain.title.cybersecurity}]]*/ 'Next-Gen Cyber security',
+            'Artificial Intelligence': /*[[#{institution.domain.title.ai}]]*/ 'Artificial Intelligence',
+            'Software Solutions': /*[[#{institution.domain.title.software}]]*/ 'Software Solutions',
+            'Energy generation and storage materials(Battery and supercapacitors)': /*[[#{institution.domain.title.energy}]]*/ 'Energy generation and storage materials(Battery and supercapacitors)',
+            'Additive Manufacturing & Electronic Packaging (LTCC)': /*[[#{institution.domain.title.additive}]]*/ 'Additive Manufacturing & Electronic Packaging (LTCC)',
+            'Semiconductors & Critical Materials': /*[[#{institution.domain.title.semiconductors}]]*/ 'Semiconductors & Critical Materials',
+            'Quantum Materials & Technologies': /*[[#{institution.domain.title.quantumMaterials}]]*/ 'Quantum Materials & Technologies',
+            'Nanomaterials': /*[[#{institution.domain.title.nanomaterials}]]*/ 'Nanomaterials'
+        },
+        domainDescriptions: {
+            'Exascale Computing (HPC)': /*[[#{institution.domain.description.exascale}]]*/ 'Ultra-high-performance computing capable of processing quintillions of calculations per second for complex scientific and technological challenges.',
+            'Energy generation and storage materials(Battery and supercapacitors)': /*[[#{institution.domain.description.energy}]]*/ 'Energy generation and storage materials are advanced materials that enable the production, storage, and efficient delivery of electrical energy. Batteries provide high energy storage for longer durations, while supercapacitors provide rapid energy delivery and high power.'
+        }
+    };
+</script>
+<script th:src="@{/js/institution-triangle.js}"></script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{contact.title}">Tec-verse 2026</title>
+    <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script>
+        window.tailwind = window.tailwind || {};
+        tailwind.config = {
+            corePlugins: { preflight: false },
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#F47A20', light: '#FF9A3D' },
+                        govt: { DEFAULT: '#35AA75', dark: '#061933', soft: '#EAF8F1' },
+                        ink: '#07182F',
+                        muted: '#4B5563',
+                        line: '#DDE7EF'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/jquery-validation@1.22.1/dist/jquery.validate.min.js"></script>
+    <script defer th:src="@{/js/jquery-form-validation.js}"></script>
+</head>
+<body class="inquiry-page">
+<div th:replace="~{fragments/navbar :: navbar('inquiry')}"></div>
+
+<div th:fragment="content">
+<th:block th:if="${param.type != null and param.type[0] == 'exhibitor'}">
+    <section class="exhibitor-hero position-relative d-flex align-items-center overflow-hidden">
+        <div class="exhibitor-hero__overlay"></div>
+        <div class="container exhibitor-hero__content">
+            <h1>Become An Exhibitor</h1>
+        </div>
+    </section>
+
+    <section class="exhibitor-build-section">
+        <div class="container exhibitor-build-container">
+            <div class="exhibitor-form-side">
+                <div class="exhibitor-section-heading">
+                    <h2>Let's Build The Next Tech Era, Together!</h2>
+                    <span></span>
+                    <p>Showcase your innovations, connect with decision-makers, and position your brand at the forefront of Chennai's rapidly evolving technology ecosystem.</p>
+                </div>
+
+                <form th:action="@{/inquiry(type='exhibitor')}" th:object="${inquiry}" method="post" class="exhibitor-form" data-inquiry-form>
+                    <div class="exhibitor-form-grid d-grid">
+                        <label>
+                            <span th:text="#{form.fullName.required}">Full Name*</span>
+                            <input type="text" th:field="*{name}" placeholder="Name*" required maxlength="150">
+                            <small class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+                        </label>
+                        <label>
+                            <span>Email Address*</span>
+                            <input type="email" th:field="*{email}" placeholder="Email*" required maxlength="255">
+                            <small class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+                        </label>
+                        <label>
+                            <span>Mobile Number*</span>
+                            <input type="tel" th:field="*{phone}" placeholder="Mobile Number*" required maxlength="32" data-indian-mobile>
+                            <small class="phone-hint">Only Indian mobile numbers (10 digits) are accepted.</small>
+                            <small class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small>
+                        </label>
+                        <label>
+                            <span th:text="#{form.company.required}">Company Name*</span>
+                            <input type="text" th:field="*{company}" placeholder="Company Name*" required maxlength="200">
+                            <small class="error" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></small>
+                        </label>
+                        <label>
+                            <span>Designation*</span>
+                            <input type="text" th:field="*{jobTitle}" placeholder="Designation*" required maxlength="150">
+                        </label>
+                        <label>
+                            <span>Stall Type*</span>
+                            <select name="stallType" required>
+                                <option value="">Select Stall</option>
+                                <option>Startup Booth</option>
+                                <option>Standard Stall</option>
+                                <option>Premium Stall</option>
+                                <option>Sponsor Booth</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>Country Code*</span>
+                            <select th:field="*{country}" required class="form-select" autocomplete="country" data-phone-country aria-label="Country calling code">
+<option th:each="country : ${contactCountries}" th:value="${country.code()}" th:attr="data-dial-code=${country.dialCode()}" th:text="${country.name()}"></option>
+</select><small class="error" th:if="${#fields.hasErrors('country')}" th:errors="*{country}"></small>
+                        </label>
+                        <label>
+                            <span>Website URL</span>
+                            <input type="url" name="website" placeholder="Website URL">
+                        </label>
+                        <label>
+                            <span>Industry / Category*</span>
+                            <select name="industry" required>
+                                <option value="" th:text="#{register.option.selectIndustry}">Select Industry</option>
+                                <option>AI &amp; Automation</option>
+                                <option>Software</option>
+                                <option>Manufacturing Tech</option>
+                                <option>Healthcare Tech</option>
+                                <option>Finance Tech</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>What do you want to exhibit?*</span>
+                            <select name="exhibitType" required>
+                                <option value="">Please Select</option>
+                                <option>Product</option>
+                                <option>Service</option>
+                                <option>Platform</option>
+                                <option>Live Demo</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <label class="exhibitor-form-message">
+                        <span>Message / Remarks</span>
+                        <textarea rows="3" th:field="*{message}" placeholder="Message / Remarks" required maxlength="5000"></textarea>
+                        <small class="error" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></small>
+                    </label>
+
+                    <button type="submit" class="exhibitor-submit">Submit</button>
+                    <p class="success" th:if="${successMessage}" th:text="${successMessage}"></p>
+                </form>
+            </div>
+
+            <aside class="exhibitor-benefits">
+                <div class="exhibitor-section-heading">
+                    <h2>Why Exhibit At Tec-verse Chennai?</h2>
+                    <span></span>
+                </div>
+
+                <div class="benefit-card benefit-card--blue">
+                    <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+                    <h3>Direct Access to 3,000+ Business Visitors</h3>
+                    <p>Engage with SMEs, MSMEs, and decision-makers who are actively seeking IT solutions and technology partners.</p>
+                </div>
+                <div class="benefit-card benefit-card--yellow">
+                    <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+                    <h3>AI &amp; Future Tech Positioning</h3>
+                    <p>Be part of a platform focused on AI, automation, and digital transformation, aligning your brand with future-ready solutions.</p>
+                </div>
+                <div class="benefit-card benefit-card--green">
+                    <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+                    <h3>High-Quality Lead Generation</h3>
+                    <p>Meet serious buyers with real requirements, not just visitors, leading to faster conversions and deal closures.</p>
+                </div>
+                <div class="benefit-card benefit-card--blue">
+                    <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+                    <h3>Strong Business Networking</h3>
+                    <p>Connect with founders, CEOs, and industry leaders through the TEG App to build long-term partnerships and collaborations.</p>
+                </div>
+                <div class="benefit-card benefit-card--red">
+                    <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+                    <h3>Multi-Industry Exposure</h3>
+                    <p>Showcase your solutions across manufacturing, retail, logistics, healthcare, finance, and more all under one roof.</p>
+                </div>
+                <div class="benefit-card benefit-card--yellow">
+                    <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+                    <h3>Live Product Demonstrations</h3>
+                    <p>Demonstrate your solutions in real time, helping prospects understand the value instantly and build trust.</p>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <section class="stall-packages-section">
+        <div class="container stall-packages-grid">
+            <article class="stall-package stall-package--red">
+                <div class="stall-package__label" th:text="#{register.field.stallPackage}">Stall Package</div>
+                <h2>Stall Size : 3 X 3 Mtr.</h2>
+                <ul>
+                    <li>2 Exhibitor Passes (Food coupon)</li>
+                    <li>1 Exhibitor Pass for Pre &amp; post party</li>
+                    <li>5 Visitor Passes</li>
+                    <li>TEG Community Network Portal Access</li>
+                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li>One-to-one messaging can be done to visitors (in app)</li>
+                    <li><strong>Visibility</strong>
+                        <ul>
+                            <li>On Website (Logo)</li>
+                            <li>On Ground Visibility</li>
+                        </ul>
+                    </li>
+                    <li><strong>Including Infrastructure</strong>
+                        <ul>
+                            <li>Modular Stall Structure (White Octanorm Panels)</li>
+                            <li>Fascia with Company Name</li>
+                            <li>1 Table + 2 Chairs</li>
+                            <li>3 Spotlights</li>
+                            <li>1 Power Socket (15 Amp)</li>
+                            <li>Carpet Flooring</li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+
+            <article class="stall-package stall-package--yellow">
+                <div class="stall-package__label" th:text="#{register.field.stallPackage}">Stall Package</div>
+                <h2>Stall Size : 3 X 6 Mtr.</h2>
+                <ul>
+                    <li>4 Exhibitor Passes (Food coupon)</li>
+                    <li>2 Exhibitor Pass for Pre &amp; post party</li>
+                    <li>10 Visitor Passes</li>
+                    <li>TEG Community Network Portal Access</li>
+                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li>One-to-one messaging can be done to visitors (in app)</li>
+                    <li><strong>Visibility</strong>
+                        <ul>
+                            <li>On Website (Logo)</li>
+                            <li>On Ground Visibility</li>
+                        </ul>
+                    </li>
+                    <li><strong>Including Infrastructure</strong>
+                        <ul>
+                            <li>Modular Stall Structure (White Octanorm Panels)</li>
+                            <li>Fascia with Company Name</li>
+                            <li>2 Tables + 4 Chairs</li>
+                            <li>6 Spotlights</li>
+                            <li>2 Power Sockets (15 Amp)</li>
+                            <li>Carpet Flooring</li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+
+            <article class="stall-package stall-package--green">
+                <div class="stall-package__label" th:text="#{register.field.stallPackage}">Stall Package</div>
+                <h2>Stall Size : 6 X 6 Mtr.</h2>
+                <ul>
+                    <li>8 Exhibitor Passes (Food coupon)</li>
+                    <li>3 Exhibitor Pass invited for pre &amp; post party</li>
+                    <li>20 Visitor Passes</li>
+                    <li>TEG Community Network Portal Access</li>
+                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li>One-to-one messaging can be done to visitors (in app)</li>
+                    <li><strong>Visibility</strong>
+                        <ul>
+                            <li>On Website (Logo)</li>
+                            <li>On Ground Visibility</li>
+                        </ul>
+                    </li>
+                    <li><strong>Including Infrastructure</strong>
+                        <ul>
+                            <li>Modular Stall Structure (White Octanorm Panels)</li>
+                            <li>Fascia with Company Name</li>
+                            <li>2 Tables + 2 Round Glass Tables</li>
+                            <li>2 Sofas + 6 Chairs</li>
+                            <li>12 Spotlights</li>
+                            <li>3 Power Sockets (15 Amp)</li>
+                            <li>Carpet Flooring</li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+        </div>
+        
+        <div class="container stall-packages-grid stall-packages-grid--two">
+            <article class="stall-package stall-package--blue">
+                <div class="stall-package__label" th:text="#{register.field.stallPackage}">Stall Package</div>
+                <h2>Stall Size : 3 X 9 Mtr. (Corner Stall)</h2>
+                <ul>
+                    <li>6 Exhibitor Pass (Food coupon)</li>
+                    <li>2 Exhibitor Pass invited for pre &amp; post party</li>
+                    <li>15 Visitor Passes</li>
+                    <li>TEG Community Network Portal Access</li>
+                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li>One-to-one messaging can be done to visitors (in app)</li>
+                    <li><strong>Visibility</strong>
+                        <ul>
+                            <li>On Website (Logo)</li>
+                            <li>On Ground Visibility</li>
+                        </ul>
+                    </li>
+                    <li><strong>Including Infrastructure</strong>
+                        <ul>
+                            <li>Modular Stall Structure (White Octanorm Panels)</li>
+                            <li>Fascia with Company Name</li>
+                            <li>2 Tables + 1 Round Glass Table</li>
+                            <li>1 Sofa + 4 Chairs</li>
+                            <li>9 Spotlights</li>
+                            <li>3 Power Sockets (15 Amp)</li>
+                            <li>Carpet Flooring</li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+
+            <article class="stall-package stall-package--red">
+                <div class="stall-package__label">The Catalyst Zone</div>
+                <h2>Stall Size : 2 × 2 SQ MTS</h2>
+                <ul>
+                    <li>2 Exhibitor Passes (Food coupon)</li>
+                    <li>TEG Community Network Portal Acces</li>
+                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li>One-to-one messaging can be done to visitors (In app)</li>
+                    <li><strong>Including Infrastructure</strong>
+                        <ul>
+                            <li>Modular Stall Structure (White Octanorm Panels)</li>
+                            <li>Fascia with Company Name</li>
+                            <li>1 Table + 2 Chairs</li>
+                            <li>2 Spotlights</li>
+                            <li>1 Power Socket (15 Amp)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </article>
+        </div>
+    </section>
+</th:block>
+
+<th:block th:unless="${param.type != null and param.type[0] == 'exhibitor'}">
+<main class="contact-compact" aria-labelledby="contact-hero-title">
+  <div class="contact-reference-shell">
+    <header class="contact-reference-hero">
+        <div class="contact-reference-hero__inner">
+            <!-- <span class="contact-reference-hero__eyebrow" th:text="#{contact.heading}">CONTACT US</span> -->
+            <h1 id="contact-hero-title"><span th:text="#{contact.compact.hero.title.start}">Have</span> <em th:text="#{contact.compact.hero.title.emphasis}">Queries?</em></h1>
+            <p th:text="#{contact.compact.hero.subtitle}">We’re here to help! Reach out to us for any information regarding TecVerse 2026.</p>
+        </div>
+    </header>
+    <div class="container contact-reference-layout">
+        <section class="compact-contact-message">
+            <form th:action="@{/inquiry}" th:object="${inquiry}" method="post" class="compact-contact-form" data-inquiry-form>
+                <header class="compact-help-heading">
+                    <span aria-hidden="true"><i class="bi bi-chat-dots-fill"></i></span>
+                    <div><h2><span th:text="#{contact.compact.form.title.start}">Send us a</span> <em th:text="#{contact.compact.form.title.emphasis}">Message</em></h2></div>
+                </header>
+                <div class="compact-form-grid d-grid">
+                    <label><span th:text="#{contact.compact.field.name}">Name *</span><input type="text" th:field="*{name}" th:placeholder="#{contact.compact.placeholder.name}" required maxlength="150"><small class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small></label>
+                    <label><span th:text="#{contact.compact.field.email}">Email *</span><input type="email" th:field="*{email}" th:placeholder="#{contact.compact.placeholder.email}" required maxlength="255"><small class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small></label>
+                    <label><span th:text="#{contact.compact.field.phone}">Mobile Number *</span><span class="compact-phone-input"><input type="tel" th:field="*{phone}" th:placeholder="#{contact.compact.placeholder.phone}" required maxlength="32" data-indian-mobile></span><small class="phone-hint" th:text="#{contact.compact.phoneHint}">Enter a valid 10-digit Indian mobile number.</small><small class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small></label>
+                    <label><span th:text="#{contact.compact.field.institution}">Institution Name *</span><input type="text" th:field="*{company}" th:placeholder="#{contact.compact.placeholder.institution}" required maxlength="200"><small class="error" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></small></label>
+                    <label><span th:text="#{contact.compact.field.jobTitle}">Job Title</span><input type="text" th:field="*{jobTitle}" th:placeholder="#{contact.compact.placeholder.jobTitle}" maxlength="150"><small class="error" th:if="${#fields.hasErrors('jobTitle')}" th:errors="*{jobTitle}"></small></label>
+                    <label><span th:text="#{contact.compact.field.country}">Country</span><select th:field="*{country}" class="form-select" autocomplete="country" data-phone-country><option th:each="country : ${contactCountries}" th:value="${country.code()}" th:attr="data-dial-code=${country.dialCode()}" th:text="${country.name()}"></option></select><small class="error" th:if="${#fields.hasErrors('country')}" th:errors="*{country}"></small></label>
+                    <label class="compact-full"><span th:text="#{contact.compact.field.message}">Message *</span><textarea th:field="*{message}" rows="3" th:placeholder="#{contact.compact.placeholder.message}" required maxlength="5000"></textarea><small class="error" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></small></label>
+                </div>
+                <div class="compact-captcha-row">
+                    <label class="compact-captcha"><span th:text="#{contact.compact.field.security}">Security Check *</span><span><strong th:text="${captchaQuestion}">3 + 7 = ?</strong><input name="captchaAnswer" type="number" inputmode="numeric" min="0" max="100" th:placeholder="#{contact.compact.placeholder.captcha}" required></span><small class="error" th:if="${#fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}" th:text="${error}"></small></label>
+                    <button type="submit"><i class="bi bi-send-fill"></i> <span th:text="#{contact.compact.send}">Send Message</span></button>
+                </div>
+                <p class="success" th:if="${successMessage}" th:text="${successMessage}"></p>
+            </form>
+        </section>
+        <aside class="contact-reference-sidebar">
+            <h2><span th:text="#{contact.compact.sidebar.title.start}">Get in</span> <em th:text="#{contact.compact.sidebar.title.emphasis}">Touch</em></h2>
+            <p class="contact-reference-sidebar__intro" th:text="#{contact.compact.sidebar.intro}">You can also reach us through the following contact information.</p>
+            <section class="compact-contact-cards" aria-label="Contact details">
+            <div><i class="bi bi-envelope-fill compact-icon--orange"></i><p><strong th:text="#{contact.email}">Email</strong><span>tec-verse@cdac.in</span></p></div>
+            <div><i class="bi bi-geo-alt-fill compact-icon--green"></i><p><strong th:text="#{contact.venueOffice}">Venue Address</strong><span>Chennai Trade Centre, Nandambakkam, Chennai, Tamil Nadu 600089</span></p></div>
+            <div><i class="bi bi-telephone-fill compact-icon--navy"></i><p><strong th:text="#{register.field.phone}">Phone</strong><span>+91 **********</span></p></div>
+            </section>
+            <section class="compact-location">
+            <div class="compact-map overflow-hidden"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.3451748816456!2d80.1872352748421!3d13.013677337305563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267345cb07d5b%3A0x7d6459212d295bdf!2sChennai%20Trade%20Centre%20-%20Nandambakkam!5e0!3m2!1sen!2sin!4v1785913418990!5m2!1sen!2sin" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Chennai Trade Centre"></iframe></div>
+            <aside><h2><i class="bi bi-geo-alt-fill"></i> <span th:text="#{contact.compact.venue.title}">Venue Location</span></h2><address><strong>CHENNAI TRADE CENTRE,</strong><br>Ramapuram, Nandambakkam,<br>Chennai, Tamil Nadu 600089</address><p><i class="bi bi-signpost"></i> <span th:text="#{contact.compact.venue.landmark}">Landmark: Nandambakkam</span></p><a href="https://www.google.com/maps/search/?api=1&amp;query=Chennai+Trade+Centre%2C+Nandambakkam%2C+Chennai" target="_blank" rel="noopener"><span th:text="#{contact.compact.venue.directions}">Get Directions on Google Maps</span> <i class="bi bi-arrow-right"></i></a></aside>
+            </section>
+        </aside>
+    </div>
+  </div>
+</main>
+</th:block>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<div th:if="${successMessage}" class="modal fade" id="inquiry-success-modal"
+     tabindex="-1" aria-labelledby="inquiry-success-title"
+     aria-describedby="inquiry-success-description" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="d-flex justify-content-end p-3 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center px-4 pb-4">
+                <i class="bi bi-check-circle-fill text-success fs-1" aria-hidden="true"></i>
+                <h2 id="inquiry-success-title" class="h5 fw-bold mt-3">Thank you for submitting!</h2>
+                <p id="inquiry-success-description" class="text-muted mb-4">Our team will reach out to you shortly.</p>
+                <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/contact-inquiry.js}" defer></script>
+</body>
+</html>

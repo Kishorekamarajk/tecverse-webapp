@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<section th:fragment="testimonials" id="testimonials" aria-labelledby="testimonials-heading" class="relative isolate overflow-hidden bg-[#F3E5C8]">
+
+    <div class="container-custom relative py-[120px]">
+
+        <div class="flex items-center justify-center gap-4" data-reveal="fade-up">
+            <div class="text-center">
+                <h2 id="testimonials-heading" class="text-[21px] font-bold leading-tight tracking-tight text-ink sm:text-[31px]" th:text="#{testimonials.heading}">The Story Behind Tec-verse 2025</h2>
+                <span class="section-heading-rule overflow-hidden" aria-hidden="true"><span></span><span></span><span></span></span>
+            </div>
+        </div>
+
+        <div class="relative mt-16 overflow-hidden" data-testimonial-viewport>
+            <div class="flex gap-6" data-testimonial-track>
+
+                <!-- Card 1: Ajim Sheikh -->
+                <div class="testimonial-card">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="testimonial-card__quote-icon" aria-hidden="true">
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                    </svg>
+                    <p class="testimonial-card__quote" th:text="|&quot;#{testimonials.quote.ajim}&quot;|">"Tec-verse 2025 was a hub of innovation and learning—thrilled to have been a part of it!"</p>
+                    <div class="testimonial-card__author">
+                        <div class="flex items-center gap-3">
+                            <img th:src="@{/images/2.svg}" alt="" class="testimonial-card__avatar" />
+                            <div>
+                                <p class="testimonial-card__name">Ajim Sheikh</p>
+                                <p class="testimonial-card__role">C-DAC</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Raymond Pinto -->
+                <div class="testimonial-card">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="testimonial-card__quote-icon" aria-hidden="true">
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                    </svg>
+                    <p class="testimonial-card__quote" th:text="|&quot;#{testimonials.quote.raymond}&quot;|">"It was a wonderful experience at Tec-verse 2025."</p>
+                    <div class="testimonial-card__author">
+                        <div class="flex items-center gap-3">
+                            <img th:src="@{/images/3.svg}" alt="" class="testimonial-card__avatar" />
+                            <div>
+                                <p class="testimonial-card__name">Raymond Pinto</p>
+                                <p class="testimonial-card__role">SAMEER</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Darshan HV -->
+                <div class="testimonial-card">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="testimonial-card__quote-icon" aria-hidden="true">
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                    </svg>
+                    <p class="testimonial-card__quote" th:text="|&quot;#{testimonials.quote.darshan}&quot;|">"This event was an excellent opportunity to engage with the broader HPC community, exchange ideas…"</p>
+                    <div class="testimonial-card__author">
+                        <div class="flex items-center gap-3">
+                            <img th:src="@{/images/2.svg}" alt="" class="testimonial-card__avatar" />
+                            <div>
+                                <p class="testimonial-card__name">Darshan HV</p>
+                                <p class="testimonial-card__role" th:text="#{testimonials.role.technologySpeaker}">Technology Speaker</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Dr. Kapil Kant Kamal -->
+                <div class="testimonial-card">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="testimonial-card__quote-icon" aria-hidden="true">
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                    </svg>
+                    <p class="testimonial-card__quote" th:text="|&quot;#{testimonials.quote.kapil}&quot;|">"Tec-verse 2025… showcased innovative products and solutions, and was attended by 1,000+ participants from government organisations, startups, and the private sector."</p>
+                    <div class="testimonial-card__author">
+                        <div class="flex items-center gap-3">
+                            <img th:src="@{/images/3.svg}" alt="" class="testimonial-card__avatar" />
+                            <div>
+                                <p class="testimonial-card__name">Dr. Kapil Kant Kamal</p>
+                                <p class="testimonial-card__role" th:text="#{testimonials.role.coreTeam}">Tec-verse 2025 Core Organising Team</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Duplicate set for a seamless auto-scroll loop -->
+                <!-- Card 1: Ajim Sheikh -->
+                <div aria-hidden="true" class="testimonial-card">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="testimonial-card__quote-icon" aria-hidden="true">
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                    </svg>
+                    <p class="testimonial-card__quote" th:text="|&quot;#{testimonials.quote.ajim}&quot;|">"Tec-verse 2025 was a hub of innovation and learning—thrilled to have been a part of it!"</p>
+                    <div class="testimonial-card__author">
+                        <div class="flex items-center gap-3">
+                            <img th:src="@{/images/2.svg}" alt="" class="testimonial-card__avatar" />
+                            <div>
+                                <p class="testimonial-card__name">Ajim Sheikh</p>
+                                <p class="testimonial-card__role">C-DAC</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Raymond Pinto -->
+                <div aria-hidden="true" class="testimonial-card">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="testimonial-card__quote-icon" aria-hidden="true">
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                    </svg>
+                    <p class="testimonial-card__quote" th:text="|&quot;#{testimonials.quote.raymond}&quot;|">"It was a wonderful experience at Tec-verse 2025."</p>
+                    <div class="testimonial-card__author">
+                        <div class="flex items-center gap-3">
+                            <img th:src="@{/images/3.svg}" alt="" class="testimonial-card__avatar" />
+                            <div>
+                                <p class="testimonial-card__name">Raymond Pinto</p>
+                                <p class="testimonial-card__role">SAMEER</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Darshan HV -->
+                <div aria-hidden="true" class="testimonial-card">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="testimonial-card__quote-icon" aria-hidden="true">
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                    </svg>
+                    <p class="testimonial-card__quote" th:text="|&quot;#{testimonials.quote.darshan}&quot;|">"This event was an excellent opportunity to engage with the broader HPC community, exchange ideas…"</p>
+                    <div class="testimonial-card__author">
+                        <div class="flex items-center gap-3">
+                            <img th:src="@{/images/2.svg}" alt="" class="testimonial-card__avatar" />
+                            <div>
+                                <p class="testimonial-card__name">Darshan HV</p>
+                                <p class="testimonial-card__role" th:text="#{testimonials.role.technologySpeaker}">Technology Speaker</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Dr. Kapil Kant Kamal -->
+                <div aria-hidden="true" class="testimonial-card">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="testimonial-card__quote-icon" aria-hidden="true">
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                    </svg>
+                    <p class="testimonial-card__quote" th:text="|&quot;#{testimonials.quote.kapil}&quot;|">"Tec-verse 2025… showcased innovative products and solutions, and was attended by 1,000+ participants from government organisations, startups, and the private sector."</p>
+                    <div class="testimonial-card__author">
+                        <div class="flex items-center gap-3">
+                            <img th:src="@{/images/3.svg}" alt="" class="testimonial-card__avatar" />
+                            <div>
+                                <p class="testimonial-card__name">Dr. Kapil Kant Kamal</p>
+                                <p class="testimonial-card__role" th:text="#{testimonials.role.coreTeam}">Tec-verse 2025 Core Organising Team</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+</body>
+</html>

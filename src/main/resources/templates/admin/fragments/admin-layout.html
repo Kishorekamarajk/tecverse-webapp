@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+
+<aside th:fragment="sidebar(active)" class="admin-sidebar position-fixed top-0 start-0 d-flex flex-column vh-100" aria-label="Admin navigation">
+    <div class="admin-brand d-flex align-items-center">
+        <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo">
+        <span>
+            <strong>Tec-verse Admin</strong>
+            <small>Content Coordinator</small>
+        </span>
+    </div>
+
+    <nav class="admin-side-nav d-flex flex-column flex-grow-1 gap-1">
+        <a th:classappend="${active == 'dashboard'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin}">
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Main Dashboard</span>
+        </a>
+
+        <div class="admin-nav-label">Core Modules</div>
+
+        <a th:classappend="${active == 'news'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/news-updates}">
+            <i class="bi bi-newspaper"></i>
+            <span>News &amp; Updates</span>
+        </a>
+        <a th:classappend="${active == 'gallery'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/gallery}">
+            <i class="bi bi-images"></i>
+            <span>Gallery</span>
+        </a>
+        <a th:classappend="${active == 'speaker-update'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/speaker-update}">
+            <i class="bi bi-mic"></i>
+            <span>Speaker Update</span>
+        </a>
+        <a th:classappend="${active == 'id-cards'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/id-cards}">
+            <i class="bi bi-person-vcard"></i>
+            <span>ID Card Generator</span>
+        </a>
+        <a th:classappend="${active == 'exhibitor-logos'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/exhibitor-logos}">
+            <i class="bi bi-shop-window"></i>
+            <span>Exhibitor Logos</span>
+        </a>
+        <a th:classappend="${active == 'chief-guests'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/chief-guests}">
+            <i class="bi bi-person-badge"></i>
+            <span>Chief Guests</span>
+        </a>
+        <a th:classappend="${active == 'important-dates'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/important-dates}">
+            <i class="bi bi-calendar3"></i>
+            <span>Important Dates</span>
+        </a>
+        <a th:classappend="${active == 'faqs'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/faqs}">
+            <i class="bi bi-question-circle"></i>
+            <span>FAQ</span>
+        </a>
+        <a th:classappend="${active == 'schedule'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/conference-schedule}">
+            <i class="bi bi-calendar-event"></i>
+            <span>Conference Schedule</span>
+        </a>
+        <a th:classappend="${active == 'thematic'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/thematic-cards}">
+            <i class="bi bi-grid-3x3-gap"></i>
+            <span>Thematic Areas</span>
+        </a>
+    </nav>
+
+    <form class="admin-sidebar-logout" th:action="@{/admin/logout}" method="post">
+        <button class="btn btn-outline-secondary w-100" type="submit">
+            <i class="bi bi-box-arrow-right me-1"></i> Logout
+        </button>
+    </form>
+</aside>
+
+<header th:fragment="topbar(title)" class="admin-topbar sticky-top d-flex align-items-center">
+    <div class="admin-breadcrumb d-flex align-items-center">
+        <strong th:text="${title}">Dashboard</strong>
+    </div>
+</header>
+
+</body>
+</html>

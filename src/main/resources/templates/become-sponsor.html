@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{sponsor.title}">Become a Sponsor | Tec-verse 2026</title>
+    <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <script>
+        window.tailwind = window.tailwind || {};
+        tailwind.config = { corePlugins: { preflight: false } };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/jquery-validation@1.22.1/dist/jquery.validate.min.js"></script>
+    <script defer th:src="@{/js/jquery-form-validation.js}"></script>
+</head>
+<body class="sponsor-page">
+
+<div th:replace="~{fragments/navbar :: navbar('sponsor')}"></div>
+
+<main>
+    <section class="sp-hero sp-hero--focused align-items-center" aria-labelledby="sponsor-hero-title" style="position: relative; overflow: hidden;">
+        <div class="sp-hero__media" aria-hidden="true">
+            <img th:src="@{/images/banner.jpg}" alt="" style="transform: scale(1.05);">
+        </div>
+        <div class="sp-hero__overlay" aria-hidden="true" style="background: linear-gradient(135deg, rgba(7, 24, 47, 0.7), rgba(244, 122, 32, 0.3));"></div>
+        
+        <!-- Animated decorative elements -->
+        <style>
+            @keyframes float-slow { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+            @keyframes glow-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+            @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+            .sp-deco { position: absolute; animation: float-slow 6s ease-in-out infinite; }
+            .sp-deco-1 { top: 10%; right: 5%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(244, 122, 32, 0.2) 0%, transparent 70%); border-radius: 50%; }
+            .sp-deco-2 { bottom: 10%; left: 5%; width: 250px; height: 250px; background: radial-gradient(circle, rgba(53, 170, 117, 0.15) 0%, transparent 70%); border-radius: 50%; animation-delay: 3s; }
+        </style>
+        <div class="sp-deco sp-deco-1"></div>
+        <div class="sp-deco sp-deco-2"></div>
+
+        <div class="container sp-hero__inner d-grid align-items-center" style="position: relative; z-index: 2;">
+            <div class="sp-hero__copy" data-reveal="fade-up">
+                <span class="sp-kicker d-inline-flex align-items-center gap-[0.55rem] font-[800] text-uppercase" style="animation: slideUp 0.8s ease-out 0.2s both;"><i class="bi bi-gem"></i> Tec-verse 2026 Sponsorship</span>
+                <h1 id="sponsor-hero-title" style="animation: slideUp 0.8s ease-out 0.4s both;">Become a Sponsor at Tec-verse 2026</h1>
+                <p style="animation: slideUp 0.8s ease-out 0.6s both;">Explore structured partnership opportunities designed for visibility, engagement, and institutional collaboration.</p>
+                <div class="sp-actions d-flex flex-wrap gap-[0.9rem]" style="animation: slideUp 0.8s ease-out 0.8s both;">
+                    <a href="#sponsor-packages" class="sp-btn sp-btn--primary align-items-center justify-content-center gap-[0.55rem] font-[800]" style="transition: all 0.3s ease; position: relative; overflow: hidden;">
+                        <span style="position: relative; z-index: 2;"><i class="bi bi-grid-3x3-gap"></i> View Sponsorship Packages</span>
+                        <span style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.2); animation: shimmer 0.8s ease infinite; z-index: 1;"></span>
+                    </a>
+                    <a href="#sponsor-contact" class="sp-btn sp-btn--light align-items-center justify-content-center gap-[0.55rem] font-[800]" style="transition: all 0.3s ease;"><i class="bi bi-send-fill"></i> Register Interest</a>
+                </div>
+            </div>
+
+            <aside class="sp-hero-panel overflow-hidden" data-reveal="fade-up" data-reveal-delay="120" aria-label="Sponsor options" style="animation: slideUp 0.8s ease-out 0.6s both; backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 255, 255, 0.2);">
+                <div class="sp-panel-head d-flex align-items-center justify-content-between gap-[1rem]">
+                    <span>Available Ways</span>
+                    <strong>5 Sponsorship Packages</strong>
+                </div>
+                <div class="sp-focus-list">
+                    <span style="animation: slideLeft 0.6s ease-out 0.8s both; display: inline-flex; gap: 8px; align-items: center;"><i class="bi bi-gem" style="color: #F47A20;"></i> Platinum Sponsor</span>
+                    <span style="animation: slideLeft 0.6s ease-out 0.9s both; display: inline-flex; gap: 8px; align-items: center;"><i class="bi bi-trophy-fill" style="color: #FFB800;"></i> Gold Sponsor</span>
+                    <span style="animation: slideLeft 0.6s ease-out 1s both; display: inline-flex; gap: 8px; align-items: center;"><i class="bi bi-award-fill" style="color: #A8A8A8;"></i> Silver Sponsor</span>
+                    <span style="animation: slideLeft 0.6s ease-out 1.1s both; display: inline-flex; gap: 8px; align-items: center;"><i class="bi bi-circle-fill" style="color: #B87333;"></i> Copper Sponsor</span>
+                    <span style="animation: slideLeft 0.6s ease-out 1.2s both; display: inline-flex; gap: 8px; align-items: center;"><i class="bi bi-circle" style="color: #CD7F32;"></i> Bronze Sponsor</span>
+                </div>
+            </aside>
+        </div>
+        <style>
+            @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+            @keyframes slideLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        </style>
+    </section>
+    
+    <section id="sponsor-contact" class="sp-section sp-contact overflow-hidden" aria-labelledby="sponsor-contact-title" style="background: linear-gradient(135deg, #FFFFFF 0%, #F8F9FB 100%);">
+        <style>
+            .sp-form {
+                animation: slideUp 0.8s ease-out;
+            }
+            .sp-field {
+                position: relative;
+                animation: slideUp 0.6s ease-out forwards;
+                opacity: 0;
+            }
+            .sp-field:nth-child(1) { animation-delay: 0.1s; }
+            .sp-field:nth-child(2) { animation-delay: 0.2s; }
+            .sp-field:nth-child(3) { animation-delay: 0.3s; }
+            .sp-field:nth-child(4) { animation-delay: 0.4s; }
+            .sp-field:nth-child(5) { animation-delay: 0.5s; }
+            .sp-field:nth-child(6) { animation-delay: 0.6s; }
+            .sp-field:nth-child(7) { animation-delay: 0.7s; }
+            .sp-field:nth-child(8) { animation-delay: 0.8s; }
+            .sp-field:nth-child(9) { animation-delay: 0.9s; }
+            .sp-field:nth-child(10) { animation-delay: 1s; }
+            .sp-field:nth-child(11) { animation-delay: 1.1s; }
+            
+            .sp-field input, .sp-field textarea, .sp-field select {
+                background: white;
+                border: 2px solid rgba(221, 231, 239, 0.8);
+                border-radius: 12px;
+                padding: 12px 16px;
+                transition: all 0.3s ease;
+                font-size: 15px;
+            }
+            .sp-field input:focus, .sp-field textarea:focus, .sp-field select:focus {
+                border-color: #F47A20;
+                background: rgba(244, 122, 32, 0.02);
+                box-shadow: 0 0 0 4px rgba(244, 122, 32, 0.1);
+                outline: none;
+            }
+            .sp-field label {
+                font-weight: 600;
+                color: #07182F;
+                margin-bottom: 8px;
+                display: block;
+            }
+            .sp-submit {
+                background: linear-gradient(135deg, #F47A20, #FF9A3D);
+                border: none;
+                border-radius: 12px;
+                padding: 14px 32px;
+                font-weight: 600;
+                color: white;
+                cursor: pointer;
+                transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(244, 122, 32, 0.3);
+            }
+            .sp-submit::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.2);
+                transition: left 0.6s ease;
+            }
+            .sp-submit:hover::before {
+                left: 100%;
+            }
+            .sp-submit:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(244, 122, 32, 0.4);
+            }
+            .sp-submit:active {
+                transform: translateY(-1px);
+            }
+        </style>
+        <div class="container">
+            <div class="sp-section-head" data-reveal="fade-up">
+                <span>Sponsor Registration</span>
+                <h2 id="sponsor-contact-title">Register Your Sponsorship Interest</h2>
+                <p>Select your preferred package, provide your organization details, and verify your official email. Our Tec-verse team will contact you with the sponsorship confirmation and payment process.</p>
+            </div>
+            <div class="sp-contact-grid d-grid align-items-stretch position-relative">
+                <aside class="sp-contact-card overflow-hidden" data-reveal="fade-up">
+                    <figure class="sp-sponsor-process-visual">
+                        <img th:src="@{/images/tieup.png}" alt="Tec-verse sponsorship partnership" loading="lazy">
+                    </figure>
+                    <div class="sp-sponsor-process-content">
+                        <span class="sp-kicker d-inline-flex align-items-center gap-[0.55rem] font-[800] text-uppercase"><i class="bi bi-envelope-paper"></i> Sponsor Process</span>
+                        <h3>What Happens Next?</h3>
+                        <p><strong>1.</strong> Choose a sponsorship package<br><strong>2.</strong> Verify your email with OTP<br><strong>3.</strong> Submit your sponsorship interest<br><strong>4.</strong> Tec-verse team contacts you<br><strong>5.</strong> Package confirmation, invoice and payment follow-up</p>
+                        <p style="font-size:.9rem;opacity:.85">No bank, card, or payment details are collected through this public form.</p>
+                        <div class="sp-contact-list mt-[1.6rem]">
+                            <a href="mailto:tec-verse@cdac.in"><i class="bi bi-envelope-fill"></i>tec-verse@cdac.in</a>
+                        </div>
+                    </div>
+                </aside>
+
+                <form action="/become-sponsor" th:action="@{/become-sponsor}" th:object="${inquiry}" method="post" class="sp-form sp-form--simple d-grid overflow-hidden" data-reveal="fade-up" data-reveal-delay="100" id="sponsorForm"
+                      th:data-send-otp-url="@{/sponsor/send-otp}" th:data-verify-otp-url="@{/sponsor/verify-otp}"
+                      th:data-submitted="${sponsorInquirySubmitted}" th:data-failed="${sponsorInquiryFailed}"
+                      th:data-error="${sponsorEnquiryError}"
+                      th:data-alert-submitted="#{alert.formSubmitted}" th:data-alert-not-submitted="#{alert.formNotSubmitted}"
+                      th:data-alert-check-details="#{alert.formCheckDetails}" th:data-alert-required-fields="#{alert.formRequiredFields}">
+                    <div th:if="${sponsorInquirySubmitted}" class="sp-form-success d-flex align-items-center gap-[0.65rem] min-h-[48px] text-[0.9rem] font-[900]" role="status" style="animation: slideDown 0.6s ease-out;"><i class="bi bi-check-circle-fill"></i><span>Your sponsorship interest has been received successfully. Our team will contact you soon.</span></div>
+                    <div th:if="${sponsorEnquiryError}" class="sp-form-error d-flex align-items-center gap-[0.65rem] min-h-[48px] text-[0.9rem] font-[900]" role="alert"><i class="bi bi-exclamation-circle-fill"></i><span th:text="${sponsorEnquiryError}"></span></div>
+
+                    <div class="sp-field"><label for="sponsorCompany">Organization / Company Name*</label><input id="sponsorCompany" name="company" type="text" required maxlength="200" placeholder="Organization / Company Name" th:value="${inquiry != null ? inquiry.company : ''}"><small class="sp-field-error" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></small></div>
+                    <div class="sp-field"><label for="sponsorName">Contact Person Name*</label><input id="sponsorName" name="name" type="text" required maxlength="150" placeholder="Full Name" th:value="${inquiry != null ? inquiry.name : ''}"><small class="sp-field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small></div>
+                    <div class="sp-field"><label for="sponsorDesignation" th:text="#{register.field.designation}">Designation</label><input id="sponsorDesignation" name="jobTitle" type="text" placeholder="Designation" th:value="${inquiry != null ? inquiry.jobTitle : ''}" maxlength="100"></div>
+                    <div class="sp-field"><label for="sponsorPhone">Mobile Number*</label><input id="sponsorPhone" name="phone" type="tel" inputmode="tel" required maxlength="15" placeholder="Mobile Number" th:value="${inquiry != null ? inquiry.phone : ''}"><small class="sp-field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small></div>
+                    <div class="sp-field sp-field--full"><label for="sponsorEmail">Official Email ID*</label><div style="display:flex;gap:8px"><input id="sponsorEmail" name="email" type="email" required maxlength="254" placeholder="Official Email ID" style="flex:1" th:value="${inquiry != null ? inquiry.email : ''}"><button type="button" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="sendSponsorOtp" style="width:auto;padding:0 18px">Verify Email</button></div><small class="sp-field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small><small id="otpStatus" style="display:block;margin-top:6px"></small></div>
+                    <div class="sp-field sp-field--full" id="otpBlock" style="display:none"><label for="sponsorOtp">Enter Email OTP*</label><div style="display:flex;gap:8px"><input id="sponsorOtp" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit OTP" style="flex:1"><button type="button" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="verifySponsorOtp" style="width:auto;padding:0 18px">Confirm OTP</button></div></div>
+                    <div class="sp-field"><label for="sponsorInterest">Sponsorship Package*</label><select id="sponsorInterest" name="sponsorshipInterest" required><option value="" disabled>Select Sponsorship Package</option><option value="Platinum" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Platinum'}">Platinum — ₹15,00,000</option><option value="Gold" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Gold'}">Gold — ₹10,00,000</option><option value="Silver" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Silver'}">Silver — ₹5,00,000</option><option value="Copper" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Copper'}">Copper — ₹2,50,000</option><option value="Bronze" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Bronze'}">Bronze — ₹1,00,000</option></select><small class="sp-field-error" th:if="${#fields.hasErrors('sponsorshipInterest')}" th:errors="*{sponsorshipInterest}"></small></div>
+                    <div class="sp-field"><label for="sponsorCity">City / Location</label><input id="sponsorCity" name="city" type="text" placeholder="City / Location" th:value="${inquiry != null ? inquiry.city : ''}" maxlength="100"></div>
+                    <div class="sp-field"><label for="sponsorWebsite">Company Website</label><input id="sponsorWebsite" name="website" type="url" placeholder="https://example.com" th:value="${inquiry != null ? inquiry.website : ''}" maxlength="255"></div>
+                    <div class="sp-field"><label for="sponsorIndustry">Industry / Category</label><input id="sponsorIndustry" name="industry" type="text" placeholder="Industry / Category" th:value="${inquiry != null ? inquiry.industry : ''}" maxlength="100"></div>
+                    <div class="sp-field sp-field--full"><label for="sponsorMessage">Message / Requirements</label><textarea id="sponsorMessage" name="message" rows="4" placeholder="Any message or sponsorship requirements" th:text="${inquiry != null ? inquiry.message : ''}" maxlength="5000"></textarea></div>
+                    <div class="sp-field sp-field--full"><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" required style="margin-top:4px"> <span>I confirm that the above information is correct and agree to be contacted by the Tec-verse organizing team regarding sponsorship, package confirmation, invoice and payment.</span></label></div>
+                    <button type="submit" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="sponsorSubmit">Submit Sponsorship Interest</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="sponsor-packages" class="sp-section sp-packages" aria-labelledby="sponsor-packages-title" style="background: linear-gradient(135deg, #F8F9FB 0%, #EAF8F1 100%); position: relative; overflow: hidden;">
+        <style>
+            .sp-package {
+                transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+                position: relative;
+                border: 2px solid rgba(221, 231, 239, 0.8);
+                background: white;
+            }
+            .sp-package::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, #F47A20, #35AA75);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 0.5s ease;
+            }
+            .sp-package:hover::before {
+                transform: scaleX(1);
+            }
+            .sp-package:hover {
+                transform: translateY(-12px) scale(1.02);
+                box-shadow: 0 30px 60px rgba(244, 122, 32, 0.2), 0 10px 25px rgba(0, 0, 0, 0.1);
+                border-color: rgba(244, 122, 32, 0.4);
+            }
+            .sp-package--featured {
+                border: 2px solid #F47A20;
+                transform: scale(1.05);
+            }
+            .sp-package--featured:hover {
+                transform: translateY(-12px) scale(1.07);
+                box-shadow: 0 40px 80px rgba(244, 122, 32, 0.3);
+            }
+            .sp-package h3 {
+                animation: titleGlow 2s ease-in-out infinite;
+            }
+            .sp-package:hover h3 {
+                animation: none;
+                color: #F47A20;
+            }
+            @keyframes titleGlow {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.9; }
+            }
+            .sp-package__tag {
+                position: relative;
+                display: inline-block;
+                background: linear-gradient(135deg, #F47A20, #FF9A3D);
+                color: white;
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-weight: 600;
+                animation: pulse-tag 2s ease-in-out infinite;
+            }
+            @keyframes pulse-tag {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+            .sp-package li {
+                opacity: 0.8;
+                transition: all 0.3s ease;
+            }
+            .sp-package:hover li {
+                opacity: 1;
+            }
+            .sp-package button {
+                transition: all 0.4s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            .sp-package button::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                transition: width 0.6s, height 0.6s;
+            }
+            .sp-package button:hover::before {
+                width: 300px;
+                height: 300px;
+            }
+            .sp-package button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(244, 122, 32, 0.3);
+            }
+        </style>
+        <div class="container">
+            <div class="sp-section-head" data-reveal="fade-up"><span>Official Packages</span><h2 id="sponsor-packages-title">Tec-verse 2026 Sponsorship Packages</h2><p>Select a package to pre-fill the sponsorship registration form.</p></div>
+            <div class="sp-package-grid d-grid">
+                <article class="sp-package sp-package--featured" data-tier="platinum" data-reveal="zoom" data-reveal-delay="100"><div class="sp-package__medal"><i class="bi bi-gem"></i></div><h3>Platinum</h3><div class="sp-package__label">Premium Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;15,00,000</div><ul><li><i class="bi bi-check2"></i>VIP seating: Yes (inauguration &amp; valedictory)</li><li><i class="bi bi-check2"></i>10 technical session passes</li><li><i class="bi bi-check2"></i>4 panel discussions + 4 parallel technical sessions</li><li><i class="bi bi-star-fill"></i>Main stage logo branding</li><li><i class="bi bi-cup-hot-fill"></i>VIP lounge: 7 people for both days</li><li><i class="bi bi-tools"></i>VIP dining: 4 people for both days</li><li><i class="bi bi-shop"></i>Premium category stall</li><li><i class="bi bi-megaphone-fill"></i>Logo in marketing materials, sign boards and kits</li><li><i class="bi bi-file-earmark-text-fill"></i>CSC participation + technical write-up in event report</li></ul><button type="button" data-select-sponsor="Platinum">Choose Platinum <i class="bi bi-arrow-right"></i></button></article>
+                <article class="sp-package sp-package--gold" data-tier="gold" data-reveal="zoom" data-reveal-delay="120"><div class="sp-package__popular"><i class="bi bi-stars"></i> Most Popular</div><div class="sp-package__medal"><i class="bi bi-trophy-fill"></i></div><h3>Gold</h3><div class="sp-package__label">Strategic Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;10,00,000</div><ul><li><i class="bi bi-check2"></i>VIP seating: Yes</li><li><i class="bi bi-check2"></i>10 technical session passes</li><li><i class="bi bi-check2"></i>3 panel discussions + 3 parallel sessions</li><li><i class="bi bi-star-fill"></i>Main stage logo branding</li><li><i class="bi bi-cup-hot-fill"></i>VIP lounge: 5 people</li><li><i class="bi bi-tools"></i>VIP dining: 2 people</li><li><i class="bi bi-shop"></i>Large stall</li><li><i class="bi bi-megaphone-fill"></i>Logo in marketing materials, sign boards and kits</li><li><i class="bi bi-file-earmark-text-fill"></i>CSC participation + technical write-up</li></ul><button type="button" data-select-sponsor="Gold">Choose Gold <i class="bi bi-arrow-right"></i></button></article>
+                <article class="sp-package sp-package--silver" data-tier="silver" data-reveal="zoom" data-reveal-delay="140"><div class="sp-package__medal"><i class="bi bi-star-fill"></i></div><h3>Silver</h3><div class="sp-package__label">Associate Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;5,00,000</div><ul><li><i class="bi bi-check2"></i>10 technical session passes</li><li><i class="bi bi-check2"></i>2 panel discussions + 2 parallel sessions</li><li><i class="bi bi-cup-hot-fill"></i>VIP lounge: 3 people</li><li><i class="bi bi-shop"></i>Medium stall</li><li><i class="bi bi-megaphone-fill"></i>Logo in marketing materials and sign boards</li><li><i class="bi bi-people-fill"></i>CSC participation</li><li><i class="bi bi-file-earmark-text-fill"></i>Technical write-up in event report</li></ul><button type="button" data-select-sponsor="Silver">Choose Silver <i class="bi bi-arrow-right"></i></button></article>
+                <article class="sp-package" data-tier="copper" data-reveal="zoom" data-reveal-delay="160"><div class="sp-package__medal"><i class="bi bi-shield-fill"></i></div><h3>Copper</h3><div class="sp-package__label">Supporting Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;2,50,000</div><ul><li><i class="bi bi-check2"></i>10 technical session passes</li><li><i class="bi bi-check2"></i>1 panel discussion + 1 parallel session</li><li><i class="bi bi-cup-hot-fill"></i>VIP lounge: 2 people</li><li><i class="bi bi-shop"></i>Small stall</li><li><i class="bi bi-megaphone-fill"></i>Limited logo placement in marketing materials</li><li><i class="bi bi-people-fill"></i>CSC participation</li><li><i class="bi bi-file-earmark-text-fill"></i>Technical write-up in event report</li></ul><button type="button" data-select-sponsor="Copper">Choose Copper <i class="bi bi-arrow-right"></i></button></article>
+                <article class="sp-package" data-tier="bronze" data-reveal="zoom" data-reveal-delay="180"><div class="sp-package__medal"><i class="bi bi-award-fill"></i></div><h3>Bronze</h3><div class="sp-package__label">Foundation Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;1,00,000</div><ul><li><i class="bi bi-check2"></i>10 technical session passes</li><li><i class="bi bi-cup-hot-fill"></i>VIP lounge: 1 person</li><li><i class="bi bi-megaphone-fill"></i>Limited logo placement in marketing materials</li><li><i class="bi bi-people-fill"></i>CSC participation</li><li><i class="bi bi-file-earmark-text-fill"></i>Technical write-up in event report</li></ul><button type="button" data-select-sponsor="Bronze">Choose Bronze <i class="bi bi-arrow-right"></i></button></article>
+            </div>
+        </div>
+    </section>
+
+    <section class="sp-section sp-faq-section" aria-labelledby="sponsor-faq-title">
+        <div class="container">
+            <div class="sp-section-head" data-reveal="fade-up">
+                <span>FAQ</span>
+                <h2 id="sponsor-faq-title">Sponsor FAQ</h2>
+                <p>Quick answers for brands and organisations planning to partner with Tec-verse 2026.</p>
+            </div>
+
+            <div class="sp-sponsor-faq-grid" data-reveal="fade-up" data-reveal-delay="120">
+                <details class="sp-sponsor-faq-card" open>
+                    <summary>
+                        <span class="sp-sponsor-faq-question"><i class="bi bi-gem"></i> Which sponsor packages are available?</span>
+                        <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
+                    </summary>
+                    <p>Tec-verse sponsorship is available through five official packages: Platinum, Gold, Silver, Copper and Bronze. Each package includes different levels of branding, passes, session access, stall visibility and hospitality benefits.</p>
+                </details>
+
+                <details class="sp-sponsor-faq-card">
+                    <summary>
+                        <span class="sp-sponsor-faq-question"><i class="bi bi-envelope-check"></i> Why is email OTP verification required?</span>
+                        <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
+                    </summary>
+                    <p>OTP verification confirms that the official email address belongs to the organisation or authorised contact person. This helps the team respond to genuine sponsorship enquiries faster.</p>
+                </details>
+
+                <details class="sp-sponsor-faq-card">
+                    <summary>
+                        <span class="sp-sponsor-faq-question"><i class="bi bi-credit-card-2-front"></i> Do we need to pay on this website?</span>
+                        <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
+                    </summary>
+                    <p>No bank, card or payment details are collected through this public form. After submission, the Tec-verse team will contact you for package confirmation, invoice details and payment follow-up.</p>
+                </details>
+
+                <details class="sp-sponsor-faq-card">
+                    <summary>
+                        <span class="sp-sponsor-faq-question"><i class="bi bi-megaphone-fill"></i> What branding benefits do sponsors receive?</span>
+                        <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
+                    </summary>
+                    <p>Branding benefits can include logo placement on marketing materials, event sign boards, kits, main-stage branding, technical write-up in the event report and other visibility benefits based on the selected package.</p>
+                </details>
+
+                <details class="sp-sponsor-faq-card">
+                    <summary>
+                        <span class="sp-sponsor-faq-question"><i class="bi bi-shop"></i> Is stall space included in sponsorship?</span>
+                        <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
+                    </summary>
+                    <p>Yes, sponsor packages include stall visibility according to the tier. Platinum includes a premium category stall, Gold includes a large stall, Silver includes a medium stall and Copper includes a small stall.</p>
+                </details>
+
+                <details class="sp-sponsor-faq-card">
+                    <summary>
+                        <span class="sp-sponsor-faq-question"><i class="bi bi-people-fill"></i> How many event passes are included?</span>
+                        <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
+                    </summary>
+                    <p>Platinum, Gold, Silver and Copper packages list 10 technical session passes. Hospitality access such as VIP lounge and dining varies by package tier.</p>
+                </details>
+
+                <details class="sp-sponsor-faq-card">
+                    <summary>
+                        <span class="sp-sponsor-faq-question"><i class="bi bi-sliders"></i> Can we request package clarification or changes?</span>
+                        <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
+                    </summary>
+                    <p>Please select the closest official package and mention your requirement in the message field. The sponsorship team will review it and contact you for clarification.</p>
+                </details>
+
+                <details class="sp-sponsor-faq-card">
+                    <summary>
+                        <span class="sp-sponsor-faq-question"><i class="bi bi-clock-history"></i> What happens after form submission?</span>
+                        <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
+                    </summary>
+                    <p>After your enquiry is submitted, the Tec-verse team reviews the organisation details, preferred package and message. They will then contact you for confirmation, documentation and next steps.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    const sponsorForm = document.getElementById("sponsorForm");
+    const sponsorSendOtpUrl = sponsorForm.dataset.sendOtpUrl;
+    const sponsorVerifyOtpUrl = sponsorForm.dataset.verifyOtpUrl;
+    const sponsorSubmitted = sponsorForm.dataset.submitted === "true";
+    const sponsorFailed = sponsorForm.dataset.failed === "true";
+    const sponsorError = sponsorForm.dataset.error;
+
+    if (sponsorSubmitted) {
+        alert(sponsorForm.dataset.alertSubmitted);
+    } else if (sponsorError) {
+        alert(sponsorForm.dataset.alertNotSubmitted + " " + sponsorError);
+    } else if (sponsorFailed) {
+        alert(sponsorForm.dataset.alertCheckDetails);
+    }
+
+    let sponsorEmailVerified = false;
+    const otpStatus = document.getElementById("otpStatus");
+    const sponsorEmail = document.getElementById("sponsorEmail");
+
+    async function sponsorOtpRequest(url, body) {
+        const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.message || data.error || "Request failed. Please try again.");
+        return data;
+    }
+
+    document.getElementById("sendSponsorOtp")?.addEventListener("click", async () => {
+        const email = sponsorEmail.value.trim();
+        if (!email) { otpStatus.textContent = "Please enter your official email first."; return; }
+        try {
+            otpStatus.textContent = "Sending OTP...";
+            await sponsorOtpRequest(sponsorSendOtpUrl, { email, name: document.getElementById("sponsorName").value.trim() });
+            document.getElementById("otpBlock").style.display = "block";
+            otpStatus.textContent = "OTP sent. Please check your email.";
+        } catch (error) { otpStatus.textContent = error.message; }
+    });
+
+    document.getElementById("verifySponsorOtp")?.addEventListener("click", async () => {
+        try {
+            await sponsorOtpRequest(sponsorVerifyOtpUrl, { email: sponsorEmail.value.trim(), otp: document.getElementById("sponsorOtp").value.trim() });
+            sponsorEmailVerified = true;
+            sponsorEmail.readOnly = true;
+            otpStatus.textContent = "✓ Email verified successfully.";
+            document.getElementById("otpBlock").style.display = "none";
+        } catch (error) { otpStatus.textContent = error.message; }
+    });
+
+    sponsorEmail?.addEventListener("input", () => { sponsorEmailVerified = false; sponsorEmail.readOnly = false; });
+    const sponsorFieldMessage = (field) => {
+        const value = field.value.trim();
+        if (field.required && !value) return "This field is required.";
+        if (!value) return "";
+        if (field.name === "name" && !/^[A-Za-z][A-Za-z .'-]{1,149}$/.test(value)) return "Enter a valid contact name.";
+        if (field.name === "email" && (!field.validity.valid || value.length > 254)) return "Enter a valid email address (maximum 254 characters).";
+        if (field.name === "phone" && !/^(?:\\+91[-\\s]?)?[6-9]\\d{9}$/.test(value)) return "Enter a valid 10-digit Indian mobile number.";
+        if (field.name === "website" && (!/^https?:\\/\\/.+/.test(value) || value.length > 255)) return "Enter a valid website URL starting with http:// or https:// (maximum 255 characters).";
+        const limits = { company: 200, jobTitle: 100, city: 100, industry: 100, message: 5000 };
+        if (limits[field.name] && value.length > limits[field.name]) return `Maximum ${limits[field.name]} characters allowed.`;
+        return "";
+    };
+    const showSponsorFieldError = (field, message) => {
+        let error = field.closest(".sp-field")?.querySelector(".sp-client-error");
+        if (!error && field.closest(".sp-field")) {
+            error = document.createElement("small"); error.className = "sp-client-error";
+            error.style.cssText = "display:block;color:#b42318;margin-top:5px";
+            field.closest(".sp-field").append(error);
+        }
+        if (error) error.textContent = message;
+        field.setAttribute("aria-invalid", String(Boolean(message)));
+        return !message;
+    };
+    sponsorForm?.querySelectorAll("input[name],select[name],textarea[name]").forEach((field) => {
+        field.addEventListener("input", () => showSponsorFieldError(field, sponsorFieldMessage(field)));
+        field.addEventListener("change", () => showSponsorFieldError(field, sponsorFieldMessage(field)));
+    });
+    sponsorForm?.addEventListener("submit", (event) => {
+        let valid = true;
+        sponsorForm.querySelectorAll("input[name],select[name],textarea[name]").forEach((field) => {
+            if (!showSponsorFieldError(field, sponsorFieldMessage(field))) valid = false;
+        });
+        if (!valid) { event.preventDefault(); sponsorForm.querySelector('[aria-invalid="true"]')?.focus(); return; }
+        if (!sponsorEmailVerified) { event.preventDefault(); alert("Please verify your official email with OTP before submitting."); }
+    });
+
+    document.querySelectorAll("[data-select-sponsor]").forEach((button) => {
+        button.addEventListener("click", () => {
+            const select = document.getElementById("sponsorInterest");
+            if (select) {
+                document.querySelectorAll(".sp-package.is-selected").forEach((card) => {
+                    card.classList.remove("is-selected");
+                });
+                button.closest(".sp-package")?.classList.add("is-selected");
+                select.value = button.dataset.selectSponsor;
+                select.dispatchEvent(new Event("change", { bubbles: true }));
+                document.getElementById("sponsor-contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        });
+    });
+
+    document.querySelectorAll("form").forEach((form) => {
+        form.addEventListener("invalid", () => {
+            if (form.dataset.invalidAlertShown === "true") {
+                return;
+            }
+            form.dataset.invalidAlertShown = "true";
+            alert(form.dataset.alertRequiredFields || "Form not submitted. Please check the required fields.");
+            setTimeout(() => {
+                form.dataset.invalidAlertShown = "false";
+            }, 300);
+        }, true);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Maven build output
+target/
+bin/
+
+# Maven wrapper
+!.mvn/wrapper/maven-wrapper.jar
+
+# Compiled files and logs
+*.class
+*.log
+
+# Environment / secrets
+.env
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.factorypath
+.metadata/
+.settings/
+
+# Local development folders
+.m2repo/
+.tools/
+
+# Runtime uploads
+uploads/
+
+# Archives
+*.zip

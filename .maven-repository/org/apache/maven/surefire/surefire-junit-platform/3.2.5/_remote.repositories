@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon Sep 28 09:25:11 IST 2026
+surefire-junit-platform-3.2.5.jar>central=
+surefire-junit-platform-3.2.5.pom>central=

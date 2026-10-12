@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<section th:fragment="speakers" id="speakers" aria-labelledby="speakers-heading" class="relative isolate overflow-hidden bg-white">
+
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div class="absolute top-0 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-brand/5 blur-3xl"></div>
+    </div>
+
+    <div class="container-custom relative py-[120px]">
+        <div class="mx-auto max-w-2xl text-center" data-reveal="fade-up">
+            <h2 id="speakers-heading" class="mt-3 text-[24px] font-bold tracking-tight text-ink sm:text-[38px]" th:text="#{footer.link.speakers}">SPEAKERS</h2>
+            <span class="section-heading-rule overflow-hidden" aria-hidden="true"><span></span><span></span><span></span></span>
+        </div>
+
+        <div th:if="${homeSpeakers != null and !homeSpeakers.isEmpty()}" class="mt-16 speakers-marquee overflow-x-auto overflow-y-hidden scrollbar-hidden">
+            <div class="speakers-track flex gap-8">
+                <article th:each="speaker, iter : ${homeSpeakers}" class="speaker-flip-card group w-56 shrink-0 text-center"
+                         data-reveal="zoom" th:attr="data-reveal-delay=${(iter.index % 8) * 80}">
+                    <div class="speaker-flip-shell" tabindex="0">
+                        <div class="speaker-flip-inner">
+                            <div class="speaker-flip-face speaker-flip-front">
+                                <div class="speaker-photo-frame relative mx-auto overflow-hidden transition-transform duration-500 ease-out group-hover:scale-[1.03]">
+                                    <img th:src="@{${#strings.isEmpty(speaker.profileImageUrl) ? '/images/speaker1.png' : speaker.profileImageUrl}}"
+                                         th:alt="|${speaker.name} speaking at Tec-verse|"
+                                         class="h-full w-full object-cover" loading="lazy" />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent"></div>
+                                </div>
+                                <h3 class="speaker-name mt-4" th:text="${speaker.name}">Speaker Name</h3>
+                                <p class="speaker-designation" th:if="${speaker.designation != null and !speaker.designation.isBlank()}" th:text="${speaker.designation}">Designation</p>
+                                <p class="speaker-organization" th:if="${speaker.organization != null and !speaker.organization.isBlank()}" th:text="${speaker.organization}">Organization</p>
+                                <p class="speaker-session" th:if="${speaker.sessionTiming != null and !speaker.sessionTiming.isBlank()}" th:text="${@speakerTimeFormatter.format(speaker.sessionTiming)}">26 Nov, 11:30 AM</p>
+                            </div>
+                            <div class="speaker-flip-face speaker-flip-back">
+                                <span class="speaker-flip-label">Speaker</span>
+                                <h3 class="speaker-name" th:text="${speaker.name}">Speaker Name</h3>
+                                <p class="speaker-designation" th:text="${speaker.designation}">Designation</p>
+                                <p class="speaker-session" th:if="${speaker.sessionTiming != null and !speaker.sessionTiming.isBlank()}" th:text="${@speakerTimeFormatter.format(speaker.sessionTiming)}">26 Nov, 11:30 AM</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <div th:if="${homeSpeakers == null or homeSpeakers.isEmpty()}" class="speakers-empty-state mt-16">
+            <i class="bi bi-mic"></i>
+            <p>Speakers will be updated soon.</p>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

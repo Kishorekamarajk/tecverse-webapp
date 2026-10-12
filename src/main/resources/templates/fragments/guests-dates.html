@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<section th:fragment="guests-dates" class="guests-dates-section" aria-labelledby="guests-dates-heading">
+    <div class="guests-dates-circuit position-absolute" aria-hidden="true"></div>
+
+    <div class="container-custom guests-dates-layout position-relative d-grid align-items-stretch">
+        <div class="chief-guests-panel">
+            <div class="guests-dates-heading text-start" data-reveal="fade-up">
+                <h2 id="guests-dates-heading">Eminent leaders and visionaries gracing Tec-verse 2026</h2>
+            </div>
+
+            <div class="chief-guests-carousel" th:if="${chiefGuests != null and !chiefGuests.isEmpty()}" data-chief-guests-carousel>
+                <div class="chief-guests-viewport overflow-hidden">
+                    <div class="chief-guests-track d-flex" data-chief-guests-track>
+                        <div th:each="page : ${#numbers.sequence(0, (chiefGuests.size() - 1) / 6)}" class="chief-guests-slide" data-chief-guests-slide>
+                            <th:block th:each="guest, iter : ${chiefGuests}">
+                                <article th:if="${iter.index >= page * 6 and iter.index < (page * 6) + 6}"
+                                         class="chief-guest-card text-center" data-reveal="zoom"
+                                         th:attr="data-reveal-delay=${(iter.index % 4) * 70}"
+                                         th:style="|--guest-accent:${guest.accentColor};|">
+                                    <div class="chief-guest-photo">
+                                        <img th:src="@{${guest.imageUrl}}" th:alt="|${guest.name} chief guest|" loading="lazy">
+                                    </div>
+                                    <p class="chief-guest-label d-inline-flex align-items-center justify-content-center"><span></span> CHIEF GUEST <span></span></p>
+                                    <h3 th:text="${guest.name}">Dr. Rajkumar Upadhyay</h3>
+                                    <p class="chief-guest-role" th:text="${guest.designation}">Director General</p>
+                                    <p class="chief-guest-org" th:if="${guest.organization != null and !guest.organization.isBlank()}" th:text="${guest.organization}">C-DAC</p>
+                                    <span class="chief-guest-line" aria-hidden="true"></span>
+                                </article>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chief-guests-dots d-flex align-items-center justify-content-center gap-[0.7rem] mt-[1.35rem]" aria-label="Chief guest slides" data-chief-guests-dots>
+                    <button th:each="dot : ${#numbers.sequence(0, (chiefGuests.size() - 1) / 6)}" class="chief-guests-dot" type="button" th:classappend="${dot == 0} ? ' active'" th:attr="data-chief-guests-dot=${dot}, aria-label=|Show chief guest slide ${dot + 1}|"></button>
+                </div>
+            </div>
+
+            <div class="guests-dates-empty text-center" th:if="${chiefGuests == null or chiefGuests.isEmpty()}">
+                <i class="bi bi-person-badge"></i>
+                <p>Chief guests will be updated soon.</p>
+            </div>
+        </div>
+
+        <aside class="important-dates-panel w-100" aria-labelledby="important-dates-heading" data-reveal="slide-left">
+            <div class="important-dates-head position-relative">
+                <div class="important-dates-icon d-grid"><i class="bi bi-calendar3"></i></div>
+                <div>
+                    <h2 id="important-dates-heading"><span th:text="#{importantDates.heading.prefix}">Important</span> <strong th:text="#{importantDates.heading.suffix}">Dates</strong></h2>
+                    <span class="important-dates-stripe" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="important-dates-list d-grid" th:if="${importantDates != null and !importantDates.isEmpty()}">
+                <article th:each="item, iter : ${importantDates}" class="important-date-card align-items-center">
+                    <div class="important-date-icon d-grid" th:style="|--important-date-accent:${item.accentColor};|" th:aria-label="#{importantDates.step(${iter.index + 1})}"><span class="important-date-number" th:text="${#numbers.formatInteger(iter.index + 1, 2)}">01</span></div>
+                    <div class="important-date-copy"><h3 th:text="${#messages.msgOrNull('importantDates.title.' + item.title) ?: item.title}">Registration Starts</h3><time th:text="${item.dateLabel}">21 June 2026</time></div>
+                </article>
+            </div>
+            <div class="guests-dates-empty guests-dates-empty-dark text-center position-relative" th:if="${importantDates == null or importantDates.isEmpty()}">
+                <i class="bi bi-calendar-event"></i>
+                <p th:text="#{importantDates.empty}">Important dates will be updated soon.</p>
+            </div>
+        </aside>
+    </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<section th:fragment="media-coverage" id="media-coverage" aria-labelledby="media-coverage-heading"
+         class="relative isolate overflow-hidden bg-[#F8F9FB] py-[70px] sm:py-[92px]">
+
+    <div class="pointer-events-none absolute -left-32 top-24 h-72 w-72 rounded-full bg-[#35AA75]/[0.045] blur-3xl" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute -right-32 bottom-20 h-80 w-80 rounded-full bg-[#233373]/[0.05] blur-3xl" aria-hidden="true"></div>
+
+    <div class="container-custom relative">
+        <div class="text-center" data-reveal="fade-up">
+            <h2 id="media-coverage-heading" class="section-heading font-sans text-uppercase"
+                th:text="#{media.coverage.heading}">Media Coverage / PR</h2>
+
+            <div class="section-heading-rule overflow-hidden" aria-hidden="true">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(mediaCoverage)}"
+             class="media-coverage-marquee mt-[58px]"
+             th:attr="aria-label=#{media.coverage.ariaLabel}">
+
+            <div class="media-coverage-marquee-track"
+                 th:style="|--media-card-count: ${mediaCoverage.size()}|">
+
+                <div class="media-coverage-marquee-group">
+                    <article th:each="news, itemStat : ${mediaCoverage}"
+                             data-reveal="fade-up"
+                             th:attr="data-reveal-delay=${itemStat.index * 80}"
+                             class="media-overlay-card">
+
+                        <a th:href="${news.postUrl}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="media-overlay-link"
+                           th:aria-label="|Watch ${news.title}|">
+
+                            <div class="media-overlay-image">
+                                <img th:if="${!#strings.isEmpty(news.imageUrl)}"
+                                     th:src="${news.imageUrl}"
+                                     th:alt="${news.title}"
+                                     loading="lazy" />
+
+                                <img th:if="${#strings.isEmpty(news.imageUrl)}"
+                                     th:src="@{/images/tecverselogo.png}"
+                                     alt="Tec-verse"
+                                     loading="lazy" />
+
+                                <div class="media-overlay-shade" aria-hidden="true"></div>
+
+                                <div class="media-overlay-top">
+                                    <span class="media-youtube-badge"
+                                          th:if="${#strings.equalsIgnoreCase(news.platformDisplayName, 'YouTube')}">
+                                        <span class="media-youtube-icon" aria-hidden="true">▶</span>
+                                        YouTube
+                                    </span>
+
+                                    <span class="media-source-badge"
+                                          th:if="${!#strings.equalsIgnoreCase(news.platformDisplayName, 'YouTube')}"
+                                          th:text="${news.platformDisplayName}">
+                                        Media
+                                    </span>
+
+                                    <span class="media-type-badge"
+                                          th:if="${!#strings.isEmpty(news.mediaType)}"
+                                          th:text="${news.mediaType}">
+                                        VIDEO
+                                    </span>
+                                </div>
+
+                                <span class="media-play-button" aria-hidden="true">
+                                    <span></span>
+                                </span>
+
+                                <div class="media-overlay-content">
+                                    <p class="media-overlay-kicker"
+                                       th:if="${!#strings.isEmpty(news.sourceName)}"
+                                       th:text="${news.sourceName}">
+                                        TEC-VERSE
+                                    </p>
+
+                                    <h3 th:text="${news.title}">
+                                        Tec-verse 2026 media coverage
+                                    </h3>
+
+                                    <p class="media-overlay-description"
+                                       th:if="${!#strings.isEmpty(news.descriptionPreview)}"
+                                       th:text="${news.descriptionPreview}">
+                                        Latest Tec-verse stories, interviews and event highlights.
+                                    </p>
+
+                                    <div class="media-overlay-meta">
+                                        <time th:datetime="${news.publishedDate}"
+                                              th:text="${news.publishedDateLabel}">
+                                            24 JUN 2025
+                                        </time>
+
+                                        <span class="media-watch-link">
+                                            <span th:text="${news.actionLabel}">WATCH VIDEO</span>
+                                            <span aria-hidden="true">→</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </article>
+                </div>
+
+                <div class="media-coverage-marquee-group" aria-hidden="true">
+                    <article th:each="news : ${mediaCoverage}"
+                             class="media-overlay-card">
+
+                        <a th:href="${news.postUrl}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           tabindex="-1"
+                           class="media-overlay-link">
+
+                            <div class="media-overlay-image">
+                                <img th:if="${!#strings.isEmpty(news.imageUrl)}"
+                                     th:src="${news.imageUrl}"
+                                     alt=""
+                                     loading="lazy" />
+
+                                <img th:if="${#strings.isEmpty(news.imageUrl)}"
+                                     th:src="@{/images/tecverselogo.png}"
+                                     alt=""
+                                     loading="lazy" />
+
+                                <div class="media-overlay-shade" aria-hidden="true"></div>
+
+                                <div class="media-overlay-top">
+                                    <span class="media-youtube-badge"
+                                          th:if="${#strings.equalsIgnoreCase(news.platformDisplayName, 'YouTube')}">
+                                        <span class="media-youtube-icon" aria-hidden="true">▶</span>
+                                        YouTube
+                                    </span>
+
+                                    <span class="media-source-badge"
+                                          th:if="${!#strings.equalsIgnoreCase(news.platformDisplayName, 'YouTube')}"
+                                          th:text="${news.platformDisplayName}">
+                                        Media
+                                    </span>
+
+                                    <span class="media-type-badge"
+                                          th:if="${!#strings.isEmpty(news.mediaType)}"
+                                          th:text="${news.mediaType}">
+                                        VIDEO
+                                    </span>
+                                </div>
+
+                                <span class="media-play-button" aria-hidden="true">
+                                    <span></span>
+                                </span>
+
+                                <div class="media-overlay-content">
+                                    <p class="media-overlay-kicker"
+                                       th:if="${!#strings.isEmpty(news.sourceName)}"
+                                       th:text="${news.sourceName}">
+                                        TEC-VERSE
+                                    </p>
+
+                                    <h3 th:text="${news.title}">
+                                        Tec-verse 2026 media coverage
+                                    </h3>
+
+                                    <p class="media-overlay-description"
+                                       th:if="${!#strings.isEmpty(news.descriptionPreview)}"
+                                       th:text="${news.descriptionPreview}">
+                                        Latest Tec-verse stories, interviews and event highlights.
+                                    </p>
+
+                                    <div class="media-overlay-meta">
+                                        <time th:datetime="${news.publishedDate}"
+                                              th:text="${news.publishedDateLabel}">
+                                            24 JUN 2025
+                                        </time>
+
+                                        <span class="media-watch-link">
+                                            <span th:text="${news.actionLabel}">WATCH VIDEO</span>
+                                            <span aria-hidden="true">→</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </article>
+                </div>
+
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(mediaCoverage)}"
+             class="mt-[58px] flex justify-center"
+             th:attr="aria-label=#{media.coverage.ariaLabel}">
+
+            <article class="media-overlay-card media-overlay-card--empty">
+                <div class="media-overlay-image">
+                    <img th:src="@{/images/tecverselogo.png}"
+                         alt="Tec-verse"
+                         loading="lazy" />
+
+                    <div class="media-overlay-shade" aria-hidden="true"></div>
+
+                    <div class="media-overlay-content">
+                        <p class="media-overlay-kicker" th:text="#{footer.support.updates.title}">OFFICIAL UPDATES</p>
+                        <h3 th:text="#{media.coverage.empty.title}">Media coverage is coming soon</h3>
+                        <p class="media-overlay-description" th:text="#{media.coverage.empty.description}">
+                            Official Tec-verse media coverage will appear here when connected channels publish new content.
+                        </p>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

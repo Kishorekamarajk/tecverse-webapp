@@ -1,0 +1,73 @@
+import '../domain/important_date_item.dart';
+
+class ImportantDatesData {
+  ImportantDatesData._();
+
+  static const List<ImportantDateItem> defaultDates = [
+    ImportantDateItem(
+      id: 1,
+      title: 'TechVerse 2026 Registrations Now Open!',
+      eventDate: '26–27 November 2026',
+      timeAgo: '2 days ago',
+      category: 'Registration',
+      status: 'ACTIVE',
+      imageUrl: 'assets/images/news_techverse.jpg',
+      description: 'Official delegate, researcher, and industry exhibitor registrations are now live for TEC-VERSE 2026 at Chennai Trade Centre. Reserve your spot today to access keynotes, exhibition stalls, and networking events.',
+      actionUrl: 'https://tecverse2026.cdac.in/register.html',
+      displayOrder: 1,
+      isFeatured: true,
+    ),
+    ImportantDateItem(
+      id: 2,
+      title: 'Call for Research Papers: Deadline Extended',
+      eventDate: '15 October 2026',
+      timeAgo: '5 days ago',
+      category: 'Submissions',
+      status: 'ACTIVE',
+      imageUrl: 'assets/images/conbanner.png',
+      description: 'Submit your peer-reviewed research papers across AI & Supercomputing, Quantum Communications, Cybersecurity, Semiconductors & VLSI, and Robotics & Automation.',
+      actionUrl: 'https://tecverse2026.cdac.in',
+      displayOrder: 2,
+      isFeatured: true,
+    ),
+    ImportantDateItem(
+      id: 3,
+      title: 'Exhibition Passes & Stall Allocations Live',
+      eventDate: '10 November 2026',
+      timeAgo: '1 week ago',
+      category: 'Exhibition',
+      status: 'UPCOMING',
+      imageUrl: 'assets/images/trade.png',
+      description: 'Stall booking is open for institutions, MSMEs, startups, and defense tech leaders with 3x3m and 6x6m prime exhibition pavilions at Hall 1 & 2.',
+      actionUrl: 'https://tecverse2026.cdac.in',
+      displayOrder: 3,
+      isFeatured: true,
+    ),
+    ImportantDateItem(
+      id: 4,
+      title: 'Acceptance Notification & Camera-Ready Submissions',
+      eventDate: '30 October 2026',
+      timeAgo: 'Upcoming',
+      category: 'Milestone',
+      status: 'UPCOMING',
+      imageUrl: 'assets/images/about-tec.png',
+      description: 'Authors will receive peer review feedback, camera-ready submission guidelines, and presentation schedule confirmations for track sessions.',
+      actionUrl: 'https://tecverse2026.cdac.in',
+      displayOrder: 4,
+      isFeatured: false,
+    ),
+    ImportantDateItem(
+      id: 5,
+      title: 'Grand Inauguration & Conference Opening',
+      eventDate: '26 November 2026',
+      timeAgo: 'Upcoming',
+      category: 'Conference',
+      status: 'UPCOMING',
+      imageUrl: 'assets/images/chennai.png',
+      description: 'Honorable leadership from MeitY, C-DAC, SAMEER, and C-MET inaugurate India’s premier technology confluence at Chennai Trade Centre.',
+      actionUrl: 'https://tecverse2026.cdac.in',
+      displayOrder: 5,
+      isFeatured: false,
+    ),
+  ];
+}

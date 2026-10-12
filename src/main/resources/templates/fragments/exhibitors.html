@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<section th:fragment="exhibitors" id="exhibitors" aria-labelledby="exhibitors-heading"
+         class="exhibitors-glass-section relative isolate overflow-hidden">
+
+    <div class="container-custom relative z-10">
+        <div class="exhibitors-heading-wrap text-center" data-reveal="fade-up">
+            <p class="exhibitors-eyebrow">PEOPLE <span>•</span> IDEAS <span>•</span> TECHNOLOGY <span>•</span> A BETTER TOMORROW</p>
+            <h2 id="exhibitors-heading" class="exhibitors-glass-heading font-sans">
+                <span th:text="#{exhibitors.heading}">OUR EXHIBITORS 2026</span>
+            </h2>
+            <span class="section-heading-rule exhibitors-heading-rule overflow-hidden" aria-hidden="true"><span></span><span></span><span></span></span>
+            <p class="exhibitors-glass-subtitle" th:text="#{exhibitors.subtitle}">Partnering for innovation. Building the future together.</p>
+        </div>
+
+        <ul th:if="${homeExhibitors != null and !homeExhibitors.isEmpty()}" class="exhibitors-glass-grid exhibitors-database-grid" data-reveal="fade-up" data-reveal-delay="100">
+            <li class="exhibitor-glass-card exhibitor-flip-card" th:each="exhibitor : ${homeExhibitors}">
+                <div class="exhibitor-flip-inner">
+                    <div class="exhibitor-flip-face exhibitor-flip-front">
+                        <img class="exhibitor-glass-logo" th:src="@{${exhibitor.imageUrl}}" th:alt="|${exhibitor.companyName} logo|" loading="lazy">
+                    </div>
+                    <div class="exhibitor-flip-face exhibitor-flip-back">
+                        <strong th:text="${exhibitor.stallAllocation}">3 × 6</strong>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <ul th:if="${homeExhibitors == null or homeExhibitors.isEmpty()}" class="exhibitors-glass-grid" data-reveal="fade-up" data-reveal-delay="100">
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo1.jpg}" alt="Exhibitor logo 1" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo2.jpg}" alt="Exhibitor logo 2" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo3.jpg}" alt="Exhibitor logo 3" loading="lazy"></li>
+            <!-- <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo4.jpg}" alt="Exhibitor logo 4" loading="lazy"></li> -->
+            <!-- <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo5.jpg}" alt="Exhibitor logo 5" loading="lazy"></li> -->
+            <!-- <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo6.jpg}" alt="Exhibitor logo 6" loading="lazy"></li> -->
+            <!-- <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo7.jpg}" alt="Exhibitor logo 7" loading="lazy"></li> -->
+            <!-- <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo8.jpg}" alt="Exhibitor logo 8" loading="lazy"></li> -->
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo9.png}" alt="Exhibitor logo 9" loading="lazy"></li>
+            <!-- <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo10.jpg}" alt="Exhibitor logo 10" loading="lazy"></li> -->
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo11.jpg}" alt="Exhibitor logo 11" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo12.jpg}" alt="Exhibitor logo 12" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo13.png}" alt="Exhibitor logo 13" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo14.png}" alt="Exhibitor logo 14" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo15.png}" alt="Exhibitor logo 15" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo16.jpg}" alt="Exhibitor logo 16" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo17.jpg}" alt="Exhibitor logo 17" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo18.jpg}" alt="Exhibitor logo 18" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo19.jpg}" alt="Exhibitor logo 19" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo9.png}" alt="Exhibitor logo 9" loading="lazy"></li>
+            <!-- <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo10.jpg}" alt="Exhibitor logo 10" loading="lazy"></li> -->
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo11.jpg}" alt="Exhibitor logo 11" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo12.jpg}" alt="Exhibitor logo 12" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo13.png}" alt="Exhibitor logo 13" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo14.png}" alt="Exhibitor logo 14" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo15.png}" alt="Exhibitor logo 15" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo16.jpg}" alt="Exhibitor logo 16" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo17.jpg}" alt="Exhibitor logo 17" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo18.jpg}" alt="Exhibitor logo 18" loading="lazy"></li>
+            <li class="exhibitor-glass-card"><img class="exhibitor-glass-logo" th:src="@{/images/logo19.jpg}" alt="Exhibitor logo 19" loading="lazy"></li>
+       
+        </ul>
+    </div>
+</section>
+
+</body>
+</html>

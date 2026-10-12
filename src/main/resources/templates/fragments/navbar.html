@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="navbar(active)" class="navbar navbar-expand-xl site-navbar fixed-top">
+    <div class="container-custom">
+        <a class="navbar-brand" th:href="@{/}">
+            <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" class="navbar-logo d-block object-fit-contain" />
+            <span class="navbar-brand-text" th:text="#{brand.name}">Tec-verse 2026</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNav"
+                aria-controls="mainNav" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="mainNav" aria-labelledby="mainNavLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="mainNavLabel">
+                    <a class="offcanvas-title-link" th:href="@{/}" th:text="#{contact.title}">Tec-verse 2026</a>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                        data-bs-target="#mainNav" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${active == 'retreat'} ? 'active'" th:href="@{/retreat-2026}" th:text="#{nav.glance}">Time Line</a>
+                    </li>
+                                               <!-- <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/retreat-2024}">Tec-verse 2024</a></li>
+                            <li><a class="dropdown-item" th:href="@{/retreat-2025}">Tec-verse 2025</a></li> 
+                            <li><a class="dropdown-item" th:href="@{/retreat-2026}" th:text="#{contact.title}">Tec-verse 2026</a></li>
+                        </ul> -->
+
+
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${active == 'about'} ? 'active'" th:href="@{/about}" th:text="#{nav.about}">About Tec-verse</a>
+                    </li>
+
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" th:classappend="${active == 'gallery' or active == 'news'} ? 'active'" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false" th:text="#{nav.explore}">Explore</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/gallery}" th:text="#{nav.gallery}">Gallery</a></li>
+                            <li><a class="dropdown-item" th:href="@{/news-updates}" th:text="#{nav.news}">News & Update</a></li>
+                            <!-- <li><a class="dropdown-item" th:href="@{/#media-coverage}" th:text="#{footer.link.media}">Media Coverage</a></li> -->
+                        </ul>
+                    </li>
+
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${active == 'inquiry'} ? 'active'" th:href="@{/inquiry}" th:text="#{nav.contact}">Contact Us</a>
+                    </li>
+                </ul>
+
+                <div class="navbar-actions ms-lg-auto d-flex justify-content-end">
+                    <div class="mob-clr d-flex justify-content-center navbar-language-switcher notranslate" translate="no" aria-label="Language selector">
+                        <button type="button" class="navbar-language-btn mob-clr notranslate d-inline-flex align-items-center justify-content-center" translate="no" data-language-button="en" lang="en">English</button>
+                        <!-- <span class="navbar-language-separator align-items-center justify-content-center" aria-hidden="true">|</span>
+                        <button type="button" class="navbar-language-btn mob-clr notranslate d-inline-flex align-items-center justify-content-center" translate="no" data-language-button="ta" lang="ta">&#2980;&#2990;&#3007;&#2996;&#3021;</button> -->
+                        <span class="navbar-language-separator align-items-center justify-content-center" aria-hidden="true">|</span>
+                        <button type="button" class="navbar-language-btn mob-clr notranslate d-inline-flex align-items-center justify-content-center" translate="no" data-language-button="hi" lang="hi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;</button>
+                    </div>
+                    <a class="navbar-action-btn navbar-action-btn-ticket d-inline-flex align-items-center justify-content-center overflow-hidden" th:href="@{/ticket}" th:text="#{nav.register}">Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>

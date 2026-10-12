@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Schedule | Tec-verse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body class="admin-dashboard-page overflow-x-hidden">
+<div class="admin-app-shell min-vh-100 overflow-x-hidden">
+<div th:replace="~{admin/fragments/admin-layout :: sidebar('schedule')}"></div>
+<div class="admin-main-panel">
+<div th:replace="~{admin/fragments/admin-layout :: topbar('Conference Schedule')}"></div>
+<main class="admin-shell container-fluid mx-auto">
+    <div class="mb-4">
+        <a class="text-decoration-none small fw-semibold text-success" th:href="@{/admin/conference-schedule}"><i class="bi bi-arrow-left"></i> Conference Schedule</a>
+        <h1 class="h3 mt-2 mb-0" th:text="${mode == 'edit' ? 'Edit Schedule Item' : 'Add Schedule Item'}">Add Schedule Item</h1>
+    </div>
+
+    <section class="card form-card overflow-hidden">
+        <div class="card-body p-4">
+            <form data-admin-validation th:action="${mode == 'edit'} ? @{/admin/conference-schedule/{id}(id=${scheduleItemId})} : @{/admin/conference-schedule}" th:object="${conferenceScheduleItemForm}" method="post" enctype="multipart/form-data">
+                <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="dayNumber">Day *</label>
+                        <select id="dayNumber" class="form-select form-select-lg" th:field="*{dayNumber}" required>
+                            <option value="">Choose a day</option>
+                            <option value="1">Day 01</option>
+                            <option value="2">Day 02</option>
+                            <option value="3">Day 03</option>
+                        </select>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('dayNumber')}" th:errors="*{dayNumber}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="scheduleDate">Date *</label>
+                        <input id="scheduleDate" type="date" class="form-control form-control-lg" th:field="*{scheduleDate}" required>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('scheduleDate')}" th:errors="*{scheduleDate}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="displayOrder">Display Order</label>
+                        <input id="displayOrder" type="number" min="0" class="form-control form-control-lg" th:field="*{displayOrder}">
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('displayOrder')}" th:errors="*{displayOrder}"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label class="form-label fw-semibold" for="sessionTitle">Session Title *</label>
+                    <input id="sessionTitle" class="form-control form-control-lg" th:field="*{sessionTitle}" maxlength="220" required>
+                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('sessionTitle')}" th:errors="*{sessionTitle}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold" for="imageFile">Schedule Image <span th:if="${mode != 'edit'}">*</span></label>
+                    <input id="imageFile" name="imageFile" type="file" class="form-control form-control-lg"
+                           accept="image/jpeg,image/png,image/webp,image/gif" data-max-file-bytes="1048576" th:required="${mode != 'edit'}">
+                    <div class="form-text" th:text="${mode == 'edit' ? 'Choose a new image only if you want to replace the current one. Maximum size: 1 MB.' : 'Choose a JPG, PNG, WEBP, or GIF image, up to 1 MB.'}">Choose an image.</div>
+                    <img th:if="${mode == 'edit' and currentImageUrl != null}" th:src="@{${currentImageUrl}}" alt="Current schedule image" class="img-thumbnail mt-2" style="max-width: 180px; max-height: 120px; object-fit: cover;">
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold" for="startTime">Start Time *</label>
+                        <input id="startTime" type="time" class="form-control form-control-lg" th:field="*{startTime}" required>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold" for="endTime">End Time *</label>
+                        <input id="endTime" type="time" class="form-control form-control-lg" th:field="*{endTime}" data-after="#startTime" required>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}"></div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-4 my-4">
+                    <div class="form-check form-switch">
+                        <input id="highlighted" class="form-check-input" type="checkbox" th:field="*{highlighted}">
+                        <label class="form-check-label fw-semibold" for="highlighted">Highlight this card</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input id="active" class="form-check-input" type="checkbox" th:field="*{active}">
+                        <label class="form-check-label fw-semibold" for="active">Publish on website</label>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-primary btn-save btn-lg" type="submit"><i class="bi bi-save me-1"></i><span th:text="${mode == 'edit' ? 'Update' : 'Save'}">Save</span></button>
+                    <a class="btn btn-outline-secondary btn-lg" th:href="@{/admin/conference-schedule}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+ </div>
+ </div>
+<script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.22.1/dist/jquery.validate.min.js"></script>
+<script th:src="@{/js/jquery-form-validation.js}"></script>
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>
