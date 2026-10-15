@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import '../utils/app_logger.dart';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../constants/api_constants.dart';
@@ -153,8 +153,8 @@ class ApiClient {
       final bool isAuthRequest = endpoint.contains('auth') || endpoint.contains('login');
 
       if (isAuthRequest) {
-        debugPrint('[LOGIN] API URL: $targetUri');
-        debugPrint('[LOGIN] Request started');
+        appLog('[LOGIN] API URL: $targetUri');
+        appLog('[LOGIN] Request started');
       }
 
       try {
@@ -163,7 +163,7 @@ class ApiClient {
         );
 
         if (isAuthRequest) {
-          debugPrint('[LOGIN] Response received: ${response.statusCode}');
+          appLog('[LOGIN] Response received: ${response.statusCode}');
         }
 
         // Successfully connected to candidate backend - lock in candidate URL
@@ -179,22 +179,22 @@ class ApiClient {
         final osError = se.osError?.message.toLowerCase() ?? '';
 
         if (msg.contains('refused') || osError.contains('refused')) {
-          if (isAuthRequest) debugPrint('[LOGIN] Error: Connection refused at $candidate');
+          if (isAuthRequest) appLog('[LOGIN] Error: Connection refused at $candidate');
         } else if (msg.contains('timed out') || osError.contains('timed out') || msg.contains('unreachable')) {
-          if (isAuthRequest) debugPrint('[LOGIN] Error: Connection timeout at $candidate');
+          if (isAuthRequest) appLog('[LOGIN] Error: Connection timeout at $candidate');
         } else {
-          if (isAuthRequest) debugPrint('[LOGIN] Error: SocketException - ${se.message}');
+          if (isAuthRequest) appLog('[LOGIN] Error: SocketException - ${se.message}');
         }
         continue;
       } on TimeoutException catch (te, st) {
         lastError = te;
         lastStackTrace = st;
-        if (isAuthRequest) debugPrint('[LOGIN] Error: Connection timeout at $candidate');
+        if (isAuthRequest) appLog('[LOGIN] Error: Connection timeout at $candidate');
         continue;
       } on http.ClientException catch (ce, st) {
         lastError = ce;
         lastStackTrace = st;
-        if (isAuthRequest) debugPrint('[LOGIN] Error: ClientException - ${ce.message}');
+        if (isAuthRequest) appLog('[LOGIN] Error: ClientException - ${ce.message}');
         continue;
       } catch (e) {
         if (e is ApiException) rethrow;
@@ -205,19 +205,19 @@ class ApiClient {
 
     // All candidates failed - map to exact network failure exception
     if (lastError is TimeoutException) {
-      debugPrint('[LOGIN] Error: Connection timeout');
+      appLog('[LOGIN] Error: Connection timeout');
       throw const ConnectionTimeoutException('Unable to reach the server. Please try again.');
     } else if (lastError is SocketException) {
-      debugPrint('[LOGIN] Error: Network / socket error');
+      appLog('[LOGIN] Error: Network / socket error');
       throw const ServerUnavailableException('Unable to reach the server. Please try again.');
     } else if (lastError is http.ClientException) {
-      debugPrint('[LOGIN] Error: HTTP Client failure');
+      appLog('[LOGIN] Error: HTTP Client failure');
       throw const ConnectionTimeoutException('Unable to reach the server. Please try again.');
     } else if (lastError is ApiException) {
       throw lastError;
     }
 
-    debugPrint('[LOGIN] Error: General failure - $lastError');
+    appLog('[LOGIN] Error: General failure - $lastError');
     Error.throwWithStackTrace(
       const ConnectionTimeoutException('Unable to reach the server. Please try again.'),
       lastStackTrace ?? StackTrace.current,
@@ -261,10 +261,10 @@ class ApiClient {
 
     switch (code) {
       case 400:
-        debugPrint('[LOGIN] Error: HTTP 400 - $message');
+        appLog('[LOGIN] Error: HTTP 400 - $message');
         throw ValidationException(message, statusCode: code, details: decoded);
       case 401:
-        debugPrint('[LOGIN] Error: HTTP 401 - $message');
+        appLog('[LOGIN] Error: HTTP 401 - $message');
         if (errorCode == 'USER_NOT_REGISTERED' || message.toLowerCase().contains('not registered')) {
           throw const UserNotRegisteredException('Invalid credentials');
         }
@@ -276,7 +276,7 @@ class ApiClient {
               : 'Your session has expired. Please sign in again.',
         );
       case 403:
-        debugPrint('[LOGIN] Error: HTTP 403 - $message');
+        appLog('[LOGIN] Error: HTTP 403 - $message');
         if (errorCode == 'REGISTRATION_NOT_APPROVED' || message.toLowerCase().contains('not yet approved')) {
           throw RegistrationPendingException(message);
         }
@@ -285,22 +285,22 @@ class ApiClient {
         final retryAfter = int.tryParse(response.headers['retry-after'] ?? '') ?? 60;
         throw TooManyRequestsException(message, retryAfterSeconds: retryAfter);
       case 404:
-        debugPrint('[LOGIN] Error: HTTP 404 - $message');
+        appLog('[LOGIN] Error: HTTP 404 - $message');
         throw NotFoundException(
           message.toLowerCase() == 'not found'
               ? 'Attendee or digital pass was not found.'
               : message,
         );
       case 500:
-        debugPrint('[LOGIN] Error: HTTP 500 - $message');
+        appLog('[LOGIN] Error: HTTP 500 - $message');
         throw const ServerException('Server error. Please try again later.');
       case 502:
       case 503:
       case 504:
-        debugPrint('[LOGIN] Error: HTTP $code - $message');
+        appLog('[LOGIN] Error: HTTP $code - $message');
         throw const ServerUnavailableException('Unable to reach the server. Please try again.');
       default:
-        debugPrint('[LOGIN] Error: HTTP $code - $message');
+        appLog('[LOGIN] Error: HTTP $code - $message');
         throw ServerException('$message (HTTP $code)');
     }
   }

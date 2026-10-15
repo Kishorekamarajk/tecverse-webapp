@@ -21,7 +21,10 @@ import com.tecverse.app.dto.TicketRegistrationRequest;
 import com.tecverse.app.dto.TicketRegistrationResponse;
 import com.tecverse.app.entity.TicketRegistration;
 import com.tecverse.app.repository.TicketRegistrationRepository;
+import com.tecverse.app.exception.OtpVerificationRequiredException;
 import com.tecverse.app.response.ApiResponse;
+import com.tecverse.app.security.OtpSessionVerification;
+import com.tecverse.app.security.OtpSessionVerification.Purpose;
 import com.tecverse.app.service.ExhibitorOtpService;
 import com.tecverse.app.service.ExhibitorStorageService;
 import com.tecverse.app.service.RegistrationService;
@@ -65,17 +68,22 @@ public class RegistrationController {
     @PostMapping(value={"/register","/register.html"},consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<RegistrationResponse>> register(@Valid @RequestBody RegistrationRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "exhibitor-registration", request.getEmail(), 5, Duration.ofHours(1), 20, Duration.ofHours(1));
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(message("api.registration.submitted"),registrationService.register(request)));
+        OtpSessionVerification.require(httpRequest, Purpose.EXHIBITOR, request.getEmail());
+        RegistrationResponse response = registrationService.register(request);
+        OtpSessionVerification.consume(httpRequest, Purpose.EXHIBITOR);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(message("api.registration.submitted"),response));
     }
     @PostMapping(value={"/register","/register.html"},consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<RegistrationResponse>> registerForm(@Valid @ModelAttribute RegistrationRequest request, HttpServletRequest httpRequest){return register(request, httpRequest);}
     @GetMapping(value={"/check-email","/check-email.html"},produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<Boolean>> checkEmail(@RequestParam @Email @NotBlank @Size(max=254) String email){
+    public ResponseEntity<ApiResponse<Boolean>> checkEmail(@RequestParam @Email @NotBlank @Size(max=254) String email, HttpServletRequest httpRequest){
+        rateLimitService.check(httpRequest, "check-email", null, 0, Duration.ofMinutes(10), 20, Duration.ofMinutes(10));
         boolean exists=registrationService.checkEmailExists(email);
         return ResponseEntity.ok(ApiResponse.success(exists?message("api.email.registered"):message("api.email.available"),exists));
     }
     @GetMapping(value={"/check-phone","/check-phone.html"},produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<Boolean>> checkPhone(@RequestParam @NotBlank @Size(max=32) String phone){
+    public ResponseEntity<ApiResponse<Boolean>> checkPhone(@RequestParam @NotBlank @Size(max=32) String phone, HttpServletRequest httpRequest){
+        rateLimitService.check(httpRequest, "check-phone", null, 0, Duration.ofMinutes(10), 20, Duration.ofMinutes(10));
         boolean exists=registrationService.checkPhoneExists(phone);
         return ResponseEntity.ok(ApiResponse.success(exists?message("api.phone.registered"):message("api.phone.available"),exists));
     }
@@ -95,11 +103,17 @@ public class RegistrationController {
         if (email == null || email.length() > 254 || !email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) throw new IllegalArgumentException("Enter a valid official email address.");
         if (otp == null || !otp.matches("^\\d{6}$")) throw new IllegalArgumentException("Enter the 6-digit OTP.");
         rateLimitService.check(httpRequest, "otp-verify", email, 5, Duration.ofMinutes(3), 60, Duration.ofMinutes(3));
-        exhibitorOtpService.verify(email, otp); return ResponseEntity.ok(ApiResponse.success("Official email verified."));
+        exhibitorOtpService.verify(email, otp);
+        OtpSessionVerification.markVerified(httpRequest, Purpose.EXHIBITOR, email);
+        return ResponseEntity.ok(ApiResponse.success("Official email verified."));
     }
     @PostMapping(value="/exhibitor/upload", consumes=MediaType.MULTIPART_FORM_DATA_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<String>> exhibitorUpload(@RequestParam("file") org.springframework.web.multipart.MultipartFile file, @RequestParam(value="reference",defaultValue="pending") @Size(max=100) String reference, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "exhibitor-upload", null, 0, Duration.ofHours(1), 10, Duration.ofHours(1));
+        // Only a visitor who has verified an official email in this session may upload documents.
+        if (!OtpSessionVerification.hasVerification(httpRequest, Purpose.EXHIBITOR)) {
+            throw new OtpVerificationRequiredException("Please verify your official email with OTP before uploading documents.");
+        }
         String savedPath = exhibitorStorageService.upload(file, reference);
         return ResponseEntity.ok(ApiResponse.success("Document uploaded successfully.", savedPath));
     }
@@ -112,12 +126,44 @@ public class RegistrationController {
     @PostMapping(value="/ticket/verify-otp",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> verifyTicketOtp(@Valid @RequestBody TicketOtpVerifyRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "otp-verify", request.getEmail(), 5, Duration.ofMinutes(1), 60, Duration.ofMinutes(1));
-        ticketOtpService.verifyOtp(request.getEmail(),request.getOtp()); return ResponseEntity.ok(ApiResponse.success("OTP verified successfully."));
+        ticketOtpService.verifyOtp(request.getEmail(),request.getOtp());
+        OtpSessionVerification.markVerified(httpRequest, Purpose.TICKET, request.getEmail());
+        return ResponseEntity.ok(ApiResponse.success("OTP verified successfully."));
+    }
+    @PostMapping(value="/ticket/send-mobile-otp",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<Void>> sendTicketMobileOtp(@RequestBody java.util.Map<String,String> body, HttpServletRequest httpRequest){
+        String phone = requireIndianMobile(body.get("phone"));
+        // Each SMS costs money: tighter limits than email, plus a daily cap per number.
+        rateLimitService.check(httpRequest, "sms-otp-send", phone, 3, Duration.ofMinutes(3), 20, Duration.ofMinutes(3));
+        rateLimitService.check(httpRequest, "sms-otp-daily", phone, 10, Duration.ofDays(1), 100, Duration.ofDays(1));
+        ticketOtpService.sendMobileOtp(phone);
+        return ResponseEntity.ok(ApiResponse.success("OTP has been sent to your mobile number."));
+    }
+    @PostMapping(value="/ticket/verify-mobile-otp",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<Void>> verifyTicketMobileOtp(@RequestBody java.util.Map<String,String> body, HttpServletRequest httpRequest){
+        String phone = requireIndianMobile(body.get("phone")), otp = body.get("otp");
+        if (otp == null || !otp.matches("^\\d{6}$")) throw new IllegalArgumentException("Enter the 6-digit OTP.");
+        rateLimitService.check(httpRequest, "sms-otp-verify", phone, 5, Duration.ofMinutes(1), 60, Duration.ofMinutes(1));
+        ticketOtpService.verifyMobileOtp(phone, otp);
+        OtpSessionVerification.markVerified(httpRequest, Purpose.TICKET_MOBILE, phone);
+        return ResponseEntity.ok(ApiResponse.success("Mobile number verified successfully."));
+    }
+    private static String requireIndianMobile(String phone){
+        if (phone == null || !phone.trim().matches("^(?:\\+91[-\\s]?)?[6-9]\\d{9}$")) throw new IllegalArgumentException("Enter a valid 10-digit Indian mobile number.");
+        return com.tecverse.app.util.ValidationUtil.normalizeIndianMobile(phone.trim());
     }
     @PostMapping(value="/ticket/register",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<TicketRegistrationResponse>> ticketRegister(@Valid @RequestBody TicketRegistrationRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "ticket-registration", request.getEmail(), 5, Duration.ofHours(1), 20, Duration.ofHours(1));
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Registration completed.",ticketRegistrationService.register(request)));
+        OtpSessionVerification.require(httpRequest, Purpose.TICKET, request.getEmail());
+        String phone = request.getPhone() == null ? "" : com.tecverse.app.util.ValidationUtil.normalizeIndianMobile(request.getPhone().trim());
+        if (!OtpSessionVerification.isVerified(httpRequest, Purpose.TICKET_MOBILE, phone)) {
+            throw new OtpVerificationRequiredException("Please verify your mobile number with OTP before submitting.");
+        }
+        TicketRegistrationResponse response = ticketRegistrationService.register(request);
+        OtpSessionVerification.consume(httpRequest, Purpose.TICKET);
+        OtpSessionVerification.consume(httpRequest, Purpose.TICKET_MOBILE);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Registration completed.",response));
     }
 
     @GetMapping(value="/ticket/qr",produces=MediaType.IMAGE_PNG_VALUE)

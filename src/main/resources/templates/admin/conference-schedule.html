@@ -60,7 +60,7 @@
                             <i class="bi bi-pencil-square"></i>
                         </a>
                         <form class="d-inline" th:action="@{/admin/conference-schedule/{id}/delete(id=${item.id})}" method="post"
-                              onsubmit="return confirm('Delete this schedule item?');">
+                              data-confirm="Delete this schedule item?">
                             <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Delete schedule item">
                                 <i class="bi bi-trash"></i>
                             </button>

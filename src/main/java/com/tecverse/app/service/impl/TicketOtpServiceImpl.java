@@ -3,23 +3,36 @@ package com.tecverse.app.service.impl;
 import java.security.SecureRandom;
 import java.security.MessageDigest;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tecverse.app.dto.TicketOtpSendRequest;
+import com.tecverse.app.entity.TicketMobileOtp;
+import com.tecverse.app.repository.TicketMobileOtpRepository;
 import com.tecverse.app.service.TicketOtpService;
 import com.tecverse.app.repository.TicketRegistrationRepository;
 import com.tecverse.app.service.MailDeliveryService;
+import com.tecverse.app.util.SMSServices;
 import com.tecverse.app.util.ValidationUtil;
 
 @Service
 public class TicketOtpServiceImpl implements TicketOtpService {
 
+    private static final Logger log = LoggerFactory.getLogger(TicketOtpServiceImpl.class);
+
     private static final Duration OTP_VALIDITY = Duration.ofMinutes(5);
     private static final SecureRandom RANDOM = new SecureRandom();
+    private static final int MAX_OTP_ATTEMPTS = 5;
 
     private final MailDeliveryService mailDeliveryService;
     private final TicketRegistrationRepository registrationRepository;
@@ -27,11 +40,87 @@ public class TicketOtpServiceImpl implements TicketOtpService {
     private final Map<String, LocalDateTime> verifiedEmails = new ConcurrentHashMap<>();
     private final Map<String, OtpEntry> passwordResetOtps = new ConcurrentHashMap<>();
     private final Map<String, Integer> passwordResetOtpAttempts = new ConcurrentHashMap<>();
-    private final Map<String, LocalDateTime> verifiedPasswordResets = new ConcurrentHashMap<>();
+    private final Map<String, ResetGrant> verifiedPasswordResets = new ConcurrentHashMap<>();
+    private final TicketMobileOtpRepository mobileOtpRepository;
+    private final SMSServices smsServices;
+    private final String smsUsername;
+    private final String smsPassword;
+    private final String smsSenderId;
+    private final String smsSecureKey;
+    private final String smsTemplateId;
 
-    public TicketOtpServiceImpl(MailDeliveryService mailDeliveryService, TicketRegistrationRepository registrationRepository) {
+    public TicketOtpServiceImpl(MailDeliveryService mailDeliveryService, TicketRegistrationRepository registrationRepository,
+                                TicketMobileOtpRepository mobileOtpRepository,
+                                @Value("${tecverse.sms.url}") String smsUrl,
+                                @Value("${tecverse.sms.username}") String smsUsername,
+                                @Value("${tecverse.sms.password}") String smsPassword,
+                                @Value("${tecverse.sms.sender-id}") String smsSenderId,
+                                @Value("${tecverse.sms.secure-key}") String smsSecureKey,
+                                @Value("${tecverse.sms.template-id}") String smsTemplateId) {
         this.mailDeliveryService = mailDeliveryService;
         this.registrationRepository = registrationRepository;
+        this.mobileOtpRepository = mobileOtpRepository;
+        this.smsServices = new SMSServices(smsUrl);
+        this.smsUsername = smsUsername;
+        this.smsPassword = smsPassword;
+        this.smsSenderId = smsSenderId;
+        this.smsSecureKey = smsSecureKey;
+        this.smsTemplateId = smsTemplateId;
+    }
+
+    @Override
+    public void sendMobileOtp(String phone) {
+        String mobile = ValidationUtil.normalizeIndianMobile(phone);
+        if (registrationRepository.existsByPhone(mobile)) throw new IllegalArgumentException("This phone number is already registered.");
+        String otp = String.format("%06d", RANDOM.nextInt(1_000_000));
+        // Must match the licensed DLT template word for word, or the gateway rejects the SMS.
+        String msg = "Dear Patron, Use OTP " + otp + " to verify your mobile number and start your engagement on the SSM Portal - Team SSM";
+        String output = smsServices.sendOtpSMS(smsUsername, smsPassword, msg, smsSenderId, mobile, smsSecureKey, smsTemplateId);
+        if (output == null || !output.contains(SMSServices.SUCCESS_MARKER)) {
+            log.error("OTP SMS sending FAILED for mobile ending {}: {}", mobile.substring(Math.max(0, mobile.length() - 4)), output);
+            throw new IllegalStateException("SMS Gateway error. Please try again later.");
+        }
+        // Saving with the same mobile replaces any earlier OTP for that number (and resets attempts).
+        mobileOtpRepository.save(new TicketMobileOtp(mobile, hashMobileOtp(mobile, otp), Instant.now().plus(OTP_VALIDITY)));
+    }
+
+    // noRollbackFor: failed-attempt counts and deletions must be committed even though we then throw.
+    @Override
+    @Transactional(noRollbackFor = IllegalArgumentException.class)
+    public void verifyMobileOtp(String phone, String otp) {
+        String mobile = ValidationUtil.normalizeIndianMobile(phone);
+        TicketMobileOtp entry = mobileOtpRepository.findByMobileForUpdate(mobile)
+                .orElseThrow(() -> new IllegalArgumentException("Please request a new OTP."));
+        if (Instant.now().isAfter(entry.getExpiresAt())) {
+            mobileOtpRepository.delete(entry);
+            throw new IllegalArgumentException("OTP has expired. Please request a new OTP.");
+        }
+        if (otp == null || !MessageDigest.isEqual(entry.getOtpHash().getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                hashMobileOtp(mobile, otp.trim()).getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
+            if (entry.incrementFailedAttempts() >= MAX_OTP_ATTEMPTS) {
+                mobileOtpRepository.delete(entry);
+                throw new IllegalArgumentException("Too many incorrect OTP attempts. Please request a new OTP.");
+            }
+            throw new IllegalArgumentException("Incorrect OTP. Please try again.");
+        }
+        // Correct OTP: delete it so it can never be used again.
+        mobileOtpRepository.delete(entry);
+    }
+
+    @Scheduled(fixedRate = 3_600_000)
+    @Transactional
+    public void purgeExpiredMobileOtps() {
+        mobileOtpRepository.deleteExpired(Instant.now());
+    }
+
+    private static String hashMobileOtp(String mobile, String otp) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256")
+                    .digest((mobile + ":" + otp).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return java.util.HexFormat.of().formatHex(digest);
+        } catch (java.security.NoSuchAlgorithmException ex) {
+            throw new IllegalStateException("SHA-256 unavailable", ex);
+        }
     }
 
     @Override
@@ -70,10 +159,17 @@ public class TicketOtpServiceImpl implements TicketOtpService {
             otpStore.remove(normalizedEmail);
             throw new IllegalArgumentException("OTP has expired. Please request a new OTP.");
         }
-        if (!entry.otp().equals(otp)) {
+        if (otp == null || !MessageDigest.isEqual(entry.otp().getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                otp.trim().getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
+            if (entry.failedAttempts().incrementAndGet() >= MAX_OTP_ATTEMPTS) {
+                otpStore.remove(normalizedEmail, entry);
+                throw new IllegalArgumentException("Too many incorrect OTP attempts. Please request a new OTP.");
+            }
             throw new IllegalArgumentException("Incorrect OTP. Please try again.");
         }
-        otpStore.remove(normalizedEmail);
+        if (!otpStore.remove(normalizedEmail, entry)) {
+            throw new IllegalArgumentException("Please request a new OTP.");
+        }
         verifiedEmails.put(normalizedEmail, LocalDateTime.now().plus(Duration.ofMinutes(30)));
     }
 
@@ -103,7 +199,7 @@ public class TicketOtpServiceImpl implements TicketOtpService {
         }
     }
 
-    public synchronized void verifyPasswordResetOtp(String email, String otp) {
+    public synchronized String verifyPasswordResetOtp(String email, String otp) {
         String normalizedEmail = normalizeEmail(email);
         OtpEntry entry = passwordResetOtps.get(normalizedEmail);
         if (entry == null) throw new IllegalArgumentException("Please request a new OTP.");
@@ -124,13 +220,30 @@ public class TicketOtpServiceImpl implements TicketOtpService {
         }
         passwordResetOtps.remove(normalizedEmail);
         passwordResetOtpAttempts.remove(normalizedEmail);
-        verifiedPasswordResets.put(normalizedEmail, LocalDateTime.now().plus(Duration.ofMinutes(10)));
+        // A single-use random token proves this caller passed the OTP step; knowing the email alone is not enough.
+        byte[] tokenBytes = new byte[32];
+        RANDOM.nextBytes(tokenBytes);
+        String resetToken = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes);
+        verifiedPasswordResets.put(normalizedEmail, new ResetGrant(resetToken, LocalDateTime.now().plus(Duration.ofMinutes(10))));
+        return resetToken;
     }
 
-    public boolean consumePasswordResetVerification(String email) {
+    public boolean consumePasswordResetVerification(String email, String resetToken) {
         String normalizedEmail = normalizeEmail(email);
-        LocalDateTime until = verifiedPasswordResets.remove(normalizedEmail);
-        return until != null && !LocalDateTime.now().isAfter(until);
+        ResetGrant grant = verifiedPasswordResets.get(normalizedEmail);
+        if (grant == null || resetToken == null || resetToken.isBlank()) return false;
+        if (LocalDateTime.now().isAfter(grant.expiresAt())) {
+            verifiedPasswordResets.remove(normalizedEmail, grant);
+            return false;
+        }
+        if (!MessageDigest.isEqual(grant.token().getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                resetToken.trim().getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
+            return false;
+        }
+        return verifiedPasswordResets.remove(normalizedEmail, grant);
+    }
+
+    private record ResetGrant(String token, LocalDateTime expiresAt) {
     }
 
     public void consumeEmailVerification(String email) { verifiedEmails.remove(normalizeEmail(email)); }
@@ -151,6 +264,9 @@ public class TicketOtpServiceImpl implements TicketOtpService {
         return email == null ? "" : email.trim().toLowerCase();
     }
 
-    private record OtpEntry(String otp, LocalDateTime expiresAt) {
+    private record OtpEntry(String otp, LocalDateTime expiresAt, AtomicInteger failedAttempts) {
+        OtpEntry(String otp, LocalDateTime expiresAt) {
+            this(otp, expiresAt, new AtomicInteger());
+        }
     }
 }

@@ -21,7 +21,7 @@
 
     <section class="card form-card overflow-hidden">
         <div class="card-body p-4">
-            <form data-admin-validation th:action="${mode == 'edit' ? '/admin/thematic-cards/' + thematicCardId : '/admin/thematic-cards'}" th:object="${thematicDomainCardForm}" method="post">
+            <form data-admin-validation th:action="${mode == 'edit'} ? @{/admin/thematic-cards/{id}(id=${thematicCardId})} : @{/admin/thematic-cards}" th:object="${thematicDomainCardForm}" method="post">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold" for="institution">Institution *</label>

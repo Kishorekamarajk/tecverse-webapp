@@ -30,6 +30,7 @@ public class MobileSessionService {
     private final org.springframework.security.crypto.password.PasswordEncoder passwords;
     private final Duration lifetime;
     private final byte[] signingSecret;
+    private final String dummyHash;
 
     public MobileSessionService(TicketRegistrationRepository registrations, MobileRevokedSessionRepository revokedSessions,
             org.springframework.security.crypto.password.PasswordEncoder passwords,
@@ -40,6 +41,7 @@ public class MobileSessionService {
         this.passwords = passwords;
         this.lifetime = lifetime;
         this.signingSecret = signingSecret.getBytes(StandardCharsets.UTF_8);
+        this.dummyHash = passwords.encode(UUID.randomUUID().toString());
     }
 
     public Map<String, Object> login(String identifier, String password) {
@@ -50,7 +52,12 @@ public class MobileSessionService {
         var attendee = clean.contains("@")
                 ? registrations.findByEmailIgnoreCase(clean)
                 : registrations.findByPhone(ValidationUtil.normalizeIndianMobile(clean));
-        TicketRegistration registration = attendee.orElseThrow(() -> new IllegalArgumentException("Invalid email/mobile or password."));
+        if (attendee.isEmpty()) {
+            // Spend the same BCrypt time as a real check so response timing does not reveal registered accounts.
+            passwords.matches(password, dummyHash);
+            throw new IllegalArgumentException("Invalid email/mobile or password.");
+        }
+        TicketRegistration registration = attendee.get();
         String passwordHash = registration.getPasswordHash();
         if (passwordHash == null || passwordHash.isBlank() || !passwords.matches(password, passwordHash)) {
             throw new IllegalArgumentException("Invalid email/mobile or password.");

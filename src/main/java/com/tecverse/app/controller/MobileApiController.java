@@ -98,8 +98,11 @@ public class MobileApiController {
     public Map<String, Object> health() { return Map.of("status", "ok", "service", "tecverse-shared-backend"); }
 
     @PostMapping("/auth/login")
-    public Map<String, Object> login(@RequestBody MobileLoginRequest request) {
-        return sessions.login(request.resolvedIdentifier(), request.password());
+    public Map<String, Object> login(@RequestBody MobileLoginRequest request, HttpServletRequest httpRequest) {
+        String identifier = request.resolvedIdentifier();
+        rateLimitService.check(httpRequest, "mobile-login", identifier == null ? null : identifier.trim().toLowerCase(),
+                5, Duration.ofMinutes(15), 30, Duration.ofMinutes(15));
+        return sessions.login(identifier, request.password());
     }
 
     @PostMapping("/auth/logout")
@@ -263,8 +266,8 @@ public class MobileApiController {
         String email = firstNonBlank(request.get("email"), request.get("identifier"));
         rateLimitService.check(httpRequest, "mobile-password-reset-verify", email,
                 5, Duration.ofMinutes(15), 30, Duration.ofMinutes(15));
-        otpService.verifyPasswordResetOtp(email, request.get("otp"));
-        return Map.of("success", true);
+        String resetToken = otpService.verifyPasswordResetOtp(email, request.get("otp"));
+        return Map.of("success", true, "resetToken", resetToken);
     }
 
     @PostMapping("/auth/reset-password")
@@ -276,12 +279,40 @@ public class MobileApiController {
         String newPassword = request.get("newPassword");
         if (newPassword == null || newPassword.length() < 8) throw new IllegalArgumentException("Password must contain at least 8 characters.");
         if (!newPassword.equals(request.get("confirmPassword"))) throw new IllegalArgumentException("Password and confirmation do not match.");
-        if (!otpService.consumePasswordResetVerification(email)) throw new IllegalArgumentException("Verify a valid reset OTP before changing the password.");
+        if (!otpService.consumePasswordResetVerification(email, request.get("resetToken"))) {
+            throw new IllegalArgumentException("Verify a valid reset OTP before changing the password.");
+        }
         TicketRegistration attendee = ticketRegistrations.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new IllegalArgumentException("No attendee account was found for that email address."));
         attendee.setPasswordHash(passwordEncoder.encode(newPassword));
         ticketRegistrations.save(attendee);
         return Map.of("success", true, "message", "Password updated successfully.");
+    }
+
+    /**
+     * Permanently deletes the signed-in attendee's account and all data linked to it
+     * (Google Play account-deletion requirement). The current password is required.
+     */
+    @PostMapping("/me/delete")
+    @Transactional
+    public Map<String, Object> deleteAccount(@RequestHeader("Authorization") String authorization,
+            @RequestBody Map<String, String> request, HttpServletRequest httpRequest) {
+        TicketRegistration attendee = sessions.requireAttendee(authorization);
+        rateLimitService.check(httpRequest, "mobile-account-delete", attendee.getEmail(),
+                5, Duration.ofMinutes(15), 30, Duration.ofMinutes(15));
+        String password = request.get("password");
+        if (password == null || attendee.getPasswordHash() == null
+                || !passwordEncoder.matches(password, attendee.getPasswordHash())) {
+            throw new IllegalArgumentException("Incorrect password. Your account was not deleted.");
+        }
+        Long id = attendee.getId();
+        notifications.deleteByRegistrationId(id);
+        preferences.deleteByRegistrationId(id);
+        checkIns.deleteByRegistrationId(id);
+        ticketRegistrations.delete(attendee);
+        // Existing tokens stop working: requireAttendee() rejects tokens for registrations that no longer exist.
+        sessions.logout(authorization);
+        return Map.of("success", true, "message", "Your account and registration data have been deleted.");
     }
 
     @GetMapping("/digital-pass")
@@ -302,10 +333,12 @@ public class MobileApiController {
     @PostMapping("/pass/verify")
     @Transactional
     public Map<String, Object> verifyPass(@RequestBody Map<String, String> request) {
-        String qrToken = request.get("qrToken");
-        if (qrToken == null || !qrToken.startsWith("TECVERSE26:")) throw new IllegalArgumentException("Invalid event pass.");
-        String ref = qrToken.substring("TECVERSE26:".length());
-        TicketRegistration attendee = ticketRegistrations.findByReferenceNumber(ref)
+        // Passes are identified only by the registration's random 128-bit scan token, never by the
+        // sequential reference number, so a valid pass cannot be guessed or printed by others.
+        // Accepts the app QR ("TECVERSE26:<token>") and the e-mail/ID-card QR (".../ticket/scan/<token>").
+        String scanToken = scanTokenFrom(request.get("qrToken"));
+        if (scanToken == null) throw new IllegalArgumentException("Invalid event pass.");
+        TicketRegistration attendee = ticketRegistrations.findByScanToken(scanToken)
                 .orElseThrow(() -> new IllegalArgumentException("Pass registration not found."));
         if (checkIns.findByRegistrationId(attendee.getId()).isPresent()) throw new IllegalArgumentException("This pass has already been checked in.");
         MobilePassCheckIn checkIn = new MobilePassCheckIn();
@@ -329,7 +362,7 @@ public class MobileApiController {
         result.put("eventDates", "26-27 NOVEMBER 2026");
         result.put("venue", "CHENNAI TRADE CENTRE, NANDAMBAKKAM, CHENNAI 600089");
         result.put("attendanceDays", attendee.getAttendanceDays());
-        result.put("qrToken", "TECVERSE26:" + attendee.getReferenceNumber());
+        result.put("qrToken", "TECVERSE26:" + attendee.getScanToken());
         MobilePassCheckIn checkIn = checkIns.findByRegistrationId(attendee.getId()).orElse(null);
         result.put("status", checkIn == null ? "active" : "used");
         result.put("issuedAt", attendee.getCreatedAt().toString());
@@ -347,6 +380,15 @@ public class MobileApiController {
         return Map.of("id", item.getId(), "title", item.getTitle(), "message", item.getMessage(),
                 "category", item.getCategory(), "priority", item.getPriority(), "actionRoute", item.getActionRoute() == null ? "" : item.getActionRoute(),
                 "isRead", item.isRead(), "createdAt", item.getCreatedAt().toString());
+    }
+
+    private static final java.util.regex.Pattern SCAN_TOKEN = java.util.regex.Pattern.compile(
+            "^(?:TECVERSE26:|.*/ticket/scan/)([a-f0-9]{32})/?$");
+
+    private static String scanTokenFrom(String qrValue) {
+        if (qrValue == null) return null;
+        java.util.regex.Matcher matcher = SCAN_TOKEN.matcher(qrValue.trim());
+        return matcher.matches() ? matcher.group(1) : null;
     }
 
     private static String suffix(String reference) {

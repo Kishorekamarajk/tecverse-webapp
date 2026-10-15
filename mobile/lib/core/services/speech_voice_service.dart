@@ -4,6 +4,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../utils/app_logger.dart';
 
 /// Robust Speech-To-Text and Text-To-Speech Audio Service with graceful platform fallback.
 class SpeechVoiceService {
@@ -33,7 +34,7 @@ class SpeechVoiceService {
         await _flutterTts.awaitSynthCompletion(true);
         _isTtsInitialized = true;
       } catch (e) {
-        debugPrint('[SpeechVoiceService] TTS init note: $e');
+        appLog('[SpeechVoiceService] TTS init note: $e');
       }
     }
 
@@ -42,20 +43,20 @@ class SpeechVoiceService {
       try {
         _isSpeechAvailableOnDevice = await _speech.initialize(
           onStatus: (status) {
-            debugPrint('[SpeechVoiceService] Status: $status');
+            appLog('[SpeechVoiceService] Status: $status');
             if (status == 'done' || status == 'notListening') {
               _isListening = false;
             }
           },
           onError: (SpeechRecognitionError error) {
-            debugPrint('[SpeechVoiceService] Error: ${error.errorMsg}');
+            appLog('[SpeechVoiceService] Error: ${error.errorMsg}');
             _isListening = false;
           },
           debugLogging: false,
         );
         _isSpeechInitialized = true;
       } catch (e) {
-        debugPrint('[SpeechVoiceService] STT init note (will use fallback): $e');
+        appLog('[SpeechVoiceService] STT init note (will use fallback): $e');
         _isSpeechAvailableOnDevice = false;
         _isSpeechInitialized = true; // Mark as attempted
       }
@@ -103,7 +104,7 @@ class SpeechVoiceService {
       );
       return true;
     } catch (e) {
-      debugPrint('[SpeechVoiceService] Listen exception: $e');
+      appLog('[SpeechVoiceService] Listen exception: $e');
       _isListening = false;
       onError?.call();
       return false;
@@ -146,7 +147,7 @@ class SpeechVoiceService {
 
       await _flutterTts.speak(cleanText);
     } catch (e) {
-      debugPrint('[SpeechVoiceService] Speak error: $e');
+      appLog('[SpeechVoiceService] Speak error: $e');
       onComplete?.call();
     }
   }

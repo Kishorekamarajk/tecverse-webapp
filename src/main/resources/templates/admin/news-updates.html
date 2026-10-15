@@ -53,7 +53,7 @@
                     </td>
                     <td class="text-end">
                         <form th:action="@{/admin/news-updates/{id}/delete(id=${item.id})}" method="post"
-                              onsubmit="return confirm('Delete this news update?');">
+                              data-confirm="Delete this news update?">
                             <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Delete news update">
                                 <i class="bi bi-trash"></i>
                             </button>

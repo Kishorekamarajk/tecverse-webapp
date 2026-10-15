@@ -30,6 +30,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   int _currentStep = 1; // 1: Email, 2: OTP, 3: New Password, 4: Success
 
+  /// One-time token returned by the OTP verification step. Held in memory
+  /// only (never persisted) and discarded after use or when leaving step 3.
+  String? _resetToken;
+
   Timer? _resendTimer;
   int _resendCountdown = 0;
 
@@ -101,13 +105,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final authController = context.read<AuthController>();
     authController.clearError();
 
-    final valid = await authController.verifyResetOtp(
+    final resetToken = await authController.verifyResetOtp(
       identifier: email,
       otp: otp,
     );
 
-    if (valid && mounted) {
-      setState(() => _currentStep = 3);
+    if (resetToken != null && mounted) {
+      setState(() {
+        _resetToken = resetToken;
+        _currentStep = 3;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('OTP code verified. Please set your new password.'),
@@ -123,7 +130,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final email = _emailController.text.trim();
-    final otp = _otpController.text.trim();
+    final resetToken = _resetToken;
     final newPassword = _newPasswordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
@@ -137,18 +144,33 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
+    if (resetToken == null || resetToken.isEmpty) {
+      // Token lost (e.g. user navigated back): the OTP must be verified again.
+      setState(() => _currentStep = 2);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please verify the OTP code again to continue.'),
+          backgroundColor: AppColors.crimsonError,
+        ),
+      );
+      return;
+    }
+
     final authController = context.read<AuthController>();
     authController.clearError();
 
     final success = await authController.resetPassword(
       identifier: email,
-      otp: otp,
+      resetToken: resetToken,
       newPassword: newPassword,
       confirmPassword: confirmPassword,
     );
 
     if (success && mounted) {
-      setState(() => _currentStep = 4);
+      setState(() {
+        _resetToken = null;
+        _currentStep = 4;
+      });
     }
   }
 
@@ -175,7 +197,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textPrimary),
               onPressed: () {
                 if (_currentStep > 1 && _currentStep < 4) {
-                  setState(() => _currentStep--);
+                  setState(() {
+                    _currentStep--;
+                    _resetToken = null;
+                  });
                 } else {
                   Navigator.of(context).pop();
                 }
@@ -475,7 +500,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           children: [
             GestureDetector(
               onTap: () {
-                setState(() => _currentStep = 1);
+                setState(() {
+                  _currentStep = 1;
+                  _resetToken = null;
+                });
               },
               child: Text(
                 'Change Email',

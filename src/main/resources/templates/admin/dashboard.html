@@ -80,7 +80,7 @@
     </div>
 </div>
 <script th:src="@{/js/admin.js}"></script>
-<script th:inline="javascript">
+<script th:nonce="${cspNonce}" th:inline="javascript">
     document.addEventListener("DOMContentLoaded", () => {
         const canvas = document.getElementById("adminSubmissionChart");
         if (!canvas || typeof Chart === "undefined") return;

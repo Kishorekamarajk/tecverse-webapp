@@ -9,4 +9,5 @@ public interface MobileNotificationRepository extends JpaRepository<MobileNotifi
     List<MobileNotification> findTop100ByRegistrationIdOrderByCreatedAtDesc(Long registrationId);
     Optional<MobileNotification> findByIdAndRegistrationId(Long id, Long registrationId);
     int countByRegistrationIdAndReadFalse(Long registrationId);
+    long deleteByRegistrationId(Long registrationId);
 }

@@ -48,35 +48,53 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<bool> verifyResetOtp({
+  Future<String> verifyResetOtp({
     required String identifier,
     required String otp,
   }) async {
-    final cleanIdentifier = identifier.trim().toLowerCase();
+    final cleanEmail = identifier.trim().toLowerCase();
     final res = await authApi.verifyResetOtp(
-      identifier: cleanIdentifier,
+      email: cleanEmail,
       otp: otp.trim(),
     );
-    if (res.containsKey('success')) {
-      return res['success'] == true;
+    final resetToken = res['resetToken']?.toString() ?? '';
+    if (res['success'] == true && resetToken.isNotEmpty) {
+      return resetToken;
     }
-    return true;
+    throw ValidationException(
+      res['message']?.toString() ?? 'Invalid or expired OTP. Please try again.',
+    );
   }
 
   @override
-  Future<void> verifyResetOtpAndSetPassword({
+  Future<void> resetPassword({
     required String identifier,
-    required String otp,
+    required String resetToken,
     required String newPassword,
     String? confirmPassword,
   }) async {
-    final cleanIdentifier = identifier.trim().toLowerCase();
+    final cleanEmail = identifier.trim().toLowerCase();
     await authApi.resetPassword(
-      identifier: cleanIdentifier,
-      otp: otp.trim(),
+      email: cleanEmail,
+      resetToken: resetToken,
       newPassword: newPassword.trim(),
       confirmPassword: confirmPassword?.trim() ?? newPassword.trim(),
     );
+  }
+
+  @override
+  Future<void> deleteAccount({
+    required String token,
+    required String password,
+  }) async {
+    final res = await authApi.deleteAccount(token: token, password: password);
+    if (res['success'] == false) {
+      throw ValidationException(
+        res['message']?.toString() ?? 'Unable to delete the account. Please try again.',
+      );
+    }
+    // The account no longer exists on the server: wipe every local credential.
+    await tokenStorage.clearAll();
   }
 
   @override

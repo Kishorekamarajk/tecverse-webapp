@@ -4,13 +4,18 @@ import com.tecverse.app.service.ExhibitorOtpService;
 import com.tecverse.app.service.MailDeliveryService;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ExhibitorOtpServiceImpl implements ExhibitorOtpService {
-    private record Entry(String otp, LocalDateTime expires) {}
+    private static final int MAX_OTP_ATTEMPTS = 5;
+
+    private record Entry(String otp, LocalDateTime expires, AtomicInteger failedAttempts) {}
 
     private final ConcurrentHashMap<String, Entry> codes = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, LocalDateTime> verified = new ConcurrentHashMap<>();
@@ -25,7 +30,7 @@ public class ExhibitorOtpServiceImpl implements ExhibitorOtpService {
     public void send(String email, String name) {
         String normalized = norm(email);
         String otp = String.format("%06d", random.nextInt(1_000_000));
-        codes.put(normalized, new Entry(otp, LocalDateTime.now().plusMinutes(5)));
+        codes.put(normalized, new Entry(otp, LocalDateTime.now().plusMinutes(5), new AtomicInteger()));
         verified.remove(normalized);
 
         String displayName = name == null || name.isBlank() ? "Exhibitor" : name.trim();
@@ -56,8 +61,15 @@ public class ExhibitorOtpServiceImpl implements ExhibitorOtpService {
             codes.remove(normalized);
             throw new IllegalArgumentException("OTP has expired.");
         }
-        if (!entry.otp().equals(otp)) throw new IllegalArgumentException("Incorrect OTP.");
-        codes.remove(normalized);
+        if (otp == null || !MessageDigest.isEqual(entry.otp().getBytes(StandardCharsets.UTF_8),
+                otp.trim().getBytes(StandardCharsets.UTF_8))) {
+            if (entry.failedAttempts().incrementAndGet() >= MAX_OTP_ATTEMPTS) {
+                codes.remove(normalized, entry);
+                throw new IllegalArgumentException("Too many incorrect OTP attempts. Please request a new OTP.");
+            }
+            throw new IllegalArgumentException("Incorrect OTP.");
+        }
+        if (!codes.remove(normalized, entry)) throw new IllegalArgumentException("Please request a new OTP.");
         verified.put(normalized, LocalDateTime.now().plusMinutes(30));
     }
 

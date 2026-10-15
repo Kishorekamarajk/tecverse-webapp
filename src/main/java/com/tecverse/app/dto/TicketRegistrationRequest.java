@@ -25,11 +25,11 @@ public class TicketRegistrationRequest {
     private String confirmPassword;
     @NotBlank @Pattern(regexp="ACADEMIA|CENTRAL_GOVERNMENT|STATE_GOVERNMENT|INDUSTRY_STARTUP|VIP_SPECIAL_INVITEE|SPEAKER|ORGANIZER", message="Choose a valid registration category.")
     private String category;
-    @Size(max=100) @Pattern(regexp="^(?:[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} &.,'’()/#+-]{0,99})?$", message="Enter a valid academia type.") private String academiaType;
-    @Size(max=200) @Pattern(regexp="^(?:[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} &.,'’()/#+-]{0,199})?$", message="Institution name may contain letters, numbers, spaces, and common punctuation (& . , ' - / # + parentheses).") private String collegeName;
+    @Size(max=100) @Pattern(regexp="^(?:(?=.*\\p{L})[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} &.,'’()/#+-]{0,99})?$", message="Academia type must contain letters.") private String academiaType;
+    @Size(max=200) @Pattern(regexp="^(?:(?=.*\\p{L})[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} &.,'’()/#+-]{0,199})?$", message="Institution name must contain letters and may include numbers, spaces, and common punctuation (& . , ' - / # + parentheses).") private String collegeName;
     @Size(max=100) @Pattern(regexp="^(?:[\\p{L}\\p{M}][\\p{L}\\p{M} .,'’()/-]{0,99})?$", message="Enter a valid district name using letters and common punctuation.") private String collegeDistrict;
     @Size(max=100) @Pattern(regexp="^(?:[\\p{L}\\p{M}][\\p{L}\\p{M} .,'’()/-]{0,99})?$", message="Enter a valid state or union territory name using letters and common punctuation.") private String collegeState;
-    @Size(max=200) @Pattern(regexp="^(?:[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} &.,'’()/#+-]{0,199})?$", message="University name may contain letters, numbers, spaces, and common punctuation (& . , ' - / # + parentheses).") private String universityName;
+    @Size(max=200) @Pattern(regexp="^(?:(?=.*\\p{L})[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} &.,'’()/#+-]{0,199})?$", message="University name must contain letters and may include numbers, spaces, and common punctuation (& . , ' - / # + parentheses).") private String universityName;
     @Size(max=100) private String academiaRole;
     @Size(max=100) @Pattern(regexp="^(?:[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} _./#-]{0,99})?$", message="Student ID may contain letters, numbers, spaces, and these separators: _ . / # -.") private String registerNumber;
 
@@ -37,9 +37,9 @@ public class TicketRegistrationRequest {
     @Size(max=100) private String stateName;
     @Size(max=200) private String stateDepartment;
 
-    @Size(max=200) @Pattern(regexp="^(?:[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} &.,'’()/#+-]{0,199})?$", message="Organization name may contain letters, numbers, spaces, and common punctuation (& . , ' - / # + parentheses).") private String organizationName;
-    @Size(max=255) @Pattern(regexp="^(?:[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} .,'’()/-]{0,254})?$", message="Enter a valid city or office location using letters, numbers, spaces, and common punctuation.") private String organizationLocation;
-    @Size(max=150) @Pattern(regexp="^(?:[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} &.,'’()/#+-]{0,149})?$", message="Designation may contain letters, numbers, spaces, and common punctuation.") private String designation;
+    @Size(max=200) @Pattern(regexp="^(?:(?=.*\\p{L})[\\p{L}\\p{M}\\p{N}][\\p{L}\\p{M}\\p{N} &.,'’()/#+-]{0,199})?$", message="Organization name must contain letters and may include numbers, spaces, and common punctuation (& . , ' - / # + parentheses).") private String organizationName;
+    @Size(max=255) @Pattern(regexp="^(?:[\\p{L}\\p{M}][\\p{L}\\p{M} .,'’()/-]{0,254})?$", message="Enter a valid city or office location using letters, spaces, and common punctuation.") private String organizationLocation;
+    @Size(max=150) @Pattern(regexp="^(?:[\\p{L}\\p{M}][\\p{L}\\p{M} &.,'’()/-]{0,149})?$", message="Designation may contain letters, spaces, and common punctuation (& . , ' - / parentheses).") private String designation;
     @Size(max=100) private String industryOrStartup;
 
     @NotBlank @Pattern(regexp="INDIAN|NRI|FOREIGNER", message="Choose a valid citizenship status.")

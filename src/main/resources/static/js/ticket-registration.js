@@ -2,7 +2,7 @@
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 const contextPath=((document.body&&document.body.dataset.contextPath)||'').replace(/\/$/,'');
 const apiPath=path=>(contextPath==='/'?'':contextPath)+path;
-const API={send:apiPath('/ticket/send-otp'),verify:apiPath('/ticket/verify-otp'),register:apiPath('/ticket/register')};
+const API={sendMobile:apiPath('/ticket/send-mobile-otp'),verifyMobile:apiPath('/ticket/verify-mobile-otp'),send:apiPath('/ticket/send-otp'),verify:apiPath('/ticket/verify-otp'),detailsStep:apiPath('/ticket/details-step'),register:apiPath('/ticket/register')};
 $$('.password-toggle').forEach(button=>button.addEventListener('click',()=>{
  const input=$('#'+button.dataset.passwordTarget);
  const showing=input.type==='password';
@@ -27,7 +27,7 @@ const ministries=[
 "Ministry of Tribal Affairs","Ministry of Women and Child Development","Ministry of Youth Affairs and Sports"];
 const states=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 const departments=["General Administration","Finance","Home","Education","Higher Education","School Education","Health and Family Welfare","Industries and Commerce","Information Technology / Electronics","Science and Technology","Agriculture","Animal Husbandry and Fisheries","Co-operation","Rural Development","Urban Development / Municipal Administration","Revenue","Transport","Public Works","Water Resources","Energy","Environment and Forests","Labour and Employment","Skill Development","Tourism and Culture","Social Welfare","Women and Child Development","Tribal Welfare","Food and Civil Supplies","Information and Public Relations","Planning","Law","Personnel","Other"];
-let verified=false, timer=null, rateLimitTimer=null;
+let verified=false, emailVerified=false, mobileVerified=false, timer=null, mobileTimer=null, rateLimitTimer=null;
 
 function msg(el,text,ok=false){el.textContent=text;el.className='tr-msg small fw-semibold mt-3 '+(ok?'text-success':'text-danger');}
 
@@ -43,7 +43,7 @@ function setLoading(btn,on,loadingLabel){
   }
 }
 function overlay(on,text){const o=$('#trOverlay');if(!o)return;if(!window.bootstrap?.Modal)return;if(text)$('#trOverlayText').textContent=text;const modal=window.bootstrap.Modal.getOrCreateInstance(o);if(on)modal.show();else modal.hide();}
-function shakeOtp(){$$('.tr-otp-inputs input').forEach(i=>{i.classList.remove('tr-shake');void i.offsetWidth;i.classList.add('tr-shake');});}
+function shakeOtp(){$$('#emailOtpInputs input').forEach(i=>{i.classList.remove('tr-shake');void i.offsetWidth;i.classList.add('tr-shake');});}
 
 const STEP_N={verify:1,details:2,preview:3,complete:4};
 function show(view){
@@ -125,18 +125,43 @@ const FIELD_PLACEHOLDERS={collegeName:'Enter your institution name',collegeDistr
 const SELECT_PROMPTS={academiaRole:'Select participant role',centralMinistry:'Select a ministry',stateName:'Select a state or union territory',stateDepartment:'Select a department',industryOrStartup:'Select organization type'};
 const FREE_TEXT_VALIDATION={
  officialName:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’\-]{0,149}$/u,message:'Use letters, spaces, periods, apostrophes, commas, or hyphens for your name.'},
- academiaType:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,99}$/u,message:'Enter a valid academia type.'},
- collegeName:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,199}$/u,message:'Institution name may contain letters, numbers, spaces, and common punctuation (& . , apostrophe - / # + parentheses).'},
+ academiaType:{pattern:/^(?=.*\p{L})[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,99}$/u,message:'Academia type must contain letters.'},
+ collegeName:{pattern:/^(?=.*\p{L})[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,199}$/u,message:'Institution name must contain letters and may include numbers, spaces, and common punctuation (& . , apostrophe - / # + parentheses).'},
  collegeDistrict:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’()/-]{0,99}$/u,message:'Enter a valid district name using letters and common punctuation.'},
  collegeState:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’()/-]{0,99}$/u,message:'Enter a valid state or union territory name using letters and common punctuation.'},
- universityName:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,199}$/u,message:'University name may contain letters, numbers, spaces, and common punctuation (& . , apostrophe - / # + parentheses).'},
+ universityName:{pattern:/^(?=.*\p{L})[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,199}$/u,message:'University name must contain letters and may include numbers, spaces, and common punctuation (& . , apostrophe - / # + parentheses).'},
  registerNumber:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} _./#-]{0,99}$/u,message:'Student ID may contain letters, numbers, spaces, and these separators: _ . / # -.'},
- organizationName:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,199}$/u,message:'Organization name may contain letters, numbers, spaces, and common punctuation (& . , apostrophe - / # + parentheses).'},
- organizationLocation:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} .,'’()/-]{0,254}$/u,message:'Enter a valid city or office location using letters, numbers, spaces, and common punctuation.'},
- designation:{pattern:/^[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,149}$/u,message:'Designation may contain letters, numbers, spaces, and common punctuation.'},
+ organizationName:{pattern:/^(?=.*\p{L})[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N} &.,'’()/#+-]{0,199}$/u,message:'Organization name must contain letters and may include numbers, spaces, and common punctuation (& . , apostrophe - / # + parentheses).'},
+ organizationLocation:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’()/-]{0,254}$/u,message:'Enter a valid city or office location using letters, spaces, and common punctuation.'},
+ organizationLocationOther:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’()/-]{0,254}$/u,message:'Enter a valid city or office location using letters, spaces, and common punctuation.'},
+ designation:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} &.,'’()/-]{0,149}$/u,message:'Designation may contain letters, spaces, and common punctuation (& . , apostrophe - / parentheses).'},
  passportNumber:{pattern:/^[A-Za-z0-9][A-Za-z0-9-]{0,49}$/,message:'Passport number may contain letters, numbers, and hyphens.'},
  passportName:{pattern:/^[\p{L}\p{M}][\p{L}\p{M} .,'’\-]{0,149}$/u,message:'Use letters, spaces, periods, apostrophes, commas, or hyphens for the passport name.'}
 };
+// Characters each field may NOT contain; they are stripped as the user types or pastes.
+const PERSON_NAME_BLOCK=/[^\p{L}\p{M} .,'’-]/gu, PLACE_BLOCK=/[^\p{L}\p{M} .,'’()/-]/gu, ORG_BLOCK=/[^\p{L}\p{M}\p{N} &.,'’()/#+-]/gu;
+const INPUT_FILTERS={
+ verifyName:PERSON_NAME_BLOCK, officialName:PERSON_NAME_BLOCK, passportName:PERSON_NAME_BLOCK,
+ collegeDistrict:PLACE_BLOCK, collegeState:PLACE_BLOCK, organizationLocationOther:PLACE_BLOCK,
+ designation:/[^\p{L}\p{M} &.,'’()/-]/gu,
+ collegeName:ORG_BLOCK, universityName:ORG_BLOCK, organizationName:ORG_BLOCK, academiaType:ORG_BLOCK,
+ registerNumber:/[^\p{L}\p{M}\p{N} _./#-]/gu,
+ passportNumber:/[^A-Za-z0-9-]/g,
+ phone:/[^0-9+]/g
+};
+function applyInputFilter(el){
+ const block=INPUT_FILTERS[el.name]; if(!block)return;
+ let cleaned=el.value.replace(block,'').replace(/^\s+/,'').replace(/\s{2,}/g,' ');
+ if(el.name==='passportNumber')cleaned=cleaned.toUpperCase();
+ if(el.name==='phone')cleaned=cleaned.replace(/(?!^)\+/g,'');
+ if(cleaned===el.value)return;
+ const caret=Math.max(0,(el.selectionStart??cleaned.length)-(el.value.length-cleaned.length));
+ el.value=cleaned;
+ try{el.setSelectionRange(caret,caret);}catch(_){}
+}
+// Capture phase so the value is cleaned before any field validation listeners run.
+document.addEventListener('input',e=>{if(!e.isComposing&&e.target.name)applyInputFilter(e.target);},true);
+document.addEventListener('compositionend',e=>{if(e.target.name)applyInputFilter(e.target);},true);
 const CITIES=[
  'Agartala','Agra','Ahmedabad','Aizawl','Ajmer','Aligarh','Alappuzha','Amaravati','Amritsar','Anand','Anantapur','Asansol','Ayodhya',
  'Bareilly','Bathinda','Begusarai','Belagavi','Bengaluru','Berhampur','Bharatpur','Bhagalpur','Bhavnagar','Bhilai','Bhopal','Bhubaneswar','Bikaner','Bilaspur','Bokaro',
@@ -245,9 +270,10 @@ $('#sendOtp').onclick=async()=>{
   msg(m,'Use 8–64 characters with at least one uppercase letter, one number, and one special symbol.');return;
  }
  if(password!==confirmPassword){msg(m,'Password and confirm password must match.');return;}
+ if(emailVerified)return;
  let retryAfterSeconds=0;
  setLoading(btn,true);
- try{await post(API.send,{fullName:name,email,phone,passType:'Tec-verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;msg(m,'OTP sent. Check your email.',true);startTimer();$$('.tr-otp-inputs input')[0]?.focus();}
+ try{await post(API.send,{fullName:name,email,phone,passType:'Tec-verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;msg(m,'OTP sent. Check your email.',true);startTimer();$$('#emailOtpInputs input')[0]?.focus();}
  catch(e){msg(m,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
 };
@@ -267,7 +293,48 @@ function startRateLimitCountdown(button,seconds){
  rateLimitTimer=setInterval(()=>{remaining--;update();if(remaining<=0){clearInterval(rateLimitTimer);button.innerHTML=originalLabel;}},1000);
 }
 $('#resendOtp').onclick=()=>$('#sendOtp').click();
-const otpInputs=$$('.tr-otp-inputs input');
+$('#registerStart').onclick=()=>{
+ if(window.jQuery && !window.jQuery('#ticketVerifyForm').valid())return;
+ if(!emailVerified||!mobileVerified){
+  const missing=[];
+  if(!emailVerified)missing.push('email');
+  if(!mobileVerified)missing.push('mobile');
+  msg($('#verifyMsg'),`Please verify your ${missing.join(' and ')} OTP${missing.length>1?'s':''} before registering.`);
+  return;
+ }
+ proceedAfterVerification();
+};
+// Mobile number verification by SMS OTP (must be completed before the email OTP step).
+$('#sendMobileOtp').onclick=async()=>{
+ if(mobileVerified)return;
+ const btn=$('#sendMobileOtp'),phone=$('#phone').value.trim(),m=$('#verifyMsg');
+ if(!/^(?:\+91[-\s]?)?[6-9]\d{9}$/.test(phone)){msg(m,'Enter a valid 10-digit Indian mobile number.');return;}
+ let retryAfterSeconds=0;
+ setLoading(btn,true,'Sending…');
+ try{await post(API.sendMobile,{phone});$('#otpMobile').textContent=phone;$('#mobileOtpBox').hidden=false;$$('#mobileOtpInputs input').forEach(i=>{i.value='';});msg(m,'OTP sent to your mobile number by SMS.',true);startMobileTimer();$$('#mobileOtpInputs input')[0]?.focus();}
+ catch(e){msg(m,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
+ finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
+};
+function startMobileTimer(){let n=60;const b=$('#resendMobileOtp');b.disabled=true;clearInterval(mobileTimer);mobileTimer=setInterval(()=>{n--;b.textContent=n>0?`Resend OTP (${n}s)`:'Resend OTP';if(n<=0){clearInterval(mobileTimer);b.disabled=false;}},1000);b.textContent='Resend OTP (60s)';}
+$('#resendMobileOtp').onclick=()=>$('#sendMobileOtp').click();
+$('#verifyMobileOtp').onclick=async()=>{
+ const btn=$('#verifyMobileOtp'),otp=$$('#mobileOtpInputs input').map(x=>x.value).join(''),m=$('#verifyMsg');
+ if(otp.length!==6){msg(m,'Enter the complete 6-digit OTP sent to your mobile.');return;}
+ let retryAfterSeconds=0;
+ setLoading(btn,true);
+ try{await post(API.verifyMobile,{phone:$('#phone').value.trim(),otp});mobileVerified=true;if(!emailVerified)msg(m,'Mobile number verified. Now click Send OTP next to your email to verify it.',true);}
+ catch(e){msg(m,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
+ finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
+ if(mobileVerified)setMobileVerifiedUi(true);
+};
+function setMobileVerifiedUi(on){
+ const b=$('#sendMobileOtp');
+ $('#phone').readOnly=on;$('#mobileOtpBox').hidden=true;clearInterval(mobileTimer);
+ b.disabled=on;b.innerHTML=on?'<i class="bi bi-check-circle-fill"></i> Verified':'Verify Mobile';delete b.dataset.label;
+}
+// Six single-digit boxes per OTP: auto-advance, paste-to-fill, backspace/arrow navigation, Enter submits.
+function wireOtpBoxes(container,submitButton){
+const otpInputs=$$(container+' input');
 otpInputs.forEach((input,index)=>{
  input.autocomplete=index===0?'one-time-code':'off';
  input.oninput=()=>{
@@ -287,34 +354,68 @@ otpInputs.forEach((input,index)=>{
   }else if(event.key==='Delete'&&input.value){input.value='';event.preventDefault();}
   else if(event.key==='ArrowLeft'&&otpInputs[index-1]){otpInputs[index-1].focus();event.preventDefault();}
   else if(event.key==='ArrowRight'&&otpInputs[index+1]){otpInputs[index+1].focus();event.preventDefault();}
+  else if(event.key==='Enter'){event.preventDefault();$(submitButton).click();}
  };
 });
+}
+wireOtpBoxes('#emailOtpInputs','#verifyOtp');
+wireOtpBoxes('#mobileOtpInputs','#verifyMobileOtp');
 $('#verifyOtp').onclick=async()=>{
- const btn=$('#verifyOtp'); const otp=$$('.tr-otp-inputs input').map(x=>x.value).join(''),m=$('#verifyMsg');
+ const btn=$('#verifyOtp'); const otp=$$('#emailOtpInputs input').map(x=>x.value).join(''),m=$('#verifyMsg');
  if(otp.length!==6){msg(m,'Enter the complete 6-digit OTP.');shakeOtp();return;}
  let retryAfterSeconds=0;
  setLoading(btn,true);
  try{
   await post(API.verify,{email:$('#email').value.trim(),otp});
-  verified=true;
-  const verifiedName=$('#verifyName').value.trim();
-  $('#detailsForm [name="officialName"]').value=verifiedName;
-  $('#verifyName').readOnly=true;
-  $('#email').readOnly=true;
-  $('#phone').readOnly=true;
-  $('#detailsForm [name="officialName"]').readOnly=true;
-  msg(m,'Email verified successfully. Your verified name, email, and phone number are locked.',true);
-  show('details');
+  emailVerified=true;
+  if(!mobileVerified)msg(m,'Email verified. Now click Verify Mobile to verify your mobile number.',true);
  }
  catch(e){msg(m,e.message);shakeOtp();if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
+ if(emailVerified)setEmailVerifiedUi(true);
 };
+const sendOtpLabel=$('#sendOtp').innerHTML;
+function setEmailVerifiedUi(on){
+ const b=$('#sendOtp');
+ $('#email').readOnly=on;$('#otpBox').hidden=true;clearInterval(timer);
+ b.disabled=on;b.innerHTML=on?'<i class="bi bi-check-circle-fill"></i> Verified':sendOtpLabel;delete b.dataset.label;
+}
+// Runs once both email and mobile OTPs are verified.
+async function proceedAfterVerification(){
+ const m=$('#verifyMsg');
+ // The verify responses alone never advance the form: step 2 is only released by the server
+ // to a session that really completed both OTP verifications.
+ if(!await loadDetailsStep()){msg(m,'OTP verification could not be confirmed. Please verify again.');emailVerified=mobileVerified=false;setEmailVerifiedUi(false);setMobileVerifiedUi(false);return;}
+ verified=true;
+ const verifiedName=$('#verifyName').value.trim();
+ $('#detailsForm [name="officialName"]').value=verifiedName;
+ $('#verifyName').readOnly=true;
+ $('#email').readOnly=true;
+ $('#phone').readOnly=true;
+ $('#detailsForm [name="officialName"]').readOnly=true;
+ msg(m,'Mobile and email verified successfully. Your verified name, email, and phone number are locked.',true);
+ show('details');
+}
+async function loadDetailsStep(){
+ let r;
+ try{r=await fetch(API.detailsStep,{headers:{Accept:'text/html'},cache:'no-store'});}catch(_){return false;}
+ if(!r.ok)return false;
+ if($('#detailsForm'))return true; // already loaded earlier; keep what the user has typed
+ const doc=new DOMParser().parseFromString(await r.text(),'text/html'), form=doc.querySelector('form#detailsForm[data-view="details"]');
+ if(!form)return false;
+ $('#detailsStepHost').replaceChildren(document.adoptNode(form));
+ bindDetailsStep();
+ window.TecverseValidation?.init($('#detailsForm'));
+ return true;
+}
+function bindDetailsStep(){
 $('#category').onchange=()=>{renderConditional();renderPassport();};$('#citizenship').onchange=renderPassport;
 document.querySelector('#conditional').addEventListener('change',e=>{if(e.target.name==='academiaRole')updateAcademiaRoleFields();if(e.target.name==='organizationLocationChoice'){const other=e.target.value==='__OTHER__',wrap=$('#organizationLocationOtherWrap'),input=$('#organizationLocationOther');if(wrap&&input){wrap.hidden=!other;input.disabled=!other;input.required=other;if(!other)input.value='';}}});
 document.querySelector('#conditional').addEventListener('input',e=>{const rule=FREE_TEXT_VALIDATION[e.target.name];if(!rule)return;const value=e.target.value.trim();e.target.setCustomValidity(value&&!rule.pattern.test(value)?rule.message:'');if(e.target.hasAttribute('aria-invalid'))e.target.setAttribute('aria-invalid',String(!e.target.validity.valid));});
 $('#backVerify').onclick=()=>show('verify');
 $('#detailsForm').onsubmit=e=>{e.preventDefault();const days=$$('input[name="attendanceDays"]:checked');const m=$('#detailsMsg');if(!validateTicketFields(e.currentTarget))return;if(!$('#category').value){msg(m,'Choose your registration type.');return;}if(!days.length){msg(m,'Select at least one participation day.');return;}if(days.length===2){days[0].checked=false;days[1].checked=false;const both=$$('input[name="attendanceDays"]')[2];both.checked=true;}preview();};
 $$('input[name="attendanceDays"]').forEach(i=>i.onchange=()=>{if(i.value==='BOTH'&&i.checked)$$('input[name="attendanceDays"]').slice(0,2).forEach(x=>x.checked=false);else if(i.checked)$$('input[name="attendanceDays"]')[2].checked=false;});
+}
 $('#editForm').onclick=()=>show('details');
 const categoryLabels={ACADEMIA:'Academia',CENTRAL_GOVERNMENT:'Central Government',STATE_GOVERNMENT:'State Government',INDUSTRY_STARTUP:'Industry / Startup',VIP_SPECIAL_INVITEE:'VIP / Special Invitee',SPEAKER:'Speaker',ORGANIZER:'Organizer'};
 const dayLabels={DAY_1:'Day 1 · 26 Nov',DAY_2:'Day 2 · 27 Nov',BOTH:'Both Days · 26 & 27 Nov'};
@@ -401,7 +502,7 @@ $('#submitFinal').onclick=async()=>{
  if(!window.ticketPayload?.attendanceDays?.length){msg(m,'Select at least one participation day.');show('details');return;}
  setLoading(btn,true); overlay(true,'Submitting your registration…');
  try{const result=await post(API.register,window.ticketPayload);const data=result.data||result;$('#completeEmail').textContent=data.email;$('#confirmationEmailStatus').textContent=data.confirmationEmailSent?'Your confirmation email is on its way to':'Thanks for registering for TecVerse 2026. Further details will be shared at';show('complete');showRegistrationCelebration();launchIdCard(data,window.ticketPayload);}
- catch(e){msg(m,e.message);}
+ catch(e){if(e.status===403){verified=false;emailVerified=false;mobileVerified=false;setEmailVerifiedUi(false);setMobileVerifiedUi(false);['#verifyName','#email','#phone'].forEach(s=>{$(s).readOnly=false;});show('verify');msg($('#verifyMsg'),e.message);return;}msg(m,e.message);}
  finally{setLoading(btn,false);overlay(false);}
 };
 

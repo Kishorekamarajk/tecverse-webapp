@@ -65,6 +65,7 @@
                 <h3 th:text="#{footer.follow}">Follow Updates</h3>
                 <p th:text="#{footer.follow.desc}">Stay connected with official Tec-verse announcements and event highlights.</p>
                 <a class="site-footer__contact d-inline-flex align-items-center text-decoration-none" href="mailto:tec-verse@cdac.in"><i class="bi bi-envelope"></i> tec-verse@cdac.in</a>
+                <a class="site-footer__contact d-inline-flex align-items-center text-decoration-none" th:href="@{/privacy-policy}" href="/privacy-policy"><i class="bi bi-shield-lock"></i> Privacy Policy</a>
                 <div class="site-footer__socials flex-wrap">
                     <a class="site-footer__social site-footer__social--facebook" href="https://www.facebook.com/CDACINDIA/" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
                     <a class="site-footer__social site-footer__social--instagram" href="https://www.instagram.com/c_dacindia/" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
@@ -91,7 +92,7 @@
         </section>
     </div>
 
-    <script>
+    <script th:nonce="${cspNonce}">
         (function () {
             var modal = document.getElementById('virtualTourModal');
             if (!modal || modal.dataset.initialized) return;

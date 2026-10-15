@@ -60,18 +60,22 @@ class MockAuthRepository implements AuthRepository {
   Future<int> requestPasswordReset({required String identifier}) async => 0;
 
   @override
-  Future<bool> verifyResetOtp({required String identifier, required String otp}) async => true;
+  Future<String> verifyResetOtp({required String identifier, required String otp}) async => 'mock-reset-token';
 
   @override
   Future<UserProfile> updateInterests({required String token, required List<String> interests}) async => _mockProfile;
 
   @override
-  Future<void> verifyResetOtpAndSetPassword({
+  Future<void> resetPassword({
     required String identifier,
-    required String otp,
+    required String resetToken,
     required String newPassword,
     String? confirmPassword,
   }) async {}
+
+  @override
+  Future<void> deleteAccount({required String token, required String password}) async =>
+      tokenStorage.clearAll();
 }
 
 void main() {

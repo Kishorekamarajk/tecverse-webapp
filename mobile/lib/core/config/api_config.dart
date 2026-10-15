@@ -1,44 +1,65 @@
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 
-/// Centralized Production / Staging API Configuration for TEC-VERSE.
+/// Centralized server URL configuration for TEC-VERSE.
 ///
-/// Defaults to the shared TEC-VERSE staging application and API.
+/// This is the ONE source of truth for the server location. Every API URL,
+/// web page link (privacy policy, account deletion, registration) and QR
+/// verification URL is derived from [serverBaseUrl].
 ///
-/// Can also be dynamically overridden at build time via:
-/// `--dart-define=API_BASE_URL=https://...`
+/// Override at build time with:
+/// `--dart-define=API_BASE_URL=https://your-host/tecverse`
+/// (a value that already ends in `/api` or `/api/mobile` is also accepted).
+///
+/// IMPORTANT: the default below is the STAGING server. Release builds for
+/// Google Play MUST pass the production URL, e.g.
+/// `flutter build appbundle --release --dart-define=API_BASE_URL=https://<production-host>/tecverse`
 class ApiConfig {
   ApiConfig._();
 
-  /// Shared website/backend staging origin. Override with
-  /// `--dart-define=STAGING_BASE_URL=https://your-staging-host/tecverse`.
-  static const String stagingBaseUrl = String.fromEnvironment(
-    'STAGING_BASE_URL',
-    defaultValue: 'https://ngypr123.bosschn.in/tecverse',
-  );
+  /// Raw value supplied via `--dart-define=API_BASE_URL=...` (empty if absent).
+  static const String _definedBaseUrl = String.fromEnvironment('API_BASE_URL');
+
+  /// Default server origin + context path (STAGING). See class docs.
+  static const String _defaultServerBaseUrl = 'https://ngypr123.bosschn.in/tecverse';
+
+  /// Configured server origin + context path, as supplied (not yet normalized).
+  static String get _configuredBaseUrl =>
+      _definedBaseUrl.isNotEmpty ? _definedBaseUrl : _defaultServerBaseUrl;
 
   static String? _resolvedBaseUrl;
 
-  /// Centralized base URL for all API requests
+  /// Centralized base URL for all API requests (always ends with `/api`).
   static String get baseUrl {
-    const definedUrl = String.fromEnvironment('API_BASE_URL');
-    if (definedUrl.isNotEmpty) {
-      return _normalizeUrl(definedUrl);
+    if (_definedBaseUrl.isNotEmpty) {
+      return _normalizeUrl(_definedBaseUrl);
     }
 
     if (_resolvedBaseUrl != null) return _resolvedBaseUrl!;
 
-    return _normalizeUrl(stagingBaseUrl);
+    return _normalizeUrl(_configuredBaseUrl);
   }
+
+  /// Website origin + context path without the `/api` suffix,
+  /// e.g. `https://ngypr123.bosschn.in/tecverse`.
+  static String get webBaseUrl {
+    final api = _normalizeUrl(_configuredBaseUrl);
+    return api.substring(0, api.length - '/api'.length);
+  }
+
+  /// Public privacy policy page.
+  static String get privacyPolicyUrl => '$webBaseUrl/privacy-policy';
+
+  /// Public account deletion request page.
+  static String get accountDeletionUrl => '$webBaseUrl/account-deletion';
 
   /// Ordered candidate base URLs to attempt in sequence
   static List<String> get candidateBaseUrls {
-    const definedUrl = String.fromEnvironment('API_BASE_URL');
-    if (definedUrl.isNotEmpty) {
-      return [_normalizeUrl(definedUrl)];
+    if (_definedBaseUrl.isNotEmpty) {
+      return [_normalizeUrl(_definedBaseUrl)];
     }
 
     return [
-      _normalizeUrl(stagingBaseUrl),
+      _normalizeUrl(_configuredBaseUrl),
       if (!kIsWeb && kDebugMode) ...[
         'http://10.0.2.2:2304/api',
         'http://127.0.0.1:2304/api',
@@ -49,6 +70,7 @@ class ApiConfig {
 
   /// Ensures URL ends with `/api` without double slashes.
   /// A URL may already include `/api/mobile` when supplied by a deployment.
+  /// Release builds reject non-HTTPS URLs.
   static String _normalizeUrl(String url) {
     var trimmed = url.trim();
     while (trimmed.endsWith('/')) {

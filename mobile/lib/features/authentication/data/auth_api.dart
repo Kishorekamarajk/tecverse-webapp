@@ -35,36 +35,50 @@ class AuthApi {
     return response is Map<String, dynamic> ? response : <String, dynamic>{};
   }
 
+  /// Verifies the reset OTP. On success the backend returns
+  /// `{"success": true, "resetToken": "..."}`.
   Future<Map<String, dynamic>> verifyResetOtp({
-    required String identifier,
+    required String email,
     required String otp,
   }) async {
     final response = await client.post(
       ApiConstants.verifyResetOtpEndpoint,
       body: {
-        'identifier': identifier,
-        'email': identifier.contains('@') ? identifier : null,
+        'email': email,
         'otp': otp,
       },
     );
     return response is Map<String, dynamic> ? response : <String, dynamic>{};
   }
 
+  /// Sets a new password using the one-time [resetToken] from [verifyResetOtp].
   Future<Map<String, dynamic>> resetPassword({
-    required String identifier,
-    required String otp,
+    required String email,
+    required String resetToken,
     required String newPassword,
-    String? confirmPassword,
+    required String confirmPassword,
   }) async {
     final response = await client.post(
       ApiConstants.resetPasswordEndpoint,
       body: {
-        'identifier': identifier,
-        'email': identifier.contains('@') ? identifier : null,
-        'otp': otp,
+        'email': email,
+        'resetToken': resetToken,
         'newPassword': newPassword,
-        'confirmPassword': confirmPassword ?? newPassword,
+        'confirmPassword': confirmPassword,
       },
+    );
+    return response is Map<String, dynamic> ? response : <String, dynamic>{};
+  }
+
+  /// Permanently deletes the signed-in attendee's account.
+  Future<Map<String, dynamic>> deleteAccount({
+    required String token,
+    required String password,
+  }) async {
+    final response = await client.post(
+      ApiConstants.deleteAccountEndpoint,
+      token: token,
+      body: {'password': password},
     );
     return response is Map<String, dynamic> ? response : <String, dynamic>{};
   }

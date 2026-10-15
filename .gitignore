@@ -11,6 +11,8 @@ bin/
 
 # Environment / secrets
 .env
+config/tecverse-secrets.properties
+*.secrets.properties
 
 # IDE files
 .idea/
@@ -24,10 +26,14 @@ bin/
 
 # Local development folders
 .m2repo/
+.m2/
+.m2-repository/
+.maven-repository/
 .tools/
 
-# Runtime uploads
+# Runtime uploads and logs
 uploads/
+logs/
 
 # Archives
 *.zip

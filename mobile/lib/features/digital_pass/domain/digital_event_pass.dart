@@ -1,3 +1,5 @@
+import '../../../core/config/api_config.dart';
+
 /// Pass validity and verification status issued by the backend.
 enum PassStatus {
   active,
@@ -143,7 +145,7 @@ class DigitalEventPass {
   /// When scanned via Google Lens, Apple Camera, or any Barcode/QR Scanner,
   /// the phone immediately prompts to open this official Delegate Credential Verification web page.
   String get scannableInfo {
-    final baseUrl = 'https://ngypr123.bosschn.in/tecverse';
+    final baseUrl = ApiConfig.webBaseUrl;
     final pId = Uri.encodeComponent(passId);
     final ref = Uri.encodeComponent(attendeeId.isNotEmpty ? attendeeId : passId);
     final tok = Uri.encodeComponent(qrToken);

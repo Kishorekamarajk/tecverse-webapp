@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../../core/constants/api_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/utils/external_links.dart';
 import '../../../core/widgets/animation_utils.dart';
 import '../../authentication/domain/authenticated_user.dart';
 import '../../authentication/presentation/auth_controller.dart';
@@ -10,6 +12,7 @@ import '../../digital_pass/presentation/digital_pass_controller.dart';
 import '../../digital_pass/presentation/digital_pass_screen.dart';
 import '../../home/presentation/interest_selection_dialog.dart';
 import '../../schedule/presentation/schedule_screen.dart';
+import 'widgets/delete_account_dialog.dart';
 
 /// Redesigned Profile Screen matching the exact TEC-VERSE 2026 Mobile UI.
 ///
@@ -84,6 +87,42 @@ class ProfileScreen extends StatelessWidget {
       if (context.mounted) {
         Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
       }
+    }
+  }
+
+  Future<void> _openPrivacyPolicy(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final opened = await openExternalUrl(ApiConstants.privacyPolicyUrl);
+    if (!opened) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Could not open the Privacy Policy. Please try again later.'),
+          backgroundColor: AppColors.crimsonError,
+        ),
+      );
+    }
+  }
+
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final passCtrl = context.read<DigitalPassController>();
+
+    final deleted = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const DeleteAccountDialog(),
+    );
+
+    if (deleted == true) {
+      passCtrl.clearPass();
+      navigator.pushNamedAndRemoveUntil('/login', (route) => false);
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Your account has been permanently deleted.'),
+          backgroundColor: AppColors.emeraldSuccess,
+        ),
+      );
     }
   }
 
@@ -187,6 +226,45 @@ class ProfileScreen extends StatelessWidget {
                   Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DigitalPassScreen()));
                 },
               ),
+              const Divider(height: 1, color: AppColors.borderSubtle),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.textSecondary.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.privacy_tip_outlined, color: AppColors.textSecondary, size: 20),
+                ),
+                title: const Text('Privacy Policy', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5)),
+                trailing: const Icon(Icons.open_in_new_rounded, size: 14, color: AppColors.textSecondary),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  _openPrivacyPolicy(context);
+                },
+              ),
+              const Divider(height: 1, color: AppColors.borderSubtle),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.crimsonError.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.delete_forever_rounded, color: AppColors.crimsonError, size: 20),
+                ),
+                title: const Text(
+                  'Delete Account',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5, color: AppColors.crimsonError),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.textSecondary),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  _confirmDeleteAccount(context);
+                },
+              ),
             ],
           ),
         ),
@@ -277,6 +355,11 @@ class ProfileScreen extends StatelessWidget {
                               delay: const Duration(milliseconds: 200),
                               child: _buildSignOutButton(context),
                             ),
+
+                            const SizedBox(height: 8),
+
+                            // 6. Privacy Policy & Account Deletion links
+                            _buildLegalLinks(context),
 
                             const SizedBox(height: 16),
                           ],
@@ -1051,6 +1134,35 @@ class ProfileScreen extends StatelessWidget {
         elevation: 0,
         shadowColor: AppColors.signoutOrange.withValues(alpha: 0.3),
       ),
+    );
+  }
+
+  /// 7. Privacy Policy and Delete Account links
+  Widget _buildLegalLinks(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        TextButton.icon(
+          onPressed: () => _openPrivacyPolicy(context),
+          icon: const Icon(Icons.privacy_tip_outlined, size: 16, color: AppColors.textSecondary),
+          label: Text(
+            'Privacy Policy',
+            style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+        TextButton.icon(
+          onPressed: () => _confirmDeleteAccount(context),
+          icon: const Icon(Icons.delete_forever_rounded, size: 16, color: AppColors.crimsonError),
+          label: Text(
+            'Delete Account',
+            style: AppTypography.bodySmall.copyWith(
+              fontWeight: FontWeight.w600,
+              color: AppColors.crimsonError,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

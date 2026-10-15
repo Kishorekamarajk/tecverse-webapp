@@ -8,4 +8,5 @@ import com.tecverse.app.entity.MobileAttendeePreference;
 
 public interface MobileAttendeePreferenceRepository extends JpaRepository<MobileAttendeePreference, Long> {
     Optional<MobileAttendeePreference> findByRegistrationId(Long registrationId);
+    long deleteByRegistrationId(Long registrationId);
 }

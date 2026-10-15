@@ -1,5 +1,7 @@
 package com.tecverse.app.controller;
 
+import com.tecverse.app.security.OtpSessionVerification;
+import com.tecverse.app.security.OtpSessionVerification.Purpose;
 import com.tecverse.app.service.SponsorOtpService;
 import com.tecverse.app.service.RateLimitService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +38,7 @@ public class SponsorVerificationController {
     public ResponseEntity<Map<String, String>> verifyOtp(@Valid @RequestBody VerifyRequest request, HttpServletRequest httpRequest) {
         rateLimitService.check(httpRequest, "otp-verify", request.email(), 5, Duration.ofMinutes(3), 60, Duration.ofMinutes(3));
         sponsorOtpService.verify(request.email(), request.otp());
+        OtpSessionVerification.markVerified(httpRequest, Purpose.SPONSOR, request.email());
         return ResponseEntity.ok(Map.of("message", "Email verified successfully."));
     }
 

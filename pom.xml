@@ -86,6 +86,12 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- Health check for the load balancer / monitoring (only /actuator/health is exposed) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- BCrypt password hashing -->
         <dependency>
             <groupId>org.springframework.security</groupId>

@@ -11,7 +11,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
 <link rel="stylesheet" th:href="@{/css/style.css}">
-<script>
+<script th:nonce="${cspNonce}">
 window.tailwind = window.tailwind || {};
 tailwind.config = { corePlugins: { preflight: false }, theme: { extend: { colors: { saffron: '#E8710A', india: '#138A5B', navy: '#0E2442' } } } };
 </script>
@@ -20,7 +20,7 @@ tailwind.config = { corePlugins: { preflight: false }, theme: { extend: { colors
 <script defer src="https://cdn.jsdelivr.net/npm/jquery-validation@1.22.1/dist/jquery.validate.min.js" integrity="sha384-DIFfDxcYkhbAXYdxOYFZshXsis24zK4HtbU7qI30u9/eP7JtiRIGuOaLsoYL5QTs" crossorigin="anonymous"></script>
 <script defer th:src="@{/js/jquery-form-validation.js}"></script>
 <style>
-.rg{--bg:#F6F8FC;--fg:#0E2442;--mut:#5C6B80;--bd:#E0E7F0;--pri:#E8710A;--pri-d:#CC6006;--grn:#138A5B;--acc:#E6F5EE;--err:#D92D20;--r:12px;
+.rg{--bg:#F6F8FC;--fg:#0E2442;--mut:#5C6B80;--bd:#E0E7F0;--pri:#6C63FF;--pri-d:#574FE0;--secondary:#00D4FF;--grn:#138A5B;--acc:#E6F5EE;--err:#D92D20;--r:12px;
   font-family:'Figtree',system-ui,sans-serif;color:var(--fg);background:var(--bg)}
 body.ticket-page{background:#F6F8FC}
 .rg *{box-sizing:border-box}
@@ -70,7 +70,7 @@ body.ticket-page{background:#F6F8FC}
 .rg label.rg-f{display:block;font-size:.82rem;font-weight:700;margin:0}
 .rg .tr-required-star{color:var(--err);margin-left:2px}
 .rg .form-control,.rg .form-select{height:48px;margin-top:8px;border:1px solid var(--bd);border-radius:var(--r);font-size:.93rem;padding:0 14px;background-color:#FBFCFE;box-shadow:none;transition:border-color .2s,box-shadow .2s,background .2s}
-.rg .form-control:focus,.rg .form-select:focus{background:#fff;border-color:var(--pri);box-shadow:0 0 0 4px rgba(232,113,10,.15)}
+.rg .form-control:focus,.rg .form-select:focus{background:#fff;border-color:var(--pri);box-shadow:0 0 0 4px rgba(108,99,255,.15)}
 .rg .input-group{margin-top:8px;flex-wrap:nowrap}
 .rg .input-group>.form-control{min-width:0;margin-top:0;border-radius:var(--r) 0 0 var(--r)}
 .rg .input-group>.form-control:focus{position:relative;z-index:3}
@@ -94,13 +94,46 @@ body.ticket-page{background:#F6F8FC}
 .tr-msg.error,.tr-msg.text-danger{color:var(--err)}.tr-msg.success{color:var(--grn)}
 .tr-view:not([hidden]){animation:rgIn .5s cubic-bezier(.2,.8,.2,1)}
 @keyframes rgIn{from{opacity:0;transform:translateY(16px)}}
-.tr-otp{min-width:0;margin-top:24px;padding:22px;border-radius:16px;background:#F3F7FB;border:1px solid var(--bd)}
-.tr-otp p{margin:0 0 14px;font-size:.9rem;overflow-wrap:anywhere}
-.tr-otp-inputs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;width:100%;min-width:0;margin-bottom:18px}
-.tr-otp-inputs .form-control{width:100%;min-width:0;height:54px;margin:0;padding:0;text-align:center;font-weight:800;font-size:1.25rem}
-.rg-otp-actions{display:flex;flex-wrap:wrap;gap:12px}
-@media(max-width:575px){.tr-otp{padding:14px}.tr-otp-inputs{gap:clamp(5px,2vw,8px)}.rg-otp-actions{flex-direction:column;gap:8px}.rg-otp-actions .btn{width:100%;padding-inline:12px}}
-@media(max-width:360px){.rg-card{padding:16px}.tr-otp-inputs .form-control{height:48px;font-size:1.1rem}}
+/* Compact OTP panel shown directly under its field (simple portal style). */
+.rg .input-group .tr-primary{height:auto;padding:0 14px;font-size:.8rem;font-weight:600;box-shadow:none;white-space:nowrap}
+.tr-otp{min-width:0;margin-top:8px;padding:10px 12px;border-radius:6px;background:#F8FAFC;border:1px solid var(--bd)}
+.tr-otp-note{margin:0 0 8px;font-size:.78rem;font-weight:500;color:#475569;overflow-wrap:anywhere}
+.tr-otp-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.tr-otp-inputs{display:flex;gap:6px}
+.tr-otp-inputs .form-control{width:36px;height:38px;margin:0;padding:0;border-radius:4px;text-align:center;font-weight:700;font-size:1rem}
+.rg .tr-otp-btn{height:38px;padding:0 16px;border:0;border-radius:var(--r);background:var(--pri);color:#fff;font-size:.82rem;font-weight:600}
+.rg .tr-otp-btn:hover{background:var(--pri-d);color:#fff}
+.tr-otp-resend{display:inline-block;margin-top:6px;padding:0;border:0;background:none;font-size:.76rem;font-weight:600;color:var(--pri);text-decoration:underline}
+.tr-otp-resend:disabled{color:#94A3B8;text-decoration:none;cursor:default}
+@media(max-width:360px){.rg-card{padding:16px}.tr-otp-inputs{gap:4px}.tr-otp-inputs .form-control{width:32px;height:36px}}
+/* Keep the email and mobile verification controls aligned as each OTP panel opens. */
+.tr-verify-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px;row-gap:22px;align-items:start}
+.tr-verify-field{min-width:0}
+.tr-verify-name{grid-column:1;grid-row:1}
+.tr-verify-password{grid-column:2;grid-row:1}
+.tr-verify-mobile{grid-column:1;grid-row:2}
+.tr-verify-email{grid-column:2;grid-row:2}
+.tr-verify-confirm{grid-column:1;grid-row:3}
+.tr-verify-register{grid-column:2;grid-row:3;align-self:end;display:flex;justify-content:flex-end}
+.tr-verify-register .btn{min-width:170px;height:54px;font-size:1rem;border-radius:14px;background:var(--pri);box-shadow:0 12px 24px -12px rgba(108,99,255,.65)}
+.tr-verify-register .btn:hover{background:var(--pri-d);transform:translateY(-1px)}
+.tr-verify-grid>.tr-verify-email .tr-otp{background:linear-gradient(145deg,#F4F3FF,#FAFAFF);border-color:#DEDCFF;border-radius:14px;padding:16px}
+.tr-verify-grid>.tr-verify-mobile .tr-otp{background:linear-gradient(145deg,#FFF7F0,#FFFAF6);border-color:#FFE0C9;border-radius:14px;padding:16px}
+.tr-verify-grid>.tr-verify-mobile .tr-otp-btn{background:#F97316;color:#fff}
+.tr-verify-grid>.tr-verify-mobile .tr-otp-btn:hover{background:#EA650B}
+.tr-verify-grid>.tr-verify-mobile .tr-otp-resend{color:#C65A0A}
+.tr-otp{width:100%;padding:12px 14px;border-radius:10px}
+.tr-otp-row{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.tr-otp-inputs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:min(100%,306px);min-width:0;gap:8px}
+.tr-otp-inputs .form-control{width:100%;min-width:0;max-width:none;height:44px;border-radius:8px}
+.tr-otp-row{width:100%}
+.tr-otp-inputs{width:100%;max-width:100%}
+.tr-otp-inputs .form-control:focus{position:relative;z-index:1;outline:2px solid rgba(108,99,255,.38);outline-offset:2px}
+.rg .tr-otp-btn{height:42px;padding:0 18px;border-radius:var(--r);font-weight:700}
+.tr-otp-resend{margin-top:9px}
+@media(min-width:768px) and (max-width:991px){.tr-verify-grid{column-gap:14px;row-gap:18px}.tr-otp{padding:10px}.tr-otp-inputs{gap:6px}}
+@media(max-width:767px){.tr-verify-grid{grid-template-columns:minmax(0,1fr);row-gap:18px}.tr-verify-name,.tr-verify-password,.tr-verify-mobile,.tr-verify-email,.tr-verify-confirm,.tr-verify-register{grid-column:1;grid-row:auto}.tr-verify-register{justify-content:stretch}.tr-verify-register .btn{width:100%}}
+@media(max-width:400px){.tr-otp{padding:10px}.tr-otp-inputs{gap:5px}.tr-otp-inputs .form-control{height:40px}.rg .tr-otp-btn{padding:0 16px}}
 .tr-fieldset{border:0;padding:0;margin:32px 0 0}
 .tr-fieldset legend{font-size:1.1rem;font-weight:800;margin-bottom:4px;float:none;width:auto}
 .tr-fieldset>p{color:var(--mut);font-size:.86rem;margin-bottom:16px}
@@ -261,7 +294,7 @@ body.ticket-page{background:#F6F8FC}
 </style>
 </head>
 <body class="ticket-page no-hero" th:attr="data-context-path=@{/}">
-<script th:inline="none">document.body.classList.add('js');</script>
+<script th:nonce="${cspNonce}" th:inline="none">document.body.classList.add('js');</script>
 <div id="rgScroll"></div>
 <div th:replace="~{fragments/navbar :: navbar('ticket')}"></div>
 
@@ -291,70 +324,40 @@ body.ticket-page{background:#F6F8FC}
             <form id="ticketVerifyForm" class="tr-view" data-view="verify" data-jquery-validate novalidate>
               <!-- <div class="rg-sec"><i class="bi bi-shield-lock"></i><h3>Email Verification<small>Your information is collected only for TecVerse 2026 purposes and will be kept private and secure.</small></h3></div>
               <div class="rg-note"><i class="bi bi-info-circle"></i><span> It will not be shared with external organisations.</span></div> -->
-              <div class="row g-3">
-                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.fullName}">Full Name</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="verifyName" name="verifyName" type="text" autocomplete="name" th:placeholder="#{ticket.verify.placeholder.fullName}" maxlength="150" required></label></div>
-                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.email}">Email Address</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="email" name="email" type="email" autocomplete="email" th:placeholder="#{ticket.verify.placeholder.email}" maxlength="150" required></label></div>
-                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.createPassword}">Create Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="8+ characters" required><button class="btn password-toggle" type="button" data-password-target="password" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span><small class="text-secondary fw-normal d-block mt-1">Use 8+ characters with an uppercase letter, a number, and a symbol.</small></label></div>
-                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.confirmPassword}">Confirm Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="64" th:placeholder="#{ticket.verify.placeholder.confirmPassword}" required><button class="btn btn-outline-secondary password-toggle" type="button" data-password-target="confirmPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span></label></div>
-                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required></label></div>
-                <div class="col-12 col-md-6 d-flex align-items-end"><button type="button" id="sendOtp" class="btn tr-primary w-100"><span th:text="#{ticket.verify.sendOtp}">Send OTP</span> <i class="bi bi-send"></i></button></div>
-              </div>
-              <div id="otpBox" class="tr-otp" hidden>
-                <p>Enter the 6-digit OTP sent to <strong id="otpEmail"></strong>.</p>
-                <div class="tr-otp-inputs">
-                  <input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric"><input class="form-control" maxlength="1" inputmode="numeric">
+              <div class="tr-verify-grid">
+                <div class="tr-verify-field tr-verify-name"><label class="rg-f"><span th:text="#{ticket.verify.fullName}">Full Name</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="verifyName" name="verifyName" type="text" autocomplete="name" th:placeholder="#{ticket.verify.placeholder.fullName}" maxlength="150" required></label></div>
+                <div class="tr-verify-field tr-verify-email"><label class="rg-f"><span th:text="#{ticket.verify.email}">Email Address</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="email" name="email" type="email" autocomplete="email" th:placeholder="#{ticket.verify.placeholder.email}" maxlength="150" required><button type="button" id="sendOtp" class="btn tr-primary"><span th:text="#{ticket.verify.sendOtp}">Send OTP</span></button></span></label>
+                  <div id="otpBox" class="tr-otp" hidden>
+                    <p class="tr-otp-note">Enter the OTP sent to <strong id="otpEmail"></strong></p>
+                    <div class="tr-otp-row">
+                      <div class="tr-otp-inputs" id="emailOtpInputs" role="group" aria-label="Email OTP">
+                        <input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 1"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 2"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 3"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 4"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 5"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 6">
+                      </div>
+                      <button type="button" id="verifyOtp" class="btn tr-otp-btn">Verify</button>
+                    </div>
+                    <button id="resendOtp" class="tr-otp-resend" type="button">Resend OTP</button>
+                  </div>
                 </div>
-                <div class="rg-otp-actions">
-                  <button type="button" id="verifyOtp" class="btn tr-primary">Verify &amp; Proceed</button>
-                  <button id="resendOtp" class="btn tr-link" type="button">Resend OTP</button>
+                <div class="tr-verify-field tr-verify-password"><label class="rg-f"><span th:text="#{ticket.verify.createPassword}">Create Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="8+ characters" required><button class="btn password-toggle" type="button" data-password-target="password" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span><small class="text-secondary fw-normal d-block mt-1">Use 8+ characters with an uppercase letter, a number, and a symbol.</small></label></div>
+                <div class="tr-verify-field tr-verify-mobile"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required><button type="button" id="sendMobileOtp" class="btn tr-primary">Send OTP</button></span></label>
+                  <div id="mobileOtpBox" class="tr-otp" hidden>
+                    <p class="tr-otp-note">Enter the OTP sent by SMS to <strong id="otpMobile"></strong></p>
+                    <div class="tr-otp-row">
+                      <div class="tr-otp-inputs" id="mobileOtpInputs" role="group" aria-label="Mobile OTP">
+                        <input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 1"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 2"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 3"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 4"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 5"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 6">
+                      </div>
+                      <button type="button" id="verifyMobileOtp" class="btn tr-otp-btn">Verify</button>
+                    </div>
+                    <button id="resendMobileOtp" class="tr-otp-resend" type="button">Resend OTP</button>
+                  </div>
                 </div>
+                <div class="tr-verify-field tr-verify-confirm"><label class="rg-f"><span th:text="#{ticket.verify.confirmPassword}">Confirm Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="64" th:placeholder="#{ticket.verify.placeholder.confirmPassword}" oncopy="return false" oncut="return false" onpaste="return false" required><button class="btn btn-outline-secondary password-toggle" type="button" data-password-target="confirmPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span></label></div>
+                <div class="tr-verify-register"><button type="button" id="registerStart" class="btn tr-primary">Register <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div>
               </div>
               <div id="verifyMsg" class="tr-msg" role="status" aria-live="polite"></div>
             </form>
 
-            <form id="detailsForm" class="tr-view" data-view="details" hidden>
-              <div class="rg-sec"><i class="bi bi-person-vcard"></i><h3>Details</h3></div>
-              <div class="row g-3">
-                <div class="col-12"><label class="rg-f">Full Name <span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" name="officialName" placeholder="Full name" required maxlength="150"></label></div>
-                <div class="col-12 col-md-6"><label class="rg-f">Category of Participation<span class="tr-required-star" aria-hidden="true">*</span>
-                  <select class="form-select" name="category" id="category" required>
-                    <option value="">Select category</option>
-                    <option value="ACADEMIA">Academia</option>
-                    <option value="CENTRAL_GOVERNMENT">Central Government</option>
-                    <option value="STATE_GOVERNMENT">State Government</option>
-                    <option value="INDUSTRY_STARTUP">Industry / Business</option>
-                    <!--
-                    <option value="VIP_SPECIAL_INVITEE">VIP / Special Invitee</option>
-                    <option value="SPEAKER">Speaker</option>
-                    <option value="ORGANIZER">Organizer</option>
-                    -->
-                  </select></label></div>
-                <div class="col-12 col-md-6"><label class="rg-f">Nationality / Residency Status<span class="tr-required-star" aria-hidden="true">*</span>
-                  <select class="form-select" name="citizenshipStatus" id="citizenship" required>
-                    <option value="">Select status</option>
-                    <option value="INDIAN">Indian National</option>
-                    <option value="NRI">Non-Resident Indian (NRI)</option>
-                    <option value="FOREIGNER">Foreign National</option>
-                  </select></label></div>
-              </div>
-
-              <div id="conditional" class="mt-3"></div>
-
-              <fieldset class="tr-fieldset">
-                <legend>Preferred Day(s) <span class="tr-required-star" aria-hidden="true">*</span></legend>
-                <p>Select the day(s) you will attend.</p>
-                <div class="rg-days">
-                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="DAY_1"><span>Day 1 – 26 November 2026</span></label>
-                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="DAY_2"><span>Day 2 – 27 November 2026</span></label>
-                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="BOTH"><span>Both Days – 26 &amp; 27 November 2026</span></label>
-                </div>
-              </fieldset>
-              <div id="detailsMsg" class="tr-msg"></div>
-              <div class="rg-actions">
-                <button type="button" id="backVerify" class="btn tr-secondary"><i class="bi bi-arrow-left"></i> Back</button>
-                <button type="submit" class="btn tr-primary">Review Application <i class="bi bi-arrow-right"></i></button>
-              </div>
-            </form>
+            <div id="detailsStepHost"></div>
 
             <div class="tr-view" data-view="preview" hidden>
               <div class="rg-sec"><i class="bi bi-table"></i><h3>Review Application</h3></div>
@@ -488,8 +491,8 @@ body.ticket-page{background:#F6F8FC}
     <div class="tr-document-header">
       <h3><i class="bi bi-file-earmark-pdf"></i> Registration Acknowledgement</h3>
       <div class="tr-document-actions">
-        <button type="button" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
-        <button type="button" class="tr-document-close" onclick="document.getElementById('documentViewer').style.display='none'"><i class="bi bi-x-lg"></i></button>
+        <button type="button" data-document-print><i class="bi bi-printer"></i> Print</button>
+        <button type="button" class="tr-document-close" data-document-close><i class="bi bi-x-lg"></i></button>
       </div>
     </div>
     <div class="tr-document-content">
@@ -554,7 +557,7 @@ body.ticket-page{background:#F6F8FC}
 <script defer th:src="@{/js/main.js}"></script>
 <script defer th:src="@{/js/celebration.js}"></script>
 <script defer th:src="@{/js/ticket-registration.js}"></script>
-<script th:inline="none">
+<script th:nonce="${cspNonce}" th:inline="none">
 /* Presentation only: scroll line, reveal, live pass, preview table. Does not touch your form logic. */
 (function () {
   function q(s) { return document.querySelector(s); }
@@ -668,6 +671,10 @@ body.ticket-page{background:#F6F8FC}
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    var docPrint = q('[data-document-print]'), docClose = q('[data-document-close]');
+    if (docPrint) { docPrint.addEventListener('click', function () { window.print(); }); }
+    if (docClose) { docClose.addEventListener('click', function () { document.getElementById('documentViewer').style.display = 'none'; }); }
+
     var cv = q('[data-view=complete]');
     if (cv) {
       new MutationObserver(function () { if (!cv.hasAttribute('hidden')) { closeOverlay(); } })

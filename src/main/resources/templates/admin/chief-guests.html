@@ -49,7 +49,7 @@
                         <div class="d-inline-flex gap-2">
                             <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/chief-guests/{id}/edit(id=${item.id})}" title="Edit"><i class="bi bi-pencil"></i></a>
                             <form th:action="@{/admin/chief-guests/{id}/toggle(id=${item.id})}" method="post"><button class="btn btn-sm btn-outline-secondary" type="submit" title="Toggle status"><i th:class="${item.active} ? 'bi bi-eye-slash' : 'bi bi-eye'"></i></button></form>
-                            <form th:action="@{/admin/chief-guests/{id}/delete(id=${item.id})}" method="post" onsubmit="return confirm('Delete this chief guest?');"><button class="btn btn-sm btn-outline-danger" type="submit" title="Delete"><i class="bi bi-trash"></i></button></form>
+                            <form th:action="@{/admin/chief-guests/{id}/delete(id=${item.id})}" method="post" data-confirm="Delete this chief guest?"><button class="btn btn-sm btn-outline-danger" type="submit" title="Delete"><i class="bi bi-trash"></i></button></form>
                         </div>
                     </td>
                 </tr>

@@ -38,9 +38,11 @@ import com.tecverse.app.repository.ThematicDomainCardRepository;
 import com.tecverse.app.repository.ExhibitorLogoRepository;
 import com.tecverse.app.service.FaqService;
 import com.tecverse.app.service.MediaCoverageService;
+import com.tecverse.app.security.OtpSessionVerification;
 import com.tecverse.app.service.SponsorOtpService;
 import com.tecverse.app.service.RateLimitService;
 import com.tecverse.app.exception.RateLimitExceededException;
+import com.tecverse.app.util.Constants;
 import com.tecverse.app.util.ValidationUtil;
 import com.tecverse.app.dto.InquiryForm;
 import com.tecverse.app.util.ContactPhoneNumbers;
@@ -186,6 +188,7 @@ public class PageController {
     public static class SponsorEnquiryForm {
         @NotBlank(message = "{validation.companyName.required}")
         @Size(max = 200, message = "Maximum 200 characters allowed.")
+        @Pattern(regexp = Constants.ORG_NAME_REGEX, message = "Company name must contain letters and may include numbers, spaces, and & . , ' - / # + parentheses.")
         private String company;
 
         @NotBlank(message = "{validation.name.required}")
@@ -193,14 +196,17 @@ public class PageController {
         private String name;
 
         @Size(max = 100, message = "Maximum 100 characters allowed.")
+        @Pattern(regexp = Constants.TITLE_REGEX, message = "Designation may contain letters, spaces, and & . , ' - / parentheses.")
         private String jobTitle;
 
         @Size(max = 100, message = "Maximum 100 characters allowed.")
+        @Pattern(regexp = Constants.PLACE_REGEX, message = "City may contain letters, spaces, and . , ' - / parentheses.")
         private String city;
-        @jakarta.validation.constraints.Pattern(regexp = "^$|^https?://.+", message = "Enter a valid website URL starting with http:// or https://.")
+        @jakarta.validation.constraints.Pattern(regexp = "^$|^https?://\\S+$", message = "Enter a valid website URL starting with http:// or https://.")
         @Size(max = 255, message = "Maximum 255 characters allowed.")
         private String website;
         @Size(max = 100, message = "Maximum 100 characters allowed.")
+        @Pattern(regexp = Constants.TITLE_REGEX, message = "Industry may contain letters, spaces, and & . , ' - / parentheses.")
         private String industry;
 
         @NotBlank(message = "{validation.email.required}")
@@ -218,6 +224,7 @@ public class PageController {
         private String sponsorshipInterest;
 
         @Size(max = 5000, message = "Maximum 5000 characters allowed.")
+        @Pattern(regexp = Constants.FREE_TEXT_REGEX, message = "Message contains characters that are not allowed.")
         private String message;
 
         public String getCity() { return city; }
@@ -555,7 +562,9 @@ public class PageController {
         String normalizedEmail = inquiry.getEmail().trim().toLowerCase();
         String normalizedPhone = ValidationUtil.normalizeIndianMobile(inquiry.getPhone());
 
-        if (!sponsorOtpService.isVerified(normalizedEmail)) {
+        if (!sponsorOtpService.isVerified(normalizedEmail)
+                || !OtpSessionVerification.isVerified(httpRequest, OtpSessionVerification.Purpose.SPONSOR, normalizedEmail)) {
+            response.setStatus(org.springframework.http.HttpStatus.FORBIDDEN.value());
             model.addAttribute("sponsorEnquiryError", "Please verify your email with OTP before submitting.");
             model.addAttribute("sponsorInquiryFailed", true);
             return "become-sponsor";
@@ -589,10 +598,21 @@ public class PageController {
                 .build();
         sponsorEnquiryRepository.save(sponsorEnquiry);
         sponsorOtpService.consume(normalizedEmail);
+        OtpSessionVerification.consume(httpRequest, OtpSessionVerification.Purpose.SPONSOR);
 
         model.addAttribute("sponsorInquirySubmitted", true);
         model.addAttribute("inquiry", new SponsorEnquiryForm());
         return "become-sponsor";
+    }
+
+    @GetMapping({"/privacy-policy", "/privacy"})
+    public String privacyPolicy() {
+        return "privacy-policy";
+    }
+
+    @GetMapping({"/account-deletion", "/delete-account"})
+    public String accountDeletion() {
+        return "account-deletion";
     }
 
     @GetMapping("/exhibitor-registration")
@@ -604,6 +624,22 @@ public class PageController {
     public String ticket(Model model) {
         model.addAttribute("ticketFaqs", faqService.activeFaqs(FaqService.TICKET));
         return "ticket";
+    }
+
+    /**
+     * Step 2 of ticket registration. The server, not the browser, decides whether the visitor may
+     * continue: the form is returned only to a session that completed OTP verification server-side.
+     */
+    @GetMapping("/ticket/details-step")
+    public String ticketDetailsStep(HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-store");
+        if (!OtpSessionVerification.hasVerification(request, OtpSessionVerification.Purpose.TICKET)) {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Email verification is required.");
+        }
+        if (!OtpSessionVerification.hasVerification(request, OtpSessionVerification.Purpose.TICKET_MOBILE)) {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Mobile number verification is required.");
+        }
+        return "fragments/ticket-details-step :: detailsStep";
     }
 
     @GetMapping({"/ticket/confirmation", "/ticket/confirmation.html"})

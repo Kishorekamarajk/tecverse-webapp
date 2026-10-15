@@ -15,7 +15,11 @@
             </div>
         </article>
         <div class="venue-guide-map col-12 col-lg" data-reveal="fade-up" data-reveal-delay="100">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.3451748816456!2d80.1872352748421!3d13.013677337305563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267345cb07d5b%3A0x7d6459212d295bdf!2sChennai%20Trade%20Centre%20-%20Nandambakkam!5e0!3m2!1sen!2sin!4v1785913418990!5m2!1sen!2sin" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map showing Chennai Trade Centre"></iframe>
+            <iframe th:if="${!#strings.isEmpty(@environment.getProperty('tecverse.google.maps.embed-api-key'))}"
+                    th:src="@{https://www.google.com/maps/embed/v1/place(key=${@environment.getProperty('tecverse.google.maps.embed-api-key')},q='Chennai Trade Centre, Nandambakkam, Chennai, Tamil Nadu, India',zoom=15)}"
+                    loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Interactive map showing Chennai Trade Centre, Nandambakkam, Chennai" allowfullscreen credentialless></iframe>
+            <a th:unless="${!#strings.isEmpty(@environment.getProperty('tecverse.google.maps.embed-api-key'))}"
+               href="https://www.google.com/maps/search/?api=1&amp;query=Chennai+Trade+Centre%2C+Nandambakkam%2C+Chennai" target="_blank" rel="noopener noreferrer">Open Chennai Trade Centre in Google Maps</a>
         </div>
     </div>
 </section>

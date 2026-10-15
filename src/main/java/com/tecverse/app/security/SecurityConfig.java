@@ -1,13 +1,14 @@
 package com.tecverse.app.security;
 
 import java.nio.file.Paths;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
+import org.springframework.core.Ordered;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -39,14 +41,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.tecverse.app.exception.RateLimitExceededException;
 import com.tecverse.app.service.RateLimitService;
 
+import jakarta.servlet.SessionCookieConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SecurityConfig implements WebMvcConfigurer {
 
-    private static final String ADMIN_USERNAME = "admin@cdac.in";
-    private static final String ADMIN_PASSWORD = "23weSDxc@23";
     private final String uploadsLocation;
     private final String galleryLocation;
     private final String documentsLocation;
@@ -82,12 +83,32 @@ public class SecurityConfig implements WebMvcConfigurer {
         return new ServletListenerRegistrationBean<>(new HttpSessionEventPublisher());
     }
 
+    /** Runs before every other filter so security, rate limits and redirects see the real client and HTTPS. */
     @Bean
-    CookieCsrfTokenRepository csrfTokenRepository() {
+    FilterRegistrationBean<TrustedProxyFilter> trustedProxyFilter(
+            @Value("${tecverse.proxy.trusted:127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}") String trustedProxies) {
+        FilterRegistrationBean<TrustedProxyFilter> registration = new FilterRegistrationBean<>(new TrustedProxyFilter(trustedProxies));
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return registration;
+    }
+
+    /** Session cookie flags are set here because server.servlet.session.* is ignored in a WAR deployment. */
+    @Bean
+    ServletContextInitializer sessionCookieHardening(@Value("${tecverse.cookies.secure:true}") boolean secureCookies) {
+        return servletContext -> {
+            SessionCookieConfig cookie = servletContext.getSessionCookieConfig();
+            cookie.setHttpOnly(true);
+            cookie.setSecure(secureCookies);
+            cookie.setAttribute("SameSite", "Lax");
+        };
+    }
+
+    @Bean
+    CookieCsrfTokenRepository csrfTokenRepository(@Value("${tecverse.cookies.secure:true}") boolean secureCookies) {
         CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         repository.setCookiePath("/");
         repository.setCookieHttpOnly(true);
-        repository.setCookieCustomizer(cookie -> cookie.sameSite("Lax"));
+        repository.setCookieCustomizer(cookie -> cookie.sameSite("Lax").secure(secureCookies));
         return repository;
     }
 
@@ -125,18 +146,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                                 "Cross-Origin-Embedder-Policy", "credentialless"))
                         .addHeaderWriter(new StaticHeadersWriter(
                                 "Cross-Origin-Resource-Policy", "same-origin"))
-                        .addHeaderWriter(new StaticHeadersWriter("Content-Security-Policy",
-                                "default-src 'self'; "
-                                        + "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; "
-                                        + "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net "
-                                        + "https://code.jquery.com https://cdn.tailwindcss.com https://www.youtube.com "
-                                        + "https://www.youtube-nocookie.com https://www.gstatic.com; "
-                                        + "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
-                                        + "img-src 'self' data: blob: https:; "
-                                        + "font-src 'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com; "
-                                        + "connect-src 'self' https://cdn.tailwindcss.com https://www.youtube.com https://www.youtube-nocookie.com; "
-                                        + "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com; "
-                                        + "media-src 'self' blob: https:")))
+                        // X-XSS-Protection is set once by the front-end web server; the application must not
+                        // send its own copy, or clients receive two conflicting values.
+                        .xssProtection(xss -> xss.disable()))
                 .logout(logout -> logout
                         .logoutUrl("/admin/logout")
                         .logoutSuccessUrl("/adminportal?logout=true")
@@ -153,9 +165,11 @@ public class SecurityConfig implements WebMvcConfigurer {
         http.addFilterBefore(new AdminCaptchaFilter(adminCaptchaService, rateLimitService),
                 UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new CsrfCookieHardeningFilter(csrfTokenRepository), CsrfFilter.class);
+        http.addFilterBefore(new CspNonceFilter(), HeaderWriterFilter.class);
 
         http.csrf(csrf -> csrf.ignoringRequestMatchers(request -> {
-            String path = request.getServletPath();
+            // Path within the application, independent of how the dispatcher servlet is mapped.
+            String path = request.getRequestURI().substring(request.getContextPath().length());
             return path.startsWith("/api/mobile/") && !path.equals("/api/mobile/pass/verify");
         }));
 
@@ -178,7 +192,23 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    AuthenticationProvider adminAuthenticationProvider() {
+    AuthenticationProvider adminAuthenticationProvider(PasswordEncoder passwordEncoder,
+            @Value("${tecverse.admin.username:admin@cdac.in}") String adminUsername,
+            @Value("${tecverse.admin.password-hash:}") String adminPasswordHash,
+            @Value("${tecverse.admin.password:23weSDxc@23}") String adminPassword) {
+        // Hardcoded defaults apply unless overridden by configuration (secrets file or env vars).
+        // Prefer a BCrypt hash; a plain password is hashed once at startup and never kept.
+        String configuredHash = !adminPasswordHash.isBlank() ? adminPasswordHash.trim()
+                : adminPassword.isBlank() ? "" : passwordEncoder.encode(adminPassword);
+        String configuredUsername = adminUsername.trim();
+        boolean adminEnabled = !configuredUsername.isEmpty() && !configuredHash.isEmpty();
+        if (!adminEnabled) {
+            org.slf4j.LoggerFactory.getLogger(SecurityConfig.class).warn(
+                    "Admin login is disabled: set tecverse.admin.username and tecverse.admin.password-hash "
+                    + "(or ADMIN_USERNAME / ADMIN_PASSWORD_HASH environment variables).");
+        }
+        // Compared against unknown usernames so the response time does not reveal whether the username matched.
+        String dummyHash = passwordEncoder.encode("tecverse-dummy-" + System.nanoTime());
         return new AuthenticationProvider() {
             @Override
             public org.springframework.security.core.Authentication authenticate(
@@ -186,15 +216,13 @@ public class SecurityConfig implements WebMvcConfigurer {
                 String username = authentication.getName();
                 Object credentials = authentication.getCredentials();
                 String password = credentials == null ? "" : credentials.toString();
-                boolean passwordMatches = MessageDigest.isEqual(
-                        ADMIN_PASSWORD.getBytes(StandardCharsets.UTF_8),
-                        password.getBytes(StandardCharsets.UTF_8));
+                boolean usernameMatches = adminEnabled && username != null
+                        && configuredUsername.equalsIgnoreCase(username.trim());
+                boolean passwordMatches = passwordEncoder.matches(password, usernameMatches ? configuredHash : dummyHash);
 
-                if (username != null
-                        && ADMIN_USERNAME.equalsIgnoreCase(username.trim())
-                        && passwordMatches) {
+                if (usernameMatches && passwordMatches) {
                     return UsernamePasswordAuthenticationToken.authenticated(
-                            ADMIN_USERNAME, null, java.util.List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+                            configuredUsername, null, java.util.List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
                 }
                 throw new BadCredentialsException("Invalid username or password.");
             }

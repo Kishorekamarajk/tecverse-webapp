@@ -2,12 +2,14 @@ package com.tecverse.app.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class TicketOtpSendRequest {
 
     @NotBlank(message = "{validation.fullName.required}")
     @Size(max = 150)
+    @Pattern(regexp = "^[\\p{L}\\p{M}][\\p{L}\\p{M} .,'’\\-]{0,149}$", message = "Use letters, spaces, periods, apostrophes, commas, or hyphens for your name.")
     private String fullName;
 
     @NotBlank(message = "{validation.email.required}")
@@ -17,9 +19,11 @@ public class TicketOtpSendRequest {
 
     @NotBlank
     @Size(max = 20)
+    @Pattern(regexp = "^(?:\\+91[-\\s]?)?[6-9]\\d{9}$", message = "Enter a valid 10-digit Indian mobile number.")
     private String phone;
 
     @Size(max = 80)
+    @Pattern(regexp = "^[\\p{L}\\p{N} .\\-]*$", message = "Enter a valid pass type.")
     private String passType;
 
     public String getFullName() {

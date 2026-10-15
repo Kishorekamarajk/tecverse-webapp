@@ -208,8 +208,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                     "Exhibitor confirmation"
             );
         } catch (IllegalStateException ex) {
-            log.warn("Exhibitor registration {} was saved, but the confirmation email could not be sent to {}.",
-                    registration.getReferenceNumber(), registration.getEmail(), ex);
+            log.warn("Exhibitor registration {} was saved, but the confirmation email could not be sent.",
+                    registration.getReferenceNumber(), ex);
         }
     }
 }

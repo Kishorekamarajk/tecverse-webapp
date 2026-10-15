@@ -77,8 +77,8 @@ class ServerException extends ApiException {
 class TooManyRequestsException extends ApiException {
   final int retryAfterSeconds;
 
-  const TooManyRequestsException(String message, {required this.retryAfterSeconds})
-      : super(message, statusCode: 429);
+  const TooManyRequestsException(super.message, {required this.retryAfterSeconds})
+      : super(statusCode: 429);
 }
 
 /// Thrown on 400 Bad Request or validation failure.

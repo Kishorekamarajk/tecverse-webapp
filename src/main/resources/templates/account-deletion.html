@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Your Account | TEC-VERSE 2026</title>
+    <meta name="description" content="How to delete your TEC-VERSE 2026 account and the data that is removed.">
+    <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
+    <link rel="stylesheet" th:href="@{/css/fonts.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="no-hero">
+
+<div th:replace="~{fragments/navbar :: navbar('privacy')}"></div>
+
+<header class="page-header">
+    <div class="container">
+        <h1 class="fw-bold">Delete your TEC-VERSE account</h1>
+        <p class="lead mb-0">TEC-VERSE 2026 app by C-DAC</p>
+    </div>
+</header>
+
+<section class="content-section">
+    <div class="container" style="max-width: 860px">
+        <h2 class="h4 fw-bold">Option 1: Delete in the app (immediate)</h2>
+        <ol>
+            <li>Open the <strong>TEC-VERSE 2026</strong> app and sign in.</li>
+            <li>Go to <strong>Profile</strong> and tap <strong>Delete Account</strong>.</li>
+            <li>Enter your password to confirm. Your account is deleted immediately.</li>
+        </ol>
+
+        <h2 class="h4 fw-bold mt-4">Option 2: Request deletion by email</h2>
+        <p>If you cannot use the app, send an email from your registered email address to
+            <a href="mailto:tec-verse@cdac.in?subject=Account%20deletion%20request">tec-verse@cdac.in</a> with the subject
+            <strong>&ldquo;Account deletion request&rdquo;</strong> and your registration reference number (if you have it).
+            We verify the request and delete the account within 7 working days, and confirm by email.</p>
+
+        <h2 class="h4 fw-bold mt-4">What is deleted</h2>
+        <ul>
+            <li>Your registration: name, email, mobile number, password, category, organisation and passport details.</li>
+            <li>Your digital event pass and QR code, check-in record, app preferences and notifications.</li>
+        </ul>
+        <p>Nothing is kept after deletion, except where the law requires us to keep a record; any such record is kept only for
+            the period the law requires. See our <a th:href="@{/privacy-policy}" href="/privacy-policy">Privacy Policy</a>
+            for details.</p>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

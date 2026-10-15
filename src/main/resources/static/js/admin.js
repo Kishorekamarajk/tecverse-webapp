@@ -10,6 +10,12 @@
         field.classList.toggle("is-invalid", Boolean(message));
     };
 
+    document.querySelectorAll("form[data-confirm]").forEach((form) => {
+        form.addEventListener("submit", (event) => {
+            if (!window.confirm(form.dataset.confirm)) event.preventDefault();
+        });
+    });
+
     document.querySelectorAll("form[data-admin-validation]").forEach((form) => {
         const controls = Array.from(form.querySelectorAll("input, select, textarea"));
         const validate = (field) => {

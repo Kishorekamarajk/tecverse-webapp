@@ -20,7 +20,7 @@
             <h1 class="h3 mt-2 mb-0">Thematic Areas</h1>
         </div>
         <div class="d-flex flex-wrap gap-2">
-            <form th:action="@{/admin/thematic-cards/reset-original}" method="post" onsubmit="return confirm('Replace current thematic cards with original key terms?');">
+            <form th:action="@{/admin/thematic-cards/reset-original}" method="post" data-confirm="Replace current thematic cards with original key terms?">
                 <button class="btn btn-outline-primary fw-bold" type="submit">
                     <i class="bi bi-arrow-clockwise me-1"></i> Restore Defaults
                 </button>
@@ -67,7 +67,7 @@
                             </button>
                         </form>
                         <form class="d-inline" th:action="@{/admin/thematic-cards/{id}/delete(id=${item.id})}" method="post"
-                              onsubmit="return confirm('Delete this thematic area?');">
+                              data-confirm="Delete this thematic area?">
                             <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Delete thematic area">
                                 <i class="bi bi-trash"></i>
                             </button>

@@ -54,7 +54,7 @@
                         <div class="d-inline-flex gap-2">
                             <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/gallery/images/{id}/edit(id=${item.id})}"><i class="bi bi-pencil"></i></a>
                             <form th:action="@{/admin/gallery/images/{id}/toggle(id=${item.id})}" method="post"><button class="btn btn-sm btn-outline-secondary" type="submit"><i th:class="${item.active} ? 'bi bi-eye-slash' : 'bi bi-eye'"></i></button></form>
-                            <form th:action="@{/admin/gallery/images/{id}/delete(id=${item.id})}" method="post" onsubmit="return confirm('Delete this gallery image?');"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form>
+                            <form th:action="@{/admin/gallery/images/{id}/delete(id=${item.id})}" method="post" data-confirm="Delete this gallery image?"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form>
                         </div>
                     </td>
                 </tr>
@@ -81,7 +81,7 @@
                         <div class="d-inline-flex gap-2">
                             <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/gallery/videos/{id}/edit(id=${item.id})}"><i class="bi bi-pencil"></i></a>
                             <form th:action="@{/admin/gallery/videos/{id}/toggle(id=${item.id})}" method="post"><button class="btn btn-sm btn-outline-secondary" type="submit"><i th:class="${item.active} ? 'bi bi-eye-slash' : 'bi bi-eye'"></i></button></form>
-                            <form th:action="@{/admin/gallery/videos/{id}/delete(id=${item.id})}" method="post" onsubmit="return confirm('Delete this gallery video?');"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form>
+                            <form th:action="@{/admin/gallery/videos/{id}/delete(id=${item.id})}" method="post" data-confirm="Delete this gallery video?"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form>
                         </div>
                     </td>
                 </tr>
@@ -110,7 +110,7 @@
                         <div class="d-inline-flex gap-2">
                             <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/gallery/speakers/{id}/edit(id=${item.id})}"><i class="bi bi-pencil"></i></a>
                             <form th:action="@{/admin/gallery/speakers/{id}/toggle(id=${item.id})}" method="post"><button class="btn btn-sm btn-outline-secondary" type="submit"><i th:class="${item.active} ? 'bi bi-eye-slash' : 'bi bi-eye'"></i></button></form>
-                            <form th:action="@{/admin/gallery/speakers/{id}/delete(id=${item.id})}" method="post" onsubmit="return confirm('Delete this speaker?');"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form>
+                            <form th:action="@{/admin/gallery/speakers/{id}/delete(id=${item.id})}" method="post" data-confirm="Delete this speaker?"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form>
                         </div>
                     </td>
                 </tr>

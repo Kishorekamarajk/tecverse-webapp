@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/utils/app_logger.dart';
+import '../../../core/utils/external_links.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/futuristic_background.dart';
 import '../../../core/widgets/institution_logos_bar.dart';
@@ -56,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _isSubmitting = true;
     });
 
-    debugPrint('[LOGIN] Button clicked');
+    appLog('[LOGIN] Button clicked');
 
     try {
       final success = await authController.login(
@@ -84,24 +85,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _launchRegistrationUrl() async {
-    final uri = Uri.parse(ApiConstants.websiteRegistrationUrl);
-    try {
-      final launched = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-      if (!launched) {
-        await launchUrl(uri);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Could not open registration portal: ${ApiConstants.websiteRegistrationUrl}'),
-            backgroundColor: AppColors.crimsonError,
+    final launched = await openExternalUrl(ApiConstants.websiteRegistrationUrl);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Could not open the registration page. Please check your internet connection and try again.',
           ),
-        );
-      }
+          backgroundColor: AppColors.crimsonError,
+          action: SnackBarAction(
+            label: 'RETRY',
+            textColor: Colors.white,
+            onPressed: _launchRegistrationUrl,
+          ),
+        ),
+      );
     }
   }
 

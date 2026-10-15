@@ -68,7 +68,7 @@
                                     <i th:class="${item.active} ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                                 </button>
                             </form>
-                            <form th:action="@{/admin/faqs/{id}/delete(id=${item.id})}" method="post" onsubmit="return confirm('Delete this FAQ?');">
+                            <form th:action="@{/admin/faqs/{id}/delete(id=${item.id})}" method="post" data-confirm="Delete this FAQ?">
                                 <input type="hidden" name="section" th:value="${activeSection}">
                                 <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button>
                             </form>

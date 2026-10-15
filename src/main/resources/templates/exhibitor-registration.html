@@ -15,7 +15,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
-    <script>
+    <script th:nonce="${cspNonce}">
         window.tailwind = window.tailwind || {};
         tailwind.config = {
             corePlugins: { preflight: false },
@@ -347,7 +347,7 @@
                 <div class="stall-grid grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="stallGrid">
                     <article class="stall-card glass rounded-3xl overflow-hidden cursor-pointer border border-white/70" data-package="3x3">
                         <div class="stall-visual aspect-[4/3] bg-gradient-to-br from-blue-main/10 to-white/40 flex items-center justify-center">
-                            <img th:src="@{/images/stall-3x3.png}" alt="3 by 3 metre stall" class="max-h-[70%] object-contain" onerror="this.style.display='none'">
+                            <img th:src="@{/images/stall-3x3.png}" alt="3 by 3 metre stall" class="max-h-[70%] object-contain" data-hide-on-error>
                             <i class="bi bi-box2-heart text-5xl text-blue-main/30"></i>
                         </div>
                         <div class="stall-card-body p-6">
@@ -363,7 +363,7 @@
                     <article class="stall-card featured glass-strong rounded-3xl overflow-hidden cursor-pointer border-2 border-blue-main/40 relative lg:-translate-y-3" data-package="3x6">
                         <div class="absolute top-4 right-4 bg-gradient-to-br from-blue-main to-blue-sky text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full z-10">Popular</div>
                         <div class="stall-visual aspect-[4/3] bg-gradient-to-br from-blue-main/15 to-blue-sky/10 flex items-center justify-center">
-                            <img th:src="@{/images/stall-3x6.png}" alt="3 by 6 metre stall" class="max-h-[70%] object-contain" onerror="this.style.display='none'">
+                            <img th:src="@{/images/stall-3x6.png}" alt="3 by 6 metre stall" class="max-h-[70%] object-contain" data-hide-on-error>
                             <i class="bi bi-columns-gap text-5xl text-blue-main/40"></i>
                         </div>
                         <div class="stall-card-body p-6">
@@ -378,7 +378,7 @@
 
                     <article class="stall-card glass rounded-3xl overflow-hidden cursor-pointer border border-white/70" data-package="6x6">
                         <div class="stall-visual aspect-[4/3] bg-gradient-to-br from-blue-deep/10 to-white/40 flex items-center justify-center">
-                            <img th:src="@{/images/stall-6x6.png}" alt="6 by 6 metre stall" class="max-h-[70%] object-contain" onerror="this.style.display='none'">
+                            <img th:src="@{/images/stall-6x6.png}" alt="6 by 6 metre stall" class="max-h-[70%] object-contain" data-hide-on-error>
                             <i class="bi bi-building text-5xl text-blue-deep/40"></i>
                         </div>
                         <div class="stall-card-body p-6">
@@ -582,7 +582,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script th:src="@{/js/main.js}"></script>
-    <script>
+    <script th:nonce="${cspNonce}">
+        document.querySelectorAll('img[data-hide-on-error]').forEach(img => {
+            const hide = () => { img.style.display = 'none'; };
+            if (img.complete && img.naturalWidth === 0) hide();
+            else img.addEventListener('error', hide);
+        });
+
         (function () {
             const navbar = document.querySelector('.site-navbar');
             if (!navbar) return;
@@ -598,127 +604,6 @@
         })();
     </script>
 
-    <script type="application/x-disabled">
-        // ---- Demo interaction layer (replace with exhibitor-registration.js in production) ----
-        (function () {
-            const steps = Array.from(document.querySelectorAll('.form-step'));
-            const nodes = Array.from(document.querySelectorAll('.step-node'));
-            const traceFill = document.getElementById('traceFill');
-            let current = 1;
-            const total = steps.length;
-
-            function paintStepper() {
-                const pct = ((current - 1) / (total - 1)) * 100;
-                traceFill.style.width = pct + '%';
-                nodes.forEach(n => {
-                    const s = Number(n.dataset.step);
-                    n.classList.remove('active', 'done');
-                    if (s === current) n.classList.add('active');
-                    else if (s < current) n.classList.add('done');
-                });
-            }
-
-            function goTo(step) {
-                current = Math.min(Math.max(step, 1), total);
-                steps.forEach(s => s.classList.toggle('active', Number(s.dataset.step) === current));
-                paintStepper();
-                document.getElementById('exhibitor-flow').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
-            document.querySelectorAll('.next').forEach(btn => btn.addEventListener('click', () => goTo(current + 1)));
-            document.querySelectorAll('.back').forEach(btn => btn.addEventListener('click', () => goTo(current - 1)));
-            nodes.forEach(n => n.addEventListener('click', () => goTo(Number(n.dataset.step))));
-            paintStepper();
-
-            // OTP UI
-            const sendOtp = document.getElementById('sendOtp');
-            const otpWrap = document.getElementById('otpWrap');
-            const verifyOtp = document.getElementById('verifyOtp');
-            const otpStatus = document.getElementById('otpStatus');
-            sendOtp?.addEventListener('click', () => {
-                otpWrap.classList.remove('hidden');
-                otpStatus.textContent = 'OTP sent to your email.';
-            });
-            verifyOtp?.addEventListener('click', () => {
-                otpStatus.textContent = 'Email verified successfully.';
-                otpStatus.classList.add('text-green-600');
-            });
-
-            // Package selection (synced between hero grid & step 4)
-            const packages = {
-                '3x3': { label: '3 × 3 Mtr. — Compact', desc: 'Focused product display and meetings.' },
-                '3x6': { label: '3 × 6 Mtr. — Expanded', desc: 'More room for engagement and demos.' },
-                '6x6': { label: '6 × 6 Mtr. — Flagship', desc: 'Premium showcase and networking zone.' },
-            };
-            let selectedPackage = null;
-
-            function renderPackageChoice() {
-                const wrap = document.getElementById('packageChoice');
-                wrap.innerHTML = '';
-                Object.entries(packages).forEach(([key, val]) => {
-                    const card = document.createElement('button');
-                    card.type = 'button';
-                    card.className = 'glass rounded-2xl p-5 text-left border border-white/70 hover:border-blue-main/50 transition' + (selectedPackage === key ? ' selected' : '');
-                    card.innerHTML = `<span class="font-display font-semibold text-ink">${val.label}</span><p class="text-xs text-ink/60 mt-1">${val.desc}</p>`;
-                    card.addEventListener('click', () => selectPackage(key));
-                    wrap.appendChild(card);
-                });
-            }
-
-            function selectPackage(key) {
-                selectedPackage = key;
-                renderPackageChoice();
-                const details = document.getElementById('packageDetails');
-                details.classList.remove('hidden');
-                details.innerHTML = `<strong class="text-ink">${packages[key].label}</strong><br>${packages[key].desc}`;
-            }
-
-            document.querySelectorAll('.stall-card').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    if (e.target.closest('.select-package')) return;
-                    selectPackage(card.dataset.package);
-                });
-                card.querySelector('.select-package')?.addEventListener('click', () => {
-                    selectPackage(card.dataset.package);
-                    goTo(4);
-                });
-            });
-            renderPackageChoice();
-
-            // Preview / submit modals
-            const previewModal = document.getElementById('previewModal');
-            const successModal = document.getElementById('successModal');
-            const previewBtn = document.getElementById('previewBtn');
-            const form = document.getElementById('exhibitorForm');
-
-            previewBtn?.addEventListener('click', () => {
-                const data = new FormData(form);
-                const rows = [];
-                for (const [key, val] of data.entries()) {
-                    if (!val) continue;
-                    rows.push(`<div class="flex justify-between gap-4 py-1 border-b border-ink/5"><span class="text-ink/50">${key}</span><span class="font-medium text-ink text-right">${val}</span></div>`);
-                }
-                if (selectedPackage) {
-                    rows.push(`<div class="flex justify-between gap-4 py-1 border-b border-ink/5"><span class="text-ink/50">package</span><span class="font-medium text-ink text-right">${packages[selectedPackage].label}</span></div>`);
-                }
-                document.getElementById('previewContent').innerHTML = rows.join('') || '<p>No fields filled yet.</p>';
-                previewModal.classList.remove('hidden');
-            });
-
-            document.getElementById('confirmSubmit')?.addEventListener('click', () => {
-                previewModal.classList.add('hidden');
-                document.getElementById('referenceBox').textContent = 'REF-TV26-' + Math.floor(100000 + Math.random() * 900000);
-                successModal.classList.remove('hidden');
-            });
-
-            document.querySelectorAll('.close-modal, .edit-modal').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    previewModal.classList.add('hidden');
-                    successModal.classList.add('hidden');
-                });
-            });
-        })();
-    </script>
     <script th:src="@{/js/celebration.js}"></script>
     <script th:src="@{/js/exhibitor-registration.js}"></script>
 </body>

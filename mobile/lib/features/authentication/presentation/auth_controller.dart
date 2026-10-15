@@ -98,41 +98,42 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  /// Verify entered 6-digit OTP
-  Future<bool> verifyResetOtp({
+  /// Verify entered 6-digit OTP.
+  /// Returns the one-time reset token (keep it in memory only), or `null` on failure.
+  Future<String?> verifyResetOtp({
     required String identifier,
     required String otp,
   }) async {
     _setLoading(true);
     _errorMessage = null;
     try {
-      final valid = await repository.verifyResetOtp(identifier: identifier, otp: otp);
+      final resetToken = await repository.verifyResetOtp(identifier: identifier, otp: otp);
       _setLoading(false);
-      return valid;
+      return resetToken;
     } on ApiException catch (e) {
       _errorMessage = e.message;
       _setLoading(false);
-      return false;
+      return null;
     } catch (e) {
       _errorMessage = 'Invalid OTP. Please try again.';
       _setLoading(false);
-      return false;
+      return null;
     }
   }
 
-  /// Reset password and update in database
+  /// Reset password using the token returned by [verifyResetOtp]
   Future<bool> resetPassword({
     required String identifier,
-    required String otp,
+    required String resetToken,
     required String newPassword,
     String? confirmPassword,
   }) async {
     _setLoading(true);
     _errorMessage = null;
     try {
-      await repository.verifyResetOtpAndSetPassword(
+      await repository.resetPassword(
         identifier: identifier,
-        otp: otp,
+        resetToken: resetToken,
         newPassword: newPassword,
         confirmPassword: confirmPassword,
       );
@@ -171,6 +172,34 @@ class AuthController extends ChangeNotifier {
     _currentUser = null;
     _errorMessage = null;
     _setLoading(false);
+  }
+
+  /// Permanently delete the attendee account after confirming [password].
+  /// On success all local credentials and session state are cleared.
+  Future<bool> deleteAccount(String password) async {
+    final token = sessionManager.accessToken;
+    if (token == null || token.isEmpty) {
+      _errorMessage = 'Your session has expired. Please sign in again.';
+      notifyListeners();
+      return false;
+    }
+    _setLoading(true);
+    _errorMessage = null;
+    try {
+      await repository.deleteAccount(token: token, password: password);
+      await sessionManager.terminateSession();
+      _currentUser = null;
+      _setLoading(false);
+      return true;
+    } on ApiException catch (e) {
+      _errorMessage = e.message;
+      _setLoading(false);
+      return false;
+    } catch (e) {
+      _errorMessage = 'Unable to delete the account. Please try again.';
+      _setLoading(false);
+      return false;
+    }
   }
 
   /// Clear local identity and credentials after the backend rejects the session.

@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <script>
+    <script th:nonce="${cspNonce}">
         window.tailwind = window.tailwind || {};
         tailwind.config = {
             corePlugins: { preflight: false },
@@ -365,7 +365,7 @@
             <div><i class="bi bi-telephone-fill compact-icon--navy"></i><p><strong th:text="#{register.field.phone}">Phone</strong><span>+91 **********</span></p></div>
             </section>
             <section class="compact-location">
-            <div class="compact-map overflow-hidden"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.3451748816456!2d80.1872352748421!3d13.013677337305563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267345cb07d5b%3A0x7d6459212d295bdf!2sChennai%20Trade%20Centre%20-%20Nandambakkam!5e0!3m2!1sen!2sin!4v1785913418990!5m2!1sen!2sin" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Chennai Trade Centre"></iframe></div>
+            <div class="compact-map overflow-hidden"><iframe th:if="${!#strings.isEmpty(@environment.getProperty('tecverse.google.maps.embed-api-key'))}" th:src="@{https://www.google.com/maps/embed/v1/place(key=${@environment.getProperty('tecverse.google.maps.embed-api-key')},q='Chennai Trade Centre, Nandambakkam, Chennai',zoom=15)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Interactive map showing Chennai Trade Centre, Nandambakkam, Chennai" allowfullscreen credentialless></iframe><a th:unless="${!#strings.isEmpty(@environment.getProperty('tecverse.google.maps.embed-api-key'))}" href="https://www.google.com/maps/search/?api=1&amp;query=Chennai+Trade+Centre%2C+Nandambakkam%2C+Chennai" target="_blank" rel="noopener noreferrer">Open Chennai Trade Centre in Google Maps</a></div>
             <aside><h2><i class="bi bi-geo-alt-fill"></i> <span th:text="#{contact.compact.venue.title}">Venue Location</span></h2><address><strong>CHENNAI TRADE CENTRE,</strong><br>Ramapuram, Nandambakkam,<br>Chennai, Tamil Nadu 600089</address><p><i class="bi bi-signpost"></i> <span th:text="#{contact.compact.venue.landmark}">Landmark: Nandambakkam</span></p><a href="https://www.google.com/maps/search/?api=1&amp;query=Chennai+Trade+Centre%2C+Nandambakkam%2C+Chennai" target="_blank" rel="noopener"><span th:text="#{contact.compact.venue.directions}">Get Directions on Google Maps</span> <i class="bi bi-arrow-right"></i></a></aside>
             </section>
         </aside>

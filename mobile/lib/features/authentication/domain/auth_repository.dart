@@ -13,18 +13,26 @@ abstract class AuthRepository {
   /// Requests a reset OTP and returns the server's resend cooldown in seconds.
   Future<int> requestPasswordReset({required String identifier});
 
-  /// Verify entered 6-digit OTP.
-  Future<bool> verifyResetOtp({
+  /// Verify entered 6-digit OTP and return the one-time reset token.
+  /// The token must be kept in memory only and passed to [resetPassword].
+  Future<String> verifyResetOtp({
     required String identifier,
     required String otp,
   });
 
-  /// Set new password after OTP verification and update in database.
-  Future<void> verifyResetOtpAndSetPassword({
+  /// Set new password using the reset token obtained from [verifyResetOtp].
+  Future<void> resetPassword({
     required String identifier,
-    required String otp,
+    required String resetToken,
     required String newPassword,
     String? confirmPassword,
+  });
+
+  /// Permanently deletes the attendee account after re-checking [password],
+  /// then clears all locally stored credentials.
+  Future<void> deleteAccount({
+    required String token,
+    required String password,
   });
 
   /// Synchronizes attendee profile from authoritative website backend.

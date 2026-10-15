@@ -15,7 +15,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
     <!-- Tailwind CSS (footer + content sections) - preflight disabled so it doesn't reset the Bootstrap-based page -->
-    <script>
+    <script th:nonce="${cspNonce}">
         window.tailwind = window.tailwind || {};
         tailwind.config = {
             corePlugins: { preflight: false },

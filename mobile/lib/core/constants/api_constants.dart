@@ -11,11 +11,13 @@ class ApiConstants {
   /// Centralized Base URL resolved via [ApiConfig]
   static String get baseUrl => ApiConfig.baseUrl;
 
-  /// Official Website Registration URL (where users register before using the app)
-  static const String websiteRegistrationUrl = String.fromEnvironment(
-    'WEBSITE_REGISTRATION_URL',
-    defaultValue: 'https://ngypr123.bosschn.in/tecverse',
-  );
+  /// Official Website Registration URL (where users register before using the app).
+  /// Derived from the single server URL configured in [ApiConfig].
+  static String get websiteRegistrationUrl => ApiConfig.webBaseUrl;
+
+  /// Public web pages opened in the external browser.
+  static String get privacyPolicyUrl => ApiConfig.privacyPolicyUrl;
+  static String get accountDeletionUrl => ApiConfig.accountDeletionUrl;
 
   /// Health Check Endpoint
   static const String healthEndpoint = '/mobile/health';
@@ -36,6 +38,7 @@ class ApiConstants {
   static const String profileEndpoint = '/mobile/profile';
   static const String userProfileEndpoint = '/mobile/profile';
   static const String userInterestsEndpoint = '/mobile/me/interests';
+  static const String deleteAccountEndpoint = '/mobile/me/delete';
 
   /// Digital Event Pass & QR Verification Endpoints
   static const String digitalPassEndpoint = '/mobile/digital-pass';

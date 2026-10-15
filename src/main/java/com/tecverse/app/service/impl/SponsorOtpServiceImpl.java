@@ -4,15 +4,21 @@ import com.tecverse.app.service.MailDeliveryService;
 import com.tecverse.app.service.SponsorOtpService;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class SponsorOtpServiceImpl implements SponsorOtpService {
-    private record Entry(String otp, LocalDateTime expiresAt) {}
+    private static final int MAX_OTP_ATTEMPTS = 5;
+    private static final SecureRandom RANDOM = new SecureRandom();
+
+    private record Entry(String otp, LocalDateTime expiresAt, AtomicInteger failedAttempts) {}
 
     private final Map<String, Entry> codes = new ConcurrentHashMap<>();
     private final Map<String, LocalDateTime> verified = new ConcurrentHashMap<>();
@@ -27,8 +33,8 @@ public class SponsorOtpServiceImpl implements SponsorOtpService {
         String normalized = normalize(email);
         if (normalized.isBlank()) throw new IllegalArgumentException("Please enter a valid email address.");
 
-        String otp = String.format("%06d", ThreadLocalRandom.current().nextInt(1_000_000));
-        codes.put(normalized, new Entry(otp, LocalDateTime.now().plusMinutes(10)));
+        String otp = String.format("%06d", RANDOM.nextInt(1_000_000));
+        codes.put(normalized, new Entry(otp, LocalDateTime.now().plusMinutes(10), new AtomicInteger()));
         verified.remove(normalized);
 
         String displayName = name == null || name.isBlank() ? "Sponsor" : name.trim();
@@ -59,10 +65,15 @@ public class SponsorOtpServiceImpl implements SponsorOtpService {
             codes.remove(normalized);
             throw new IllegalArgumentException("OTP has expired. Please request a new OTP.");
         }
-        if (otp == null || !entry.otp().equals(otp.trim())) {
+        if (otp == null || !MessageDigest.isEqual(entry.otp().getBytes(StandardCharsets.UTF_8),
+                otp.trim().getBytes(StandardCharsets.UTF_8))) {
+            if (entry.failedAttempts().incrementAndGet() >= MAX_OTP_ATTEMPTS) {
+                codes.remove(normalized, entry);
+                throw new IllegalArgumentException("Too many incorrect OTP attempts. Please request a new OTP.");
+            }
             throw new IllegalArgumentException("Incorrect OTP. Please try again.");
         }
-        codes.remove(normalized);
+        if (!codes.remove(normalized, entry)) throw new IllegalArgumentException("Please request a new OTP.");
         verified.put(normalized, LocalDateTime.now().plusMinutes(30));
     }
 

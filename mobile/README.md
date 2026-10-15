@@ -4,13 +4,17 @@ This Flutter app is kept alongside the Spring Boot website/backend so both clien
 
 ## Staging API
 
-The app defaults to the website's staging origin, `https://ngypr123.bosschn.in/tecverse`, and appends `/api`. Override the origin for a different staging domain with:
+The app defaults to the website's staging origin, `https://ngypr123.bosschn.in/tecverse`, and appends `/api`. The single source of truth is `lib/core/config/api_config.dart`; API calls, the QR verification link and the Privacy Policy / Account Deletion / registration pages are all derived from it. Override it with:
 
 ```sh
-flutter run --dart-define=STAGING_BASE_URL=https://your-staging-host/tecverse
+flutter run --dart-define=API_BASE_URL=https://your-staging-host/tecverse
 ```
 
-Or supply `--dart-define=API_BASE_URL=https://your-staging-host/tecverse/api` to override the full API base URL.
+Release builds must pass the production URL (HTTPS is mandatory in release):
+
+```sh
+flutter build appbundle --release --dart-define=API_BASE_URL=https://<production-host>/tecverse
+```
 
 The Spring Boot deployment must point `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` at the same PostgreSQL database used by the website. Set `MOBILE_TOKEN_SECRET` to a random secret of at least 32 characters on every backend instance. For Flutter Web, set `MOBILE_WEB_ORIGINS` to the exact comma-separated browser origins that host the app. Gate check-in requires an authenticated admin session and CSRF token; do not embed a shared gate credential in the mobile app. Hibernate creates mobile preference, notification, gate check-in, and revoked-session tables in the shared database.
 

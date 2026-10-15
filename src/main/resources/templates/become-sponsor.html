@@ -14,7 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
-    <script>
+    <script th:nonce="${cspNonce}">
         window.tailwind = window.tailwind || {};
         tailwind.config = { corePlugins: { preflight: false } };
     </script>
@@ -392,7 +392,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
-<script>
+<script th:nonce="${cspNonce}">
     const sponsorForm = document.getElementById("sponsorForm");
     const sponsorSendOtpUrl = sponsorForm.dataset.sendOtpUrl;
     const sponsorVerifyOtpUrl = sponsorForm.dataset.verifyOtpUrl;
@@ -447,8 +447,8 @@
         if (!value) return "";
         if (field.name === "name" && !/^[A-Za-z][A-Za-z .'-]{1,149}$/.test(value)) return "Enter a valid contact name.";
         if (field.name === "email" && (!field.validity.valid || value.length > 254)) return "Enter a valid email address (maximum 254 characters).";
-        if (field.name === "phone" && !/^(?:\\+91[-\\s]?)?[6-9]\\d{9}$/.test(value)) return "Enter a valid 10-digit Indian mobile number.";
-        if (field.name === "website" && (!/^https?:\\/\\/.+/.test(value) || value.length > 255)) return "Enter a valid website URL starting with http:// or https:// (maximum 255 characters).";
+        if (field.name === "phone" && !/^(?:\+91[-\s]?)?[6-9]\d{9}$/.test(value)) return "Enter a valid 10-digit Indian mobile number.";
+        if (field.name === "website" && (!/^https?:\/\/\S+$/.test(value) || value.length > 255)) return "Enter a valid website URL starting with http:// or https:// (maximum 255 characters).";
         const limits = { company: 200, jobTitle: 100, city: 100, industry: 100, message: 5000 };
         if (limits[field.name] && value.length > limits[field.name]) return `Maximum ${limits[field.name]} characters allowed.`;
         return "";
