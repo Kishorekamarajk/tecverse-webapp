@@ -4,46 +4,50 @@
 <!-- Step 2 of ticket registration. Served only by /ticket/details-step to a session that has
      completed OTP verification on the server, so a forged client response cannot reveal it. -->
             <form th:fragment="detailsStep" id="detailsForm" class="tr-view" data-view="details" hidden>
-              <div class="rg-sec"><i class="bi bi-person-vcard"></i><h3>Details</h3></div>
+              <div class="rg-sec"><i class="bi bi-person-vcard"></i><h3 th:text="#{ticketpage.details.title}">Details</h3></div>
               <div class="row g-3">
-                <div class="col-12"><label class="rg-f">Full Name <span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" name="officialName" placeholder="Full name" required maxlength="150"></label></div>
-                <div class="col-12 col-md-6"><label class="rg-f">Category of Participation<span class="tr-required-star" aria-hidden="true">*</span>
+                <div class="col-12"><label class="rg-f"><span th:text="#{ticket.verify.fullName}">Full Name</span> <span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" name="officialName" placeholder="Full name" th:placeholder="#{ticketpage.details.namePlaceholder}" required maxlength="150"></label></div>
+                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticketpage.details.category}">Category of Participation</span><span class="tr-required-star" aria-hidden="true">*</span>
                   <select class="form-select" name="category" id="category" required>
-                    <option value="">Select category</option>
-                    <option value="ACADEMIA">Academia</option>
-                    <option value="CENTRAL_GOVERNMENT">Central Government</option>
-                    <option value="STATE_GOVERNMENT">State Government</option>
-                    <option value="INDUSTRY_STARTUP">Industry / Business</option>
+                    <option value="" th:text="#{ticketpage.details.selectCategory}">Select category</option>
+                    <option value="ACADEMIA" th:text="#{ticketpage.details.cat.academia}">Academia</option>
+                    <option value="CENTRAL_GOVERNMENT" th:text="#{ticketpage.details.cat.central}">Central Government</option>
+                    <option value="STATE_GOVERNMENT" th:text="#{ticketpage.details.cat.state}">State Government</option>
+                    <option value="INDUSTRY_STARTUP" th:text="#{ticketpage.details.cat.industry}">Industry / Business</option>
                     <!--
                     <option value="VIP_SPECIAL_INVITEE">VIP / Special Invitee</option>
                     <option value="SPEAKER">Speaker</option>
                     <option value="ORGANIZER">Organizer</option>
                     -->
                   </select></label></div>
-                <div class="col-12 col-md-6"><label class="rg-f">Nationality / Residency Status<span class="tr-required-star" aria-hidden="true">*</span>
+                <div class="col-12 col-md-6"><label class="rg-f"><span th:text="#{ticketpage.details.citizenship}">Nationality / Residency Status</span><span class="tr-required-star" aria-hidden="true">*</span>
                   <select class="form-select" name="citizenshipStatus" id="citizenship" required>
-                    <option value="">Select status</option>
-                    <option value="INDIAN">Indian National</option>
-                    <option value="NRI">Non-Resident Indian (NRI)</option>
-                    <option value="FOREIGNER">Foreign National</option>
+                    <option value="" th:text="#{ticketpage.details.selectStatus}">Select status</option>
+                    <option value="INDIAN" th:text="#{ticketpage.details.cit.indian}">Indian National</option>
+                    <option value="NRI" th:text="#{ticketpage.details.cit.nri}">Non-Resident Indian (NRI)</option>
+                    <option value="FOREIGNER" th:text="#{ticketpage.details.cit.foreign}">Foreign National</option>
+                  </select></label></div>
+                <div class="col-12 col-md-6"><label class="rg-f" for="applicantState">State / Union Territory <span class="tr-required-star" aria-hidden="true">*</span>
+                  <select class="form-select" name="applicantState" id="applicantState" required>
+                    <option value="">Select your state or union territory</option>
                   </select></label></div>
               </div>
 
               <div id="conditional" class="mt-3"></div>
 
               <fieldset class="tr-fieldset">
-                <legend>Preferred Day(s) <span class="tr-required-star" aria-hidden="true">*</span></legend>
-                <p>Select the day(s) you will attend.</p>
+                <legend><span th:text="#{ticketpage.details.days}">Preferred Day(s)</span> <span class="tr-required-star" aria-hidden="true">*</span></legend>
+                <p th:text="#{ticketpage.details.daysHelp}">Select the day(s) you will attend.</p>
                 <div class="rg-days">
-                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="DAY_1"><span>Day 1 – 26 November 2026</span></label>
-                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="DAY_2"><span>Day 2 – 27 November 2026</span></label>
-                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="BOTH"><span>Both Days – 26 &amp; 27 November 2026</span></label>
+                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="DAY_1"><span th:text="#{ticketpage.details.day1}">Day 1 – 26 November 2026</span></label>
+                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="DAY_2"><span th:text="#{ticketpage.details.day2}">Day 2 – 27 November 2026</span></label>
+                  <label class="tr-check form-check"><input class="form-check-input" type="checkbox" name="attendanceDays" value="BOTH"><span th:text="#{ticketpage.details.dayBoth}">Both Days – 26 &amp; 27 November 2026</span></label>
                 </div>
               </fieldset>
               <div id="detailsMsg" class="tr-msg"></div>
               <div class="rg-actions">
-                <button type="button" id="backVerify" class="btn tr-secondary"><i class="bi bi-arrow-left"></i> Back</button>
-                <button type="submit" class="btn tr-primary">Review Application <i class="bi bi-arrow-right"></i></button>
+                <button type="button" id="backVerify" class="btn tr-secondary"><i class="bi bi-arrow-left"></i> <span th:text="#{register.back}">Back</span></button>
+                <button type="submit" class="btn tr-primary"><span th:text="#{ticketpage.preview.title}">Review Application</span> <i class="bi bi-arrow-right"></i></button>
               </div>
             </form>
 </body>

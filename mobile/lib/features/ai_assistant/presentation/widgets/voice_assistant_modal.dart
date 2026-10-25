@@ -144,7 +144,7 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
 
     if (!started && mounted) {
       setState(() {
-        _transcriptText = 'Voice Assistant ready! Say "Go to Sessions" or tap a prompt.';
+        _transcriptText = 'Microphone unavailable. Allow microphone access for TEC-VERSE in your phone Settings, or tap a prompt below.';
       });
     }
   }
@@ -553,7 +553,7 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
       case VoiceState.listening:
         return 'Listening for Voice Query...';
       case VoiceState.processing:
-        return 'Analyzing Intent with Neural AI...';
+        return 'Understanding your request...';
       case VoiceState.navigating:
         return 'Executing Navigation...';
       case VoiceState.speaking:

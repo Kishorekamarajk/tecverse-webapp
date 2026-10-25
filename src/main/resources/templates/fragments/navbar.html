@@ -5,12 +5,12 @@
 <nav th:fragment="navbar(active)" class="navbar navbar-expand-xl site-navbar fixed-top">
     <div class="container-custom">
         <a class="navbar-brand" th:href="@{/}">
-            <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" class="navbar-logo d-block object-fit-contain" />
+            <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" th:alt="#{misc.logo.tecverse}" class="navbar-logo d-block object-fit-contain" />
             <span class="navbar-brand-text" th:text="#{brand.name}">Tec-verse 2026</span>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNav"
-                aria-controls="mainNav" aria-label="Toggle navigation">
+                aria-controls="mainNav" aria-label="Toggle navigation" th:aria-label="#{misc.navbar.toggleAria}">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -20,7 +20,7 @@
                     <a class="offcanvas-title-link" th:href="@{/}" th:text="#{contact.title}">Tec-verse 2026</a>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
-                        data-bs-target="#mainNav" aria-label="Close"></button>
+                        data-bs-target="#mainNav" aria-label="Close" th:aria-label="#{register.modal.close}"></button>
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav align-items-lg-center">
@@ -56,7 +56,7 @@
                 </ul>
 
                 <div class="navbar-actions ms-lg-auto d-flex justify-content-end">
-                    <div class="mob-clr d-flex justify-content-center navbar-language-switcher notranslate" translate="no" aria-label="Language selector">
+                    <div class="mob-clr d-flex justify-content-center navbar-language-switcher notranslate" translate="no" aria-label="Language selector" th:aria-label="#{misc.navbar.languageAria}">
                         <button type="button" class="navbar-language-btn mob-clr notranslate d-inline-flex align-items-center justify-content-center" translate="no" data-language-button="en" lang="en">English</button>
                         <!-- <span class="navbar-language-separator align-items-center justify-content-center" aria-hidden="true">|</span>
                         <button type="button" class="navbar-language-btn mob-clr notranslate d-inline-flex align-items-center justify-content-center" translate="no" data-language-button="ta" lang="ta">&#2980;&#2990;&#3007;&#2996;&#3021;</button> -->

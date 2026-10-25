@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -35,8 +37,69 @@ public class GalleryStorageServiceImpl implements GalleryStorageService {
     }
 
     @Override
+    public List<String> uploadImages(List<MultipartFile> files, String folder) {
+        return uploadMany(files, folder, true);
+    }
+
+    @Override
+    public List<String> uploadVideos(List<MultipartFile> files, String folder) {
+        return uploadMany(files, folder, false);
+    }
+
+    private List<String> uploadMany(List<MultipartFile> files, String folder, boolean image) {
+        List<MultipartFile> selected = files == null ? List.of()
+                : files.stream().filter(file -> file != null && !file.isEmpty()).toList();
+        String media = image ? "image" : "video";
+        if (selected.isEmpty()) throw new IllegalArgumentException("Choose at least one " + media + " to upload.");
+        if (selected.size() > 20) throw new IllegalArgumentException("Upload no more than 20 " + media + "s at a time.");
+        for (MultipartFile file : selected) {
+            long maxSize = image ? MAX_IMAGE_SIZE_BYTES : MAX_VIDEO_SIZE_BYTES;
+            if (file.getSize() > maxSize) throw new IllegalArgumentException("Each " + media + " must be 1 MB or smaller.");
+            if (!isSupportedFile(file.getContentType(), file.getOriginalFilename(), image)) {
+                throw new IllegalArgumentException(image
+                        ? "Choose JPG, PNG, WEBP, or GIF images only."
+                        : "Choose MP4, WEBM, OGG, or MOV videos only.");
+            }
+        }
+
+        List<String> uploaded = new ArrayList<>(selected.size());
+        try {
+            for (MultipartFile file : selected) uploaded.add(image ? uploadImage(file, folder) : uploadVideo(file, folder));
+            return uploaded;
+        } catch (RuntimeException ex) {
+            for (String url : uploaded) {
+                try {
+                    Path storedFile = storageDirectory.resolve(url.substring("/uploads/gallery/".length())).normalize();
+                    if (storedFile.startsWith(storageDirectory)) Files.deleteIfExists(storedFile);
+                } catch (IOException | RuntimeException ignored) {
+                    // Keep the original upload failure as the useful error for the admin.
+                }
+            }
+            throw ex;
+        }
+    }
+
+    @Override
     public String uploadVideo(MultipartFile file, String folder) {
         return upload(file, folder, false);
+    }
+
+    @Override
+    public void deleteStoredMedia(String mediaUrl) {
+        String prefix = "/uploads/gallery/";
+        if (mediaUrl == null || !mediaUrl.startsWith(prefix)) return;
+
+        String relativePath = mediaUrl.substring(prefix.length());
+        Path storedFile = storageDirectory.resolve(relativePath).normalize();
+        if (!storedFile.startsWith(storageDirectory)) {
+            throw new IllegalArgumentException("Invalid stored media path.");
+        }
+
+        try {
+            Files.deleteIfExists(storedFile);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unable to remove uploaded media file.", ex);
+        }
     }
 
     private String upload(MultipartFile file, String folder, boolean image) {

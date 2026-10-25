@@ -17,129 +17,6 @@ class TecverseAiService {
   static List<FaqItem> _cachedDbFaqs = [];
   static bool _isLoading = false;
 
-  /// Default baseline matching all 22 rows in PostgreSQL `faq_items` table
-  static final List<FaqItem> _initialFaqs = [
-    const FaqItem(
-      id: 1,
-      pageKey: 'home',
-      question: 'What is Tec-verse 2026?',
-      answer: '🌟 **Tec-verse 2026** is India\'s premier Technology & Engineering Exhibition and Conference organized by the Consortium of Scientific Societies (CSC) under MeitY, Government of India, along with C-DAC, SAMEER, and C-MET.\n\n📍 **Venue:** Chennai Trade Centre, Nandambakkam, Chennai\n🗓️ **Dates:** 26–27 November 2026\n🎯 **Focus Areas:** Quantum Computing, Semiconductor VLSI, Generative AI, Robotics, 6G & Advanced Materials.',
-      displayOrder: 1,
-    ),
-    const FaqItem(
-      id: 2,
-      pageKey: 'home',
-      question: 'Is Tec-verse 2026 only for IT companies?',
-      answer: '🌐 **No, Tec-verse 2026 is open to all domains!**\n\nIt brings together Electronics, Semiconductors, Hardware Design, Defense Technology, Deep Tech Startups, Academic Researchers, and Government Scientific Institutions alongside IT & Software enterprises.',
-      displayOrder: 2,
-    ),
-    const FaqItem(
-      id: 3,
-      pageKey: 'home',
-      question: 'Will there be networking opportunities?',
-      answer: '🤝 **Yes, extensive B2B & Research Networking!**\n\n• **B2B Matchmaking Lounges** in Hall 2 & 3\n• **Executive Dinners & MoU Signing Pavilions**\n• **Direct interaction with MeitY, C-DAC, SAMEER, & C-MET leadership**\n• **Startup Investor Pitching Arenas**',
-      displayOrder: 3,
-    ),
-    const FaqItem(
-      id: 4,
-      pageKey: 'home',
-      question: 'Why should I exhibit at Tec-verse 2026?',
-      answer: '🏢 **Exhibitor Benefits:**\n\n• Showcase innovations to **10,000+ delegates and international buyers**\n• High-visibility standard (3x3m) and premium (6x6m) stalls at Chennai Trade Centre\n• Direct government procurement & industry partnership opportunities\n• Brand coverage across national media and conference proceedings.',
-      displayOrder: 4,
-    ),
-    const FaqItem(
-      id: 5,
-      pageKey: 'retreat',
-      question: 'Who can attend the leadership retreat?',
-      answer: '🏕️ **Leadership Retreat Eligibility:**\n\nSenior scientists, academic chairs, industry executives, startup founders, and invited delegates can participate in the exclusive technical retreat and round-table discussions.',
-      displayOrder: 5,
-    ),
-    const FaqItem(
-      id: 6,
-      pageKey: 'retreat',
-      question: 'How are speakers selected?',
-      answer: '🎤 **Speaker Selection Process:**\n\nSpeakers are chosen by the **National Technical Program Committee (TPC)** comprising eminent scientists from MeitY, C-DAC, IITs, and industry fellows based on research merit and breakthrough innovations.',
-      displayOrder: 6,
-    ),
-    const FaqItem(
-      id: 7,
-      pageKey: 'retreat',
-      question: 'Can industry organizations participate?',
-      answer: '🏭 **Yes, Industry Participation is Welcomed!**\n\nIndustry organizations can participate as **Sponsors, Exhibitors, Panelists, and Technology Partners** to demonstrate cutting-edge products and hire top engineering talent.',
-      displayOrder: 7,
-    ),
-    const FaqItem(
-      id: 8,
-      pageKey: 'retreat',
-      question: 'How can researchers present projects?',
-      answer: '🔬 **Research Project Presentations:**\n\nResearchers can submit extended abstracts and technical papers through the official portal. Selected papers are published in conference proceedings and presented in the Plenary Track.',
-      displayOrder: 8,
-    ),
-    const FaqItem(
-      id: 9,
-      pageKey: 'ticket',
-      question: 'Is there any registration fee for the event?',
-      answer: '🎟️ **Registration & Fee Details:**\n\n• **Standard Delegate:** Complimentary passes available for registered academic and scientific delegates through government sponsorship.\n• **Corporate / Industry Pass:** Available with full access to exhibition halls, executive dining, and conference kits.',
-      displayOrder: 9,
-    ),
-    const FaqItem(
-      id: 10,
-      pageKey: 'ticket',
-      question: 'Will food be provided at the event?',
-      answer: '🍱 **Dining & Hospitality:**\n\n**Yes!** Complimentary high-tea, snacks, and an executive buffet lunch are provided for all registered delegates at the **Lawn Pavilion behind Hall 3** on both Day 1 (26 Nov) and Day 2 (27 Nov).',
-      displayOrder: 10,
-    ),
-    const FaqItem(
-      id: 11,
-      pageKey: 'ticket',
-      question: 'How can I register for the event?',
-      answer: '📝 **How to Register:**\n\n1. Register online at `tecverse2026.cdac.in` or via the in-app registration screen.\n2. Complete your profile and select your technology interest domains.\n3. Instantly receive your **Encrypted QR Digital Pass** in the app for fast-track entry.',
-      displayOrder: 11,
-    ),
-    const FaqItem(
-      id: 12,
-      pageKey: 'ticket',
-      question: 'Will I receive a confirmation after registration?',
-      answer: '📧 **Registration Confirmation:**\n\n**Yes!** Immediately upon registration, you will receive an official confirmation email with your **Registration Reference Number** and your **Digital Pass QR badge** will activate in this app.',
-      displayOrder: 12,
-    ),
-    const FaqItem(
-      id: 13,
-      pageKey: 'floor_plan',
-      question: 'Where is Chennai Trade Centre located?',
-      answer: '📍 **Venue Location:**\n\n**Chennai Trade Centre (CTC)**\nMount-Poonamallee High Road, Nandambakkam, Chennai, Tamil Nadu 600089.\nConveniently located 10 minutes from Chennai International Airport and Guindy Metro Station.',
-      displayOrder: 13,
-    ),
-    const FaqItem(
-      id: 14,
-      pageKey: 'floor_plan',
-      question: 'Which hall has the Quantum Computing and AI exhibits?',
-      answer: '🤖 **Quantum & AI Exhibits:**\n\n• **Hall 1 & 2:** Quantum Computing, PARAM Supercomputing (C-DAC) & High Performance Computing (HPC)\n• **Hall 3 & 4:** Generative AI, Robotics & Autonomous Systems\n• **Hall 5 & 6:** Semiconductor VLSI & Advanced Sensors\n• **Hall 7 & 8:** 6G Wireless Communications & Defence Electronics.',
-      displayOrder: 14,
-    ),
-    const FaqItem(
-      id: 15,
-      pageKey: 'floor_plan',
-      question: 'Where is the Help Desk and Registration Counter?',
-      answer: 'ℹ️ **Help Desk & Badge Printing:**\n\nThe Central Registration Desk, Fast-Track QR Scanner, and Information Booth are located at the **Grand Convention Foyer (Entry Gate 1 & 2)**.',
-      displayOrder: 15,
-    ),
-    const FaqItem(
-      id: 16,
-      pageKey: 'schedule',
-      question: 'What are the daily exhibition timings?',
-      answer: '⏰ **Exhibition & Conference Timings:**\n\n• **Day 1 (26 Nov 2026):** 09:00 AM – 06:30 PM (Inauguration at 10:00 AM)\n• **Day 2 (27 Nov 2026):** 09:30 AM – 06:00 PM (Valedictory & Awards at 04:30 PM)',
-      displayOrder: 16,
-    ),
-    const FaqItem(
-      id: 17,
-      pageKey: 'schedule',
-      question: 'When is the Keynote Address on Quantum Computing?',
-      answer: '⚡ **Quantum Keynote:**\n\n**Day 1 (26 Nov 2026) at 11:30 AM** in **Main Auditorium (Hall 1)**.\nDelivered by chief scientists from MeitY and C-DAC on National Quantum Mission milestones.',
-      displayOrder: 17,
-    ),
-  ];
-
   /// Fetch questions & answers directly from PostgreSQL `faq_items` table
   static Future<List<FaqItem>> fetchFaqItemsFromDb({bool forceRefresh = false}) async {
     if (_cachedDbFaqs.isNotEmpty && !forceRefresh) {
@@ -147,7 +24,7 @@ class TecverseAiService {
     }
 
     if (_isLoading) {
-      return _cachedDbFaqs.isNotEmpty ? _cachedDbFaqs : _initialFaqs;
+      return _cachedDbFaqs;
     }
 
     _isLoading = true;
@@ -155,13 +32,9 @@ class TecverseAiService {
       final items = await _faqRepo.fetchFaqItems();
       if (items.isNotEmpty) {
         _cachedDbFaqs = items;
-      } else if (_cachedDbFaqs.isEmpty) {
-        _cachedDbFaqs = _initialFaqs;
       }
     } catch (_) {
-      if (_cachedDbFaqs.isEmpty) {
-        _cachedDbFaqs = _initialFaqs;
-      }
+      // Keep whatever was cached; an empty cache means the next query retries the server.
     } finally {
       _isLoading = false;
     }
@@ -318,10 +191,22 @@ class TecverseAiService {
       }
     }
 
-    // Default message when no matching record is found in `faq_items` database
+    if (dbFaqs.isEmpty) {
+      return AiMessage(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        text: 'I can\'t reach the TEC-VERSE server right now, so I can\'t look up answers.\n\n'
+            'Please check your internet connection and try again. You can still say '
+            '**"Go to Schedule"** or **"Go to Digital Pass"** to open a screen.',
+        sender: MessageSender.assistant,
+        timestamp: DateTime.now(),
+        isVoiceGenerated: isVoice,
+      );
+    }
+
+    // Default message when no FAQ matches the question
     return AiMessage(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      text: '🤖 I couldn\'t find a precise match in the `faq_items` database.\n\n'
+      text: 'I couldn\'t find an answer to that in the TEC-VERSE FAQs.\n\n'
           'Try saying or typing:\n'
           '• **"Go to Sessions"** or **"Go to Floor Plan"**\n'
           '• **"Go to Digital Pass"** or **"Go to Schedule"**\n'

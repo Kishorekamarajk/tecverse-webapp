@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy | TEC-VERSE 2026</title>
+    <title th:text="#{misc.privacy.pageTitle}">Privacy Policy | TEC-VERSE 2026</title>
     <meta name="description" content="How TEC-VERSE 2026 (C-DAC) collects, uses and protects personal data on the website and mobile app.">
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
     <link rel="stylesheet" th:href="@{/css/fonts.css}">
@@ -16,63 +16,63 @@
 
 <header class="page-header">
     <div class="container">
-        <h1 class="fw-bold">Privacy Policy</h1>
-        <p class="lead mb-0">TEC-VERSE 2026 website and mobile app &middot; Last updated: 15 October 2026</p>
+        <h1 class="fw-bold" th:text="#{misc.privacy.heading}">Privacy Policy</h1>
+        <p class="lead mb-0" th:text="#{misc.privacy.lead}">TEC-VERSE 2026 website and mobile app &middot; Last updated: 15 October 2026</p>
     </div>
 </header>
 
 <section class="content-section">
     <div class="container" style="max-width: 860px">
-        <p>TEC-VERSE 2026 is organised by the Centre for Development of Advanced Computing (C-DAC). This policy explains what
+        <p th:text="#{misc.privacy.intro}">TEC-VERSE 2026 is organised by the Centre for Development of Advanced Computing (C-DAC). This policy explains what
             personal data we collect through the TEC-VERSE website and the TEC-VERSE 2026 Android app, why we collect it,
             and the choices you have.</p>
 
-        <h2 class="h4 fw-bold mt-4">1. Data we collect</h2>
+        <h2 class="h4 fw-bold mt-4" th:text="#{misc.privacy.s1.heading}">1. Data we collect</h2>
         <ul>
-            <li><strong>Registration details:</strong> name, email address, mobile number, password (stored only as a one-way
+            <li th:utext="#{misc.privacy.s1.registration}"><strong>Registration details:</strong> name, email address, mobile number, password (stored only as a one-way
                 hash), registration category, organisation / institution, designation, city, student ID (students only)
                 and preferred attendance days.</li>
-            <li><strong>Passport details (foreign nationals only):</strong> passport number, expiry date and name as shown on
+            <li th:utext="#{misc.privacy.s1.passport}"><strong>Passport details (foreign nationals only):</strong> passport number, expiry date and name as shown on
                 the passport, used for event security and entry.</li>
-            <li><strong>Exhibitor and sponsor enquiries:</strong> company and contact details, and documents you upload.</li>
-            <li><strong>App usage:</strong> technology interests you select in the app, notifications sent to you, and your
+            <li th:utext="#{misc.privacy.s1.enquiries}"><strong>Exhibitor and sponsor enquiries:</strong> company and contact details, and documents you upload.</li>
+            <li th:utext="#{misc.privacy.s1.appUsage}"><strong>App usage:</strong> technology interests you select in the app, notifications sent to you, and your
                 event check-in status.</li>
-            <li><strong>Microphone (optional):</strong> if you use voice search in the app, your speech is converted to text by
+            <li th:utext="#{misc.privacy.s1.microphone}"><strong>Microphone (optional):</strong> if you use voice search in the app, your speech is converted to text by
                 your device's speech-recognition service. We do not record or store audio.</li>
         </ul>
-        <p>We do not collect location data, contacts, photos or advertising identifiers, and we do not use your data for
+        <p th:text="#{misc.privacy.s1.note}">We do not collect location data, contacts, photos or advertising identifiers, and we do not use your data for
             advertising.</p>
 
-        <h2 class="h4 fw-bold mt-4">2. How we use it</h2>
+        <h2 class="h4 fw-bold mt-4" th:text="#{misc.privacy.s2.heading}">2. How we use it</h2>
         <ul>
-            <li>To register you for the event, issue your digital pass and QR code, and verify entry at the venue.</li>
-            <li>To verify your email with a one-time password (OTP) and to let you reset your password.</li>
-            <li>To send event updates, confirmations and notifications related to TEC-VERSE 2026.</li>
-            <li>To plan and secure the event (attendance numbers, venue access).</li>
+            <li th:text="#{misc.privacy.s2.item1}">To register you for the event, issue your digital pass and QR code, and verify entry at the venue.</li>
+            <li th:text="#{misc.privacy.s2.item2}">To verify your email with a one-time password (OTP) and to let you reset your password.</li>
+            <li th:text="#{misc.privacy.s2.item3}">To send event updates, confirmations and notifications related to TEC-VERSE 2026.</li>
+            <li th:text="#{misc.privacy.s2.item4}">To plan and secure the event (attendance numbers, venue access).</li>
         </ul>
 
-        <h2 class="h4 fw-bold mt-4">3. Sharing</h2>
-        <p>We do not sell your personal data. It is accessible only to authorised C-DAC event staff and the service providers
+        <h2 class="h4 fw-bold mt-4" th:text="#{misc.privacy.s3.heading}">3. Sharing</h2>
+        <p th:text="#{misc.privacy.s3.body}">We do not sell your personal data. It is accessible only to authorised C-DAC event staff and the service providers
             that host our servers and send our emails, who process it on our behalf. We may disclose data where required by
             law or by government security authorities for event security.</p>
 
-        <h2 class="h4 fw-bold mt-4">4. Security and retention</h2>
-        <p>Data is sent over encrypted HTTPS connections. Passwords are stored as hashes, app sessions are stored in the
+        <h2 class="h4 fw-bold mt-4" th:text="#{misc.privacy.s4.heading}">4. Security and retention</h2>
+        <p th:text="#{misc.privacy.s4.body}">Data is sent over encrypted HTTPS connections. Passwords are stored as hashes, app sessions are stored in the
             device's secure storage, and access to the admin system is restricted. We keep registration data only as long as
             needed for TEC-VERSE 2026 and related reporting, after which it is deleted or anonymised.</p>
 
-        <h2 class="h4 fw-bold mt-4">5. Your choices and account deletion</h2>
-        <p>You can view your details in the app, and you can delete your account at any time from
-            <strong>Profile &rarr; Delete Account</strong> in the app, or by following the steps on our
-            <a th:href="@{/account-deletion}" href="/account-deletion">account deletion page</a>. Deleting your account
-            permanently removes your registration, digital pass, preferences and notifications.</p>
+        <h2 class="h4 fw-bold mt-4" th:text="#{misc.privacy.s5.heading}">5. Your choices and account deletion</h2>
+        <p><th:block th:utext="#{misc.privacy.s5.bodyStart}">You can view your details in the app, and you can delete your account at any time from
+            <strong>Profile &rarr; Delete Account</strong> in the app, or by following the steps on our</th:block>
+            <a th:href="@{/account-deletion}" href="/account-deletion" th:text="#{misc.privacy.s5.link}">account deletion page</a><th:block th:text="#{misc.privacy.s5.bodyEnd}">. Deleting your account
+            permanently removes your registration, digital pass, preferences and notifications.</th:block></p>
 
-        <h2 class="h4 fw-bold mt-4">6. Children</h2>
-        <p>The event and app are intended for professionals, students and visitors aged 13 and above. We do not knowingly
+        <h2 class="h4 fw-bold mt-4" th:text="#{misc.privacy.s6.heading}">6. Children</h2>
+        <p th:text="#{misc.privacy.s6.body}">The event and app are intended for professionals, students and visitors aged 13 and above. We do not knowingly
             collect data from children under 13.</p>
 
-        <h2 class="h4 fw-bold mt-4">7. Changes and contact</h2>
-        <p>We may update this policy; the date above shows the latest version. For any privacy question or request, contact
+        <h2 class="h4 fw-bold mt-4" th:text="#{misc.privacy.s7.heading}">7. Changes and contact</h2>
+        <p th:utext="#{misc.privacy.s7.body}">We may update this policy; the date above shows the latest version. For any privacy question or request, contact
             us at <a href="mailto:tec-verse@cdac.in">tec-verse@cdac.in</a>.</p>
     </div>
 </section>

@@ -87,7 +87,7 @@ class DigitalEventPass {
       eventDates: json['eventDates']?.toString() ?? '26–27 NOVEMBER 2026',
       venue: json['venue']?.toString() ?? 'CHENNAI TRADE CENTRE, NANDAMBAKKAM, CHENNAI 600089',
       attendanceDays: json['attendanceDays']?.toString() ?? 'Both Days (26 & 27 Nov 2026)',
-      qrToken: json['qrToken']?.toString() ?? 'TECVERSE26:${json['passId']}',
+      qrToken: json['qrToken']?.toString() ?? '',
       status: PassStatus.fromString(json['status']?.toString()),
       issuedAt: json['issuedAt'] != null
           ? DateTime.tryParse(json['issuedAt'].toString()) ?? DateTime.now()
@@ -141,14 +141,14 @@ class DigitalEventPass {
     );
   }
 
-  /// Web Verification URL encoded directly into the QR Code.
-  /// When scanned via Google Lens, Apple Camera, or any Barcode/QR Scanner,
-  /// the phone immediately prompts to open this official Delegate Credential Verification web page.
+  static final RegExp _scanTokenPattern = RegExp(r'^(?:TECVERSE26:|.*/ticket/scan/)([a-f0-9]{32})/?$');
+
+  /// Value encoded in the QR code: the same `<web>/ticket/scan/<token>` link as the
+  /// confirmation e-mail. A phone camera opens the server's scan page, and the gate
+  /// scanner's `/mobile/pass/verify` accepts it. Empty when the pass has no valid token.
   String get scannableInfo {
-    final baseUrl = ApiConfig.webBaseUrl;
-    final pId = Uri.encodeComponent(passId);
-    final ref = Uri.encodeComponent(attendeeId.isNotEmpty ? attendeeId : passId);
-    final tok = Uri.encodeComponent(qrToken);
-    return '$baseUrl/verify?passId=$pId&ref=$ref&token=$tok';
+    final match = _scanTokenPattern.firstMatch(qrToken.trim());
+    if (match == null) return '';
+    return '${ApiConfig.webBaseUrl}/ticket/scan/${match.group(1)}';
   }
 }

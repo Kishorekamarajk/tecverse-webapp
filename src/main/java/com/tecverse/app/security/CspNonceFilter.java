@@ -27,12 +27,14 @@ final class CspNonceFilter extends OncePerRequestFilter {
     private static final String POLICY_TEMPLATE = "default-src 'self'; "
             + "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; "
             + "script-src 'self' 'nonce-%s' https://cdn.jsdelivr.net "
-            + "https://code.jquery.com https://cdn.tailwindcss.com; "
+            + "https://code.jquery.com https://cdn.tailwindcss.com https://*.googletagmanager.com; "
             + "script-src-attr 'none'; "
             + "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
             + "img-src 'self' data: blob: https:; "
             + "font-src 'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com; "
-            + "connect-src 'self' https://cdn.jsdelivr.net https://cdn.tailwindcss.com; "
+            // Google Analytics 4 (fragments/analytics.html) loads from googletagmanager and reports to these hosts.
+            + "connect-src 'self' https://cdn.jsdelivr.net https://cdn.tailwindcss.com "
+            + "https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; "
             + "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com; "
             + "media-src 'self' blob: https:";
 

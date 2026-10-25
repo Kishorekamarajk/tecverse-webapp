@@ -8,7 +8,7 @@
     <div class="container-custom guests-dates-layout position-relative d-grid align-items-stretch">
         <div class="chief-guests-panel">
             <div class="guests-dates-heading text-start" data-reveal="fade-up">
-                <h2 id="guests-dates-heading">Eminent leaders and visionaries gracing Tec-verse 2026</h2>
+                <h2 id="guests-dates-heading" th:text="#{misc.guests.heading}">Eminent leaders and visionaries gracing Tec-verse 2026</h2>
             </div>
 
             <div class="chief-guests-carousel" th:if="${chiefGuests != null and !chiefGuests.isEmpty()}" data-chief-guests-carousel>
@@ -21,9 +21,9 @@
                                          th:attr="data-reveal-delay=${(iter.index % 4) * 70}"
                                          th:style="|--guest-accent:${guest.accentColor};|">
                                     <div class="chief-guest-photo">
-                                        <img th:src="@{${guest.imageUrl}}" th:alt="|${guest.name} chief guest|" loading="lazy">
+                                        <img th:src="@{${guest.imageUrl}}" th:alt="#{misc.guests.photoAlt(${guest.name})}" loading="lazy">
                                     </div>
-                                    <p class="chief-guest-label d-inline-flex align-items-center justify-content-center"><span></span> CHIEF GUEST <span></span></p>
+                                    <p class="chief-guest-label d-inline-flex align-items-center justify-content-center"><span></span> <th:block th:text="#{misc.guests.chiefGuestLabel}">CHIEF GUEST</th:block> <span></span></p>
                                     <h3 th:text="${guest.name}">Dr. Rajkumar Upadhyay</h3>
                                     <p class="chief-guest-role" th:text="${guest.designation}">Director General</p>
                                     <p class="chief-guest-org" th:if="${guest.organization != null and !guest.organization.isBlank()}" th:text="${guest.organization}">C-DAC</p>
@@ -34,14 +34,14 @@
                     </div>
                 </div>
 
-                <div class="chief-guests-dots d-flex align-items-center justify-content-center gap-[0.7rem] mt-[1.35rem]" aria-label="Chief guest slides" data-chief-guests-dots>
-                    <button th:each="dot : ${#numbers.sequence(0, (chiefGuests.size() - 1) / 6)}" class="chief-guests-dot" type="button" th:classappend="${dot == 0} ? ' active'" th:attr="data-chief-guests-dot=${dot}, aria-label=|Show chief guest slide ${dot + 1}|"></button>
+                <div class="chief-guests-dots d-flex align-items-center justify-content-center gap-[0.7rem] mt-[1.35rem]" aria-label="Chief guest slides" th:aria-label="#{misc.guests.slidesAria}" data-chief-guests-dots>
+                    <button th:each="dot : ${#numbers.sequence(0, (chiefGuests.size() - 1) / 6)}" class="chief-guests-dot" type="button" th:classappend="${dot == 0} ? ' active'" th:attr="data-chief-guests-dot=${dot}, aria-label=#{misc.guests.slideAria(${dot + 1})}"></button>
                 </div>
             </div>
 
             <div class="guests-dates-empty text-center" th:if="${chiefGuests == null or chiefGuests.isEmpty()}">
                 <i class="bi bi-person-badge"></i>
-                <p>Chief guests will be updated soon.</p>
+                <p th:text="#{misc.guests.empty}">Chief guests will be updated soon.</p>
             </div>
         </div>
 

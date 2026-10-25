@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/analytics :: gtag}"></th:block>
     <title th:text="#{home.title}">Home</title>
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
 
@@ -37,45 +38,46 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="home-page">
 <!-- Initial Tec-verse landing animation -->
-<div id="site-intro" class="site-intro" aria-label="Tec-verse introduction">
+<div id="site-intro" class="site-intro" aria-label="Tec-verse introduction" th:attr="aria-label=#{page.home.intro.aria}">
     <div class="site-intro__splash d-grid">
         <div class="site-intro__splash-grid position-absolute" aria-hidden="true"></div>
         <div class="site-intro__splash-glow site-intro__splash-glow--one position-absolute max-w-[620px] rounded-[50%]" aria-hidden="true"></div>
         <div class="site-intro__splash-glow site-intro__splash-glow--two position-absolute max-w-[620px] rounded-[50%]" aria-hidden="true"></div>
 
         <div class="site-intro__splash-content position-relative d-flex flex-column align-items-center text-center">
-            <img class="site-intro__splash-logo" th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo">
+            <img class="site-intro__splash-logo" th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" th:alt="#{page.home.intro.logoAlt}">
             <div class="site-intro__splash-eyebrow" th:text="#{contact.title}">Tec-verse 2026</div>
             <div class="site-intro__splash-word mt-[20px] font-[900] leading-[.82] tracking-[-.075em]">Tec-verse</div>
-            <div class="site-intro__splash-date">STARTS ON 26 NOVEMBER 2026</div>
+            <div class="site-intro__splash-date" th:text="#{page.home.intro.startsOn}">STARTS ON 26 NOVEMBER 2026</div>
         </div>
     </div>
 
     <div id="site-intro-countdown-panel" class="site-intro__countdown-panel text-center" aria-hidden="true">
-        <div class="site-intro__countdown-label mb-[28px]">Tec-verse STARTS IN</div>
+        <div class="site-intro__countdown-label mb-[28px]" th:text="#{page.home.intro.startsIn}">Tec-verse STARTS IN</div>
 
         <div class="site-intro__countdown-grid d-grid">
             <div class="site-intro__time-unit">
                 <div id="cd-days" class="site-intro__time-value font-[800] leading-[.85] tracking-[-.06em]">00</div>
-                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]">DAYS</div>
+                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]" th:text="#{page.home.countdown.days}">DAYS</div>
             </div>
             <div class="site-intro__time-unit">
                 <div id="cd-hours" class="site-intro__time-value font-[800] leading-[.85] tracking-[-.06em]">00</div>
-                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]">HOURS</div>
+                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]" th:text="#{page.home.countdown.hours}">HOURS</div>
             </div>
             <div class="site-intro__time-unit">
                 <div id="cd-minutes" class="site-intro__time-value font-[800] leading-[.85] tracking-[-.06em]">00</div>
-                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]">MINUTES</div>
+                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]" th:text="#{page.home.countdown.minutes}">MINUTES</div>
             </div>
             <div class="site-intro__time-unit">
                 <div id="cd-seconds" class="site-intro__time-value font-[800] leading-[.85] tracking-[-.06em]">00</div>
-                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]">SECONDS</div>
+                <div class="site-intro__time-label mt-[16px] font-[700] tracking-[.25em]" th:text="#{page.home.countdown.seconds}">SECONDS</div>
             </div>
         </div>
 
-        <div class="site-intro__event-date">STARTS ON 26 NOVEMBER 2026</div>
+        <div class="site-intro__event-date" th:text="#{page.home.intro.startsOn}">STARTS ON 26 NOVEMBER 2026</div>
     </div>
 </div>
 
@@ -87,12 +89,14 @@
     <!-- Background video (YouTube embed): brightened, contrasted, saturated for a vivid, alive feel -->
    <div data-hero-video-wrap class="pointer-events-none absolute inset-0 overflow-hidden opacity-0 brightness-[1.08] contrast-[1.06] saturate-[1.12] transition-opacity duration-[1400ms] ease-out">
     <iframe data-hero-video
-            src="https://www.youtube.com/embed/y9z789Sitrs?autoplay=1&mute=1&loop=1&playlist=y9z789Sitrs&controls=0&playsinline=1&rel=0"
+            src="https://www.youtube.com/embed/y9z789Sitrs?autoplay=1&mute=1&loop=1&playlist=y9z789Sitrs&controls=0&playsinline=1&rel=0&disablekb=1&fs=0&iv_load_policy=3&cc_load_policy=0&enablejsapi=1"
+            tabindex="-1"
+            aria-hidden="true"
             title="Tec-verse 2026 hero video"
+            th:title="#{page.home.hero.videoTitle}"
             referrerpolicy="strict-origin-when-cross-origin"
             credentialless
-            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-            allowfullscreen
+            allow="autoplay; encrypted-media"
             frameborder="0"
             class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
     </iframe>
@@ -114,19 +118,19 @@
         <div data-hero-reveal class="hero-video-countdown opacity-0 translate-y-6 delay-300 transition-all duration-700 ease-out flex-wrap" data-hero-countdown>
             <div class="hero-video-countdown__item d-inline-flex gap-[7px] text-uppercase">
                 <strong data-hero-countdown-unit="days">00</strong>
-                <span>DAYS</span>
+                <span th:text="#{page.home.countdown.days}">DAYS</span>
             </div>
             <div class="hero-video-countdown__item d-inline-flex gap-[7px] text-uppercase">
                 <strong data-hero-countdown-unit="hours">00</strong>
-                <span>HRS</span>
+                <span th:text="#{page.home.hero.hrs}">HRS</span>
             </div>
             <div class="hero-video-countdown__item d-inline-flex gap-[7px] text-uppercase">
                 <strong data-hero-countdown-unit="minutes">00</strong>
-                <span>MIN</span>
+                <span th:text="#{page.home.hero.min}">MIN</span>
             </div>
             <div class="hero-video-countdown__item d-inline-flex gap-[7px] text-uppercase">
                 <strong data-hero-countdown-unit="seconds">00</strong>
-                <span>SEC</span>
+                <span th:text="#{page.home.hero.sec}">SEC</span>
             </div>
         </div>
 
@@ -154,21 +158,21 @@
 
     <div class="container position-relative">
         <div class="institution-triangle-heading text-center position-relative" data-reveal="fade-up">
-            <span class="institution-triangle-kicker d-block mb-[.45rem] font-[900] leading-[1.4]">THREE INSTITUTIONS · ONE TECHNOLOGY ECOSYSTEM</span>
+            <span class="institution-triangle-kicker d-block mb-[.45rem] font-[900] leading-[1.4]" th:text="#{page.home.thematic.kicker}">THREE INSTITUTIONS · ONE TECHNOLOGY ECOSYSTEM</span>
             <h2 class="section-heading text-uppercase" th:text="#{thematic.heading}">THEMATIC AREAS</h2>
             <span class="section-heading-rule overflow-hidden" aria-hidden="true"><span></span><span></span><span></span></span>
         </div>
 
-        <div class="institution-triangle-stage" aria-label="Tec-verse institutional thematic domains">
+        <div class="institution-triangle-stage" aria-label="Tec-verse institutional thematic domains" th:attr="aria-label=#{page.home.thematic.stageAria}">
             <div class="institution-orbit-slogan institution-orbit-slogan--left position-absolute gap-[.35rem] font-[900] tracking-[.42em] leading-[1.2] text-uppercase" aria-hidden="true">
-                <span>Innovate</span>
-                <span>Collaborate</span>
-                <span>Transform</span>
+                <span th:text="#{retreat.mantra.innovate}">Innovate</span>
+                <span th:text="#{retreat.mantra.collaborate}">Collaborate</span>
+                <span th:text="#{page.home.slogan.transform}">Transform</span>
             </div>
             <div class="institution-orbit-slogan institution-orbit-slogan--right position-absolute gap-[.35rem] font-[900] tracking-[.42em] leading-[1.2] text-uppercase text-end" aria-hidden="true">
-                <span>A Stronger</span>
-                <span>Digital India</span>
-                <span>Together</span>
+                <span th:text="#{page.home.slogan.stronger}">A Stronger</span>
+                <span th:text="#{page.home.slogan.digitalIndia}">Digital India</span>
+                <span th:text="#{page.home.slogan.together}">Together</span>
             </div>
             <div class="triangle-energy triangle-energy--one position-absolute rounded-[50%]" aria-hidden="true"></div>
             <div class="triangle-energy triangle-energy--two position-absolute rounded-[50%]" aria-hidden="true"></div>
@@ -205,7 +209,7 @@
                     aria-pressed="false">
                 <span class="institution-node-glow position-absolute"></span>
                 <span class="institution-logo-wrap">
-                    <img th:src="@{/images/1.svg}" alt="C-DAC logo" />
+                    <img th:src="@{/images/1.svg}" alt="C-DAC logo" th:alt="#{page.home.logo.cdac}" />
                 </span>
             </button>
 
@@ -217,7 +221,7 @@
                     aria-pressed="false">
                 <span class="institution-node-glow position-absolute"></span>
                 <span class="institution-logo-wrap">
-                    <img th:src="@{/images/2.svg}" alt="SAMEER logo" />
+                    <img th:src="@{/images/2.svg}" alt="SAMEER logo" th:alt="#{page.home.logo.sameer}" />
                 </span>
             </button>
 
@@ -229,14 +233,15 @@
                     aria-pressed="false">
                 <span class="institution-node-glow position-absolute"></span>
                 <span class="institution-logo-wrap" >
-                    <img th:src="@{/images/3.svg}" alt="C-MET logo" />
+                    <img th:src="@{/images/3.svg}" alt="C-MET logo" th:alt="#{page.home.logo.cmet}" />
                 </span>
             </button>
 
             <div class="institution-triangle-core align-items-center justify-content-center" aria-hidden="true">
                 <span class="core-logo align-items-center justify-content-center">
                     <img th:src="@{/images/meity.svg}"
-                         alt="Ministry of Electronics and Information Technology logo" />
+                         alt="Ministry of Electronics and Information Technology logo"
+                         th:alt="#{page.home.logo.meity}" />
                 </span>
             </div>
 

@@ -54,11 +54,12 @@ class SpeechVoiceService {
           },
           debugLogging: false,
         );
-        _isSpeechInitialized = true;
+        // Only remember success, so a later attempt (e.g. after granting the mic in Settings) retries.
+        _isSpeechInitialized = _isSpeechAvailableOnDevice;
       } catch (e) {
         appLog('[SpeechVoiceService] STT init note (will use fallback): $e');
         _isSpeechAvailableOnDevice = false;
-        _isSpeechInitialized = true; // Mark as attempted
+        _isSpeechInitialized = false; // Retry on next use
       }
     }
 

@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/analytics :: gtag}"></th:block>
     <title th:text="#{about.title}">Tec-verse 2026</title>
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
-
-
 
     <link rel="stylesheet" th:href="@{/css/fonts.css}">
 
@@ -37,6 +36,7 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="about-page">
 
 <div th:replace="~{fragments/navbar :: navbar('about')}"></div>
@@ -90,7 +90,7 @@
 
             <div class="relative" data-reveal="fade-up" data-reveal-delay="150">
                 <div class="about-showcase-image-frame relative overflow-hidden rounded-3xl bg-slate-50 shadow-2xl">
-                    <img th:src="@{/images/about.png}" alt="Tec-verse conference showcase"
+                    <img th:src="@{/images/about.png}" alt="Tec-verse conference showcase" th:alt="#{page.about.showcase.alt}"
                         class="h-72 w-full object-contain sm:h-96" loading="lazy" />
 
                     <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#07182F]/45 via-transparent to-transparent"></div>
@@ -126,8 +126,8 @@
                 <div class="journey-marker d-flex align-items-center justify-content-center"><i class="bi bi-stars"></i></div>
                 <div class="journey-card">
                     <span class="journey-year mb-[0.4rem] text-[0.78rem] font-[800] tracking-[0.12em] text-uppercase">TEC 2026</span>
-                    <h3>Expanding the National Platform</h3>
-                    <p>Tec-verse 2026 builds on the 2025 foundation, continuing the mission to connect MeitY R&amp;D, industry, startups, academia, and government stakeholders around indigenous technologies with real-world impact.</p>
+                    <h3 th:text="#{page.about.journey.2026.title}">Expanding the National Platform</h3>
+                    <p th:text="#{page.about.journey.2026.desc}">Tec-verse 2026 builds on the 2025 foundation, continuing the mission to connect MeitY R&amp;D, industry, startups, academia, and government stakeholders around indigenous technologies with real-world impact.</p>
                 </div>
             </div>
         </div>

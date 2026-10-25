@@ -64,11 +64,17 @@
 }
 
 .tecverse-chatbot {
+    /* Available height above the floating buttons. */
+    --tecverse-chatbot-vh: 100vh;
+    --tecverse-chatbot-space: calc(var(--tecverse-chatbot-vh) - var(--tecverse-chatbot-panel-bottom) - 24px);
+    --tecverse-chatbot-max-height: 560px;
     right: 22px;
     bottom: var(--tecverse-chatbot-panel-bottom);
     z-index: calc(var(--tecverse-chatbot-z) + 1);
-    height: min(560px, calc(100vh - var(--tecverse-chatbot-panel-bottom) - 24px));
-    max-height: calc(100vh - var(--tecverse-chatbot-panel-bottom) - 24px);
+    width: clamp(340px, 30vw, 400px);
+    max-width: calc(100vw - 44px);
+    height: min(var(--tecverse-chatbot-max-height), var(--tecverse-chatbot-space));
+    min-height: min(320px, var(--tecverse-chatbot-space));
     border: 1px solid rgba(221, 231, 239, 0.9);
     border-radius: 24px;
     background: #FFFFFF;
@@ -291,32 +297,137 @@
     }
 
     .tecverse-chatbot {
+        --tecverse-chatbot-space: calc(var(--tecverse-chatbot-vh) - var(--tecverse-chatbot-panel-bottom) - 16px);
+        --tecverse-chatbot-max-height: 540px;
         right: 10px;
-        max-height: calc(100vh - var(--tecverse-chatbot-panel-bottom) - 18px);
+        left: auto;
+        width: min(420px, calc(100vw - 20px));
+        max-width: calc(100vw - 20px);
         border-radius: 20px;
     }
 
     .tecverse-chatbot__header {
-        padding: 18px;
+        padding: 14px 16px;
     }
 
     .tecverse-chatbot__header h2 {
-        font-size: 20px;
+        font-size: 18px;
+    }
+
+    .tecverse-chatbot__close {
+        width: 34px;
+        height: 34px;
+        font-size: 22px;
+    }
+
+    .tecverse-chatbot__messages {
+        padding: 14px 14px 10px;
     }
 
     .tecverse-chatbot__message {
         max-width: 90%;
     }
+
+    .tecverse-chatbot__quick-questions {
+        max-height: 92px;
+        padding: 0 14px 12px;
+    }
+
+    .tecverse-chatbot__form {
+        padding: 10px 12px;
+    }
+
+    /* 16px stops iOS Safari from zooming the page when the input is focused. */
+    .tecverse-chatbot__input {
+        height: 42px;
+        font-size: 16px;
+    }
+
+    .tecverse-chatbot__send {
+        width: 42px;
+        height: 42px;
+    }
 }
 
-@media (min-width: 768px) and (max-height: 760px) {
+/* Small phones */
+@media (max-width: 379.98px) {
+    .tecverse-chatbot__eyebrow {
+        font-size: 10px;
+    }
+
+    .tecverse-chatbot__header h2 {
+        font-size: 16px;
+    }
+
+    .tecverse-chatbot__bubble {
+        padding: 9px 11px;
+        font-size: 13px;
+    }
+
+    .tecverse-chatbot__quick-button {
+        padding: 7px 10px;
+        font-size: 11px;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) and (max-width: 1199.98px) {
     .tecverse-chatbot {
-        height: min(500px, calc(100vh - var(--tecverse-chatbot-panel-bottom) - 18px));
-        max-height: calc(100vh - var(--tecverse-chatbot-panel-bottom) - 18px);
+        width: clamp(340px, 46vw, 400px);
+    }
+}
+
+/* Large desktops */
+@media (min-width: 1600px) {
+    .tecverse-chatbot {
+        --tecverse-chatbot-max-height: 640px;
+        width: 440px;
+    }
+
+    .tecverse-chatbot__bubble {
+        font-size: 15px;
+    }
+}
+
+/* Short screens (small laptops, phones in landscape): trim chrome so messages keep room. */
+@media (max-height: 760px) {
+    .tecverse-chatbot {
+        --tecverse-chatbot-max-height: 500px;
     }
 
     .tecverse-chatbot__quick-questions {
-        max-height: 88px;
+        max-height: 80px;
+    }
+}
+
+@media (max-height: 540px) {
+    .tecverse-chatbot {
+        min-height: 0;
+    }
+
+    .tecverse-chatbot__header {
+        padding: 10px 14px;
+    }
+
+    .tecverse-chatbot__eyebrow {
+        display: none;
+    }
+
+    .tecverse-chatbot__header h2 {
+        font-size: 16px;
+    }
+
+    .tecverse-chatbot__messages {
+        padding: 10px 12px 8px;
+    }
+
+    .tecverse-chatbot__quick-questions {
+        max-height: 44px;
+        padding-bottom: 8px;
+    }
+
+    .tecverse-chatbot__form {
+        padding: 8px 10px;
     }
 }
 
@@ -362,4 +473,11 @@
 .tecverse-chatbot__input:focus {
     border-color: var(--tecverse-chatbot-orange);
     box-shadow: 0 0 0 .25rem rgba(244, 122, 32, .15);
+}
+
+/* dvh follows the visible viewport as mobile browser toolbars show and hide. */
+@supports (height: 100dvh) {
+    .tecverse-chatbot {
+        --tecverse-chatbot-vh: 100dvh;
+    }
 }

@@ -20,7 +20,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     final cleanIdentifier = identifier.trim().toLowerCase();
-    final cleanPassword = password.trim();
+    // Passwords are used exactly as typed: the server never trims them, so neither may the app.
+    final cleanPassword = password;
 
     final data = await authApi.login(identifier: cleanIdentifier, password: cleanPassword);
     if (data.isNotEmpty && (data.containsKey('accessToken') || data.containsKey('token'))) {
@@ -77,8 +78,8 @@ class AuthRepositoryImpl implements AuthRepository {
     await authApi.resetPassword(
       email: cleanEmail,
       resetToken: resetToken,
-      newPassword: newPassword.trim(),
-      confirmPassword: confirmPassword?.trim() ?? newPassword.trim(),
+      newPassword: newPassword,
+      confirmPassword: confirmPassword ?? newPassword,
     );
   }
 

@@ -15,6 +15,9 @@ import 'api_exceptions.dart';
 /// - Development logging [LOGIN] with separate error classification
 /// - Robust mapping to typed domain [ApiException]s
 class ApiClient {
+  /// Called when an authenticated request is rejected with HTTP 401. Set once in main().
+  static void Function()? onSessionExpired;
+
   final http.Client _httpClient;
   final String? _customBaseUrl;
 
@@ -267,6 +270,11 @@ class ApiClient {
         appLog('[LOGIN] Error: HTTP 401 - $message');
         if (errorCode == 'USER_NOT_REGISTERED' || message.toLowerCase().contains('not registered')) {
           throw const UserNotRegisteredException('Invalid credentials');
+        }
+        // A 401 on a request that carried a bearer token means the session expired or was
+        // revoked: let the app sign the user out and return to login from any screen.
+        if (response.request?.headers[ApiConstants.headerAuthorization] != null) {
+          onSessionExpired?.call();
         }
         throw UnauthorizedException(
           message.isNotEmpty &&

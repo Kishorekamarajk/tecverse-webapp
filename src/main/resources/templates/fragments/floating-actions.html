@@ -18,7 +18,7 @@
     </nav>
     -->
 
-    <nav aria-label="Social media links"
+    <nav aria-label="Social media links" th:attr="aria-label=#{page.floating.social.aria}"
          class="site-social-rail fixed right-0 top-1/2 z-50 flex -translate-y-1/2 flex-col overflow-hidden shadow-[0_14px_30px_rgba(7,24,47,0.18)]">
         <a href="https://www.facebook.com/CDACINDIA/" target="_blank" rel="noopener" aria-label="Facebook"
            class="flex h-12 w-12 items-center justify-center bg-[#1877F2] text-white transition-transform duration-300 hover:-translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
@@ -38,10 +38,11 @@
         </a>
     </nav>
 
-    <div class="tecverse-floating-actions position-fixed d-flex flex-column align-items-center" aria-label="Tec-verse support actions">
+    <div class="tecverse-floating-actions position-fixed d-flex flex-column align-items-center" aria-label="Tec-verse support actions" th:attr="aria-label=#{page.floating.actions.aria}">
         <button type="button"
                 class="tecverse-floating-actions__button tecverse-floating-actions__button--chat btn d-inline-flex align-items-center justify-content-center rounded-circle p-0"
                 aria-label="Open Tec-verse Assistant"
+                th:attr="aria-label=#{page.floating.chat.open}"
                 aria-controls="tecverse-chatbot"
                 aria-expanded="false"
                 data-tecverse-chatbot-open>
@@ -53,41 +54,44 @@
            target="_blank"
            rel="noopener noreferrer"
            aria-label="Open WhatsApp"
+           th:attr="aria-label=#{page.floating.whatsapp.open}"
            data-tecverse-whatsapp-link>
             <i class="bi bi-whatsapp" aria-hidden="true"></i>
         </a>
     </div>
 
     <section id="tecverse-chatbot"
-             class="tecverse-chatbot position-fixed d-flex flex-column overflow-hidden col-10 col-sm-8 col-md-5 col-lg-4 col-xl-3 h-50"
+             class="tecverse-chatbot position-fixed d-flex flex-column overflow-hidden"
              aria-labelledby="tecverse-chatbot-title"
              aria-hidden="true"
              data-tecverse-chatbot>
         <header class="tecverse-chatbot__header d-flex align-items-center justify-content-between gap-3">
             <div>
-                <p class="tecverse-chatbot__eyebrow">Tec-verse ASSISTANT</p>
-                <h2 id="tecverse-chatbot-title">Need quick help?</h2>
+                <p class="tecverse-chatbot__eyebrow" th:text="#{page.floating.chat.eyebrow}">Tec-verse ASSISTANT</p>
+                <h2 id="tecverse-chatbot-title" th:text="#{page.floating.chat.title}">Need quick help?</h2>
             </div>
             <button type="button"
                     class="tecverse-chatbot__close btn d-inline-flex align-items-center justify-content-center flex-shrink-0 rounded-circle p-0"
                     aria-label="Close Tec-verse Assistant"
+                    th:attr="aria-label=#{page.floating.chat.close}"
                     data-tecverse-chatbot-close>
                 &times;
             </button>
         </header>
 
         <div class="tecverse-chatbot__messages d-flex flex-column flex-grow-1 overflow-y-auto" data-tecverse-chatbot-messages></div>
-        <div class="tecverse-chatbot__quick-questions d-flex flex-wrap flex-shrink-0 gap-2 overflow-y-auto" data-tecverse-quick-questions aria-label="Quick questions"></div>
+        <div class="tecverse-chatbot__quick-questions d-flex flex-wrap flex-shrink-0 gap-2 overflow-y-auto" data-tecverse-quick-questions aria-label="Quick questions" th:attr="aria-label=#{page.floating.chat.quickQuestions}"></div>
 
         <form class="tecverse-chatbot__form d-flex align-items-center flex-shrink-0" data-tecverse-chatbot-form>
-            <label class="tecverse-chatbot__label visually-hidden" for="tecverse-chatbot-input">Ask any Tec-verse question...</label>
+            <label class="tecverse-chatbot__label visually-hidden" for="tecverse-chatbot-input" th:text="#{page.floating.chat.inputLabel}">Ask any Tec-verse question...</label>
             <input id="tecverse-chatbot-input"
                    class="tecverse-chatbot__input form-control rounded-pill"
                    type="text"
                    autocomplete="off"
                    placeholder="Ask any Tec-verse question..."
+                   th:placeholder="#{page.floating.chat.inputLabel}"
                    data-tecverse-chatbot-input>
-            <button type="submit" class="tecverse-chatbot__send btn d-inline-flex align-items-center justify-content-center flex-shrink-0 rounded-circle p-0" aria-label="Send message">
+            <button type="submit" class="tecverse-chatbot__send btn d-inline-flex align-items-center justify-content-center flex-shrink-0 rounded-circle p-0" aria-label="Send message" th:attr="aria-label=#{page.floating.chat.send}">
                 <i class="bi bi-send-fill" aria-hidden="true"></i>
             </button>
         </form>

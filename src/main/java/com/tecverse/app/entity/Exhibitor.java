@@ -106,6 +106,17 @@ public class Exhibitor {
     public Exhibitor() {
     }
 
+    public Long getId() { return id; }
+    public String getReferenceNumber() { return referenceNumber; }
+    public String getCompanyName() { return companyName; }
+    public String getFullName() { return fullName; }
+    public String getEmail() { return email; }
+    public String getPhone() { return phone; }
+    public String getDesignation() { return designation; }
+    public String getStallPackage() { return stallPackage; }
+    public String getRemarks() { return remarks; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+
     public void setReferenceNumber(String value) { referenceNumber = value; }
     public void setCompanyName(String value) { companyName = value; }
     public void setIndustry(String value) { industry = value; }

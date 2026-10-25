@@ -3000,6 +3000,15 @@ section[id] h2 {
     line-height: 1.6;
 }
 
+#exhibitors .exhibitors-update-soon {
+    margin: 32px auto 8px;
+    text-align: center;
+    color: #6f82a1;
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    font-weight: 600;
+    line-height: 1.6;
+}
+
 #exhibitors .exhibitors-glass-grid {
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 0;

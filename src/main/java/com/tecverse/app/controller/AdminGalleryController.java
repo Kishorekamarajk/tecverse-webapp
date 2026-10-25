@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -120,6 +123,56 @@ public class AdminGalleryController {
         return "redirect:/admin/gallery?tab=images";
     }
 
+    @PostMapping("/admin/gallery/images/bulk")
+    public String uploadImages(@RequestParam("imageFiles") List<MultipartFile> imageFiles,
+                               @RequestParam("category") String category,
+                               @RequestParam(value = "displayOrder", defaultValue = "0") int displayOrder,
+                               RedirectAttributes redirectAttributes) {
+        String cleanCategory = category == null ? "" : category.trim();
+        if (cleanCategory.isEmpty() || cleanCategory.length() > 120) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Enter a category up to 120 characters.");
+            return "redirect:/admin/gallery?tab=images";
+        }
+        if (displayOrder < 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Display order cannot be negative.");
+            return "redirect:/admin/gallery?tab=images";
+        }
+
+        try {
+            List<MultipartFile> selected = imageFiles == null ? List.of()
+                    : imageFiles.stream().filter(file -> file != null && !file.isEmpty()).toList();
+            List<String> imageUrls = galleryStorageService.uploadImages(selected, "images");
+            List<GalleryImage> images = new ArrayList<>(imageUrls.size());
+            int order = displayOrder;
+            for (int i = 0; i < imageUrls.size(); i++) {
+                MultipartFile file = selected.get(i);
+                GalleryImage image = new GalleryImage();
+                image.setTitle(imageTitle(file.getOriginalFilename()));
+                image.setCategory(cleanCategory);
+                image.setImageUrl(imageUrls.get(i));
+                image.setDisplayOrder(order++);
+                image.setActive(true);
+                images.add(image);
+            }
+            galleryImageRepository.saveAll(images);
+            redirectAttributes.addFlashAttribute("successMessage", images.size() + " gallery images uploaded successfully.");
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+        return "redirect:/admin/gallery?tab=images";
+    }
+
+    private static String imageTitle(String fileName) {
+        if (fileName == null || fileName.isBlank()) return "Gallery image";
+        String name = fileName.replace('\\', '/');
+        name = name.substring(name.lastIndexOf('/') + 1);
+        int dot = name.lastIndexOf('.');
+        if (dot > 0) name = name.substring(0, dot);
+        name = name.replaceAll("[_-]+", " ").trim();
+        if (name.length() > 180) name = name.substring(0, 180).trim();
+        return name.isBlank() ? "Gallery image" : name;
+    }
+
     @PostMapping("/admin/gallery/images/{id}")
     public String updateImage(@PathVariable Long id,
                               @Valid @ModelAttribute("galleryImageForm") GalleryImageForm form,
@@ -159,8 +212,15 @@ public class AdminGalleryController {
 
     @PostMapping("/admin/gallery/images/{id}/delete")
     public String deleteImage(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        if (galleryImageRepository.existsById(id)) {
-            galleryImageRepository.deleteById(id);
+        GalleryImage image = galleryImageRepository.findById(id).orElse(null);
+        if (image != null) {
+            galleryImageRepository.delete(image);
+            try {
+                galleryStorageService.deleteStoredMedia(image.getImageUrl());
+            } catch (IllegalStateException ex) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Image record deleted, but its uploaded file could not be removed.");
+                return "redirect:/admin/gallery?tab=images";
+            }
             redirectAttributes.addFlashAttribute("successMessage", "Gallery image deleted successfully.");
         } else {
             redirectAttributes.addFlashAttribute("successMessage", "Gallery image was already removed.");
@@ -218,6 +278,140 @@ public class AdminGalleryController {
         return "redirect:/admin/gallery?tab=videos";
     }
 
+    @PostMapping("/admin/gallery/videos/bulk")
+    public String uploadVideos(@RequestParam("videoFiles") List<MultipartFile> videoFiles,
+                               @RequestParam("titles") List<String> titles,
+                               @RequestParam(value = "descriptions", required = false) List<String> descriptions,
+                               @RequestParam(value = "displayOrder", defaultValue = "0") int displayOrder,
+                               MultipartHttpServletRequest multipartRequest,
+                               RedirectAttributes redirectAttributes) {
+        List<MultipartFile> selected = videoFiles == null ? List.of()
+                : videoFiles.stream().filter(file -> file != null && !file.isEmpty()).toList();
+        if (selected.isEmpty() || titles == null || titles.size() != selected.size()
+                || (descriptions != null && descriptions.size() != selected.size())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Select videos and complete their title details.");
+            return "redirect:/admin/gallery?tab=videos";
+        }
+        if (displayOrder < 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Display order cannot be negative.");
+            return "redirect:/admin/gallery?tab=videos";
+        }
+        for (String title : titles) {
+            if (title == null || title.isBlank() || title.trim().length() > 180) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Each video needs a title of 1 to 180 characters.");
+                return "redirect:/admin/gallery?tab=videos";
+            }
+        }
+        List<String> urls = new ArrayList<>();
+        List<String> thumbnailUrls = new ArrayList<>();
+        try {
+            urls.addAll(galleryStorageService.uploadVideos(selected, "videos"));
+            List<GalleryVideo> videos = new ArrayList<>(urls.size());
+            for (int i = 0; i < urls.size(); i++) {
+                GalleryVideo video = new GalleryVideo();
+                String title = titles.get(i).trim();
+                String description = descriptions == null ? "" : descriptions.get(i).trim();
+                MultipartFile thumbnailFile = multipartRequest.getFile("thumbnailFiles[" + i + "]");
+                String thumbnailUrl = optionalImagePath(thumbnailFile, "thumbnails");
+                if (thumbnailUrl != null) thumbnailUrls.add(thumbnailUrl);
+                video.setTitle(title);
+                video.setDescription(description.isBlank() ? title : description);
+                video.setVideoUrl(urls.get(i));
+                video.setThumbnailUrl(thumbnailUrl);
+                video.setDisplayOrder(displayOrder + i);
+                video.setActive(true);
+                videos.add(video);
+            }
+            galleryVideoRepository.saveAll(videos);
+            redirectAttributes.addFlashAttribute("successMessage", videos.size() + " gallery videos uploaded successfully.");
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            urls.forEach(galleryStorageService::deleteStoredMedia);
+            thumbnailUrls.forEach(galleryStorageService::deleteStoredMedia);
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+        return "redirect:/admin/gallery?tab=videos";
+    }
+
+    @PostMapping("/admin/gallery/videos/bulk-youtube")
+    public String uploadYoutubeVideos(@RequestParam("youtubeUrls") List<String> urls,
+                                      @RequestParam("youtubeTitles") List<String> titles,
+                                      @RequestParam(value = "youtubeDescriptions", required = false) List<String> descriptions,
+                                      MultipartHttpServletRequest multipartRequest,
+                                      @RequestParam(value = "displayOrder", defaultValue = "0") int displayOrder,
+                                      RedirectAttributes redirectAttributes) {
+        int count = urls == null ? 0 : urls.size();
+        if (count == 0 || count > 20 || titles == null || titles.size() != count
+                || (descriptions != null && descriptions.size() != count)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Add between 1 and 20 YouTube videos and complete each row.");
+            return "redirect:/admin/gallery?tab=videos";
+        }
+        if (displayOrder < 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Display order cannot be negative.");
+            return "redirect:/admin/gallery?tab=videos";
+        }
+        for (int i = 0; i < count; i++) {
+            String title = titles.get(i);
+            String description = descriptions == null ? "" : descriptions.get(i);
+            if (title == null || title.isBlank() || title.trim().length() > 180
+                    || (description != null && description.length() > 500)
+                    || youtubeVideoId(urls.get(i)) == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Check each YouTube link, title, and description.");
+                return "redirect:/admin/gallery?tab=videos";
+            }
+            MultipartFile thumbnail = multipartRequest.getFile("youtubeThumbnail" + i);
+            try {
+                validateYoutubeThumbnail(thumbnail);
+            } catch (IllegalArgumentException ex) {
+                redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+                return "redirect:/admin/gallery?tab=videos";
+            }
+        }
+
+        try {
+            List<GalleryVideo> videos = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                String title = titles.get(i).trim();
+                String description = descriptions == null || descriptions.get(i) == null
+                        ? "" : descriptions.get(i).trim();
+                MultipartFile thumbnail = multipartRequest.getFile("youtubeThumbnail" + i);
+                String customThumbnail = optionalImagePath(thumbnail, "thumbnails");
+                GalleryVideo video = new GalleryVideo();
+                video.setTitle(title);
+                video.setDescription(description.isBlank() ? title : description);
+                video.setVideoUrl(urls.get(i).trim());
+                video.setThumbnailUrl(videoThumbnail(video.getVideoUrl(), customThumbnail));
+                video.setDisplayOrder(displayOrder + i);
+                video.setActive(true);
+                videos.add(video);
+            }
+            galleryVideoRepository.saveAll(videos);
+            redirectAttributes.addFlashAttribute("successMessage", videos.size() + " YouTube videos added successfully.");
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+        return "redirect:/admin/gallery?tab=videos";
+    }
+
+    private static void validateYoutubeThumbnail(MultipartFile file) {
+        if (file == null || file.isEmpty()) return;
+        if (file.getSize() > MAX_VIDEO_THUMBNAIL_SIZE_BYTES) {
+            throw new IllegalArgumentException("Each thumbnail must be 1 MB or smaller.");
+        }
+        String filename = file.getOriginalFilename();
+        String contentType = file.getContentType();
+        if (filename == null || contentType == null) throw new IllegalArgumentException("Choose JPG, PNG, WEBP, or GIF thumbnails.");
+        String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase(Locale.ENGLISH);
+        String mime = contentType.toLowerCase(Locale.ENGLISH);
+        boolean supported = switch (extension) {
+            case "jpg", "jpeg" -> mime.equals("image/jpeg") || mime.equals("image/jpg");
+            case "png" -> mime.equals("image/png");
+            case "webp" -> mime.equals("image/webp");
+            case "gif" -> mime.equals("image/gif");
+            default -> false;
+        };
+        if (!supported) throw new IllegalArgumentException("Choose JPG, PNG, WEBP, or GIF thumbnails.");
+    }
+
     @PostMapping("/admin/gallery/videos/{id}")
     public String updateVideo(@PathVariable Long id,
                               @Valid @ModelAttribute("galleryVideoForm") GalleryVideoForm form,
@@ -255,8 +449,16 @@ public class AdminGalleryController {
 
     @PostMapping("/admin/gallery/videos/{id}/delete")
     public String deleteVideo(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        if (galleryVideoRepository.existsById(id)) {
-            galleryVideoRepository.deleteById(id);
+        GalleryVideo video = galleryVideoRepository.findById(id).orElse(null);
+        if (video != null) {
+            galleryVideoRepository.delete(video);
+            try {
+                galleryStorageService.deleteStoredMedia(video.getVideoUrl());
+                galleryStorageService.deleteStoredMedia(video.getThumbnailUrl());
+            } catch (IllegalStateException ex) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Video record deleted, but one of its uploaded files could not be removed.");
+                return "redirect:/admin/gallery?tab=videos";
+            }
             redirectAttributes.addFlashAttribute("successMessage", "Gallery video deleted successfully.");
         } else {
             redirectAttributes.addFlashAttribute("successMessage", "Gallery video was already removed.");
@@ -317,6 +519,68 @@ public class AdminGalleryController {
         return "redirect:/admin/speaker-update";
     }
 
+    @PostMapping("/admin/gallery/speakers/bulk")
+    public String uploadSpeakers(@RequestParam("profileImageFiles") List<MultipartFile> profileImageFiles,
+                                 @RequestParam("speakerNames") List<String> names,
+                                 @RequestParam("speakerDesignations") List<String> designations,
+                                 @RequestParam("speakerOrganizations") List<String> organizations,
+                                 @RequestParam(value = "speakerSessionTimings", required = false) List<String> timings,
+                                 @RequestParam(value = "displayOrder", defaultValue = "0") int displayOrder,
+                                 RedirectAttributes redirectAttributes) {
+        List<MultipartFile> selected = profileImageFiles == null ? List.of()
+                : profileImageFiles.stream().filter(file -> file != null && !file.isEmpty()).toList();
+        int size = selected.size();
+        if (size == 0 || names == null || designations == null || organizations == null
+                || names.size() != size || designations.size() != size || organizations.size() != size
+                || (timings != null && timings.size() != size)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Select speaker photos and complete each speaker's details.");
+            return "redirect:/admin/gallery?tab=speakers";
+        }
+        if (displayOrder < 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Display order cannot be negative.");
+            return "redirect:/admin/gallery?tab=speakers";
+        }
+        for (int i = 0; i < size; i++) {
+            if (blankOrTooLong(names.get(i), 160) || blankOrTooLong(designations.get(i), 180)
+                    || blankOrTooLong(organizations.get(i), 180)
+                    || (timings != null && timings.get(i) != null && timings.get(i).length() > 120)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Check each speaker's name, designation, organization, and session timing lengths.");
+                return "redirect:/admin/gallery?tab=speakers";
+            }
+            try {
+                validateSpeakerImageFormat(selected.get(i));
+            } catch (IllegalArgumentException ex) {
+                redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+                return "redirect:/admin/gallery?tab=speakers";
+            }
+        }
+        try {
+            List<String> imageUrls = galleryStorageService.uploadImages(selected, "speakers");
+            List<Speaker> speakers = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                Speaker speaker = new Speaker();
+                speaker.setName(names.get(i).trim());
+                speaker.setDesignation(designations.get(i).trim());
+                speaker.setOrganization(organizations.get(i).trim());
+                String timing = timings == null ? null : timings.get(i);
+                speaker.setSessionTiming(timing == null || timing.isBlank() ? null : timing.trim());
+                speaker.setProfileImageUrl(imageUrls.get(i));
+                speaker.setDisplayOrder(displayOrder + i);
+                speaker.setActive(true);
+                speakers.add(speaker);
+            }
+            speakerRepository.saveAll(speakers);
+            redirectAttributes.addFlashAttribute("successMessage", speakers.size() + " speakers uploaded successfully.");
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+        return "redirect:/admin/gallery?tab=speakers";
+    }
+
+    private static boolean blankOrTooLong(String value, int maxLength) {
+        return value == null || value.isBlank() || value.trim().length() > maxLength;
+    }
+
     @PostMapping("/admin/gallery/speakers/{id}")
     public String updateSpeaker(@PathVariable Long id,
                                 @Valid @ModelAttribute("speakerForm") SpeakerForm form,
@@ -362,8 +626,15 @@ public class AdminGalleryController {
 
     @PostMapping("/admin/gallery/speakers/{id}/delete")
     public String deleteSpeaker(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        if (speakerRepository.existsById(id)) {
-            speakerRepository.deleteById(id);
+        Speaker speaker = speakerRepository.findById(id).orElse(null);
+        if (speaker != null) {
+            speakerRepository.delete(speaker);
+            try {
+                galleryStorageService.deleteStoredMedia(speaker.getProfileImageUrl());
+            } catch (IllegalStateException ex) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Speaker record deleted, but its uploaded profile image could not be removed.");
+                return "redirect:/admin/speaker-update";
+            }
             redirectAttributes.addFlashAttribute("successMessage", "Speaker deleted successfully.");
         } else {
             redirectAttributes.addFlashAttribute("successMessage", "Speaker was already removed.");

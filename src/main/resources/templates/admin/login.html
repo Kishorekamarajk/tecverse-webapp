@@ -12,58 +12,106 @@
     <script defer src="https://cdn.jsdelivr.net/npm/jquery-validation@1.22.1/dist/jquery.validate.min.js" integrity="sha384-DIFfDxcYkhbAXYdxOYFZshXsis24zK4HtbU7qI30u9/eP7JtiRIGuOaLsoYL5QTs" crossorigin="anonymous"></script>
     <script defer th:src="@{/js/jquery-form-validation.js}"></script>
     <style>
-        body { min-height: 100vh; display: grid; place-items: center; padding: 20px 14px; background: radial-gradient(circle at 15% 15%, rgba(38, 184, 190, .3), transparent 30%), linear-gradient(135deg, #062f50, #087d89); font-family: Inter, system-ui, sans-serif; }
-        .login-card { width: min(92vw, 420px); border: 0; border-radius: 18px; box-shadow: 0 20px 50px rgba(0, 20, 35, .28); overflow: hidden; }
-        .login-card::before { content: ''; display: block; height: 4px; background: linear-gradient(90deg, #ff6b1a, #ffc107, #00a994); }
-        .login-card .card-body { padding: 24px 30px 28px !important; }
-        .brand-mark { width: 48px; height: 48px; object-fit: contain; }
-        .login-kicker { color: #008f83; font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
-        .btn-admin { background: #ff6b1a; border-color: #ff6b1a; font-weight: 800; box-shadow: 0 9px 18px rgba(255, 107, 26, .2); }
-        .btn-admin:hover, .btn-admin:focus { background: #e95609; border-color: #e95609; }
-        .captcha-challenge { display: inline-block; padding: .65rem 1rem; border-radius: .6rem; background: #092c62; color: #fff; font: 800 1.15rem ui-monospace, monospace; letter-spacing: .2em; user-select: none; }
-        #adminLoginForm .mb-3, #adminLoginForm .mb-4 { margin-bottom: .9rem !important; }
-        #adminLoginForm .form-label { margin-bottom: .4rem; color: #183456; }
-        #adminLoginForm .form-control { min-height: 46px; border-radius: 11px; border-color: #d5e1ee; background: #fbfdff; padding-inline: 13px; }
-        #adminLoginForm .form-control:focus { border-color: #20aa9b; box-shadow: 0 0 0 .22rem rgba(32, 170, 155, .14); background: #fff; }
-        #adminLoginForm .btn-admin { min-height: 48px; border-radius: 11px; font-size: 1rem; }
-        @media (max-width: 480px) { body { padding: 14px 12px; } .login-card { width: 100%; border-radius: 16px; } .login-card .card-body { padding: 22px 20px 24px !important; } }
+        :root { --login-blue: #2168d7; --login-ink: #10294d; --login-muted: #7185a2; --login-line: #d8e4f3; }
+        body.admin-login-page { min-height: 100vh; display: grid; place-items: center; position: relative; overflow-x: hidden; padding: 16px 14px; background: radial-gradient(ellipse at 50% 47%, #fff 0%, #f8fbff 49%, #edf5ff 100%); font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+        body.admin-login-page::before, body.admin-login-page::after { content: ''; position: fixed; z-index: 0; pointer-events: none; width: 420px; height: 420px; border-radius: 50%; background: linear-gradient(145deg, rgba(194,224,255,.34), rgba(215,235,255,.05)); }
+        body.admin-login-page::before { top: -190px; left: -170px; }
+        body.admin-login-page::after { right: -170px; bottom: -250px; width: 560px; height: 560px; }
+        .login-card { position: relative; z-index: 1; width: min(100%, 480px); border: 1px solid #dbe7f6; border-radius: 14px; background: rgba(255,255,255,.94); box-shadow: 0 18px 45px rgba(50,97,158,.11); }
+        .login-card .card-body { padding: 20px 30px 22px !important; }
+        .brand-lockup { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
+        .brand-mark { width: 48px; height: 43px; object-fit: contain; }
+        .brand-name { margin-top: 1px; color: #12335f; font-size: 1rem; font-weight: 850; letter-spacing: .18em; line-height: 1.2; }
+        .brand-name span { color: #138dc7; }
+        .login-heading { display: flex; justify-content: center; align-items: center; gap: 17px; margin: 0 auto 2px; color: var(--login-ink); font-size: 1.45rem; font-weight: 750; letter-spacing: -.035em; }
+        .login-heading::before, .login-heading::after { content: ''; width: 32px; height: 2px; background: #dce6f2; }
+        .login-subtitle { margin: 0; color: #687f9f; font-size: .9rem; }
+        .login-alerts { margin-top: 12px; }
+        #adminLoginForm { margin-top: 16px; }
+        #adminLoginForm .field-block { margin-bottom: 10px; }
+        #adminLoginForm .form-label { margin-bottom: 4px; color: #253c5c; font-size: .86rem; font-weight: 600; }
+        #adminLoginForm .input-group { min-height: 42px; overflow: hidden; border: 1px solid var(--login-line); border-radius: 9px; background: #fff; transition: border-color .18s ease, box-shadow .18s ease; }
+        #adminLoginForm .input-group:focus-within { border-color: #85afe8; box-shadow: 0 0 0 4px rgba(33,104,215,.09); }
+        #adminLoginForm .input-group-text { width: 42px; justify-content: center; border: 0; background: transparent; color: #7187a7; font-size: .98rem; }
+        #adminLoginForm .form-control { min-height: 40px; border: 0; background: transparent; color: #17355e; box-shadow: none; padding: 7px 9px; font-size: .88rem; }
+        #adminLoginForm .form-control::placeholder { color: #9aacc5; opacity: 1; }
+        #adminLoginForm .form-control:focus { background: transparent; }
+        .password-toggle { width: 38px; border: 0; background: transparent; color: #7187a7; font-size: .95rem; }
+        .captcha-row { display: flex; align-items: center; gap: 8px; margin: 0 0 5px; }
+        .captcha-challenge { display: inline-flex; align-items: center; justify-content: center; min-width: 128px; min-height: 32px; padding: 4px 10px; border-radius: 8px; background: #eaf3ff; color: #1765c8; font: 800 .9rem ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .2em; user-select: none; }
+        .captcha-refresh { display: grid; place-items: center; width: 31px; height: 31px; border: 0; border-radius: 50%; background: transparent; color: #7288a7; font-size: .95rem; transition: background .15s ease, color .15s ease; }
+        .captcha-refresh:hover { background: #edf4fc; color: var(--login-blue); }
+        #adminLoginForm .captcha-input .input-group-text { width: 42px; }
+        #adminLoginForm .btn-admin { min-height: 44px; margin-top: 1px; border: 0; border-radius: 9px; background: linear-gradient(100deg, #246bd9, #2165cf); color: #fff; font-size: .94rem; font-weight: 750; box-shadow: 0 7px 15px rgba(33,104,215,.17); transition: transform .15s ease, box-shadow .15s ease; }
+        #adminLoginForm .btn-admin:hover { transform: translateY(-1px); box-shadow: 0 13px 24px rgba(33,104,215,.27); }
+        @media (max-width: 520px) { body.admin-login-page { padding: 12px; } .login-card { border-radius: 13px; } .login-card .card-body { padding: 19px 17px !important; } .login-heading { gap: 12px; font-size: 1.4rem; } .login-heading::before, .login-heading::after { width: 24px; } .brand-mark { width: 44px; height: 40px; } .login-subtitle { font-size: .86rem; } }
     </style>
 </head>
-<body>
+<body class="admin-login-page">
 <main class="card login-card">
     <div class="card-body p-4 p-sm-5">
         <div class="mb-4 text-center">
-            <img class="brand-mark mb-3" th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo">
-            <div class="login-kicker mb-2">Secure workspace</div>
-            <h1 class="h4 fw-black mb-1">Admin Login</h1>
-            <p class="text-muted mb-0">Manage News &amp; Updates</p>
+            <div class="brand-lockup">
+                <img class="brand-mark" th:src="@{/images/tecverselogo.png}" alt="">
+                <div class="brand-name">TEC<span>VERSE</span></div>
+            </div>
+            <h1 class="login-heading">Admin Login</h1>
+            <p class="login-subtitle">Manage News &amp; Updates</p>
         </div>
 
-        <div th:if="${param.error}" class="alert alert-danger py-2">Invalid username or password.</div>
-        <div th:if="${param.logout}" class="alert alert-success py-2">You have been logged out.</div>
-        <div th:if="${param.sessionExpired}" class="alert alert-warning py-2">Your admin session ended because this account signed in from another browser. Please log in again.</div>
-        <div th:if="${param.captchaError}" class="alert alert-danger py-2">CAPTCHA did not match. Enter the exact uppercase and lowercase characters shown.</div>
+        <div class="login-alerts">
+            <div th:if="${param.error}" class="alert alert-danger py-2">Invalid username or password.</div>
+            <div th:if="${param.logout}" class="alert alert-success py-2">You have been logged out.</div>
+            <div th:if="${param.sessionExpired}" class="alert alert-warning py-2">Your admin session ended because this account signed in from another browser. Please log in again.</div>
+            <div th:if="${param.captchaError}" class="alert alert-danger py-2">CAPTCHA did not match. Enter the exact uppercase and lowercase characters shown.</div>
+        </div>
 
         <form id="adminLoginForm" th:action="@{/adminportal}" method="post" autocomplete="off">
-            <div class="mb-3">
+            <div class="field-block">
                 <label class="form-label fw-semibold" for="username">Username</label>
-                <input id="username" name="username" type="text" class="form-control form-control-lg"
-                       value="" autocomplete="off" required>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person" aria-hidden="true"></i></span>
+                    <input id="username" name="username" type="text" class="form-control"
+                           autocomplete="off" required>
+                </div>
             </div>
-            <div class="mb-4">
+            <div class="field-block">
                 <label class="form-label fw-semibold" for="password">Password</label>
-                <input id="password" name="password" type="password" class="form-control form-control-lg"
-                       value="" autocomplete="new-password" required>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock" aria-hidden="true"></i></span>
+                    <input id="password" name="password" type="password" class="form-control"
+                           autocomplete="off" required>
+                    <button class="password-toggle" type="button" id="togglePassword" aria-label="Show password"><i class="bi bi-eye" aria-hidden="true"></i></button>
+                </div>
             </div>
-            <div class="mb-4">
+            <div class="field-block">
                 <label class="form-label fw-semibold d-block" for="captchaAnswer">Security check</label>
-                <span class="captcha-challenge mb-2" th:text="${adminCaptcha}" aria-label="CAPTCHA code">Ab3Xy7</span>
-                <input id="captchaAnswer" name="captchaAnswer" type="text" class="form-control form-control-lg mt-2"
-                       maxlength="6" minlength="6" autocapitalize="none" autocomplete="off" spellcheck="false" required>
+                <div class="captcha-row">
+                    <span class="captcha-challenge" th:text="${adminCaptcha}" aria-label="CAPTCHA code">Ab3Xy7</span>
+                    <button class="captcha-refresh" type="button" id="refreshCaptcha" aria-label="Refresh security code" title="Refresh code"><i class="bi bi-arrow-repeat" aria-hidden="true"></i></button>
+                </div>
+                <div class="input-group captcha-input">
+                    <span class="input-group-text"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
+                    <input id="captchaAnswer" name="captchaAnswer" type="text" class="form-control"
+                           maxlength="6" minlength="6" autocapitalize="none" autocomplete="off" spellcheck="false" required>
+                </div>
             </div>
-            <button class="btn btn-primary btn-admin btn-lg w-100" type="submit">Login</button>
+            <button class="btn btn-admin w-100" type="submit">Login <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i></button>
         </form>
     </div>
 </main>
+<script th:nonce="${cspNonce}">
+    document.addEventListener("DOMContentLoaded", function () {
+        const password = document.getElementById("password");
+        const toggle = document.getElementById("togglePassword");
+        toggle.addEventListener("click", function () {
+            const showing = password.type === "text";
+            password.type = showing ? "password" : "text";
+            toggle.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+            toggle.innerHTML = showing ? '<i class="bi bi-eye" aria-hidden="true"></i>' : '<i class="bi bi-eye-slash" aria-hidden="true"></i>';
+        });
+        document.getElementById("refreshCaptcha").addEventListener("click", function () { window.location.reload(); });
+    });
+</script>
 </body>
 </html>

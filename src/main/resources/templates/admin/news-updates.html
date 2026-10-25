@@ -7,6 +7,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .news-bulk-card{padding:25px 28px;border-color:#e1e9f0!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(23,32,51,.055)!important}
+        .news-bulk-heading{display:flex;align-items:center;gap:15px;margin-bottom:24px}
+        .news-bulk-icon{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border-radius:14px;background:#edf4ff;color:#1768d4;font-size:1.3rem}
+        .news-bulk-heading h2{margin:0 0 5px;font-size:1.2rem;font-weight:750;letter-spacing:-.02em}.news-bulk-heading p{margin:0;color:#718096;font-size:.94rem}
+        .news-bulk-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(210px,.9fr) auto;column-gap:20px;align-items:end}
+        .news-bulk-grid>div{min-width:0}.news-bulk-grid .form-label{margin-bottom:8px;color:#253047;font-size:.92rem}.news-bulk-grid .form-control{min-height:48px;border-color:#d8e3ec;border-radius:10px;background:#fbfdff}
+        .news-bulk-grid input[type=file]{padding:5px}.news-bulk-grid input[type=file]::file-selector-button{min-height:36px;margin:-1px 12px -1px -1px;padding:0 14px;border:0;border-right:1px solid #d8e3ec;border-radius:7px 0 0 7px;background:#f1f6fb;color:#30435e;font-weight:600}
+        .news-bulk-grid .btn{min-height:48px;min-width:205px;margin-bottom:27px;padding:0 20px;border-radius:10px;font-weight:700;white-space:nowrap}
+        .news-bulk-details{display:grid;gap:12px;margin-top:18px}.news-bulk-row{display:grid;grid-template-columns:100px minmax(150px,1fr) minmax(150px,.7fr) minmax(180px,1.2fr) minmax(220px,1.5fr);gap:13px;align-items:start;padding:14px;border:1px solid #e5ebf3;border-radius:12px;background:linear-gradient(110deg,#fbfdff,#fff)}
+        .news-bulk-preview{display:grid;gap:6px;justify-items:center;min-width:0}.news-bulk-preview img{width:76px;height:54px;object-fit:cover;padding:3px;border:1px solid #e5ebf3;border-radius:9px;background:#fff}.news-bulk-filename{max-width:100%;color:#7a8798;font-size:.72rem;overflow-wrap:anywhere;text-align:center}
+        .news-bulk-row .form-label{margin-bottom:6px;color:#384860;font-size:.82rem;font-weight:650}.news-bulk-row .form-control{min-height:42px;border-color:#dbe5ee;border-radius:9px;background:#fff}.news-bulk-row textarea.form-control{min-height:88px;resize:vertical}
+        @media(max-width:1199.98px){.news-bulk-row{grid-template-columns:82px 1fr 1fr}.news-bulk-preview{grid-row:span 2}.news-bulk-row>div:nth-last-child(-n+2){grid-column:2/-1}}
+        @media(max-width:767.98px){.news-bulk-card{padding:20px 18px}.news-bulk-grid{grid-template-columns:1fr 1fr;gap:14px}.news-bulk-grid>div:first-child,.news-bulk-grid>button{grid-column:1/-1}.news-bulk-grid .btn{min-width:0;margin-bottom:0}.news-bulk-row{grid-template-columns:1fr 1fr}.news-bulk-preview{grid-column:1/-1;grid-row:auto;justify-items:start}.news-bulk-filename{text-align:left}.news-bulk-row>div:nth-last-child(-n+2){grid-column:auto}}
+        @media(max-width:480px){.news-bulk-grid{grid-template-columns:1fr}.news-bulk-grid>div:first-child,.news-bulk-grid>button{grid-column:auto}.news-bulk-grid .btn{width:100%}.news-bulk-row{grid-template-columns:1fr}.news-bulk-preview{grid-column:auto}}
+    </style>
 </head>
 <body class="admin-dashboard-page overflow-x-hidden">
 <div class="admin-app-shell min-vh-100 overflow-x-hidden">
@@ -23,6 +39,19 @@
     </div>
 
     <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Saved.</div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Bulk upload failed.</div>
+
+    <section class="news-bulk-card mb-4 bg-white border rounded-3 shadow-sm">
+        <form th:action="@{/admin/news-updates/bulk}" method="post" enctype="multipart/form-data" id="bulkNewsForm">
+            <div class="news-bulk-heading"><span class="news-bulk-icon"><i class="bi bi-newspaper"></i></span><div><h2>Bulk upload news &amp; updates</h2><p>Select up to 20 images, then add the title, date, excerpt, and full content for each update.</p></div></div>
+            <div class="news-bulk-grid">
+                <div><label class="form-label fw-semibold" for="newsImages">Select news images <span class="badge rounded-pill text-bg-light border ms-1">Up to 20</span></label><input class="form-control" id="newsImages" name="imageFiles" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple required><div class="form-text" id="newsImageSummary">No images selected · Maximum 1 MB per image</div></div>
+                <div><span class="form-label fw-semibold d-block">Each image becomes one update</span><div class="form-text">Complete all fields shown for every selected image.</div></div>
+                <button class="btn btn-primary" type="submit"><i class="bi bi-cloud-arrow-up me-1"></i> Upload news</button>
+            </div>
+            <div class="news-bulk-details" id="newsBulkDetails"></div>
+        </form>
+    </section>
 
     <section class="table-card bg-white overflow-hidden">
         <div class="table-responsive">
@@ -68,5 +97,44 @@
  </div>
  </div>
 <script th:src="@{/js/admin.js}"></script>
+<script th:nonce="${cspNonce}">
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("newsImages");
+        const details = document.getElementById("newsBulkDetails");
+        const summary = document.getElementById("newsImageSummary");
+        const form = document.getElementById("bulkNewsForm");
+        if (!input || !details || !summary || !form) return;
+        function addField(row, labelText, name, maxLength, placeholder, multiline) {
+            const wrapper = document.createElement("div");
+            const label = document.createElement("label"); label.className = "form-label"; label.textContent = labelText;
+            const field = document.createElement(multiline ? "textarea" : "input"); field.className = "form-control"; field.name = name; field.maxLength = maxLength; field.placeholder = placeholder || ""; field.required = true;
+            if (multiline) field.rows = 3; else field.type = name === "publishedDates" ? "date" : "text";
+            wrapper.append(label, field); row.append(wrapper);
+        }
+        input.addEventListener("change", function () {
+            details.replaceChildren(); summary.classList.remove("text-danger");
+            const files = Array.from(input.files);
+            summary.textContent = files.length ? files.length + " image(s) selected. Complete each update below." : "No images selected · Maximum 1 MB per image";
+            files.slice(0, 20).forEach(function (file) {
+                const row = document.createElement("div"); row.className = "news-bulk-row";
+                const preview = document.createElement("div"); preview.className = "news-bulk-preview";
+                const image = document.createElement("img"); image.src = URL.createObjectURL(file); image.alt = "Selected news image";
+                const filename = document.createElement("span"); filename.className = "news-bulk-filename"; filename.textContent = file.name; preview.append(image, filename); row.append(preview);
+                addField(row, "Title", "titles", 220, "News headline");
+                addField(row, "Publication date", "publishedDates", 10, "");
+                addField(row, "Short excerpt", "excerpts", 500, "Brief summary", true);
+                addField(row, "Full content", "contents", 10000, "News article content", true);
+                details.append(row);
+            });
+        });
+        form.addEventListener("submit", function (event) {
+            const files = Array.from(input.files); let message = "";
+            if (!files.length) message = "Choose at least one news image.";
+            else if (files.length > 20) message = "Select no more than 20 images at a time.";
+            else if (files.some(function (file) { return file.size > 1024 * 1024; })) message = "Each news image must be 1 MB or smaller.";
+            if (message) { event.preventDefault(); summary.textContent = message; summary.classList.add("text-danger"); }
+        });
+    });
+</script>
 </body>
 </html>

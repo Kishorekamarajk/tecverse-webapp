@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Included in each page's <head> with: <th:block th:replace="~{fragments/analytics :: gtag}"></th:block> -->
+    <th:block th:fragment="gtag">
+    <!-- Google tag (gtag.js) -->
+    <script async th:nonce="${cspNonce}" src="https://www.googletagmanager.com/gtag/js?id=G-42VSDT8NX6"></script>
+    <script th:nonce="${cspNonce}">
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-42VSDT8NX6');
+    </script>
+    </th:block>
+</head>
+</html>

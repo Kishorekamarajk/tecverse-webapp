@@ -19,30 +19,28 @@ class DigitalPassBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final passId = pass?.passId.isNotEmpty == true ? pass!.passId : 'TV26-PASS-000007';
     final refNo = pass?.attendeeId.isNotEmpty == true
         ? pass!.attendeeId
         : (user?.referenceNumber.isNotEmpty == true
             ? user!.referenceNumber
-            : 'TV26CG000007');
+            : '—');
 
     final userName = pass?.holderName.isNotEmpty == true
         ? pass!.holderName
         : (user?.officialName.isNotEmpty == true
             ? user!.officialName
-            : 'kishore k');
+            : 'Delegate');
 
     final designation = pass?.designation.isNotEmpty == true
         ? pass!.designation
-        : (user?.designation.isNotEmpty == true ? user!.designation : 'P.A');
+        : (user?.designation.isNotEmpty == true ? user!.designation : '');
 
     final organization = pass?.organization.isNotEmpty == true
         ? pass!.organization
-        : (user?.organization.isNotEmpty == true ? user!.organization : 'cdac');
+        : (user?.organization.isNotEmpty == true ? user!.organization : '');
 
-    final qrToken = pass?.qrToken.isNotEmpty == true
-        ? pass!.qrToken
-        : 'TECVERSE26:$passId';
+    // Only a real, loaded pass gets a QR code; never render a placeholder one.
+    final qrToken = pass?.scannableInfo ?? '';
 
     return Hero(
       tag: 'digital-pass-credential',
@@ -209,7 +207,13 @@ class DigitalPassBanner extends StatelessWidget {
                           children: [
                             // QR Frame with Orange Corners
                             _MiniQrCornerFrame(
-                              child: QrImageView(
+                              child: qrToken.isEmpty
+                                  ? const SizedBox(
+                                      width: 54,
+                                      height: 54,
+                                      child: Icon(Icons.qr_code_2_rounded, size: 40, color: Color(0xFFCBD5E1)),
+                                    )
+                                  : QrImageView(
                                 data: qrToken,
                                 version: QrVersions.auto,
                                 size: 54,

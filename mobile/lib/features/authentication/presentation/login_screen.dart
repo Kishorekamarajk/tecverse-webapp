@@ -247,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _identifierController,
                 focusNode: _identifierFocusNode,
                 label: 'Email Address',
-                hint: 'enter your gmail',
+                hint: 'Enter your registered email',
                 prefixIcon: Icons.email_outlined,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,

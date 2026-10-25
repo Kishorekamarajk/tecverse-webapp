@@ -10,6 +10,18 @@
     <style>
         .date-icon-preview { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #00856f; color: #fff; font-size: 1.1rem; }
         .color-swatch { display: inline-block; width: 28px; height: 28px; border: 1px solid #d5dce2; border-radius: 50%; vertical-align: middle; }
+        .important-bulk-card{padding:24px 26px;border-color:#e1e9f0!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(23,32,51,.055)!important}
+        .important-page-heading{align-items:center!important;margin-bottom:26px!important}.important-page-heading h1{font-size:clamp(1.65rem,2.2vw,2.1rem);font-weight:800;letter-spacing:-.035em}.important-page-heading p{color:#718096;font-size:.98rem}
+        .important-page-heading>.btn{min-height:48px;padding:10px 18px;border-radius:10px;white-space:nowrap}
+        .important-bulk-heading{display:flex;align-items:center;gap:15px;margin-bottom:24px}.important-bulk-icon{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border-radius:14px;background:#edf4ff;color:#1768d4;font-size:1.3rem}
+        .important-bulk-heading h2{margin:0 0 5px;font-size:1.2rem;font-weight:750;letter-spacing:-.02em}.important-bulk-heading p{margin:0;color:#718096;font-size:.94rem}
+        .important-bulk-controls{display:flex;flex-wrap:wrap;align-items:end;gap:14px 18px}.important-bulk-controls>div{width:min(100%,320px)}.important-bulk-controls .form-label{margin-bottom:7px;color:#253047}.important-bulk-controls .form-control{min-height:46px;border-radius:10px;background:#fbfdff}.important-bulk-controls .btn{min-height:46px;padding:0 20px;border-radius:10px;font-weight:700;white-space:nowrap}
+        .important-bulk-rows{display:grid;gap:11px;margin-top:18px}.important-bulk-row{display:grid;grid-template-columns:minmax(210px,1.25fr) minmax(170px,.9fr) minmax(190px,1.1fr) minmax(150px,.7fr) 44px;gap:14px;align-items:end;padding:16px;border:1px solid #e5ebf3;border-radius:12px;background:linear-gradient(110deg,#fbfdff,#fff)}
+        .important-bulk-row>div{min-width:0}.important-bulk-row .form-label{display:block;min-height:20px;margin-bottom:7px;color:#384860;font-size:.84rem;font-weight:650}.important-bulk-row .form-control,.important-bulk-row .form-select{width:100%;min-width:0;min-height:44px;border:1px solid #dbe5ee;border-radius:9px;background:#fff}.important-bulk-row input[type=color]{padding:4px;cursor:pointer}.important-bulk-row .remove-date{width:44px;height:44px;border-radius:10px}
+        .important-bulk-controls .btn:hover{transform:translateY(-1px)}.important-bulk-row:focus-within{border-color:#b9cfee;box-shadow:0 0 0 3px rgba(23,104,212,.055)}
+        @media(max-width:991.98px){.important-bulk-row{grid-template-columns:minmax(150px,1fr) minmax(145px,1fr) minmax(160px,1fr) 100px 44px;gap:10px;padding:13px}}
+        @media(max-width:767.98px){.important-bulk-card{padding:20px 18px}.important-page-heading>.btn{width:100%}.important-bulk-controls>div{width:min(100%,320px)}.important-bulk-controls .btn{width:auto}.important-bulk-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.important-bulk-row .date-title-field{grid-column:1/-1}.important-bulk-row .remove-date{grid-column:2;justify-self:end}}
+        @media(max-width:480px){.important-bulk-row{grid-template-columns:1fr}.important-bulk-row .date-title-field{grid-column:auto}.important-bulk-row .remove-date{grid-column:auto}.important-bulk-controls{align-items:stretch}.important-bulk-controls>div,.important-bulk-controls .btn{width:100%}}
     </style>
 </head>
 <body class="admin-dashboard-page overflow-x-hidden">
@@ -18,7 +30,7 @@
 <div class="admin-main-panel">
 <div th:replace="~{admin/fragments/admin-layout :: topbar('Important Dates Management')}"></div>
 <main class="admin-shell container-fluid mx-auto">
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="important-page-heading d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
             <a class="text-decoration-none small fw-semibold text-success" th:href="@{/admin}"><i class="bi bi-arrow-left"></i> Dashboard</a>
             <h1 class="h3 mt-2 mb-0">Important Dates</h1>
@@ -28,6 +40,19 @@
     </div>
 
     <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Saved.</div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Please check the date entries.</div>
+
+    <section class="important-bulk-card mb-4 bg-white border rounded-3 shadow-sm">
+        <form th:action="@{/admin/important-dates/bulk}" method="post" id="bulkImportantDateForm">
+            <div class="important-bulk-heading"><span class="important-bulk-icon"><i class="bi bi-calendar2-week"></i></span><div><h2>Bulk add important dates</h2><p>Add up to 20 milestones with individual dates, icons, and accent colors.</p></div></div>
+            <div class="important-bulk-controls">
+                <div><label class="form-label fw-semibold" for="importantStartingOrder">Starting display order</label><input class="form-control" id="importantStartingOrder" name="displayOrder" type="number" min="0" value="0" required><div class="form-text">Order increases for each date.</div></div>
+                <button class="btn btn-outline-primary" type="button" id="addImportantDateRow"><i class="bi bi-plus-lg me-1"></i> Add milestone</button>
+            </div>
+            <div class="important-bulk-rows" id="importantDateRows"></div>
+            <div class="mt-3"><button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-1"></i> Save all dates</button></div>
+        </form>
+    </section>
 
     <section class="table-card bg-white overflow-hidden">
         <div class="table-responsive">
@@ -60,5 +85,35 @@
 </div>
 </div>
 <script th:src="@{/js/admin.js}"></script>
+<script th:nonce="${cspNonce}">
+    document.addEventListener("DOMContentLoaded", function () {
+        const rows = document.getElementById("importantDateRows");
+        const addButton = document.getElementById("addImportantDateRow");
+        const form = document.getElementById("bulkImportantDateForm");
+        if (!rows || !addButton || !form) return;
+        const icons = ["calendar-event", "calendar-check", "calendar-date", "calendar-week", "calendar2-check", "calendar3", "clock", "hourglass-split", "pencil-square", "megaphone", "person-plus", "people-fill", "journal-check", "cash-coin", "credit-card", "trophy", "flag", "geo-alt", "ticket-perforated"];
+        function addField(row, labelText, name, type, options) {
+            const wrapper = document.createElement("div");
+            if (options.title) wrapper.className = "date-title-field";
+            const label = document.createElement("label"); label.className = "form-label"; label.textContent = labelText;
+            const field = document.createElement(type === "select" ? "select" : "input"); field.className = type === "select" ? "form-select" : "form-control"; field.name = name; field.required = true;
+            if (type === "select") icons.forEach(function (icon) { const option = document.createElement("option"); option.value = "bi-" + icon; option.textContent = icon.replaceAll("-", " "); field.append(option); });
+            else { field.type = type; if (type === "color") field.value = "#00856f"; }
+            wrapper.append(label, field); row.append(wrapper);
+        }
+        function renumber() { Array.from(rows.children).forEach(function (row, index) { row.querySelector(".date-title-field label").textContent = "Milestone " + (index + 1) + " title"; row.querySelector(".remove-date").disabled = rows.children.length === 1; }); addButton.disabled = rows.children.length >= 20; }
+        function addRow() {
+            if (rows.children.length >= 20) return;
+            const row = document.createElement("div"); row.className = "important-bulk-row";
+            addField(row, "Milestone title", "titles", "text", { title: true });
+            addField(row, "Event date", "eventDates", "date", {});
+            addField(row, "Icon", "iconClasses", "select", {});
+            addField(row, "Accent color", "accentColors", "color", {});
+            const remove = document.createElement("button"); remove.type = "button"; remove.className = "btn btn-outline-danger remove-date"; remove.setAttribute("aria-label", "Remove milestone"); remove.innerHTML = '<i class="bi bi-trash"></i>'; remove.addEventListener("click", function () { row.remove(); renumber(); }); row.append(remove);
+            rows.append(row); renumber();
+        }
+        addButton.addEventListener("click", addRow); form.addEventListener("submit", function (event) { if (!rows.children.length) { event.preventDefault(); addRow(); } }); addRow();
+    });
+</script>
 </body>
 </html>

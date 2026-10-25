@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Verified | Tec-verse 2026</title>
+    <title th:text="#{ticketpage.confirm.pageTitle}">Ticket Verified | Tec-verse 2026</title>
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
 
 
@@ -46,43 +46,43 @@
         <div class="container">
             <div class="ticket-confirmation-shell d-grid align-items-stretch">
                 <div class="ticket-confirmation-copy">
-                    <span class="ticket-confirmation-badge d-inline-flex align-items-center gap-2 min-h-[34px] py-0 px-[0.85rem] rounded-pill bg-[#EAF8F1] text-[#0B6845] text-[0.8rem] font-black uppercase"><i class="bi bi-shield-check"></i> Email verified</span>
-                    <h1 id="ticket-confirmation-title">Your ticket request is ready</h1>
+                    <span class="ticket-confirmation-badge d-inline-flex align-items-center gap-2 min-h-[34px] py-0 px-[0.85rem] rounded-pill bg-[#EAF8F1] text-[#0B6845] text-[0.8rem] font-black uppercase"><i class="bi bi-shield-check"></i> <span th:text="#{ticketpage.confirm.badge}">Email verified</span></span>
+                    <h1 id="ticket-confirmation-title" th:text="#{ticketpage.confirm.heading}">Your ticket request is ready</h1>
                     <p>
-                        The OTP check is complete for <strong th:text="${verifiedEmail}">your verified email</strong>.
-                        Review your selected pass and continue with the booking desk.
+                        <span th:text="#{ticketpage.confirm.lead}">The OTP check is complete for</span> <strong th:text="${verifiedEmail}">your verified email</strong><span th:text="#{ticketpage.confirm.leadEnd}">.
+                        Review your selected pass and continue with the booking desk.</span>
                     </p>
                     <div class="ticket-confirmation-actions flex-wrap gap-[14px] mt-[30px]">
                         <a class="ticket-confirmation-primary" th:href="@{/ticket}">
                             <i class="bi bi-ticket-perforated"></i>
-                            Book another pass
+                            <span th:text="#{ticketpage.confirm.bookAnother}">Book another pass</span>
                         </a>
                         <a class="ticket-confirmation-secondary" th:href="@{/inquiry}">
                             <i class="bi bi-headset"></i>
-                            Contact help desk
+                            <span th:text="#{ticketpage.confirm.helpDesk}">Contact help desk</span>
                         </a>
                     </div>
                 </div>
 
-                <aside class="ticket-confirmation-summary" aria-label="Ticket summary">
+                <aside class="ticket-confirmation-summary" aria-label="Ticket summary" th:aria-label="#{ticketpage.confirm.summaryLabel}">
                     <div class="ticket-confirmation-summary__brand mb-[22px] font-[900] leading-[1]">
                         <span>TEC-</span><strong>VERSE</strong>
                     </div>
                     <dl>
                         <div>
-                            <dt>Selected pass</dt>
+                            <dt th:text="#{ticketpage.confirm.selectedPass}">Selected pass</dt>
                             <dd th:text="${selectedPass}">Tec-verse Pass</dd>
                         </div>
                         <div>
-                            <dt>Status</dt>
-                            <dd>OTP verified</dd>
+                            <dt th:text="#{ticketpage.confirm.status}">Status</dt>
+                            <dd th:text="#{ticketpage.confirm.otpVerified}">OTP verified</dd>
                         </div>
                         <div>
-                            <dt>Event dates</dt>
-                            <dd>26 - 27 November 2026</dd>
+                            <dt th:text="#{ticketpage.confirm.eventDates}">Event dates</dt>
+                            <dd th:text="#{ticketpage.confirm.eventDatesValue}">26 - 27 November 2026</dd>
                         </div>
                         <div>
-                            <dt>Venue</dt>
+                            <dt th:text="#{ticketpage.doc.venue}">Venue</dt>
                             <dd th:text="#{venue.name}">Chennai Trade Centre</dd>
                         </div>
                     </dl>

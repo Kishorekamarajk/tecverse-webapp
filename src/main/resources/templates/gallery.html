@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/analytics :: gtag}"></th:block>
     <title th:text="#{contact.title}">Tec-verse 2026</title>
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
 
@@ -37,6 +39,7 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="gallery-page bg-white font-sans text-ink antialiased">
 
 <div th:replace="~{fragments/navbar :: navbar('gallery')}"></div>
@@ -56,29 +59,29 @@
             <div class="gallery-reference__heading">
                 <div><h2><span th:text="#{gallery.photo.heading}">Photo</span> <em th:text="#{nav.gallery}">Gallery</em></h2></div>
             </div>
-            <div class="gallery-carousel position-relative" th:if="${!galleryImages.isEmpty()}" data-gallery-carousel aria-label="Tec-verse photo carousel">
+            <div class="gallery-carousel position-relative" th:if="${!galleryImages.isEmpty()}" data-gallery-carousel aria-label="Tec-verse photo carousel" th:aria-label="#{misc.gallery.photoCarousel}">
                 <div class="gallery-carousel__stage position-relative overflow-hidden">
                     <a class="gallery-carousel__slide" th:each="image : ${galleryImages}" th:href="@{${image.imageUrl}}"><img th:src="@{${image.imageUrl}}" th:alt="${image.title}"></a>
                 </div>
-                <div class="gallery-carousel__controls justify-content-center gap-[.65rem] mt-[1.2rem]"><button type="button" data-gallery-prev aria-label="Previous image"><i class="bi bi-arrow-left"></i></button><button type="button" data-gallery-next aria-label="Next image"><i class="bi bi-arrow-right"></i></button></div>
+                <div class="gallery-carousel__controls justify-content-center gap-[.65rem] mt-[1.2rem]"><button type="button" data-gallery-prev aria-label="Previous image" th:aria-label="#{misc.gallery.prevImage}"><i class="bi bi-arrow-left"></i></button><button type="button" data-gallery-next aria-label="Next image" th:aria-label="#{misc.gallery.nextImage}"><i class="bi bi-arrow-right"></i></button></div>
             </div>
-            <p th:if="${galleryImages.isEmpty()}">Gallery photos will be updated soon.</p>
+            <p th:if="${galleryImages.isEmpty()}" th:text="#{misc.gallery.photosEmpty}">Gallery photos will be updated soon.</p>
             <button th:if="${!galleryImages.isEmpty()}" class="gallery-reference__button gallery-reference__button--trigger d-flex align-items-center gap-[.5rem] text-[.68rem] font-[800] text-decoration-none" type="button"
                     data-bs-toggle="modal" data-bs-target="#allPhotosModal">
-                View All Photos <i class="bi bi-arrow-right"></i>
+                <th:block th:text="#{misc.gallery.viewAllPhotos}">View All Photos</th:block> <i class="bi bi-arrow-right"></i>
             </button>
         </div>
     </section>
 
     <section id="video-gallery" class="gallery-reference__videos overflow-hidden">
         <div class="container">
-            <div class="gallery-reference__heading gallery-reference__heading--dark"><div><h2><span th:text="#{gallery.video.heading}">Video</span> <em th:text="#{nav.gallery}">Gallery</em></h2></div><div class="gallery-reference__brand pl-[.7rem] text-[.68rem] leading-[1.5]">Ideas in motion.<br>Progress in action.</div></div>
+            <div class="gallery-reference__heading gallery-reference__heading--dark"><div><h2><span th:text="#{gallery.video.heading}">Video</span> <em th:text="#{nav.gallery}">Gallery</em></h2></div><div class="gallery-reference__brand pl-[.7rem] text-[.68rem] leading-[1.5]" th:utext="#{misc.gallery.videoTagline}">Ideas in motion.<br>Progress in action.</div></div>
             <div class="gallery-carousel gallery-carousel--videos position-relative" th:if="${!galleryVideos.isEmpty()}"
-                 data-gallery-carousel aria-label="Tec-verse video carousel">
+                 data-gallery-carousel aria-label="Tec-verse video carousel" th:aria-label="#{misc.gallery.videoCarousel}">
                 <div class="gallery-carousel__stage position-relative overflow-hidden">
                     <a class="gallery-carousel__slide" th:each="video : ${galleryVideos}"
                        th:href="${video.videoUrl}" target="_blank" rel="noopener noreferrer"
-                       th:attr="aria-label=${'Watch ' + video.title}">
+                       th:attr="aria-label=#{misc.gallery.watchAria(${video.title})}">
                         <img th:if="${video.displayThumbnailUrl != null}" th:src="@{${video.displayThumbnailUrl}}"
                              th:alt="${video.title}" loading="lazy">
                         <span class="gallery-video-carousel__play" aria-hidden="true"><i class="bi bi-play-fill"></i></span>
@@ -86,14 +89,14 @@
                     </a>
                 </div>
                 <div class="gallery-carousel__controls justify-content-center gap-[.65rem] mt-[1.2rem]">
-                    <button type="button" data-gallery-prev aria-label="Previous video"><i class="bi bi-arrow-left"></i></button>
-                    <button type="button" data-gallery-next aria-label="Next video"><i class="bi bi-arrow-right"></i></button>
+                    <button type="button" data-gallery-prev aria-label="Previous video" th:aria-label="#{misc.gallery.prevVideo}"><i class="bi bi-arrow-left"></i></button>
+                    <button type="button" data-gallery-next aria-label="Next video" th:aria-label="#{misc.gallery.nextVideo}"><i class="bi bi-arrow-right"></i></button>
                 </div>
             </div>
-            <p th:if="${galleryVideos.isEmpty()}">Gallery videos will be updated soon.</p>
+            <p th:if="${galleryVideos.isEmpty()}" th:text="#{misc.gallery.videosEmpty}">Gallery videos will be updated soon.</p>
             <button class="gallery-reference__button gallery-reference__button--dark gallery-reference__button--trigger d-flex align-items-center gap-[.5rem] text-[.68rem] font-[800] text-decoration-none"
                     type="button" data-bs-toggle="modal" data-bs-target="#allVideosModal">
-                View All Videos <i class="bi bi-play-fill" aria-hidden="true"></i>
+                <th:block th:text="#{misc.gallery.viewAllVideos}">View All Videos</th:block> <i class="bi bi-play-fill" aria-hidden="true"></i>
             </button>
         </div>
     </section>
@@ -106,9 +109,9 @@
             <div class="modal-header">
                 <div>
                     <p class="gallery-all-photos-modal__eyebrow text-[.72rem] font-[800] tracking-[.12em]">TEC-VERSE 2026</p>
-                    <h2 class="modal-title" id="allPhotosModalLabel">All Photos</h2>
+                    <h2 class="modal-title" id="allPhotosModalLabel" th:text="#{misc.gallery.allPhotos}">All Photos</h2>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" th:aria-label="#{register.modal.close}"></button>
             </div>
             <div class="modal-body">
                 <div class="gallery-all-photos-grid">
@@ -125,10 +128,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <p class="gallery-all-photos-modal__eyebrow text-[.72rem] font-[800] tracking-[.12em]">TEC-VERSE VIDEO GALLERY</p>
-                    <h2 class="modal-title" id="allVideosModalLabel">All Videos</h2>
+                    <p class="gallery-all-photos-modal__eyebrow text-[.72rem] font-[800] tracking-[.12em]" th:text="#{misc.gallery.videoGalleryEyebrow}">TEC-VERSE VIDEO GALLERY</p>
+                    <h2 class="modal-title" id="allVideosModalLabel" th:text="#{misc.gallery.allVideos}">All Videos</h2>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" th:aria-label="#{register.modal.close}"></button>
             </div>
             <div class="modal-body">
                 <div class="gallery-all-videos-grid" th:if="${!galleryVideos.isEmpty()}">
@@ -142,7 +145,7 @@
                         <small th:text="${video.description}">Video description</small>
                     </a>
                 </div>
-                <p th:if="${galleryVideos.isEmpty()}">No active videos have been published yet.</p>
+                <p th:if="${galleryVideos.isEmpty()}" th:text="#{misc.gallery.noVideos}">No active videos have been published yet.</p>
             </div>
         </div>
     </div>

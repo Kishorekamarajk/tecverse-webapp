@@ -18,6 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class AdminExhibitorLogoController {
     private final ExhibitorLogoRepository repository;
@@ -67,6 +70,70 @@ public class AdminExhibitorLogoController {
         return "redirect:/admin/exhibitor-logos?saved";
     }
 
+    @PostMapping("/admin/exhibitor-logos/bulk")
+    public String createBulk(@RequestParam("imageFiles") List<MultipartFile> imageFiles,
+                             @RequestParam("companyNames") List<String> companyNames,
+                             @RequestParam("stallAllocations") List<String> stallAllocations,
+                             @RequestParam(value = "websiteUrls", required = false) List<String> websiteUrls,
+                             @RequestParam(value = "displayOrder", defaultValue = "0") int displayOrder,
+                             RedirectAttributes redirectAttributes) {
+        List<MultipartFile> selected = imageFiles == null ? List.of()
+                : imageFiles.stream().filter(file -> file != null && !file.isEmpty()).toList();
+        int count = selected.size();
+        if (count == 0 || count > 20 || companyNames == null || companyNames.size() != count
+                || stallAllocations == null || stallAllocations.size() != count
+                || (websiteUrls != null && websiteUrls.size() != count)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Select 1 to 20 photos and complete the details for each exhibitor.");
+            return "redirect:/admin/exhibitor-logos";
+        }
+        if (displayOrder < 0 || displayOrder > Integer.MAX_VALUE - count) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Starting display order is outside the supported range.");
+            return "redirect:/admin/exhibitor-logos";
+        }
+        for (int i = 0; i < count; i++) {
+            String company = companyNames.get(i) == null ? "" : companyNames.get(i).trim();
+            String stall = stallAllocations.get(i) == null ? "" : stallAllocations.get(i).trim();
+            String website = websiteUrls == null || websiteUrls.get(i) == null ? "" : websiteUrls.get(i).trim();
+            if (company.isBlank() || company.length() > 180 || stall.isBlank() || stall.length() > 80
+                    || (!website.isBlank() && (website.length() > 500 || !website.matches("(?i)^https?://[^\\s]+$")))) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Check each company name, stall allocation, and website URL.");
+                return "redirect:/admin/exhibitor-logos";
+            }
+        }
+
+        List<String> uploadedUrls = new ArrayList<>(count);
+        try {
+            List<ExhibitorLogo> logos = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                MultipartFile file = selected.get(i);
+                String imageUrl = storage.uploadImage(file, "exhibitors");
+                uploadedUrls.add(imageUrl);
+                ExhibitorLogo logo = new ExhibitorLogo();
+                logo.setCompanyName(companyNames.get(i).trim());
+                logo.setStallAllocation(stallAllocations.get(i).trim());
+                String website = websiteUrls == null ? "" : websiteUrls.get(i).trim();
+                logo.setWebsiteUrl(website.isBlank() ? null : website);
+                logo.setImageUrl(imageUrl);
+                logo.setDisplayOrder(displayOrder + i);
+                logo.setActive(true);
+                logos.add(logo);
+            }
+            repository.saveAll(logos);
+            redirectAttributes.addFlashAttribute("successMessage", logos.size() + " exhibitor photos uploaded successfully.");
+        } catch (RuntimeException ex) {
+            for (String uploadedUrl : uploadedUrls) {
+                try {
+                    storage.deleteStoredMedia(uploadedUrl);
+                } catch (RuntimeException ignored) {
+                    // Preserve the original bulk upload error for the admin.
+                }
+            }
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage() == null
+                    ? "Unable to save exhibitor photos. Please try again." : ex.getMessage());
+        }
+        return "redirect:/admin/exhibitor-logos";
+    }
+
     @PostMapping("/admin/exhibitor-logos/{id}")
     public String update(@PathVariable Long id,
                          @Valid @ModelAttribute("exhibitorLogoForm") ExhibitorLogoForm form,
@@ -113,6 +180,7 @@ public class AdminExhibitorLogoController {
         ExhibitorLogoForm form = new ExhibitorLogoForm();
         form.setCompanyName(logo.getCompanyName());
         form.setStallAllocation(logo.getStallAllocation());
+        form.setWebsiteUrl(logo.getWebsiteUrl());
         form.setDisplayOrder(logo.getDisplayOrder());
         form.setActive(logo.isActive());
         return form;
@@ -121,6 +189,7 @@ public class AdminExhibitorLogoController {
     private static ExhibitorLogo apply(ExhibitorLogoForm form, ExhibitorLogo logo, String imageUrl) {
         logo.setCompanyName(form.getCompanyName().trim());
         logo.setStallAllocation(form.getStallAllocation().trim());
+        logo.setWebsiteUrl(form.getWebsiteUrl() == null || form.getWebsiteUrl().isBlank() ? null : form.getWebsiteUrl().trim());
         logo.setDisplayOrder(form.getDisplayOrder());
         logo.setActive(form.isActive());
         logo.setImageUrl(imageUrl);

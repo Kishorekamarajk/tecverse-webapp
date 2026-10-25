@@ -152,8 +152,6 @@ body {
     padding-bottom: 16px;
 }
 
-
-
 .badge {
     padding: 0.45rem 0.65rem;
     font-weight: 800;
@@ -249,7 +247,7 @@ body {
 .admin-sidebar {
     z-index: 30;
     gap: 20px;
-    width: 280px;
+    width: 240px;
     padding: 22px 14px 16px;
     border-right: 1px solid #e5ecf3;
     background: rgba(255, 255, 255, 0.96);
@@ -312,9 +310,17 @@ body {
     transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
-.admin-side-link i {
+.admin-side-link .admin-nav-icon {
+    display: block;
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
     color: #637b9b;
-    font-size: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .admin-side-link:hover,
@@ -325,9 +331,9 @@ body {
     transform: translateX(2px);
 }
 
-.admin-side-link:hover i,
-.admin-side-link:focus i,
-.admin-side-link.is-active i {
+.admin-side-link:hover .admin-nav-icon,
+.admin-side-link:focus .admin-nav-icon,
+.admin-side-link.is-active .admin-nav-icon {
     color: #233373;
 }
 
@@ -349,7 +355,7 @@ body {
 
 .admin-main-panel {
     min-width: 0;
-    margin-left: 280px;
+    margin-left: 240px;
     background: #f6f9fc;
 }
 
@@ -691,7 +697,8 @@ body {
 /* Bootstrap row gutters preserve the original spacing between fields/cards. */
 .admin-form-grid { --bs-gutter-x: 24px; --bs-gutter-y: 20px; }
 .admin-module-grid { --bs-gutter-x: 18px; --bs-gutter-y: 18px; }
-.admin-side-link > i { flex: 0 0 28px; }
+.admin-side-link > .admin-nav-icon { flex: 0 0 22px; width: 22px; height: 22px; }
+.admin-logout-icon { display: inline-block; width: 18px; height: 18px; margin-right: 5px; vertical-align: -4px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .admin-side-link > span,
 .admin-module-card > span { min-width: 0; }
 .admin-module-card > i { flex: 0 0 42px; }

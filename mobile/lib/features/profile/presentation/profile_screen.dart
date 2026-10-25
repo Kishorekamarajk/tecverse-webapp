@@ -150,6 +150,16 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  /// Server stores DAY_1 / DAY_2 / BOTH; same wording as the confirmation PDF.
+  static String _attendanceDaysLabel(String days) {
+    final value = days.toUpperCase();
+    final day1 = value.contains('DAY_1');
+    final day2 = value.contains('DAY_2');
+    if (day1 && !day2) return '26 November 2026';
+    if (day2 && !day1) return '27 November 2026';
+    return '26 & 27 November 2026';
+  }
+
   void _copyReferenceNumber(BuildContext context, String ref) {
     Clipboard.setData(ClipboardData(text: ref));
     ScaffoldMessenger.of(context).showSnackBar(
@@ -823,7 +833,7 @@ class ProfileScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  user.referenceNumber.isNotEmpty ? user.referenceNumber : 'TV26CG000007',
+                  user.referenceNumber.isNotEmpty ? user.referenceNumber : '—',
                   style: const TextStyle(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w800,
@@ -834,7 +844,7 @@ class ProfileScreen extends StatelessWidget {
                 InkWell(
                   onTap: () => _copyReferenceNumber(
                     context,
-                    user.referenceNumber.isNotEmpty ? user.referenceNumber : 'TV26CG000007',
+                    user.referenceNumber.isNotEmpty ? user.referenceNumber : '—',
                   ),
                   child: const Icon(
                     Icons.copy_rounded,
@@ -853,7 +863,7 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.email_rounded,
             label: 'Email Address',
             valueWidget: Text(
-              user.email.isNotEmpty ? user.email : 'kishorek27032004@gmail.com',
+              user.email.isNotEmpty ? user.email : '—',
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
@@ -869,7 +879,7 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.phone_rounded,
             label: 'Registered Mobile',
             valueWidget: Text(
-              user.mobile.isNotEmpty ? user.mobile : '8072791826',
+              user.mobile.isNotEmpty ? user.mobile : '—',
               style: const TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w700,
@@ -885,7 +895,7 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.people_alt_rounded,
             label: 'Registration Category',
             valueWidget: Text(
-              user.category.isNotEmpty ? user.category.toUpperCase() : 'CENTRAL GOVERNMENT',
+              user.category.isNotEmpty ? user.category.toUpperCase() : '—',
               style: const TextStyle(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w800,
@@ -901,7 +911,7 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.calendar_month_rounded,
             label: 'Preferred Days',
             valueWidget: Text(
-              user.attendanceDays.isNotEmpty ? user.attendanceDays : '26–27 November 2026',
+              _attendanceDaysLabel(user.attendanceDays),
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,

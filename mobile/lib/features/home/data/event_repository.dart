@@ -1,7 +1,6 @@
 import '../../../core/constants/api_constants.dart';
 import '../../../core/networking/api_client.dart';
 import '../domain/important_date_item.dart';
-import 'important_dates_data.dart';
 import '../presentation/widgets/recommended_session_card.dart';
 
 class EventSummary {
@@ -137,7 +136,8 @@ class EventRepository {
         }
       }
     } catch (_) {}
-    return ImportantDatesData.defaultDates;
+    // No placeholder content in production: show nothing rather than stale or invented dates.
+    return const [];
   }
 }
 

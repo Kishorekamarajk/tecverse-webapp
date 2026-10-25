@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Exhibitor Registration | Tec-verse 2026</title>
+    <title th:text="#{exhibitor.page.title}">Exhibitor Registration | Tec-verse 2026</title>
     <link rel="icon" th:href="@{/images/tecverselogo.png}">
 
 
@@ -318,18 +318,18 @@
             <div class="container">
                 <div class="ticket-hero align-items-stretch overflow-hidden">
                     <div class="ticket-hero__copy d-flex flex-column justify-content-center gap-[0]">
-                        <p class="ticket-hero__eyebrow font-[900] leading-[0.95] text-uppercase">Become an</p>
-                        <h1 id="exhibitor-hero-title">Exhibitor</h1>
-                        <p class="ticket-hero__text max-w-[460px] font-[600] leading-[1.75]">Choose your stall, present your innovation, and connect with the technology ecosystem shaping what is next.</p>
-                        <div class="ticket-hero__meta flex-wrap" aria-label="Event details">
-                            <span><i class="bi bi-calendar-event-fill"></i> 26 - 27 November 2026</span>
-                            <span><i class="bi bi-geo-alt-fill"></i> Chennai Trade Centre</span>
+                        <p class="ticket-hero__eyebrow font-[900] leading-[0.95] text-uppercase" th:text="#{exhibitor.hero.eyebrow}">Become an</p>
+                        <h1 id="exhibitor-hero-title" th:text="#{exhibitor.hero.title}">Exhibitor</h1>
+                        <p class="ticket-hero__text max-w-[460px] font-[600] leading-[1.75]" th:text="#{exhibitor.hero.text}">Choose your stall, present your innovation, and connect with the technology ecosystem shaping what is next.</p>
+                        <div class="ticket-hero__meta flex-wrap" aria-label="Event details" th:attr="aria-label=#{exhibitor.hero.metaLabel}">
+                            <span><i class="bi bi-calendar-event-fill"></i> <th:block th:text="#{exhibitor.hero.dates}">26 - 27 November 2026</th:block></span>
+                            <span><i class="bi bi-geo-alt-fill"></i> <th:block th:text="#{exhibitor.hero.venue}">Chennai Trade Centre</th:block></span>
                         </div>
-                        <a href="#exhibitor-flow" class="ticket-hero__cta">Start application <i class="bi bi-arrow-down-circle"></i></a>
+                        <a href="#exhibitor-flow" class="ticket-hero__cta"><th:block th:text="#{exhibitor.hero.cta}">Start application</th:block> <i class="bi bi-arrow-down-circle"></i></a>
                     </div>
                     <div class="ticket-hero__visual overflow-hidden">
-                        <img th:src="@{/images/stall-6x6.png}" alt="Tec-verse exhibitor stall">
-                        <div class="ticket-hero__stage-label position-absolute text-center" aria-hidden="true"><strong>Tec-verse</strong><span>EXHIBITOR 2026</span></div>
+                        <img th:src="@{/images/stall-6x6.png}" alt="Tec-verse exhibitor stall" th:alt="#{exhibitor.hero.imageAlt}">
+                        <div class="ticket-hero__stage-label position-absolute text-center" aria-hidden="true"><strong>Tec-verse</strong><span th:text="#{exhibitor.hero.stageLabel}">EXHIBITOR 2026</span></div>
                     </div>
                 </div>
             </div>
@@ -339,54 +339,54 @@
         <section id="packages" class="exv-section relative px-5 sm:px-8 py-16">
             <div class="max-w-7xl mx-auto">
                 <div class="text-center max-w-xl mx-auto mb-12">
-                    <span class="text-xs font-bold tracking-widest text-blue-main uppercase">Choose your space</span>
-                    <h2 class="font-display font-bold text-3xl sm:text-4xl text-ink mt-3">Pick your exhibitor package</h2>
-                    <p class="text-ink/60 mt-3">Tap a stall to explore its setup and inclusions. Your selection follows you through the application.</p>
+                    <span class="text-xs font-bold tracking-widest text-blue-main uppercase" th:text="#{exhibitor.packages.eyebrow}">Choose your space</span>
+                    <h2 class="font-display font-bold text-3xl sm:text-4xl text-ink mt-3" th:text="#{exhibitor.packages.title}">Pick your exhibitor package</h2>
+                    <p class="text-ink/60 mt-3" th:text="#{exhibitor.packages.subtitle}">Tap a stall to explore its setup and inclusions. Your selection follows you through the application.</p>
                 </div>
 
                 <div class="stall-grid grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="stallGrid">
                     <article class="stall-card glass rounded-3xl overflow-hidden cursor-pointer border border-white/70" data-package="3x3">
                         <div class="stall-visual aspect-[4/3] bg-gradient-to-br from-blue-main/10 to-white/40 flex items-center justify-center">
-                            <img th:src="@{/images/stall-3x3.png}" alt="3 by 3 metre stall" class="max-h-[70%] object-contain" data-hide-on-error>
+                            <img th:src="@{/images/stall-3x3.png}" alt="3 by 3 metre stall" th:alt="#{exhibitor.package.3x3.alt}" class="max-h-[70%] object-contain" data-hide-on-error>
                             <i class="bi bi-box2-heart text-5xl text-blue-main/30"></i>
                         </div>
                         <div class="stall-card-body p-6">
-                            <span class="text-[11px] font-bold tracking-widest text-blue-main/70 uppercase">Compact</span>
+                            <span class="text-[11px] font-bold tracking-widest text-blue-main/70 uppercase" th:text="#{exhibitor.package.3x3.tier}">Compact</span>
                             <h3 class="font-display font-bold text-xl text-ink mt-1">3 × 3 Mtr.</h3>
-                            <p class="text-sm text-ink/60 mt-1">Focused product display and meetings.</p>
+                            <p class="text-sm text-ink/60 mt-1" th:text="#{exhibitor.package.3x3.desc}">Focused product display and meetings.</p>
                             <button type="button" class="select-package mt-4 w-full rounded-xl py-2.5 font-semibold text-sm border border-blue-main/30 text-blue-main hover:bg-blue-main hover:text-white transition flex items-center justify-center gap-2">
-                                Select 3 × 3 <i class="bi bi-arrow-right"></i>
+                                <th:block th:text="#{exhibitor.package.3x3.select}">Select 3 × 3</th:block> <i class="bi bi-arrow-right"></i>
                             </button>
                         </div>
                     </article>
 
                     <article class="stall-card featured glass-strong rounded-3xl overflow-hidden cursor-pointer border-2 border-blue-main/40 relative lg:-translate-y-3" data-package="3x6">
-                        <div class="absolute top-4 right-4 bg-gradient-to-br from-blue-main to-blue-sky text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full z-10">Popular</div>
+                        <div class="absolute top-4 right-4 bg-gradient-to-br from-blue-main to-blue-sky text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full z-10" th:text="#{exhibitor.package.popular}">Popular</div>
                         <div class="stall-visual aspect-[4/3] bg-gradient-to-br from-blue-main/15 to-blue-sky/10 flex items-center justify-center">
-                            <img th:src="@{/images/stall-3x6.png}" alt="3 by 6 metre stall" class="max-h-[70%] object-contain" data-hide-on-error>
+                            <img th:src="@{/images/stall-3x6.png}" alt="3 by 6 metre stall" th:alt="#{exhibitor.package.3x6.alt}" class="max-h-[70%] object-contain" data-hide-on-error>
                             <i class="bi bi-columns-gap text-5xl text-blue-main/40"></i>
                         </div>
                         <div class="stall-card-body p-6">
-                            <span class="text-[11px] font-bold tracking-widest text-blue-main uppercase">Expanded</span>
+                            <span class="text-[11px] font-bold tracking-widest text-blue-main uppercase" th:text="#{exhibitor.package.3x6.tier}">Expanded</span>
                             <h3 class="font-display font-bold text-xl text-ink mt-1">3 × 6 Mtr.</h3>
-                            <p class="text-sm text-ink/60 mt-1">More room for engagement and demos.</p>
+                            <p class="text-sm text-ink/60 mt-1" th:text="#{exhibitor.package.3x6.desc}">More room for engagement and demos.</p>
                             <button type="button" class="select-package mt-4 w-full rounded-xl py-2.5 font-semibold text-sm btn-primary flex items-center justify-center gap-2">
-                                Select 3 × 6 <i class="bi bi-arrow-right"></i>
+                                <th:block th:text="#{exhibitor.package.3x6.select}">Select 3 × 6</th:block> <i class="bi bi-arrow-right"></i>
                             </button>
                         </div>
                     </article>
 
                     <article class="stall-card glass rounded-3xl overflow-hidden cursor-pointer border border-white/70" data-package="6x6">
                         <div class="stall-visual aspect-[4/3] bg-gradient-to-br from-blue-deep/10 to-white/40 flex items-center justify-center">
-                            <img th:src="@{/images/stall-6x6.png}" alt="6 by 6 metre stall" class="max-h-[70%] object-contain" data-hide-on-error>
+                            <img th:src="@{/images/stall-6x6.png}" alt="6 by 6 metre stall" th:alt="#{exhibitor.package.6x6.alt}" class="max-h-[70%] object-contain" data-hide-on-error>
                             <i class="bi bi-building text-5xl text-blue-deep/40"></i>
                         </div>
                         <div class="stall-card-body p-6">
-                            <span class="text-[11px] font-bold tracking-widest text-blue-deep/80 uppercase">Flagship</span>
+                            <span class="text-[11px] font-bold tracking-widest text-blue-deep/80 uppercase" th:text="#{exhibitor.package.6x6.tier}">Flagship</span>
                             <h3 class="font-display font-bold text-xl text-ink mt-1">6 × 6 Mtr.</h3>
-                            <p class="text-sm text-ink/60 mt-1">Premium showcase and networking zone.</p>
+                            <p class="text-sm text-ink/60 mt-1" th:text="#{exhibitor.package.6x6.desc}">Premium showcase and networking zone.</p>
                             <button type="button" class="select-package mt-4 w-full rounded-xl py-2.5 font-semibold text-sm border border-blue-deep/30 text-blue-deep hover:bg-blue-deep hover:text-white transition flex items-center justify-center gap-2">
-                                Select 6 × 6 <i class="bi bi-arrow-right"></i>
+                                <th:block th:text="#{exhibitor.package.6x6.select}">Select 6 × 6</th:block> <i class="bi bi-arrow-right"></i>
                             </button>
                         </div>
                     </article>
@@ -401,7 +401,7 @@
                 <div class="flow-top flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
                     <div>
                         <span class="text-xs font-bold tracking-widest text-blue-main uppercase" th:text="#{register.application.badge}">Exhibitor application</span>
-                        <h2 class="font-display font-bold text-2xl sm:text-3xl text-ink mt-2">Tell us about your company</h2>
+                        <h2 class="font-display font-bold text-2xl sm:text-3xl text-ink mt-2" th:text="#{exhibitor.flow.title}">Tell us about your company</h2>
                     </div>
                 </div>
 
@@ -422,32 +422,32 @@
                         <div class="step-title flex items-start gap-4 mb-6">
                             <span class="font-display font-bold text-3xl text-blue-main/25">01</span>
                             <div>
-                                <h3 class="font-display font-semibold text-xl text-ink">Quick verification</h3>
-                                <p class="text-ink/60 text-sm mt-1">Start with your company, contact and official email.</p>
+                                <h3 class="font-display font-semibold text-xl text-ink" th:text="#{exhibitor.step1.title}">Quick verification</h3>
+                                <p class="text-ink/60 text-sm mt-1" th:text="#{exhibitor.step1.subtitle}">Start with your company, contact and official email.</p>
                             </div>
                         </div>
                         <div class="field-grid field grid sm:grid-cols-2 gap-5">
-                            <label>Company / Organization name*<input name="companyName" required maxlength="200"></label>
-                            <label>Company type / industry*<input name="industry" required maxlength="100"></label>
-                            <label>Contact person's name*<input name="fullName" required maxlength="150"></label>
-                            <label>Designation*<input name="designation" required maxlength="100"></label>
-                            <label>Mobile number*<input name="phone" type="tel" required maxlength="15"></label>
-                            <label class="wide sm:col-span-2">Official email ID*
+                            <label><th:block th:text="#{exhibitor.field.companyName}">Company / Organization name*</th:block><input name="companyName" required maxlength="200"></label>
+                            <label><th:block th:text="#{exhibitor.field.industry}">Company type / industry*</th:block><input name="industry" required maxlength="100"></label>
+                            <label><th:block th:text="#{exhibitor.field.contactName}">Contact person's name*</th:block><input name="fullName" required maxlength="150"></label>
+                            <label><th:block th:text="#{exhibitor.field.designation}">Designation*</th:block><input name="designation" required maxlength="100"></label>
+                            <label><th:block th:text="#{exhibitor.field.mobile}">Mobile number*</th:block><input name="phone" type="tel" required maxlength="15"></label>
+                            <label class="wide sm:col-span-2"><th:block th:text="#{exhibitor.field.officialEmail}">Official email ID*</th:block>
                                 <div class="email-row flex gap-2">
                                     <input id="email" name="email" type="email" required class="flex-1" maxlength="254">
-                                    <button type="button" id="sendOtp" class="btn-primary rounded-xl px-5 font-semibold text-sm whitespace-nowrap">Verify email</button>
+                                    <button type="button" id="sendOtp" class="btn-primary rounded-xl px-5 font-semibold text-sm whitespace-nowrap" th:text="#{exhibitor.otp.verifyEmail}">Verify email</button>
                                 </div>
                             </label>
-                            <label id="otpWrap" class="wide sm:col-span-2 hidden">Enter 6-digit OTP
+                            <label id="otpWrap" class="wide sm:col-span-2 hidden"><th:block th:text="#{exhibitor.otp.enter}">Enter 6-digit OTP</th:block>
                                 <div class="email-row flex gap-2">
                                     <input id="otp" inputmode="numeric" maxlength="6" class="flex-1">
-                                    <button type="button" id="verifyOtp" class="rounded-xl px-5 font-semibold text-sm border border-blue-main/30 text-blue-main hover:bg-blue-main hover:text-white transition whitespace-nowrap">Confirm OTP</button>
+                                    <button type="button" id="verifyOtp" class="rounded-xl px-5 font-semibold text-sm border border-blue-main/30 text-blue-main hover:bg-blue-main hover:text-white transition whitespace-nowrap" th:text="#{exhibitor.otp.confirm}">Confirm OTP</button>
                                 </div>
                                 <small id="otpStatus" class="text-xs font-medium text-blue-main"></small>
                             </label>
                         </div>
                         <div class="form-nav flex justify-end mt-8">
-                            <button type="button" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2">Continue <i class="bi bi-arrow-right"></i></button>
+                            <button type="button" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2"><th:block th:text="#{exhibitor.nav.continue}">Continue</th:block> <i class="bi bi-arrow-right"></i></button>
                         </div>
                     </div>
 
@@ -456,30 +456,30 @@
                         <div class="step-title flex items-start gap-4 mb-6">
                             <span class="font-display font-bold text-3xl text-blue-main/25">02</span>
                             <div>
-                                <h3 class="font-display font-semibold text-xl text-ink">Company profile</h3>
-                                <p class="text-ink/60 text-sm mt-1">Help visitors understand your organization.</p>
+                                <h3 class="font-display font-semibold text-xl text-ink" th:text="#{exhibitor.step2.title}">Company profile</h3>
+                                <p class="text-ink/60 text-sm mt-1" th:text="#{exhibitor.step2.subtitle}">Help visitors understand your organization.</p>
                             </div>
                         </div>
                         <div class="field-grid field grid sm:grid-cols-2 gap-5">
-                            <label>Website<input name="website" type="url" placeholder="https://" maxlength="255"></label>
-                            <label>GST / Tax registration number<input name="gst" maxlength="15"></label>
-                            <label class="wide sm:col-span-2">Company address<textarea name="companyAddress" maxlength="500"></textarea></label>
-                            <label>City*<input name="city" required maxlength="100"></label>
-                            <label>State*<input name="state" required maxlength="100"></label>
-                            <label>Country*<input name="country" value="India" required maxlength="100"></label>
-                            <label>Company registration number<input name="companyRegistrationNumber" maxlength="100"></label>
-                            <label>Social media / LinkedIn<input name="linkedin" maxlength="255"></label>
-                            <label>WhatsApp number<input name="whatsappNumber" maxlength="15"></label>
-                            <label>Alternate contact person<input name="alternateContactPerson" maxlength="150"></label>
-                            <label>Alternate mobile number<input name="alternateMobileNumber" maxlength="15"></label>
-                            <label class="wide sm:col-span-2">Short company description<textarea name="companyDescription" maxlength="1000"></textarea></label>
-                            <label>Product/service category<input name="productServiceCategory" maxlength="150"></label>
-                            <label class="wide sm:col-span-2">Company document (PDF, max 1 MB) <input id="logoFile" name="logoFile" type="file" accept="application/pdf,.pdf" class="!p-2 !bg-white/50"></label>
-                            <label class="wide sm:col-span-2">Supporting document (PDF, max 1 MB) <input id="documents" name="documents" type="file" accept="application/pdf,.pdf" class="!p-2 !bg-white/50"></label>
+                            <label><th:block th:text="#{register.field.website}">Website</th:block><input name="website" type="url" placeholder="https://" maxlength="255"></label>
+                            <label><th:block th:text="#{exhibitor.field.gst}">GST / Tax registration number</th:block><input name="gst" maxlength="15"></label>
+                            <label class="wide sm:col-span-2"><th:block th:text="#{exhibitor.field.companyAddress}">Company address</th:block><textarea name="companyAddress" maxlength="500"></textarea></label>
+                            <label><th:block th:text="#{exhibitor.field.city}">City*</th:block><input name="city" required maxlength="100"></label>
+                            <label><th:block th:text="#{exhibitor.field.state}">State*</th:block><input name="state" required maxlength="100"></label>
+                            <label><th:block th:text="#{exhibitor.field.country}">Country*</th:block><input name="country" value="India" required maxlength="100"></label>
+                            <label><th:block th:text="#{exhibitor.field.registrationNumber}">Company registration number</th:block><input name="companyRegistrationNumber" maxlength="100"></label>
+                            <label><th:block th:text="#{exhibitor.field.linkedin}">Social media / LinkedIn</th:block><input name="linkedin" maxlength="255"></label>
+                            <label><th:block th:text="#{exhibitor.field.whatsapp}">WhatsApp number</th:block><input name="whatsappNumber" maxlength="15"></label>
+                            <label><th:block th:text="#{exhibitor.field.alternateContact}">Alternate contact person</th:block><input name="alternateContactPerson" maxlength="150"></label>
+                            <label><th:block th:text="#{exhibitor.field.alternateMobile}">Alternate mobile number</th:block><input name="alternateMobileNumber" maxlength="15"></label>
+                            <label class="wide sm:col-span-2"><th:block th:text="#{exhibitor.field.companyDescription}">Short company description</th:block><textarea name="companyDescription" maxlength="1000"></textarea></label>
+                            <label><th:block th:text="#{exhibitor.field.productServiceCategory}">Product/service category</th:block><input name="productServiceCategory" maxlength="150"></label>
+                            <label class="wide sm:col-span-2"><th:block th:text="#{exhibitor.field.companyDocument}">Company document (PDF, max 1 MB)</th:block> <input id="logoFile" name="logoFile" type="file" accept="application/pdf,.pdf" class="!p-2 !bg-white/50"></label>
+                            <label class="wide sm:col-span-2"><th:block th:text="#{exhibitor.field.supportingDocument}">Supporting document (PDF, max 1 MB)</th:block> <input id="documents" name="documents" type="file" accept="application/pdf,.pdf" class="!p-2 !bg-white/50"></label>
                         </div>
                         <div class="form-nav flex justify-between mt-8">
                             <button type="button" class="back rounded-xl px-6 py-3 font-semibold text-ink/70 border border-ink/15 hover:bg-white/60 transition" th:text="#{register.back}">Back</button>
-                            <button type="button" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2">Continue <i class="bi bi-arrow-right"></i></button>
+                            <button type="button" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2"><th:block th:text="#{exhibitor.nav.continue}">Continue</th:block> <i class="bi bi-arrow-right"></i></button>
                         </div>
                     </div>
 
@@ -488,42 +488,42 @@
                         <div class="step-title flex items-start gap-4 mb-6">
                             <span class="font-display font-bold text-3xl text-blue-main/25">03</span>
                             <div>
-                                <h3 class="font-display font-semibold text-xl text-ink">Your exhibition</h3>
-                                <p class="text-ink/60 text-sm mt-1">Describe what you are bringing to Tec-verse.</p>
+                                <h3 class="font-display font-semibold text-xl text-ink" th:text="#{exhibitor.step3.title}">Your exhibition</h3>
+                                <p class="text-ink/60 text-sm mt-1" th:text="#{exhibitor.step3.subtitle}">Describe what you are bringing to Tec-verse.</p>
                             </div>
                         </div>
                         <div class="field-grid field grid sm:grid-cols-2 gap-5">
-                            <label>What are you exhibiting?*
+                            <label><th:block th:text="#{exhibitor.field.exhibiting}">What are you exhibiting?*</th:block>
                                 <select name="products" required>
-                                    <option value="">Select</option>
-                                    <option>Product</option>
-                                    <option>Technology</option>
-                                    <option>Service</option>
-                                    <option>Research project</option>
-                                    <option>Live demonstration</option>
+                                    <option value="" th:text="#{exhibitor.option.select}">Select</option>
+                                    <option value="Product" th:text="#{exhibitor.option.product}">Product</option>
+                                    <option value="Technology" th:text="#{exhibitor.option.technology}">Technology</option>
+                                    <option value="Service" th:text="#{exhibitor.option.service}">Service</option>
+                                    <option value="Research project" th:text="#{exhibitor.option.researchProject}">Research project</option>
+                                    <option value="Live demonstration" th:text="#{exhibitor.option.liveDemonstration}">Live demonstration</option>
                                 </select>
                             </label>
-                            <label>Product / technology name<input name="productTechnologyName" maxlength="150"></label>
-                            <label>Product category<input name="productCategory" maxlength="100"></label>
-                            <label>Stage
+                            <label><th:block th:text="#{exhibitor.field.productTechnologyName}">Product / technology name</th:block><input name="productTechnologyName" maxlength="150"></label>
+                            <label><th:block th:text="#{exhibitor.field.productCategory}">Product category</th:block><input name="productCategory" maxlength="100"></label>
+                            <label><th:block th:text="#{exhibitor.field.stage}">Stage</th:block>
                                 <select name="productStage">
-                                    <option>Prototype</option>
-                                    <option>Commercial product</option>
-                                    <option>Research project</option>
-                                    <option>Demonstration</option>
+                                    <option value="Prototype" th:text="#{exhibitor.option.prototype}">Prototype</option>
+                                    <option value="Commercial product" th:text="#{exhibitor.option.commercialProduct}">Commercial product</option>
+                                    <option value="Research project" th:text="#{exhibitor.option.researchProject}">Research project</option>
+                                    <option value="Demonstration" th:text="#{exhibitor.option.demonstration}">Demonstration</option>
                                 </select>
                             </label>
-                            <label class="wide sm:col-span-2">Brief description<textarea name="productDescription" maxlength="2000"></textarea></label>
-                            <label>Special equipment required<input name="specialRequirements" maxlength="500"></label>
-                            <label>Machinery/equipment brought<input name="machineryEquipment" maxlength="500"></label>
-                            <label>Equipment dimensions<input name="equipmentDimensions" placeholder="L × W × H" maxlength="100"></label>
-                            <label>Equipment weight<input name="equipmentWeight" maxlength="100"></label>
-                            <label class="sm:col-span-2">Compressed air / water / utilities<textarea name="utilityRequirements" maxlength="1000"></textarea></label>
-                            <label class="sm:col-span-2">Heat, noise, smoke, vibration etc.<textarea name="equipmentImpact" maxlength="1000"></textarea></label>
+                            <label class="wide sm:col-span-2"><th:block th:text="#{exhibitor.field.briefDescription}">Brief description</th:block><textarea name="productDescription" maxlength="2000"></textarea></label>
+                            <label><th:block th:text="#{exhibitor.field.specialEquipment}">Special equipment required</th:block><input name="specialRequirements" maxlength="500"></label>
+                            <label><th:block th:text="#{exhibitor.field.machinery}">Machinery/equipment brought</th:block><input name="machineryEquipment" maxlength="500"></label>
+                            <label><th:block th:text="#{exhibitor.field.equipmentDimensions}">Equipment dimensions</th:block><input name="equipmentDimensions" placeholder="L × W × H" th:placeholder="#{exhibitor.placeholder.dimensions}" maxlength="100"></label>
+                            <label><th:block th:text="#{exhibitor.field.equipmentWeight}">Equipment weight</th:block><input name="equipmentWeight" maxlength="100"></label>
+                            <label class="sm:col-span-2"><th:block th:text="#{exhibitor.field.utilities}">Compressed air / water / utilities</th:block><textarea name="utilityRequirements" maxlength="1000"></textarea></label>
+                            <label class="sm:col-span-2"><th:block th:text="#{exhibitor.field.equipmentImpact}">Heat, noise, smoke, vibration etc.</th:block><textarea name="equipmentImpact" maxlength="1000"></textarea></label>
                         </div>
                         <div class="form-nav flex justify-between mt-8">
                             <button type="button" class="back rounded-xl px-6 py-3 font-semibold text-ink/70 border border-ink/15 hover:bg-white/60 transition" th:text="#{register.back}">Back</button>
-                            <button type="button" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2">Choose package <i class="bi bi-arrow-right"></i></button>
+                            <button type="button" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2"><th:block th:text="#{exhibitor.nav.choosePackage}">Choose package</th:block> <i class="bi bi-arrow-right"></i></button>
                         </div>
                     </div>
 
@@ -533,14 +533,14 @@
                             <span class="font-display font-bold text-3xl text-blue-main/25">04</span>
                             <div>
                                 <h3 class="font-display font-semibold text-xl text-ink" th:text="#{register.field.stallPackage}">Stall package</h3>
-                                <p class="text-ink/60 text-sm mt-1">Select the space that matches your exhibition plan.</p>
+                                <p class="text-ink/60 text-sm mt-1" th:text="#{exhibitor.step4.subtitle}">Select the space that matches your exhibition plan.</p>
                             </div>
                         </div>
                         <div class="package-choice grid sm:grid-cols-3 gap-4" id="packageChoice"></div>
                         <div id="packageDetails" class="package-details mt-6 glass rounded-2xl p-5 text-sm text-ink/70 hidden"></div>
                         <div class="form-nav flex justify-between mt-8">
                             <button type="button" class="back rounded-xl px-6 py-3 font-semibold text-ink/70 border border-ink/15 hover:bg-white/60 transition" th:text="#{register.back}">Back</button>
-                            <button type="button" id="previewBtn" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2">Preview application <i class="bi bi-eye"></i></button>
+                            <button type="button" id="previewBtn" class="next btn-primary rounded-xl px-6 py-3 font-semibold flex items-center gap-2"><th:block th:text="#{exhibitor.nav.preview}">Preview application</th:block> <i class="bi bi-eye"></i></button>
                         </div>
                     </div>
 
@@ -554,12 +554,12 @@
     <div id="previewModal" class="exv-modal hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/40 backdrop-blur-sm">
         <div class="modal-card glass-strong rounded-3xl w-full max-w-2xl max-h-[85vh] overflow-y-auto p-7 sm:p-9 relative">
             <button class="close-modal absolute top-5 right-5 w-9 h-9 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-ink/60 text-xl leading-none">×</button>
-            <span class="text-xs font-bold tracking-widest text-blue-main uppercase">Final review</span>
-            <h2 class="font-display font-bold text-2xl text-ink mt-2 mb-5">Confirm your exhibitor application</h2>
+            <span class="text-xs font-bold tracking-widest text-blue-main uppercase" th:text="#{exhibitor.preview.eyebrow}">Final review</span>
+            <h2 class="font-display font-bold text-2xl text-ink mt-2 mb-5" th:text="#{exhibitor.preview.title}">Confirm your exhibitor application</h2>
             <div id="previewContent" class="preview-content text-sm text-ink/70 space-y-2"></div>
             <div class="modal-actions flex flex-col-reverse sm:flex-row justify-end gap-3 mt-7">
-                <button class="edit-modal rounded-xl px-6 py-3 font-semibold text-ink/70 border border-ink/15 hover:bg-white/60 transition">Go back &amp; edit</button>
-                <button id="confirmSubmit" class="confirm btn-primary rounded-xl px-6 py-3 font-semibold flex items-center justify-center gap-2">Confirm &amp; submit <i class="bi bi-check2"></i></button>
+                <button class="edit-modal rounded-xl px-6 py-3 font-semibold text-ink/70 border border-ink/15 hover:bg-white/60 transition" th:text="#{exhibitor.preview.edit}">Go back &amp; edit</button>
+                <button id="confirmSubmit" class="confirm btn-primary rounded-xl px-6 py-3 font-semibold flex items-center justify-center gap-2"><th:block th:text="#{exhibitor.preview.submit}">Confirm &amp; submit</th:block> <i class="bi bi-check2"></i></button>
             </div>
         </div>
     </div>
@@ -568,11 +568,11 @@
     <div id="successModal" class="exv-modal hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/40 backdrop-blur-sm">
         <div class="modal-card success glass-strong rounded-3xl w-full max-w-md p-9 text-center">
             <div class="success-icon w-16 h-16 rounded-full bg-gradient-to-br from-blue-main to-blue-sky text-white text-3xl flex items-center justify-center mx-auto mb-4">✓</div>
-            <span class="text-xs font-bold tracking-widest text-blue-main uppercase">Application received</span>
-            <h2 class="font-display font-bold text-2xl text-ink mt-2">You are registered as an exhibitor</h2>
-            <p class="text-ink/60 mt-3 text-sm">Your entered details and reference number have been sent to your official email.</p>
+            <span class="text-xs font-bold tracking-widest text-blue-main uppercase" th:text="#{exhibitor.success.eyebrow}">Application received</span>
+            <h2 class="font-display font-bold text-2xl text-ink mt-2" th:text="#{exhibitor.success.title}">You are registered as an exhibitor</h2>
+            <p class="text-ink/60 mt-3 text-sm" th:text="#{exhibitor.success.body}">Your entered details and reference number have been sent to your official email.</p>
             <div id="referenceBox" class="glass rounded-xl py-3 mt-5 font-display font-bold text-blue-main tracking-wide"></div>
-            <button class="close-modal confirm btn-primary rounded-xl px-6 py-3 font-semibold mt-6 w-full">Done</button>
+            <button class="close-modal confirm btn-primary rounded-xl px-6 py-3 font-semibold mt-6 w-full" th:text="#{exhibitor.success.done}">Done</button>
         </div>
     </div>
 

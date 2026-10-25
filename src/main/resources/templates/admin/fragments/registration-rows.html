@@ -1,0 +1,22 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="rows">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Reference</th><th>Name</th><th>Email</th><th>Phone</th><th>Category / details</th><th th:if="${type == 'tickets'}">State / Union Territory</th><th>Submitted</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="row : ${rows}">
+                <td th:text="${row.reference}">Reference</td><td th:text="${row.name}">Name</td>
+                <td th:text="${row.email}">Email</td><td th:text="${row.phone}">Phone</td><td th:text="${row.detail}">Details</td><td th:if="${type == 'tickets'}" th:text="${row.applicantState != null && !row.applicantState.isBlank() ? row.applicantState : 'Not provided'}">State</td>
+                <td th:text="${row.createdAt != null ? #temporals.format(row.createdAt, 'dd MMM yyyy HH:mm') : ''}"></td>
+                <td class="text-nowrap">
+                    <a class="btn btn-sm btn-primary" th:href="@{/admin/registrations/{type}/{id}/edit(type=${type},id=${row.id})}">View / edit</a>
+                    <form th:if="${!adminReadOnly}" class="d-inline" method="post" th:action="@{/admin/registrations/{type}/{id}/delete(type=${type},id=${row.id})}"
+                          data-confirm="Permanently delete this registration record? This cannot be undone.">
+                        <button class="btn btn-sm btn-outline-danger ms-1" type="submit" aria-label="Delete registration"><i class="bi bi-trash"></i> Delete</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(rows)}"><td th:attr="colspan=${type == 'tickets' ? 8 : 7}" class="text-center text-secondary py-4">No records found.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

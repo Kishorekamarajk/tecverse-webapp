@@ -156,13 +156,14 @@ public class RegistrationController {
     public ResponseEntity<ApiResponse<TicketRegistrationResponse>> ticketRegister(@Valid @RequestBody TicketRegistrationRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "ticket-registration", request.getEmail(), 5, Duration.ofHours(1), 20, Duration.ofHours(1));
         OtpSessionVerification.require(httpRequest, Purpose.TICKET, request.getEmail());
-        String phone = request.getPhone() == null ? "" : com.tecverse.app.util.ValidationUtil.normalizeIndianMobile(request.getPhone().trim());
-        if (!OtpSessionVerification.isVerified(httpRequest, Purpose.TICKET_MOBILE, phone)) {
-            throw new OtpVerificationRequiredException("Please verify your mobile number with OTP before submitting.");
-        }
+        // Mobile OTP verification is disabled for now; uncomment to require it again.
+        // String phone = request.getPhone() == null ? "" : com.tecverse.app.util.ValidationUtil.normalizeIndianMobile(request.getPhone().trim());
+        // if (!OtpSessionVerification.isVerified(httpRequest, Purpose.TICKET_MOBILE, phone)) {
+        //     throw new OtpVerificationRequiredException("Please verify your mobile number with OTP before submitting.");
+        // }
         TicketRegistrationResponse response = ticketRegistrationService.register(request);
         OtpSessionVerification.consume(httpRequest, Purpose.TICKET);
-        OtpSessionVerification.consume(httpRequest, Purpose.TICKET_MOBILE);
+        // OtpSessionVerification.consume(httpRequest, Purpose.TICKET_MOBILE);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Registration completed.",response));
     }
 
@@ -193,7 +194,9 @@ public class RegistrationController {
                     case "BOTH" -> "26 and 27 November 2026";
                     default -> day;
                 }).collect(java.util.stream.Collectors.joining(", "));
-        String logoUrl=appUrl.replaceAll("/+$","")+"/images/tecverselogo.png";
+        // Resolve the logo against the host serving this scan page. app.url may point at
+        // production while the same application is being tested on localhost.
+        String logoUrl="/images/tecverselogo.png";
         String body="<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Registration verified | Tec-verse 2026</title><style>body{margin:0;padding:24px;background:#f4f6fb;font:16px/1.5 system-ui,sans-serif;color:#18233b}.card{max-width:440px;margin:6vh auto;background:white;border-radius:18px;overflow:hidden;box-shadow:0 16px 40px #13214a1a}.head{padding:24px;text-align:center;background:linear-gradient(135deg,#0b2852,#5125b9);color:white}.head img{width:58px;height:58px;object-fit:contain;background:white;border-radius:50%;padding:5px}.head h1{font-size:22px;margin:12px 0 0}.body{padding:20px 24px}.row{padding:12px 0;border-bottom:1px solid #edf0f6}.label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#68728a}.value{display:block;font-weight:650;overflow-wrap:anywhere}.foot{text-align:center;padding:0 20px 20px;color:#68728a;font-size:13px}</style></head><body><main class=\"card\"><header class=\"head\"><img src=\""+htmlEscape(logoUrl)+"\" alt=\"Tec-verse\"><h1>Registration verified</h1></header><section class=\"body\">"
                 +scanRow("Name",registration.getOfficialName())+scanRow("Email",registration.getEmail())
                 +scanRow("Reference",registration.getReferenceNumber())+scanRow("Preferred days",days)

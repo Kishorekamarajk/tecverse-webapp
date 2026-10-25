@@ -38,6 +38,84 @@
         iframe.style.height = newH + 'px';
     }
 
+    // Talks to the YouTube embed over postMessage (no external API script, so the CSP stays as-is).
+    // The video is revealed only once it is actually playing and YouTube's start-up control overlay
+    // (prev / pause / next) has faded, and hidden again if playback pauses or autoplay is blocked.
+    var YT_ORIGIN = 'https://www.youtube.com';
+    var YT_PLAYING = 1;
+    var CONTROLS_FADE_MS = 2500;
+
+    function setVideoVisible(wrap, visible) {
+        wrap.classList.toggle('opacity-0', !visible);
+        wrap.classList.toggle('opacity-100', visible);
+    }
+
+    function initHeroVideoPlayer(wrap) {
+        var iframe = wrap.querySelector('[data-hero-video]');
+        if (!iframe) return;
+
+        var revealTimer = null;
+        var captionsRemoved = false;
+        var heardFromPlayer = false;
+
+        // Fallback for when the player never answers (e.g. messaging blocked): show it as before.
+        window.setTimeout(function () {
+            if (!heardFromPlayer) setVideoVisible(wrap, true);
+        }, 8000);
+
+        function send(func, args) {
+            if (!iframe.contentWindow) return;
+            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), YT_ORIGIN);
+        }
+
+        function removeCaptions() {
+            send('unloadModule', ['captions']);
+            send('unloadModule', ['cc']);
+            send('setOption', ['captions', 'track', {}]);
+        }
+
+        function listen() {
+            if (!iframe.contentWindow) return;
+            iframe.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'hero-video' }), YT_ORIGIN);
+        }
+
+        window.addEventListener('message', function (e) {
+            if (e.origin !== YT_ORIGIN || e.source !== iframe.contentWindow) return;
+            var data;
+            try { data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (err) { return; }
+            if (!data) return;
+            heardFromPlayer = true;
+
+            var state = data.event === 'onStateChange' ? data.info
+                : (data.event === 'infoDelivery' && data.info && typeof data.info.playerState === 'number') ? data.info.playerState
+                : null;
+
+            if (!captionsRemoved && (data.event === 'onReady' || data.event === 'initialDelivery' || state === YT_PLAYING)) {
+                captionsRemoved = true;
+                removeCaptions();
+            }
+            if (state === null) return;
+
+            if (state === YT_PLAYING) {
+                removeCaptions();
+                if (!revealTimer && !wrap.classList.contains('opacity-100')) {
+                    revealTimer = window.setTimeout(function () {
+                        revealTimer = null;
+                        setVideoVisible(wrap, true);
+                    }, CONTROLS_FADE_MS);
+                }
+            } else if (state === 2 || state === -1) {
+                // Paused or unstarted (autoplay blocked): YouTube shows its controls, so keep it hidden.
+                window.clearTimeout(revealTimer);
+                revealTimer = null;
+                setVideoVisible(wrap, false);
+            }
+        });
+
+        iframe.addEventListener('load', listen);
+        listen();
+    }
+
     function initHeroCountdown() {
         var countdown = document.querySelector('[data-hero-countdown]');
         if (!countdown) return;
@@ -82,21 +160,14 @@
         sizeHeroVideo();
         initHeroCountdown();
         window.addEventListener('resize', sizeHeroVideo);
+        if (videoWrap) initHeroVideoPlayer(videoWrap);
 
         if (reduceMotion) {
             revealItems.forEach(settle);
-            if (videoWrap) {
-                videoWrap.classList.remove('opacity-0');
-                videoWrap.classList.add('opacity-100');
-            }
             return;
         }
 
         requestAnimationFrame(function () {
-            if (videoWrap) {
-                videoWrap.classList.remove('opacity-0');
-                videoWrap.classList.add('opacity-100');
-            }
             revealItems.forEach(settle);
         });
     });

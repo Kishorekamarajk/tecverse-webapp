@@ -16,7 +16,6 @@ import 'widgets/latest_news_card.dart';
 import 'widgets/latest_news_sheet.dart';
 import '../../notifications/presentation/widgets/notifications_sheet.dart';
 import '../data/event_repository.dart';
-import '../data/important_dates_data.dart';
 import '../domain/important_date_item.dart';
 
 /// TEC-VERSE 2026 Executive Home Screen matching the reference design.
@@ -31,7 +30,7 @@ class PersonalizedHomeScreen extends StatefulWidget {
 
 class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
   final EventRepository _eventRepository = EventRepository();
-  List<ImportantDateItem> _importantDates = ImportantDatesData.defaultDates;
+  List<ImportantDateItem> _importantDates = const [];
 
   @override
   void initState() {
@@ -391,13 +390,14 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
 
                               const SizedBox(height: 22),
 
-                              // 6. LATEST NEWS & IMPORTANT DATES
-                              FadeSlideTransition(
-                                delay: const Duration(milliseconds: 180),
-                                child: _buildLatestNewsHeader(),
-                              ),
-
-                              const SizedBox(height: 12),
+                              // 6. LATEST NEWS & IMPORTANT DATES (only once live data has loaded)
+                              if (_importantDates.isNotEmpty) ...[
+                                FadeSlideTransition(
+                                  delay: const Duration(milliseconds: 180),
+                                  child: _buildLatestNewsHeader(),
+                                ),
+                                const SizedBox(height: 12),
+                              ],
 
                               ..._importantDates.take(3).toList().asMap().entries.map((entry) {
                                 final index = entry.key;

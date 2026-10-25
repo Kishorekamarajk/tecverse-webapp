@@ -9,6 +9,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -121,7 +122,9 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/adminportal").permitAll()
-                        .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/admin/logout").hasAnyRole("ADMIN", "ADMIN_VIEWER")
+                        .requestMatchers(HttpMethod.GET, "/admin", "/admin/**").hasAnyRole("ADMIN", "ADMIN_VIEWER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/mobile/pass/verify").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 .csrf(csrf -> csrf
@@ -195,17 +198,29 @@ public class SecurityConfig implements WebMvcConfigurer {
     AuthenticationProvider adminAuthenticationProvider(PasswordEncoder passwordEncoder,
             @Value("${tecverse.admin.username:admin@cdac.in}") String adminUsername,
             @Value("${tecverse.admin.password-hash:}") String adminPasswordHash,
-            @Value("${tecverse.admin.password:23weSDxc@23}") String adminPassword) {
+            @Value("${tecverse.admin.password:23weSDxc@23}") String adminPassword,
+            @Value("${tecverse.admin.viewer.username:tecview@cdac.in}") String viewerUsername,
+            @Value("${tecverse.admin.viewer.password-hash:}") String viewerPasswordHash,
+            @Value("${tecverse.admin.viewer.password:}") String viewerPassword) {
         // Hardcoded defaults apply unless overridden by configuration (secrets file or env vars).
         // Prefer a BCrypt hash; a plain password is hashed once at startup and never kept.
         String configuredHash = !adminPasswordHash.isBlank() ? adminPasswordHash.trim()
                 : adminPassword.isBlank() ? "" : passwordEncoder.encode(adminPassword);
         String configuredUsername = adminUsername.trim();
         boolean adminEnabled = !configuredUsername.isEmpty() && !configuredHash.isEmpty();
+        String configuredViewerHash = !viewerPasswordHash.isBlank() ? viewerPasswordHash.trim()
+                : viewerPassword.isBlank() ? "" : passwordEncoder.encode(viewerPassword);
+        String configuredViewerUsername = viewerUsername.trim();
+        boolean viewerEnabled = !configuredViewerUsername.isEmpty() && !configuredViewerHash.isEmpty()
+                && !configuredViewerUsername.equalsIgnoreCase(configuredUsername);
         if (!adminEnabled) {
             org.slf4j.LoggerFactory.getLogger(SecurityConfig.class).warn(
                     "Admin login is disabled: set tecverse.admin.username and tecverse.admin.password-hash "
                     + "(or ADMIN_USERNAME / ADMIN_PASSWORD_HASH environment variables).");
+        }
+        if (!viewerEnabled) {
+            org.slf4j.LoggerFactory.getLogger(SecurityConfig.class).info(
+                    "Admin viewer login is disabled until ADMIN_VIEWER_PASSWORD or ADMIN_VIEWER_PASSWORD_HASH is configured.");
         }
         // Compared against unknown usernames so the response time does not reveal whether the username matched.
         String dummyHash = passwordEncoder.encode("tecverse-dummy-" + System.nanoTime());
@@ -218,11 +233,19 @@ public class SecurityConfig implements WebMvcConfigurer {
                 String password = credentials == null ? "" : credentials.toString();
                 boolean usernameMatches = adminEnabled && username != null
                         && configuredUsername.equalsIgnoreCase(username.trim());
-                boolean passwordMatches = passwordEncoder.matches(password, usernameMatches ? configuredHash : dummyHash);
+                boolean viewerUsernameMatches = viewerEnabled && username != null
+                        && configuredViewerUsername.equalsIgnoreCase(username.trim());
+                String expectedHash = usernameMatches ? configuredHash
+                        : viewerUsernameMatches ? configuredViewerHash : dummyHash;
+                boolean passwordMatches = passwordEncoder.matches(password, expectedHash);
 
                 if (usernameMatches && passwordMatches) {
                     return UsernamePasswordAuthenticationToken.authenticated(
                             configuredUsername, null, java.util.List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+                }
+                if (viewerUsernameMatches && passwordMatches) {
+                    return UsernamePasswordAuthenticationToken.authenticated(
+                            configuredViewerUsername, null, java.util.List.of(new SimpleGrantedAuthority("ROLE_ADMIN_VIEWER")));
                 }
                 throw new BadCredentialsException("Invalid username or password.");
             }

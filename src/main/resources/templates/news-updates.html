@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tec-verse 2026</title>
+    <th:block th:replace="~{fragments/analytics :: gtag}"></th:block>
+    <title th:text="#{contact.title}">Tec-verse 2026</title>
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
 
 
@@ -37,6 +38,7 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="news-page bg-white font-sans text-ink antialiased">
 
 <div th:replace="~{fragments/navbar :: navbar('news')}"></div>
@@ -44,7 +46,7 @@
 <section class="contact-hero news-hero-banner align-items-center justify-content-center" aria-labelledby="news-heading">
     <div class="contact-hero__overlay position-absolute"></div>
     <div class="contact-hero__content container">
-        <h1 id="news-heading" class="section-heading text-uppercase">News &amp; Updates</h1>
+        <h1 id="news-heading" class="section-heading text-uppercase" th:text="#{misc.news.heading}">News &amp; Updates</h1>
     </div>
 </section>
 
@@ -52,16 +54,16 @@
     <div class="container">
         <div class="news-grid d-grid align-items-stretch">
             <article class="news-card d-flex flex-column min-h-[100%] h-100" th:each="news, stat : ${newsItems}" data-reveal="fade-up" th:attr="data-reveal-delay=${stat.index % 3 * 90}">
-                <a class="news-card__image-link d-block overflow-hidden rounded-[8px]" th:href="@{/news-updates/{slug}(slug=${news.slug})}" th:aria-label="${'Read ' + news.title}">
+                <a class="news-card__image-link d-block overflow-hidden rounded-[8px]" th:href="@{/news-updates/{slug}(slug=${news.slug})}" th:aria-label="#{misc.news.readAria(${news.title})}">
                     <img class="news-card__image d-block w-100 object-fit-cover" th:src="@{${news.image}}" th:alt="${news.title}" loading="lazy">
                 </a>
                 <div class="news-card__body d-flex flex-column flex-1 pt-[22px]">
-                    <p class="news-card__date leading-[1.35]"><strong>Date:</strong> <span th:text="${news.date}">25 Apr 2026</span></p>
+                    <p class="news-card__date leading-[1.35]"><strong th:text="#{venue.event.date.label}">Date:</strong> <span th:text="${news.date}">25 Apr 2026</span></p>
                     <h2 class="news-card__title m-0 font-[900] tracking-[0] leading-[1.18] min-h-[3.55em]">
                         <a th:href="@{/news-updates/{slug}(slug=${news.slug})}" th:text="${news.title}">AI Is Not The Future. It's The Floor.</a>
                     </h2>
                     <p class="news-card__excerpt overflow-hidden text-[1rem] leading-[1.42] min-h-[2.84em]" th:text="${news.excerpt}">Not too long ago, having a website made your business look modern.</p>
-                    <a class="news-read-more d-inline-flex align-items-center justify-content-center min-h-[48px] mt-auto text-[0.98rem] font-[800] leading-[1]" th:href="@{/news-updates/{slug}(slug=${news.slug})}">
+                    <a class="news-read-more d-inline-flex align-items-center justify-content-center min-h-[48px] mt-auto text-[0.98rem] font-[800] leading-[1]" th:href="@{/news-updates/{slug}(slug=${news.slug})}" th:text="#{misc.news.readMore}">
                         Read More
                     </a>
                 </div>

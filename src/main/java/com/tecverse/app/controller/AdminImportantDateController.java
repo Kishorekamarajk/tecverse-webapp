@@ -3,6 +3,8 @@ package com.tecverse.app.controller;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -88,6 +91,66 @@ public class AdminImportantDateController {
                 "Important date saved successfully."
         );
 
+        return "redirect:/admin/important-dates";
+    }
+
+    @PostMapping("/admin/important-dates/bulk")
+    public String saveImportantDatesBulk(
+            @RequestParam("titles") List<String> titles,
+            @RequestParam("eventDates") List<String> eventDates,
+            @RequestParam("iconClasses") List<String> iconClasses,
+            @RequestParam("accentColors") List<String> accentColors,
+            @RequestParam(value = "displayOrder", defaultValue = "0") int displayOrder,
+            RedirectAttributes redirectAttributes) {
+        int count = titles == null ? 0 : titles.size();
+        if (count == 0 || count > 20 || eventDates == null || eventDates.size() != count
+                || iconClasses == null || iconClasses.size() != count
+                || accentColors == null || accentColors.size() != count) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Add between 1 and 20 complete important dates.");
+            return "redirect:/admin/important-dates";
+        }
+        if (displayOrder < 0 || displayOrder > Integer.MAX_VALUE - count) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Starting display order is outside the supported range.");
+            return "redirect:/admin/important-dates";
+        }
+
+        List<LocalDate> dates = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            String title = titles.get(i) == null ? "" : titles.get(i).trim();
+            String icon = iconClasses.get(i) == null ? "" : iconClasses.get(i).trim();
+            String color = accentColors.get(i) == null ? "" : accentColors.get(i).trim();
+            if (title.isBlank() || title.length() > 160
+                    || !icon.matches("bi-(calendar-event|calendar-check|calendar-date|calendar-week|calendar2-check|calendar3|clock|hourglass-split|pencil-square|megaphone|person-plus|people-fill|journal-check|cash-coin|credit-card|trophy|flag|geo-alt|ticket-perforated)")
+                    || !color.matches("#[0-9A-Fa-f]{6}")) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Check each title, icon, and accent color.");
+                return "redirect:/admin/important-dates";
+            }
+            try {
+                dates.add(LocalDate.parse(eventDates.get(i)));
+            } catch (DateTimeParseException | NullPointerException ex) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Choose a valid date for every milestone.");
+                return "redirect:/admin/important-dates";
+            }
+        }
+
+        List<ImportantDate> items = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            ImportantDate item = new ImportantDate();
+            item.setTitle(titles.get(i).trim());
+            item.setEventDate(dates.get(i).toString());
+            item.setDateLabel(dates.get(i).format(DATE_LABEL_FORMAT));
+            item.setIconClass(iconClasses.get(i).trim());
+            item.setAccentColor(accentColors.get(i).trim());
+            item.setDisplayOrder(displayOrder + i);
+            item.setActive(true);
+            items.add(item);
+        }
+        try {
+            importantDateRepository.saveAll(items);
+            redirectAttributes.addFlashAttribute("successMessage", items.size() + " important dates added successfully.");
+        } catch (RuntimeException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Unable to save important dates. Please review the entries and try again.");
+        }
         return "redirect:/admin/important-dates";
     }
 

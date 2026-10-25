@@ -1,7 +1,7 @@
 package com.tecverse.app.service.impl;
 
-import java.security.SecureRandom;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tecverse.app.dto.TicketOtpSendRequest;
 import com.tecverse.app.entity.TicketMobileOtp;
 import com.tecverse.app.repository.TicketMobileOtpRepository;
-import com.tecverse.app.service.TicketOtpService;
 import com.tecverse.app.repository.TicketRegistrationRepository;
 import com.tecverse.app.service.MailDeliveryService;
+import com.tecverse.app.service.TicketOtpService;
 import com.tecverse.app.util.SMSServices;
 import com.tecverse.app.util.ValidationUtil;
 
@@ -254,10 +254,17 @@ public class TicketOtpServiceImpl implements TicketOtpService {
                 ? "ticket"
                 : ValidationUtil.sanitize(request.getPassType());
 
-        return "Hello " + name + ",\n\n"
-                + "Your Tec-verse 2026 OTP for " + passType + " booking is " + otp + ".\n"
-                + "This OTP is valid for 5 minutes.\n\n"
-                + "Regards,\nTec-verse Team";
+       return "Hello " + name + ",\n\n"
+        + "Thank you for registering for Tec-Verse 2026.\n\n"
+        + "To complete your registration, please use the "
+        + "One-Time Password (OTP) below to verify your account.\n\n"
+        + "Verification Code: " + otp + "\n\n"
+        + "This code is valid for 5 minutes. For your security, "
+        + "please do not share this code with anyone.\n\n"
+        + "If you did not initiate this registration, "
+        + "please disregard this message.\n\n"
+        + "Regards,\n"
+        + "Tec-Verse 2026 Team";
     }
 
     private static String normalizeEmail(String email) {

@@ -10,17 +10,16 @@ import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 /// `--dart-define=API_BASE_URL=https://your-host/tecverse`
 /// (a value that already ends in `/api` or `/api/mobile` is also accepted).
 ///
-/// IMPORTANT: the default below is the STAGING server. Release builds for
-/// Google Play MUST pass the production URL, e.g.
-/// `flutter build appbundle --release --dart-define=API_BASE_URL=https://<production-host>/tecverse`
+/// The default below is the production website origin. API requests use
+/// `https://tec-verse.cdac.in/api`; override it at build time when needed.
 class ApiConfig {
   ApiConfig._();
 
   /// Raw value supplied via `--dart-define=API_BASE_URL=...` (empty if absent).
   static const String _definedBaseUrl = String.fromEnvironment('API_BASE_URL');
 
-  /// Default server origin + context path (STAGING). See class docs.
-  static const String _defaultServerBaseUrl = 'https://ngypr123.bosschn.in/tecverse';
+  /// Default production website origin. See class docs.
+  static const String _defaultServerBaseUrl = 'https://tec-verse.cdac.in';
 
   /// Configured server origin + context path, as supplied (not yet normalized).
   static String get _configuredBaseUrl =>
@@ -40,7 +39,7 @@ class ApiConfig {
   }
 
   /// Website origin + context path without the `/api` suffix,
-  /// e.g. `https://ngypr123.bosschn.in/tecverse`.
+  /// e.g. `https://tec-verse.cdac.in`.
   static String get webBaseUrl {
     final api = _normalizeUrl(_configuredBaseUrl);
     return api.substring(0, api.length - '/api'.length);
@@ -59,12 +58,7 @@ class ApiConfig {
     }
 
     return [
-      _normalizeUrl(_configuredBaseUrl),
-      if (!kIsWeb && kDebugMode) ...[
-        'http://10.0.2.2:2304/api',
-        'http://127.0.0.1:2304/api',
-        'http://localhost:2304/api',
-      ],
+      _normalizeUrl(_defaultServerBaseUrl),
     ];
   }
 

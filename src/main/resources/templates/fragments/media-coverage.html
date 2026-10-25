@@ -35,7 +35,7 @@
                            target="_blank"
                            rel="noopener noreferrer"
                            class="media-overlay-link"
-                           th:aria-label="|Watch ${news.title}|">
+                           th:aria-label="#{page.media.watchAria(${news.title})}">
 
                             <div class="media-overlay-image">
                                 <img th:if="${!#strings.isEmpty(news.imageUrl)}"

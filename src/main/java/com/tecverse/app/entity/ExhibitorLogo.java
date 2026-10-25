@@ -23,6 +23,9 @@ public class ExhibitorLogo {
     @Column(name = "image_url", nullable = false, length = 500)
     private String imageUrl;
 
+    @Column(name = "website_url", length = 500)
+    private String websiteUrl;
+
     @Column(name = "stall_allocation", nullable = false, length = 80)
     private String stallAllocation;
 
@@ -53,6 +56,8 @@ public class ExhibitorLogo {
     public void setCompanyName(String companyName) { this.companyName = companyName; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getWebsiteUrl() { return websiteUrl; }
+    public void setWebsiteUrl(String websiteUrl) { this.websiteUrl = websiteUrl; }
     public String getStallAllocation() { return stallAllocation; }
     public void setStallAllocation(String stallAllocation) { this.stallAllocation = stallAllocation; }
     public int getDisplayOrder() { return displayOrder; }

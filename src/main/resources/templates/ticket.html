@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Delegate Registration | Tec-verse 2026</title>
+<th:block th:replace="~{fragments/analytics :: gtag}"></th:block>
+<title th:text="#{ticketpage.title}">Delegate Registration | Tec-verse 2026</title>
 <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
 
 
@@ -109,10 +110,12 @@ body.ticket-page{background:#F6F8FC}
 /* Keep the email and mobile verification controls aligned as each OTP panel opens. */
 .tr-verify-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px;row-gap:22px;align-items:start}
 .tr-verify-field{min-width:0}
+.rg .tr-password-hint{display:flex;align-items:flex-start;gap:6px;color:var(--err)!important;line-height:1.45}
+.tr-password-hint i{flex:none;margin-top:1px}
 .tr-verify-name{grid-column:1;grid-row:1}
-.tr-verify-password{grid-column:2;grid-row:1}
-.tr-verify-mobile{grid-column:1;grid-row:2}
-.tr-verify-email{grid-column:2;grid-row:2}
+.tr-verify-mobile{grid-column:2;grid-row:1}
+.tr-verify-email{grid-column:1;grid-row:2}
+.tr-verify-password{grid-column:2;grid-row:2}
 .tr-verify-confirm{grid-column:1;grid-row:3}
 .tr-verify-register{grid-column:2;grid-row:3;align-self:end;display:flex;justify-content:flex-end}
 .tr-verify-register .btn{min-width:170px;height:54px;font-size:1rem;border-radius:14px;background:var(--pri);box-shadow:0 12px 24px -12px rgba(108,99,255,.65)}
@@ -293,6 +296,7 @@ body.ticket-page{background:#F6F8FC}
 @media(prefers-reduced-motion:reduce){.rg *{animation:none!important;transition:none!important}.js .rg-reveal{opacity:1;transform:none}}
 </style>
 </head>
+
 <body class="ticket-page no-hero" th:attr="data-context-path=@{/}">
 <script th:nonce="${cspNonce}" th:inline="none">document.body.classList.add('js');</script>
 <div id="rgScroll"></div>
@@ -326,33 +330,36 @@ body.ticket-page{background:#F6F8FC}
               <div class="rg-note"><i class="bi bi-info-circle"></i><span> It will not be shared with external organisations.</span></div> -->
               <div class="tr-verify-grid">
                 <div class="tr-verify-field tr-verify-name"><label class="rg-f"><span th:text="#{ticket.verify.fullName}">Full Name</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="verifyName" name="verifyName" type="text" autocomplete="name" th:placeholder="#{ticket.verify.placeholder.fullName}" maxlength="150" required></label></div>
+                <div class="tr-verify-field tr-verify-mobile"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required><!-- Mobile OTP verification disabled for now; remove the markers to restore it. --><!--/*--><button type="button" id="sendMobileOtp" class="btn tr-primary" th:text="#{ticket.verify.sendOtp}">Send OTP</button><!--*/--></span></label>
+                  <!--/*-->
+                  <div id="mobileOtpBox" class="tr-otp" hidden>
+                    <p class="tr-otp-note"><span th:text="#{ticketpage.otp.mobileNote}">Enter the OTP sent by SMS to</span> <strong id="otpMobile"></strong></p>
+                    <div class="tr-otp-row">
+                      <div class="tr-otp-inputs" id="mobileOtpInputs" role="group" aria-label="Mobile OTP" th:aria-label="#{ticketpage.otp.mobileGroup}">
+                        <input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 1" th:aria-label="#{ticketpage.otp.digit1}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 2" th:aria-label="#{ticketpage.otp.digit2}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 3" th:aria-label="#{ticketpage.otp.digit3}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 4" th:aria-label="#{ticketpage.otp.digit4}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 5" th:aria-label="#{ticketpage.otp.digit5}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 6" th:aria-label="#{ticketpage.otp.digit6}">
+                      </div>
+                      <button type="button" id="verifyMobileOtp" class="btn tr-otp-btn" th:text="#{ticketpage.otp.verify}">Verify</button>
+                    </div>
+                    <button id="resendMobileOtp" class="tr-otp-resend" type="button" th:text="#{ticketpage.otp.resend}">Resend OTP</button>
+                  </div>
+                  <!--*/-->
+                </div>
                 <div class="tr-verify-field tr-verify-email"><label class="rg-f"><span th:text="#{ticket.verify.email}">Email Address</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="email" name="email" type="email" autocomplete="email" th:placeholder="#{ticket.verify.placeholder.email}" maxlength="150" required><button type="button" id="sendOtp" class="btn tr-primary"><span th:text="#{ticket.verify.sendOtp}">Send OTP</span></button></span></label>
                   <div id="otpBox" class="tr-otp" hidden>
-                    <p class="tr-otp-note">Enter the OTP sent to <strong id="otpEmail"></strong></p>
+                    <p class="tr-otp-note"><span th:text="#{ticketpage.otp.emailNote}">Enter the OTP sent to</span> <strong id="otpEmail"></strong></p>
                     <div class="tr-otp-row">
-                      <div class="tr-otp-inputs" id="emailOtpInputs" role="group" aria-label="Email OTP">
-                        <input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 1"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 2"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 3"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 4"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 5"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 6">
+                      <div class="tr-otp-inputs" id="emailOtpInputs" role="group" aria-label="Email OTP" th:aria-label="#{ticketpage.otp.emailGroup}">
+                        <input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 1" th:aria-label="#{ticketpage.otp.digit1}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 2" th:aria-label="#{ticketpage.otp.digit2}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 3" th:aria-label="#{ticketpage.otp.digit3}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 4" th:aria-label="#{ticketpage.otp.digit4}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 5" th:aria-label="#{ticketpage.otp.digit5}"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 6" th:aria-label="#{ticketpage.otp.digit6}">
                       </div>
-                      <button type="button" id="verifyOtp" class="btn tr-otp-btn">Verify</button>
+                      <button type="button" id="verifyOtp" class="btn tr-otp-btn" th:text="#{ticketpage.otp.verify}">Verify</button>
                     </div>
-                    <button id="resendOtp" class="tr-otp-resend" type="button">Resend OTP</button>
+                    <button id="resendOtp" class="tr-otp-resend" type="button" th:text="#{ticketpage.otp.resend}">Resend OTP</button>
                   </div>
                 </div>
-                <div class="tr-verify-field tr-verify-password"><label class="rg-f"><span th:text="#{ticket.verify.createPassword}">Create Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="8+ characters" required><button class="btn password-toggle" type="button" data-password-target="password" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span><small class="text-secondary fw-normal d-block mt-1">Use 8+ characters with an uppercase letter, a number, and a symbol.</small></label></div>
-                <div class="tr-verify-field tr-verify-mobile"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required><button type="button" id="sendMobileOtp" class="btn tr-primary">Send OTP</button></span></label>
-                  <div id="mobileOtpBox" class="tr-otp" hidden>
-                    <p class="tr-otp-note">Enter the OTP sent by SMS to <strong id="otpMobile"></strong></p>
-                    <div class="tr-otp-row">
-                      <div class="tr-otp-inputs" id="mobileOtpInputs" role="group" aria-label="Mobile OTP">
-                        <input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 1"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 2"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 3"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 4"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 5"><input class="form-control" maxlength="1" inputmode="numeric" aria-label="Digit 6">
-                      </div>
-                      <button type="button" id="verifyMobileOtp" class="btn tr-otp-btn">Verify</button>
-                    </div>
-                    <button id="resendMobileOtp" class="tr-otp-resend" type="button">Resend OTP</button>
-                  </div>
-                </div>
-                <div class="tr-verify-field tr-verify-confirm"><label class="rg-f"><span th:text="#{ticket.verify.confirmPassword}">Confirm Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="64" th:placeholder="#{ticket.verify.placeholder.confirmPassword}" oncopy="return false" oncut="return false" onpaste="return false" required><button class="btn btn-outline-secondary password-toggle" type="button" data-password-target="confirmPassword" aria-label="Show password" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span></label></div>
-                <div class="tr-verify-register"><button type="button" id="registerStart" class="btn tr-primary">Register <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div>
+                <div class="tr-verify-field tr-verify-password"><label class="rg-f"><span th:text="#{ticket.verify.createPassword}">Create Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="8+ characters" th:placeholder="#{ticket.verify.placeholder.password}" required><button class="btn password-toggle" type="button" data-password-target="password" aria-label="Show password" th:aria-label="#{ticketpage.password.show}" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span><small class="tr-password-hint fw-normal d-block mt-1"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i><span th:text="#{ticketpage.password.hint}">Use 8+ characters with an uppercase letter, a number, and a symbol.</span></small></label></div>
+
+                <div class="tr-verify-field tr-verify-confirm"><label class="rg-f"><span th:text="#{ticket.verify.confirmPassword}">Confirm Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="64" th:placeholder="#{ticket.verify.placeholder.confirmPassword}" oncopy="return false" oncut="return false" onpaste="return false" required><button class="btn btn-outline-secondary password-toggle" type="button" data-password-target="confirmPassword" aria-label="Show password" th:aria-label="#{ticketpage.password.show}" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span></label></div>
+                <div class="tr-verify-register"><button type="button" id="registerStart" class="btn tr-primary"><span th:text="#{ticketpage.verify.register}">Register</span> <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div>
               </div>
               <div id="verifyMsg" class="tr-msg" role="status" aria-live="polite"></div>
             </form>
@@ -360,22 +367,22 @@ body.ticket-page{background:#F6F8FC}
             <div id="detailsStepHost"></div>
 
             <div class="tr-view" data-view="preview" hidden>
-              <div class="rg-sec"><i class="bi bi-table"></i><h3>Review Application</h3></div>
-              <div class="rg-prev-note"><i class="bi bi-exclamation-circle"></i><span>Details cannot be changed after submission. Select <strong>Edit Details</strong> to correct any entry.</span></div>
+              <div class="rg-sec"><i class="bi bi-table"></i><h3 th:text="#{ticketpage.preview.title}">Review Application</h3></div>
+              <div class="rg-prev-note"><i class="bi bi-exclamation-circle"></i><span th:utext="#{ticketpage.preview.note}">Details cannot be changed after submission. Select <strong>Edit Details</strong> to correct any entry.</span></div>
               <div id="rgPreviewTable"></div>
               <div id="preview" class="tr-preview row g-0"></div>
               <div id="previewMsg" class="tr-msg"></div>
               <div class="rg-actions">
-                <button id="editForm" class="btn tr-secondary"><i class="bi bi-pencil"></i> Edit Details</button>
-                <button id="submitFinal" class="btn tr-primary">Submit Application <i class="bi bi-check2-circle"></i></button>
+                <button id="editForm" class="btn tr-secondary"><i class="bi bi-pencil"></i> <span th:text="#{ticketpage.preview.edit}">Edit Details</span></button>
+                <button id="submitFinal" class="btn tr-primary"><span th:text="#{register.submit}">Submit Application</span> <i class="bi bi-check2-circle"></i></button>
               </div>
             </div>
 
             <div class="tr-view tr-complete" data-view="complete" hidden>
               <canvas id="confettiCanvas" class="tr-confetti-canvas" aria-hidden="true"></canvas>
               <div class="tr-complete-intro">
-                <h2>Registration Successful</h2>
-                <p><span id="confirmationEmailStatus">An acknowledgement email is being prepared for your registration.</span> <strong id="completeEmail"></strong></p>
+                <h2 th:text="#{ticketpage.complete.title}">Registration Successful</h2>
+                <p><span id="confirmationEmailStatus" th:text="#{ticketpage.complete.emailPreparing}">An acknowledgement email is being prepared for your registration.</span> <strong id="completeEmail"></strong></p>
               </div>
 
               <div class="id-card-stage" id="idCardStage">
@@ -383,24 +390,24 @@ body.ticket-page{background:#F6F8FC}
                   <div class="id-card__top-cap" aria-hidden="true"></div>
                   <div class="id-card__header">
                     <div class="id-card__planet">
-                      <img class="id-card__logo" th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo">
+                      <img class="id-card__logo" th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" th:alt="#{ticketpage.logoAlt}">
                       <div class="id-card__planet-core"></div>
                       <div class="id-card__planet-ring"></div>
                     </div>
                     <div class="id-card__title-wrap">
                       <h1 class="id-card__title">Tec-Verse 2026</h1>
-                      <p class="id-card__subtitle">Driving Progress Through Innovation</p>
+                      <p class="id-card__subtitle" th:text="#{ticketpage.tagline}">Driving Progress Through Innovation</p>
                     </div>
                   </div>
 
                   <div class="id-card__content">
-                    <div class="id-card__qr-shell" aria-label="Registration QR code">
-                      <img id="cardQr" alt="Scannable QR code containing a secure registration pass link">
-                      <span id="cardQrError" class="id-card__qr-error" hidden>QR code unavailable</span>
+                    <div class="id-card__qr-shell" aria-label="Registration QR code" th:aria-label="#{ticketpage.card.qrLabel}">
+                      <img id="cardQr" alt="Scannable QR code containing a secure registration pass link" th:alt="#{ticketpage.card.qrAlt}">
+                      <span id="cardQrError" class="id-card__qr-error" hidden th:text="#{ticketpage.card.qrError}">QR code unavailable</span>
                     </div>
 
                     <div class="id-card__identity">
-                      <h2 id="cardName">YOUR NAME</h2>
+                      <h2 id="cardName" th:text="#{ticketpage.card.namePlaceholder}">YOUR NAME</h2>
                       <div id="cardDesignation" class="id-card__designation"></div>
                       <div id="cardOrganization" class="id-card__organization"></div>
                     </div>
@@ -412,7 +419,7 @@ body.ticket-page{background:#F6F8FC}
                   </div>
 
                   <div class="id-card__footer" aria-hidden="true">
-                    <span class="id-card__footer-text">Reference</span>
+                    <span class="id-card__footer-text" th:text="#{ticketpage.card.reference}">Reference</span>
                     <strong id="referenceNumber">TV26-0000</strong>
                   </div>
                   <div class="id-card__shine"></div>
@@ -420,65 +427,65 @@ body.ticket-page{background:#F6F8FC}
                 </div>
               </div>
 
-              <aside class="id-card-notice" role="note" aria-label="ID card and app information">
-                <h3 class="id-card-notice__title"><i class="bi bi-info-circle-fill" aria-hidden="true"></i>Important Information</h3>
+              <aside class="id-card-notice" role="note" aria-label="ID card and app information" th:aria-label="#{ticketpage.notice.label}">
+                <h3 class="id-card-notice__title"><i class="bi bi-info-circle-fill" aria-hidden="true"></i><span th:text="#{ticketpage.notice.title}">Important Information</span></h3>
                 <div class="id-card-notice__details">
-                  <p><strong>Registration details:</strong> Scan the QR code on your ID card to view your registration information.</p>
-                  <p><strong>Event gate pass:</strong> Download the Tec-Verse app from the Play Store for easy venue access.</p>
+                  <p th:utext="#{ticketpage.notice.registration}"><strong>Registration details:</strong> Scan the QR code on your ID card to view your registration information.</p>
+                  <p th:utext="#{ticketpage.notice.gatePass}"><strong>Event gate pass:</strong> Download the Tec-Verse app from the Play Store for easy venue access.</p>
                 </div>
                 <!-- <p>Keep your ID card handy and use the QR code when you arrive at the venue.</p> -->
               </aside>
 
               <div class="d-flex justify-content-center">
-                <a th:href="@{/}" class="btn tr-primary">Return to Home <i class="bi bi-arrow-right"></i></a>
+                <a th:href="@{/}" class="btn tr-primary"><span th:text="#{ticketpage.complete.home}">Return to Home</span> <i class="bi bi-arrow-right"></i></a>
               </div>
             </div>
 
           </div>
         </div>
 
-        <aside class="col-12 col-lg-5 rg-reveal d-flex" aria-label="Registration information">
+        <aside class="col-12 col-lg-5 rg-reveal d-flex" aria-label="Registration information" th:aria-label="#{ticketpage.info.label}">
           <div class="rg-side w-100">
             <div class="rg-info">
               <header class="rg-info-banner">
-                <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo">
-                <div><h2>Tec-<span>Verse</span> 2026</h2><p>Driving Progress Through Innovation</p></div>
+                <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" th:alt="#{ticketpage.logoAlt}">
+                <div><h2>Tec-<span>Verse</span> 2026</h2><p th:text="#{ticketpage.tagline}">Driving Progress Through Innovation</p></div>
               </header>
-              <div id="registrationInfoCarousel" class="carousel slide rg-info-carousel" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="hover" data-bs-touch="true" aria-label="Registration information">
+              <div id="registrationInfoCarousel" class="carousel slide rg-info-carousel" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="hover" data-bs-touch="true" aria-label="Registration information" th:aria-label="#{ticketpage.info.label}">
                 <div class="carousel-inner">
-                  <section class="carousel-item active" role="group" aria-roledescription="slide" aria-label="1 of 2">
+                  <section class="carousel-item active" role="group" aria-roledescription="slide" aria-label="1 of 2" th:aria-label="#{ticketpage.info.slide1}">
                     <div class="rg-info-content" aria-labelledby="registrationInfoTitle">
                       <h3 id="registrationInfoTitle" th:text="#{ticket.info.requiredTitle}">Information Required</h3>
-                      <p class="rg-info-intro">Please keep the following details ready before registration.</p>
+                      <p class="rg-info-intro" th:text="#{ticketpage.info.requiredIntro}">Please keep the following details ready before registration.</p>
                       <div class="rg-info-list">
-                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-person-vcard" aria-hidden="true"></i></span><div><strong>Name as per Government-issued ID</strong><p>Use your official name as per Aadhaar / Passport / Government ID.</p></div></div>
-                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-envelope-paper" aria-hidden="true"></i></span><div><strong>Valid email address</strong><p>A valid email address is required for OTP verification.</p></div></div>
-                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-building" aria-hidden="true"></i></span><div><strong>Institution, department or organisation details</strong><p>Provide your current affiliation details.</p></div></div>
-                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-passport" aria-hidden="true"></i></span><div><strong>Passport details (Foreign Nationals)</strong><p>Required for international participants.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-person-vcard" aria-hidden="true"></i></span><div><strong th:text="#{ticket.info.required.name}">Name as per Government-issued ID</strong><p th:text="#{ticketpage.info.nameDesc}">Use your official name as per Aadhaar / Passport / Government ID.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-envelope-paper" aria-hidden="true"></i></span><div><strong th:text="#{ticketpage.info.emailTitle}">Valid email address</strong><p th:text="#{ticketpage.info.emailDesc}">A valid email address is required for OTP verification.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-building" aria-hidden="true"></i></span><div><strong th:text="#{ticket.info.required.institution}">Institution, department or organisation details</strong><p th:text="#{ticketpage.info.institutionDesc}">Provide your current affiliation details.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-passport" aria-hidden="true"></i></span><div><strong th:text="#{ticket.info.required.passport}">Passport details (Foreign Nationals)</strong><p th:text="#{ticketpage.info.passportDesc}">Required for international participants.</p></div></div>
                       </div>
                     </div>
                   </section>
-                  <section class="carousel-item" role="group" aria-roledescription="slide" aria-label="2 of 2">
+                  <section class="carousel-item" role="group" aria-roledescription="slide" aria-label="2 of 2" th:aria-label="#{ticketpage.info.slide2}">
                     <div class="rg-info-content" aria-labelledby="registrationAfterTitle">
                       <h3 id="registrationAfterTitle" th:text="#{ticket.info.afterRegistration}">After Registration</h3>
-                      <p class="rg-info-intro">Keep these details handy for your visit.</p>
+                      <p class="rg-info-intro" th:text="#{ticketpage.info.afterIntro}">Keep these details handy for your visit.</p>
                       <div class="rg-info-list">
-                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-upc-scan" aria-hidden="true"></i></span><div><strong>Registration reference</strong><p>Keep your reference number for entry and future assistance.</p></div></div>
-                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-calendar2-check" aria-hidden="true"></i></span><div><strong>Preferred event days</strong><p>Your selected dates will be included in your confirmation.</p></div></div>
-                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-geo-alt" aria-hidden="true"></i></span><div><strong>Chennai Trade Centre</strong><p>Nandambakkam, Chennai.</p></div></div>
-                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-envelope-check" aria-hidden="true"></i></span><div><strong>Confirmation email</strong><p>Check your inbox for your registration details.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-upc-scan" aria-hidden="true"></i></span><div><strong th:text="#{ticketpage.info.refTitle}">Registration reference</strong><p th:text="#{ticketpage.info.refDesc}">Keep your reference number for entry and future assistance.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-calendar2-check" aria-hidden="true"></i></span><div><strong th:text="#{ticketpage.info.daysTitle}">Preferred event days</strong><p th:text="#{ticketpage.info.daysDesc}">Your selected dates will be included in your confirmation.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-geo-alt" aria-hidden="true"></i></span><div><strong th:text="#{venue.name}">Chennai Trade Centre</strong><p th:text="#{ticketpage.info.venueDesc}">Nandambakkam, Chennai.</p></div></div>
+                        <div class="rg-info-item"><span class="rg-info-icon"><i class="bi bi-envelope-check" aria-hidden="true"></i></span><div><strong th:text="#{ticketpage.info.confirmTitle}">Confirmation email</strong><p th:text="#{ticketpage.info.confirmDesc}">Check your inbox for your registration details.</p></div></div>
                       </div>
                     </div>
                   </section>
                 </div>
-                <div class="carousel-indicators" aria-label="Information slides">
-                  <button type="button" data-bs-target="#registrationInfoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1: Information required"></button>
-                  <button type="button" data-bs-target="#registrationInfoCarousel" data-bs-slide-to="1" aria-label="Slide 2: After registration"></button>
+                <div class="carousel-indicators" aria-label="Information slides" th:aria-label="#{ticketpage.info.slidesLabel}">
+                  <button type="button" data-bs-target="#registrationInfoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1: Information required" th:aria-label="#{ticketpage.info.slide1Label}"></button>
+                  <button type="button" data-bs-target="#registrationInfoCarousel" data-bs-slide-to="1" aria-label="Slide 2: After registration" th:aria-label="#{ticketpage.info.slide2Label}"></button>
                 </div>
               </div>
-              <section class="rg-venue" aria-label="Event dates and helpdesk">
-                <div><i class="bi bi-calendar-event" aria-hidden="true"></i><span><strong>Event Dates</strong><span th:text="#{ticket.info.eventDates}">26 &amp; 27 November 2026</span></span></div>
-                <div><i class="bi bi-envelope-fill" aria-hidden="true"></i><span><strong>Helpdesk</strong><a href="mailto:tec-verse@cdac.in">tec-verse@cdac.in</a></span></div>
+              <section class="rg-venue" aria-label="Event dates and helpdesk" th:aria-label="#{ticketpage.venue.label}">
+                <div><i class="bi bi-calendar-event" aria-hidden="true"></i><span><strong th:text="#{ticketpage.venue.eventDates}">Event Dates</strong><span th:text="#{ticket.info.eventDates}">26 &amp; 27 November 2026</span></span></div>
+                <div><i class="bi bi-envelope-fill" aria-hidden="true"></i><span><strong th:text="#{ticketpage.venue.helpdesk}">Helpdesk</strong><a href="mailto:tec-verse@cdac.in">tec-verse@cdac.in</a></span></div>
               </section>
             </div>
           </div>
@@ -489,9 +496,9 @@ body.ticket-page{background:#F6F8FC}
 
   <div id="documentViewer" class="tr-document-viewer" style="display:none;">
     <div class="tr-document-header">
-      <h3><i class="bi bi-file-earmark-pdf"></i> Registration Acknowledgement</h3>
+      <h3><i class="bi bi-file-earmark-pdf"></i> <span th:text="#{ticketpage.doc.title}">Registration Acknowledgement</span></h3>
       <div class="tr-document-actions">
-        <button type="button" data-document-print><i class="bi bi-printer"></i> Print</button>
+        <button type="button" data-document-print><i class="bi bi-printer"></i> <span th:text="#{ticketpage.doc.print}">Print</span></button>
         <button type="button" class="tr-document-close" data-document-close><i class="bi bi-x-lg"></i></button>
       </div>
     </div>
@@ -499,38 +506,38 @@ body.ticket-page{background:#F6F8FC}
       <div class="tr-document-card">
         <div class="tr-doc-header">
           <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse" class="tr-doc-logo">
-          <h1 class="tr-doc-title" th:text="#{contact.title}">Tec-verse 2026</h1>
-          <p class="tr-doc-subtitle">Registration Acknowledgement</p>
+          <h1 class="tr-doc-title" th:text="#{brand.name}">Tec-verse 2026</h1>
+          <p class="tr-doc-subtitle" th:text="#{ticketpage.doc.title}">Registration Acknowledgement</p>
         </div>
         <div class="tr-doc-section">
-          <div class="tr-doc-section-title">Registration Details</div>
+          <div class="tr-doc-section-title" th:text="#{ticketpage.doc.regDetails}">Registration Details</div>
           <div class="tr-doc-grid">
-            <div><div class="tr-doc-field-label">Reference Number</div><div class="tr-doc-field-value" id="docRefNumber">-</div></div>
+            <div><div class="tr-doc-field-label" th:text="#{ticketpage.doc.refNumber}">Reference Number</div><div class="tr-doc-field-value" id="docRefNumber">-</div></div>
             <div><div class="tr-doc-field-label" th:text="#{sponsor.field.name}">Name</div><div class="tr-doc-field-value" id="docName">-</div></div>
             <div><div class="tr-doc-field-label" th:text="#{register.field.email}">Email Address</div><div class="tr-doc-field-value" id="docEmail">-</div></div>
-            <div><div class="tr-doc-field-label">Category</div><div class="tr-doc-field-value" id="docCategory">-</div></div>
+            <div><div class="tr-doc-field-label" th:text="#{ticketpage.doc.category}">Category</div><div class="tr-doc-field-value" id="docCategory">-</div></div>
           </div>
         </div>
         <div class="tr-doc-section">
-          <div class="tr-doc-section-title">Event Information</div>
+          <div class="tr-doc-section-title" th:text="#{ticketpage.doc.eventInfo}">Event Information</div>
           <div class="tr-doc-grid">
-            <div><div class="tr-doc-field-label">Event Date</div><div class="tr-doc-field-value">26 &amp; 27 November 2026</div></div>
-            <div><div class="tr-doc-field-label">Venue</div><div class="tr-doc-field-value" th:text="#{venue.name}">Chennai Trade Centre</div></div>
-            <div><div class="tr-doc-field-label">Location</div><div class="tr-doc-field-value">Chennai, Tamil Nadu</div></div>
-            <div><div class="tr-doc-field-label">Preferred Days</div><div class="tr-doc-field-value" id="docDays">-</div></div>
+            <div><div class="tr-doc-field-label" th:text="#{ticketpage.doc.eventDate}">Event Date</div><div class="tr-doc-field-value" th:text="#{ticket.info.eventDates}">26 &amp; 27 November 2026</div></div>
+            <div><div class="tr-doc-field-label" th:text="#{ticketpage.doc.venue}">Venue</div><div class="tr-doc-field-value" th:text="#{venue.name}">Chennai Trade Centre</div></div>
+            <div><div class="tr-doc-field-label" th:text="#{ticketpage.doc.location}">Location</div><div class="tr-doc-field-value" th:text="#{ticketpage.doc.locationValue}">Chennai, Tamil Nadu</div></div>
+            <div><div class="tr-doc-field-label" th:text="#{ticketpage.doc.preferredDays}">Preferred Days</div><div class="tr-doc-field-value" id="docDays">-</div></div>
           </div>
         </div>
         <div class="tr-doc-section">
-          <div class="tr-doc-section-title">Important Instructions</div>
+          <div class="tr-doc-section-title" th:text="#{ticketpage.doc.instructions}">Important Instructions</div>
           <ul class="small text-secondary" style="line-height:1.9;padding-left:20px;margin:0">
-            <li>Carry a valid Government-issued photo ID on the day of the event.</li>
-            <li>The registration desk closes 15 minutes before the session starts.</li>
-            <li>Retain this acknowledgement for your records.</li>
-            <li>Present this acknowledgement (screenshot or printout) at check-in.</li>
-            <li>For queries, contact: tec-verse@cdac.in</li>
+            <li th:text="#{ticketpage.doc.instr1}">Carry a valid Government-issued photo ID on the day of the event.</li>
+            <li th:text="#{ticketpage.doc.instr2}">The registration desk closes 15 minutes before the session starts.</li>
+            <li th:text="#{ticketpage.doc.instr3}">Retain this acknowledgement for your records.</li>
+            <li th:text="#{ticketpage.doc.instr4}">Present this acknowledgement (screenshot or printout) at check-in.</li>
+            <li th:text="#{ticketpage.doc.instr5}">For queries, contact: tec-verse@cdac.in</li>
           </ul>
         </div>
-        <div class="tr-doc-footer"><p class="mb-0">This is a system-generated acknowledgement from the Tec-verse 2026 registration portal.<br>Generated on: <span id="docDate"></span></p></div>
+        <div class="tr-doc-footer"><p class="mb-0"><span th:text="#{ticketpage.doc.footer}">This is a system-generated acknowledgement from the Tec-verse 2026 registration portal.</span><br><span th:text="#{ticketpage.doc.generatedOn}">Generated on:</span> <span id="docDate"></span></p></div>
       </div>
     </div>
   </div>
@@ -542,8 +549,8 @@ body.ticket-page{background:#F6F8FC}
       <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-4 text-center">
         <div class="spinner-border text-warning" role="status" aria-hidden="true"></div>
         <div>
-          <p id="trOverlayText" class="h5 fw-bold text-dark mb-1">Submitting your registration…</p>
-          <p id="trOverlayDescription" class="small text-secondary mb-0">Please wait while we save your details.</p>
+          <p id="trOverlayText" class="h5 fw-bold text-dark mb-1" th:text="#{ticketpage.overlay.title}">Submitting your registration…</p>
+          <p id="trOverlayDescription" class="small text-secondary mb-0" th:text="#{ticketpage.overlay.desc}">Please wait while we save your details.</p>
         </div>
       </div>
     </div>

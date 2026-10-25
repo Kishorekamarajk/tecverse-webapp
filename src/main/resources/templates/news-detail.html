@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/analytics :: gtag}"></th:block>
     <title th:text="${newsItem.title + ' | Tec-verse 2026'}">News Detail | Tec-verse 2026</title>
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
 
@@ -20,6 +22,7 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="news-detail-page no-hero bg-white font-sans text-ink antialiased">
 
 <div th:replace="~{fragments/navbar :: navbar('news')}"></div>
@@ -39,7 +42,7 @@
         </figure>
 
         <div class="news-detail__content max-w-[100%] pb-[2.5rem]">
-            <p class="news-card__date leading-[1.35]"><strong>Date:</strong> <span th:text="${newsItem.date}">25 Apr 2026</span></p>
+            <p class="news-card__date leading-[1.35]"><strong th:text="#{venue.event.date.label}">Date:</strong> <span th:text="${newsItem.date}">25 Apr 2026</span></p>
             <p th:each="paragraph : ${newsItem.paragraphs}" th:text="${paragraph}">Article paragraph.</p>
         </div>
          </article>

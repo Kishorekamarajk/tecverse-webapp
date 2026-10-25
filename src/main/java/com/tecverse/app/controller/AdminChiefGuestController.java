@@ -20,6 +20,9 @@ import com.tecverse.app.service.GalleryStorageService;
 
 import jakarta.validation.Valid;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class AdminChiefGuestController {
 
@@ -74,6 +77,72 @@ public class AdminChiefGuestController {
         }
 
         redirectAttributes.addFlashAttribute("successMessage", "Chief guest saved successfully.");
+        return "redirect:/admin/chief-guests";
+    }
+
+    @PostMapping("/admin/chief-guests/bulk")
+    public String saveChiefGuestsBulk(@RequestParam("imageFiles") List<MultipartFile> imageFiles,
+                                      @RequestParam("names") List<String> names,
+                                      @RequestParam("designations") List<String> designations,
+                                      @RequestParam("organizations") List<String> organizations,
+                                      @RequestParam("accentColors") List<String> accentColors,
+                                      @RequestParam(value = "displayOrder", defaultValue = "0") int displayOrder,
+                                      RedirectAttributes redirectAttributes) {
+        List<MultipartFile> selected = imageFiles == null ? List.of()
+                : imageFiles.stream().filter(file -> file != null && !file.isEmpty()).toList();
+        int count = selected.size();
+        if (count == 0 || count > 20 || names == null || names.size() != count
+                || designations == null || designations.size() != count
+                || organizations == null || organizations.size() != count
+                || accentColors == null || accentColors.size() != count) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Select 1 to 20 photos and complete each chief guest's details.");
+            return "redirect:/admin/chief-guests";
+        }
+        if (displayOrder < 0 || displayOrder > Integer.MAX_VALUE - count) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Starting display order is outside the supported range.");
+            return "redirect:/admin/chief-guests";
+        }
+        for (int i = 0; i < count; i++) {
+            String name = names.get(i) == null ? "" : names.get(i).trim();
+            String designation = designations.get(i) == null ? "" : designations.get(i).trim();
+            String organization = organizations.get(i) == null ? "" : organizations.get(i).trim();
+            String accentColor = accentColors.get(i) == null ? "" : accentColors.get(i).trim();
+            if (name.isBlank() || name.length() > 150 || designation.isBlank() || designation.length() > 180
+                    || organization.isBlank() || organization.length() > 180
+                    || !accentColor.matches("#[0-9A-Fa-f]{6}")) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Check each name, designation, organization, and accent color.");
+                return "redirect:/admin/chief-guests";
+            }
+        }
+
+        List<String> imageUrls = new ArrayList<>();
+        try {
+            imageUrls.addAll(galleryStorageService.uploadImages(selected, "chief-guests"));
+            List<ChiefGuest> guests = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                ChiefGuest guest = new ChiefGuest();
+                guest.setName(names.get(i).trim());
+                guest.setDesignation(designations.get(i).trim());
+                guest.setOrganization(organizations.get(i).trim());
+                guest.setAccentColor(accentColors.get(i).trim());
+                guest.setImageUrl(imageUrls.get(i));
+                guest.setDisplayOrder(displayOrder + i);
+                guest.setActive(true);
+                guests.add(guest);
+            }
+            chiefGuestRepository.saveAll(guests);
+            redirectAttributes.addFlashAttribute("successMessage", guests.size() + " chief guests uploaded successfully.");
+        } catch (RuntimeException ex) {
+            for (String imageUrl : imageUrls) {
+                try {
+                    galleryStorageService.deleteStoredMedia(imageUrl);
+                } catch (RuntimeException ignored) {
+                    // Keep the original bulk upload error visible to the admin.
+                }
+            }
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage() == null
+                    ? "Unable to save chief guest photos. Please try again." : ex.getMessage());
+        }
         return "redirect:/admin/chief-guests";
     }
 

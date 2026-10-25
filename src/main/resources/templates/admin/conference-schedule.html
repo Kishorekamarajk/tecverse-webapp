@@ -7,6 +7,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .schedule-bulk-card{padding:24px 26px;border-color:#e1e9f0!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(23,32,51,.055)!important}
+        .schedule-bulk-heading{display:flex;align-items:center;gap:15px;margin-bottom:22px}.schedule-bulk-icon{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border-radius:14px;background:#edf4ff;color:#1768d4;font-size:1.3rem}
+        .schedule-bulk-heading h2{margin:0 0 5px;font-size:1.18rem;font-weight:750}.schedule-bulk-heading p{margin:0;color:#718096;font-size:.93rem}
+        .schedule-bulk-controls{display:grid;grid-template-columns:minmax(260px,1fr) minmax(180px,.55fr);align-items:end;gap:16px}.schedule-bulk-controls .form-control{min-height:46px;border-radius:10px}
+        .schedule-bulk-rows{display:grid;gap:11px;margin-top:16px}.schedule-bulk-row{display:grid;grid-template-columns:90px minmax(100px,.65fr) minmax(145px,.8fr) minmax(180px,1.2fr) minmax(130px,.7fr) minmax(130px,.7fr);gap:12px;align-items:end;padding:13px;border:1px solid #e5ebf3;border-radius:12px;background:#fbfdff}
+        .schedule-bulk-preview{display:grid;gap:6px;justify-items:center;min-width:0}.schedule-bulk-preview img{width:72px;height:52px;object-fit:cover;padding:3px;border:1px solid #e5ebf3;border-radius:9px;background:#fff}.schedule-bulk-filename{max-width:100%;color:#7a8798;font-size:.7rem;overflow-wrap:anywhere;text-align:center}
+        .schedule-bulk-row .form-label{margin-bottom:6px;color:#384860;font-size:.82rem;font-weight:650}.schedule-bulk-row .form-control,.schedule-bulk-row .form-select{min-height:42px;border-radius:9px;background:#fff}
+        @media(max-width:1199.98px){.schedule-bulk-row{grid-template-columns:80px 1fr 1fr}.schedule-bulk-preview{grid-row:span 2}.schedule-bulk-row>div:nth-last-child(-n+3){grid-column:auto}}
+        @media(max-width:767.98px){.schedule-bulk-card{padding:20px 18px}.schedule-bulk-row{grid-template-columns:1fr 1fr}.schedule-bulk-preview{grid-column:1/-1;grid-row:auto;justify-items:start}.schedule-bulk-filename{text-align:left}}
+        @media(max-width:480px){.schedule-bulk-controls{grid-template-columns:1fr}.schedule-bulk-row{grid-template-columns:1fr}.schedule-bulk-preview{grid-column:auto}}
+    </style>
 </head>
 <body class="admin-dashboard-page overflow-x-hidden">
 <div class="admin-app-shell min-vh-100 overflow-x-hidden">
@@ -23,6 +35,19 @@
     </div>
 
     <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Saved.</div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Please check the schedule entries.</div>
+
+    <section class="schedule-bulk-card mb-4 bg-white border rounded-3 shadow-sm">
+        <form th:action="@{/admin/conference-schedule/bulk}" method="post" enctype="multipart/form-data" id="bulkScheduleForm">
+            <div class="schedule-bulk-heading"><span class="schedule-bulk-icon"><i class="bi bi-calendar2-week"></i></span><div><h2>Bulk add schedule items</h2><p>Select up to 20 session images, then enter the day, date, title, and time range for each.</p></div></div>
+            <div class="schedule-bulk-controls">
+                <div><label class="form-label fw-semibold" for="scheduleImages">Select schedule images <span class="badge rounded-pill text-bg-light border ms-1">Up to 20</span></label><input class="form-control" id="scheduleImages" name="imageFiles" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple required><div class="form-text" id="scheduleImageSummary">No images selected · Maximum 1 MB per image</div></div>
+                <div><label class="form-label fw-semibold" for="scheduleStartingOrder">Starting display order</label><input class="form-control" id="scheduleStartingOrder" name="displayOrder" type="number" min="0" value="0" required><div class="form-text">Order increases for each item.</div></div>
+            </div>
+            <div class="schedule-bulk-rows" id="scheduleBulkRows"></div>
+            <div class="mt-3"><button class="btn btn-primary" type="submit"><i class="bi bi-cloud-arrow-up me-1"></i> Upload schedule items</button></div>
+        </form>
+    </section>
 
     <section class="table-card bg-white overflow-hidden">
         <div class="table-responsive">
@@ -75,5 +100,38 @@
  </div>
  </div>
 <script th:src="@{/js/admin.js}"></script>
+<script th:nonce="${cspNonce}">
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("scheduleImages");
+        const rows = document.getElementById("scheduleBulkRows");
+        const summary = document.getElementById("scheduleImageSummary");
+        const form = document.getElementById("bulkScheduleForm");
+        if (!input || !rows || !summary || !form) return;
+        function field(row, labelText, name, type, options) {
+            const wrapper = document.createElement("div"); const label = document.createElement("label"); label.className = "form-label"; label.textContent = labelText;
+            const field = document.createElement(type === "select" ? "select" : "input"); field.className = type === "select" ? "form-select" : "form-control"; field.name = name; field.required = true;
+            if (type === "select") [["1", "Day 01"], ["2", "Day 02"], ["3", "Day 03"]].forEach(function (item) { const option = document.createElement("option"); option.value = item[0]; option.textContent = item[1]; field.append(option); });
+            else { field.type = type; if (options && options.value) field.value = options.value; }
+            wrapper.append(label, field); row.append(wrapper);
+        }
+        input.addEventListener("change", function () {
+            rows.replaceChildren(); summary.classList.remove("text-danger");
+            const files = Array.from(input.files); summary.textContent = files.length ? files.length + " image(s) selected. Complete each session below." : "No images selected · Maximum 1 MB per image";
+            files.slice(0, 20).forEach(function (file) {
+                const row = document.createElement("div"); row.className = "schedule-bulk-row";
+                const preview = document.createElement("div"); preview.className = "schedule-bulk-preview"; const image = document.createElement("img"); image.src = URL.createObjectURL(file); image.alt = "Selected session image";
+                const filename = document.createElement("span"); filename.className = "schedule-bulk-filename"; filename.textContent = file.name; preview.append(image, filename); row.append(preview);
+                field(row, "Day", "dayNumbers", "select"); field(row, "Date", "scheduleDates", "date"); field(row, "Session title", "sessionTitles", "text"); field(row, "Start time", "startTimes", "time"); field(row, "End time", "endTimes", "time"); rows.append(row);
+            });
+        });
+        form.addEventListener("submit", function (event) {
+            const files = Array.from(input.files); let message = "";
+            if (!files.length) message = "Choose at least one schedule image.";
+            else if (files.length > 20) message = "Select no more than 20 images at a time.";
+            else if (files.some(function (file) { return file.size > 1024 * 1024; })) message = "Each schedule image must be 1 MB or smaller.";
+            if (message) { event.preventDefault(); summary.textContent = message; summary.classList.add("text-danger"); }
+        });
+    });
+</script>
 </body>
 </html>

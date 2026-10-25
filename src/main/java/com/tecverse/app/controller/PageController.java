@@ -636,9 +636,10 @@ public class PageController {
         if (!OtpSessionVerification.hasVerification(request, OtpSessionVerification.Purpose.TICKET)) {
             throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Email verification is required.");
         }
-        if (!OtpSessionVerification.hasVerification(request, OtpSessionVerification.Purpose.TICKET_MOBILE)) {
-            throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Mobile number verification is required.");
-        }
+        // Mobile OTP verification is disabled for now; uncomment to require it again.
+        // if (!OtpSessionVerification.hasVerification(request, OtpSessionVerification.Purpose.TICKET_MOBILE)) {
+        //     throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Mobile number verification is required.");
+        // }
         return "fragments/ticket-details-step :: detailsStep";
     }
 

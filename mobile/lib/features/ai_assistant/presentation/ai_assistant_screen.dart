@@ -52,12 +52,12 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     _messages.add(
       AiMessage(
         id: 'welcome-msg',
-        text: '👋 **Hello! I am your TEC-VERSE 2026 AI Delegate Copilot.**\n\n'
-            'Ask me anything about:\n'
-            '• Keynotes & session schedules\n'
-            '• Turn-by-turn wayfinding to Halls 1–8 & stalls\n'
-            '• Personalized recommendations based on your topics\n'
-            '• Digital Pass, Wi-Fi & venue amenities\n\n'
+        text: '👋 **Hello! I am the TEC-VERSE 2026 FAQ Assistant.**\n\n'
+            'Ask me about:\n'
+            '• Event dates, venue & schedule\n'
+            '• Registration & your Digital Pass\n'
+            '• Common questions about TEC-VERSE\n'
+            '• Opening screens, e.g. "Go to Floor Plan"\n\n'
             'Tap the **Microphone icon** below for hands-free voice assistance!',
         sender: MessageSender.assistant,
         timestamp: DateTime.now(),
@@ -282,7 +282,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'AI COPILOT • ONLINE',
+                    'FAQ ASSISTANT',
                     style: AppTypography.metaTag.copyWith(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
@@ -533,7 +533,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 const GsapElasticWaveLoader(height: 12, barCount: 4, spacing: 3),
                 const SizedBox(width: 8),
                 Text(
-                  'AI is thinking...',
+                  'Looking up an answer...',
                   style: AppTypography.bodySmall.copyWith(
                     fontSize: 11.5,
                     color: AppColors.textSecondary,

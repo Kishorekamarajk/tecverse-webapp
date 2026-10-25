@@ -23,7 +23,7 @@
                             <div class="speaker-flip-face speaker-flip-front">
                                 <div class="speaker-photo-frame relative mx-auto overflow-hidden transition-transform duration-500 ease-out group-hover:scale-[1.03]">
                                     <img th:src="@{${#strings.isEmpty(speaker.profileImageUrl) ? '/images/speaker1.png' : speaker.profileImageUrl}}"
-                                         th:alt="|${speaker.name} speaking at Tec-verse|"
+                                         th:alt="#{misc.speakers.photoAlt(${speaker.name})}"
                                          class="h-full w-full object-cover" loading="lazy" />
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent"></div>
                                 </div>
@@ -33,7 +33,7 @@
                                 <p class="speaker-session" th:if="${speaker.sessionTiming != null and !speaker.sessionTiming.isBlank()}" th:text="${@speakerTimeFormatter.format(speaker.sessionTiming)}">26 Nov, 11:30 AM</p>
                             </div>
                             <div class="speaker-flip-face speaker-flip-back">
-                                <span class="speaker-flip-label">Speaker</span>
+                                <span class="speaker-flip-label" th:text="#{misc.speakers.label}">Speaker</span>
                                 <h3 class="speaker-name" th:text="${speaker.name}">Speaker Name</h3>
                                 <p class="speaker-designation" th:text="${speaker.designation}">Designation</p>
                                 <p class="speaker-session" th:if="${speaker.sessionTiming != null and !speaker.sessionTiming.isBlank()}" th:text="${@speakerTimeFormatter.format(speaker.sessionTiming)}">26 Nov, 11:30 AM</p>
@@ -47,7 +47,7 @@
 
         <div th:if="${homeSpeakers == null or homeSpeakers.isEmpty()}" class="speakers-empty-state mt-16">
             <i class="bi bi-mic"></i>
-            <p>Speakers will be updated soon.</p>
+            <p th:text="#{misc.speakers.empty}">Speakers will be updated soon.</p>
         </div>
     </div>
 </section>

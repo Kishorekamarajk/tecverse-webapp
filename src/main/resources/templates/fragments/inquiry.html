@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{fragments/analytics :: gtag}"></th:block>
     <title th:text="#{contact.title}">Tec-verse 2026</title>
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
-
 
     <link rel="stylesheet" th:href="@{/css/fonts.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -36,6 +36,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/jquery-validation@1.22.1/dist/jquery.validate.min.js" integrity="sha384-DIFfDxcYkhbAXYdxOYFZshXsis24zK4HtbU7qI30u9/eP7JtiRIGuOaLsoYL5QTs" crossorigin="anonymous"></script>
     <script defer th:src="@{/js/jquery-form-validation.js}"></script>
 </head>
+
 <body class="inquiry-page">
 <div th:replace="~{fragments/navbar :: navbar('inquiry')}"></div>
 
@@ -44,7 +45,7 @@
     <section class="exhibitor-hero position-relative d-flex align-items-center overflow-hidden">
         <div class="exhibitor-hero__overlay"></div>
         <div class="container exhibitor-hero__content">
-            <h1>Become An Exhibitor</h1>
+            <h1 th:text="#{inquiryform.hero.title}">Become An Exhibitor</h1>
         </div>
     </section>
 
@@ -52,127 +53,127 @@
         <div class="container exhibitor-build-container">
             <div class="exhibitor-form-side">
                 <div class="exhibitor-section-heading">
-                    <h2>Let's Build The Next Tech Era, Together!</h2>
+                    <h2 th:text="#{inquiryform.intro.title}">Let's Build The Next Tech Era, Together!</h2>
                     <span></span>
-                    <p>Showcase your innovations, connect with decision-makers, and position your brand at the forefront of Chennai's rapidly evolving technology ecosystem.</p>
+                    <p th:text="#{inquiryform.intro.text}">Showcase your innovations, connect with decision-makers, and position your brand at the forefront of Chennai's rapidly evolving technology ecosystem.</p>
                 </div>
 
                 <form th:action="@{/inquiry(type='exhibitor')}" th:object="${inquiry}" method="post" class="exhibitor-form" data-inquiry-form>
                     <div class="exhibitor-form-grid d-grid">
                         <label>
                             <span th:text="#{form.fullName.required}">Full Name*</span>
-                            <input type="text" th:field="*{name}" placeholder="Name*" required maxlength="150">
+                            <input type="text" th:field="*{name}" placeholder="Name*" th:placeholder="#{inquiryform.placeholder.name}" required maxlength="150">
                             <small class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
                         </label>
                         <label>
-                            <span>Email Address*</span>
-                            <input type="email" th:field="*{email}" placeholder="Email*" required maxlength="255">
+                            <span th:text="#{inquiryform.field.email}">Email Address*</span>
+                            <input type="email" th:field="*{email}" placeholder="Email*" th:placeholder="#{form.email.required}" required maxlength="255">
                             <small class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
                         </label>
                         <label>
-                            <span>Mobile Number*</span>
-                            <input type="tel" th:field="*{phone}" placeholder="Mobile Number*" required maxlength="32" data-indian-mobile>
-                            <small class="phone-hint">Only Indian mobile numbers (10 digits) are accepted.</small>
+                            <span th:text="#{inquiryform.field.mobile}">Mobile Number*</span>
+                            <input type="tel" th:field="*{phone}" placeholder="Mobile Number*" th:placeholder="#{inquiryform.field.mobile}" required maxlength="32" data-indian-mobile>
+                            <small class="phone-hint" th:text="#{inquiryform.phoneHint}">Only Indian mobile numbers (10 digits) are accepted.</small>
                             <small class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small>
                         </label>
                         <label>
                             <span th:text="#{form.company.required}">Company Name*</span>
-                            <input type="text" th:field="*{company}" placeholder="Company Name*" required maxlength="200">
+                            <input type="text" th:field="*{company}" placeholder="Company Name*" th:placeholder="#{form.company.required}" required maxlength="200">
                             <small class="error" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></small>
                         </label>
                         <label>
-                            <span>Designation*</span>
-                            <input type="text" th:field="*{jobTitle}" placeholder="Designation*" required maxlength="150">
+                            <span th:text="#{inquiryform.field.designation}">Designation*</span>
+                            <input type="text" th:field="*{jobTitle}" placeholder="Designation*" th:placeholder="#{inquiryform.field.designation}" required maxlength="150">
                         </label>
                         <label>
-                            <span>Stall Type*</span>
+                            <span th:text="#{inquiryform.field.stallType}">Stall Type*</span>
                             <select name="stallType" required>
-                                <option value="">Select Stall</option>
-                                <option>Startup Booth</option>
-                                <option>Standard Stall</option>
-                                <option>Premium Stall</option>
-                                <option>Sponsor Booth</option>
+                                <option value="" th:text="#{inquiryform.option.selectStall}">Select Stall</option>
+                                <option value="Startup Booth" th:text="#{inquiryform.option.startupBooth}">Startup Booth</option>
+                                <option value="Standard Stall" th:text="#{inquiryform.option.standardStall}">Standard Stall</option>
+                                <option value="Premium Stall" th:text="#{inquiryform.option.premiumStall}">Premium Stall</option>
+                                <option value="Sponsor Booth" th:text="#{inquiryform.option.sponsorBooth}">Sponsor Booth</option>
                             </select>
                         </label>
                         <label>
-                            <span>Country Code*</span>
-                            <select th:field="*{country}" required class="form-select" autocomplete="country" data-phone-country aria-label="Country calling code">
+                            <span th:text="#{inquiryform.field.countryCode}">Country Code*</span>
+                            <select th:field="*{country}" required class="form-select" autocomplete="country" data-phone-country aria-label="Country calling code" th:attr="aria-label=#{inquiryform.aria.countryCode}">
 <option th:each="country : ${contactCountries}" th:value="${country.code()}" th:attr="data-dial-code=${country.dialCode()}" th:text="${country.name()}"></option>
 </select><small class="error" th:if="${#fields.hasErrors('country')}" th:errors="*{country}"></small>
                         </label>
                         <label>
-                            <span>Website URL</span>
-                            <input type="url" name="website" placeholder="Website URL">
+                            <span th:text="#{inquiryform.field.website}">Website URL</span>
+                            <input type="url" name="website" placeholder="Website URL" th:placeholder="#{inquiryform.field.website}">
                         </label>
                         <label>
-                            <span>Industry / Category*</span>
+                            <span th:text="#{inquiryform.field.industry}">Industry / Category*</span>
                             <select name="industry" required>
                                 <option value="" th:text="#{register.option.selectIndustry}">Select Industry</option>
-                                <option>AI &amp; Automation</option>
-                                <option>Software</option>
-                                <option>Manufacturing Tech</option>
-                                <option>Healthcare Tech</option>
-                                <option>Finance Tech</option>
+                                <option value="AI &amp; Automation" th:text="#{inquiryform.option.aiAutomation}">AI &amp; Automation</option>
+                                <option value="Software" th:text="#{inquiryform.option.software}">Software</option>
+                                <option value="Manufacturing Tech" th:text="#{inquiryform.option.manufacturingTech}">Manufacturing Tech</option>
+                                <option value="Healthcare Tech" th:text="#{inquiryform.option.healthcareTech}">Healthcare Tech</option>
+                                <option value="Finance Tech" th:text="#{inquiryform.option.financeTech}">Finance Tech</option>
                             </select>
                         </label>
                         <label>
-                            <span>What do you want to exhibit?*</span>
+                            <span th:text="#{inquiryform.field.exhibitType}">What do you want to exhibit?*</span>
                             <select name="exhibitType" required>
-                                <option value="">Please Select</option>
-                                <option>Product</option>
-                                <option>Service</option>
-                                <option>Platform</option>
-                                <option>Live Demo</option>
+                                <option value="" th:text="#{inquiryform.option.pleaseSelect}">Please Select</option>
+                                <option value="Product" th:text="#{inquiryform.option.product}">Product</option>
+                                <option value="Service" th:text="#{inquiryform.option.service}">Service</option>
+                                <option value="Platform" th:text="#{inquiryform.option.platform}">Platform</option>
+                                <option value="Live Demo" th:text="#{inquiryform.option.liveDemo}">Live Demo</option>
                             </select>
                         </label>
                     </div>
 
                     <label class="exhibitor-form-message">
-                        <span>Message / Remarks</span>
-                        <textarea rows="3" th:field="*{message}" placeholder="Message / Remarks" required maxlength="5000"></textarea>
+                        <span th:text="#{inquiryform.field.message}">Message / Remarks</span>
+                        <textarea rows="3" th:field="*{message}" placeholder="Message / Remarks" th:placeholder="#{inquiryform.field.message}" required maxlength="5000"></textarea>
                         <small class="error" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></small>
                     </label>
 
-                    <button type="submit" class="exhibitor-submit">Submit</button>
+                    <button type="submit" class="exhibitor-submit" th:text="#{inquiryform.submit}">Submit</button>
                     <p class="success" th:if="${successMessage}" th:text="${successMessage}"></p>
                 </form>
             </div>
 
             <aside class="exhibitor-benefits">
                 <div class="exhibitor-section-heading">
-                    <h2>Why Exhibit At Tec-verse Chennai?</h2>
+                    <h2 th:text="#{inquiryform.benefits.title}">Why Exhibit At Tec-verse Chennai?</h2>
                     <span></span>
                 </div>
 
                 <div class="benefit-card benefit-card--blue">
                     <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-                    <h3>Direct Access to 3,000+ Business Visitors</h3>
-                    <p>Engage with SMEs, MSMEs, and decision-makers who are actively seeking IT solutions and technology partners.</p>
+                    <h3 th:text="#{inquiryform.benefit1.title}">Direct Access to 3,000+ Business Visitors</h3>
+                    <p th:text="#{inquiryform.benefit1.text}">Engage with SMEs, MSMEs, and decision-makers who are actively seeking IT solutions and technology partners.</p>
                 </div>
                 <div class="benefit-card benefit-card--yellow">
                     <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-                    <h3>AI &amp; Future Tech Positioning</h3>
-                    <p>Be part of a platform focused on AI, automation, and digital transformation, aligning your brand with future-ready solutions.</p>
+                    <h3 th:text="#{inquiryform.benefit2.title}">AI &amp; Future Tech Positioning</h3>
+                    <p th:text="#{inquiryform.benefit2.text}">Be part of a platform focused on AI, automation, and digital transformation, aligning your brand with future-ready solutions.</p>
                 </div>
                 <div class="benefit-card benefit-card--green">
                     <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-                    <h3>High-Quality Lead Generation</h3>
-                    <p>Meet serious buyers with real requirements, not just visitors, leading to faster conversions and deal closures.</p>
+                    <h3 th:text="#{inquiryform.benefit3.title}">High-Quality Lead Generation</h3>
+                    <p th:text="#{inquiryform.benefit3.text}">Meet serious buyers with real requirements, not just visitors, leading to faster conversions and deal closures.</p>
                 </div>
                 <div class="benefit-card benefit-card--blue">
                     <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-                    <h3>Strong Business Networking</h3>
-                    <p>Connect with founders, CEOs, and industry leaders through the TEG App to build long-term partnerships and collaborations.</p>
+                    <h3 th:text="#{inquiryform.benefit4.title}">Strong Business Networking</h3>
+                    <p th:text="#{inquiryform.benefit4.text}">Connect with founders, CEOs, and industry leaders through the TEG App to build long-term partnerships and collaborations.</p>
                 </div>
                 <div class="benefit-card benefit-card--red">
                     <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-                    <h3>Multi-Industry Exposure</h3>
-                    <p>Showcase your solutions across manufacturing, retail, logistics, healthcare, finance, and more all under one roof.</p>
+                    <h3 th:text="#{inquiryform.benefit5.title}">Multi-Industry Exposure</h3>
+                    <p th:text="#{inquiryform.benefit5.text}">Showcase your solutions across manufacturing, retail, logistics, healthcare, finance, and more all under one roof.</p>
                 </div>
                 <div class="benefit-card benefit-card--yellow">
                     <div class="benefit-confetti" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-                    <h3>Live Product Demonstrations</h3>
-                    <p>Demonstrate your solutions in real time, helping prospects understand the value instantly and build trust.</p>
+                    <h3 th:text="#{inquiryform.benefit6.title}">Live Product Demonstrations</h3>
+                    <p th:text="#{inquiryform.benefit6.text}">Demonstrate your solutions in real time, helping prospects understand the value instantly and build trust.</p>
                 </div>
             </aside>
         </div>
@@ -182,28 +183,28 @@
         <div class="container stall-packages-grid">
             <article class="stall-package stall-package--red">
                 <div class="stall-package__label" th:text="#{register.field.stallPackage}">Stall Package</div>
-                <h2>Stall Size : 3 X 3 Mtr.</h2>
+                <h2 th:text="#{inquiryform.package.size3x3}">Stall Size : 3 X 3 Mtr.</h2>
                 <ul>
-                    <li>2 Exhibitor Passes (Food coupon)</li>
-                    <li>1 Exhibitor Pass for Pre &amp; post party</li>
-                    <li>5 Visitor Passes</li>
-                    <li>TEG Community Network Portal Access</li>
-                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
-                    <li>One-to-one messaging can be done to visitors (in app)</li>
-                    <li><strong>Visibility</strong>
+                    <li th:text="#{inquiryform.package.passes2}">2 Exhibitor Passes (Food coupon)</li>
+                    <li th:text="#{inquiryform.package.party1}">1 Exhibitor Pass for Pre <li>1 Exhibitor Pass for Pre &amp; post party</li>amp; post party</li>
+                    <li th:text="#{inquiryform.package.visitors5}">5 Visitor Passes</li>
+                    <li th:text="#{inquiryform.package.portal}">TEG Community Network Portal Access</li>
+                    <li th:text="#{inquiryform.package.meetings}">1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li th:text="#{inquiryform.package.messaging}">One-to-one messaging can be done to visitors (in app)</li>
+                    <li><strong th:text="#{inquiryform.package.visibility}">Visibility</strong>
                         <ul>
-                            <li>On Website (Logo)</li>
-                            <li>On Ground Visibility</li>
+                            <li th:text="#{inquiryform.package.websiteLogo}">On Website (Logo)</li>
+                            <li th:text="#{inquiryform.package.groundVisibility}">On Ground Visibility</li>
                         </ul>
                     </li>
-                    <li><strong>Including Infrastructure</strong>
+                    <li><strong th:text="#{inquiryform.package.infrastructure}">Including Infrastructure</strong>
                         <ul>
-                            <li>Modular Stall Structure (White Octanorm Panels)</li>
-                            <li>Fascia with Company Name</li>
-                            <li>1 Table + 2 Chairs</li>
-                            <li>3 Spotlights</li>
-                            <li>1 Power Socket (15 Amp)</li>
-                            <li>Carpet Flooring</li>
+                            <li th:text="#{inquiryform.package.structure}">Modular Stall Structure (White Octanorm Panels)</li>
+                            <li th:text="#{inquiryform.package.fascia}">Fascia with Company Name</li>
+                            <li th:text="#{inquiryform.package.table1chairs2}">1 Table + 2 Chairs</li>
+                            <li th:text="#{inquiryform.package.spotlights3}">3 Spotlights</li>
+                            <li th:text="#{inquiryform.package.socket1}">1 Power Socket (15 Amp)</li>
+                            <li th:text="#{inquiryform.package.carpet}">Carpet Flooring</li>
                         </ul>
                     </li>
                 </ul>
@@ -211,28 +212,28 @@
 
             <article class="stall-package stall-package--yellow">
                 <div class="stall-package__label" th:text="#{register.field.stallPackage}">Stall Package</div>
-                <h2>Stall Size : 3 X 6 Mtr.</h2>
+                <h2 th:text="#{inquiryform.package.size3x6}">Stall Size : 3 X 6 Mtr.</h2>
                 <ul>
-                    <li>4 Exhibitor Passes (Food coupon)</li>
-                    <li>2 Exhibitor Pass for Pre &amp; post party</li>
-                    <li>10 Visitor Passes</li>
-                    <li>TEG Community Network Portal Access</li>
-                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
-                    <li>One-to-one messaging can be done to visitors (in app)</li>
-                    <li><strong>Visibility</strong>
+                    <li th:text="#{inquiryform.package.passes4}">4 Exhibitor Passes (Food coupon)</li>
+                    <li th:text="#{inquiryform.package.party2}">2 Exhibitor Pass for Pre <li>2 Exhibitor Pass for Pre &amp; post party</li>amp; post party</li>
+                    <li th:text="#{inquiryform.package.visitors10}">10 Visitor Passes</li>
+                    <li th:text="#{inquiryform.package.portal}">TEG Community Network Portal Access</li>
+                    <li th:text="#{inquiryform.package.meetings}">1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li th:text="#{inquiryform.package.messaging}">One-to-one messaging can be done to visitors (in app)</li>
+                    <li><strong th:text="#{inquiryform.package.visibility}">Visibility</strong>
                         <ul>
-                            <li>On Website (Logo)</li>
-                            <li>On Ground Visibility</li>
+                            <li th:text="#{inquiryform.package.websiteLogo}">On Website (Logo)</li>
+                            <li th:text="#{inquiryform.package.groundVisibility}">On Ground Visibility</li>
                         </ul>
                     </li>
-                    <li><strong>Including Infrastructure</strong>
+                    <li><strong th:text="#{inquiryform.package.infrastructure}">Including Infrastructure</strong>
                         <ul>
-                            <li>Modular Stall Structure (White Octanorm Panels)</li>
-                            <li>Fascia with Company Name</li>
-                            <li>2 Tables + 4 Chairs</li>
-                            <li>6 Spotlights</li>
-                            <li>2 Power Sockets (15 Amp)</li>
-                            <li>Carpet Flooring</li>
+                            <li th:text="#{inquiryform.package.structure}">Modular Stall Structure (White Octanorm Panels)</li>
+                            <li th:text="#{inquiryform.package.fascia}">Fascia with Company Name</li>
+                            <li th:text="#{inquiryform.package.tables2chairs4}">2 Tables + 4 Chairs</li>
+                            <li th:text="#{inquiryform.package.spotlights6}">6 Spotlights</li>
+                            <li th:text="#{inquiryform.package.sockets2}">2 Power Sockets (15 Amp)</li>
+                            <li th:text="#{inquiryform.package.carpet}">Carpet Flooring</li>
                         </ul>
                     </li>
                 </ul>
@@ -240,29 +241,29 @@
 
             <article class="stall-package stall-package--green">
                 <div class="stall-package__label" th:text="#{register.field.stallPackage}">Stall Package</div>
-                <h2>Stall Size : 6 X 6 Mtr.</h2>
+                <h2 th:text="#{inquiryform.package.size6x6}">Stall Size : 6 X 6 Mtr.</h2>
                 <ul>
-                    <li>8 Exhibitor Passes (Food coupon)</li>
-                    <li>3 Exhibitor Pass invited for pre &amp; post party</li>
-                    <li>20 Visitor Passes</li>
-                    <li>TEG Community Network Portal Access</li>
-                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
-                    <li>One-to-one messaging can be done to visitors (in app)</li>
-                    <li><strong>Visibility</strong>
+                    <li th:text="#{inquiryform.package.passes8}">8 Exhibitor Passes (Food coupon)</li>
+                    <li th:text="#{inquiryform.package.party3invited}">3 Exhibitor Pass invited for pre <li>3 Exhibitor Pass invited for pre &amp; post party</li>amp; post party</li>
+                    <li th:text="#{inquiryform.package.visitors20}">20 Visitor Passes</li>
+                    <li th:text="#{inquiryform.package.portal}">TEG Community Network Portal Access</li>
+                    <li th:text="#{inquiryform.package.meetings}">1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li th:text="#{inquiryform.package.messaging}">One-to-one messaging can be done to visitors (in app)</li>
+                    <li><strong th:text="#{inquiryform.package.visibility}">Visibility</strong>
                         <ul>
-                            <li>On Website (Logo)</li>
-                            <li>On Ground Visibility</li>
+                            <li th:text="#{inquiryform.package.websiteLogo}">On Website (Logo)</li>
+                            <li th:text="#{inquiryform.package.groundVisibility}">On Ground Visibility</li>
                         </ul>
                     </li>
-                    <li><strong>Including Infrastructure</strong>
+                    <li><strong th:text="#{inquiryform.package.infrastructure}">Including Infrastructure</strong>
                         <ul>
-                            <li>Modular Stall Structure (White Octanorm Panels)</li>
-                            <li>Fascia with Company Name</li>
-                            <li>2 Tables + 2 Round Glass Tables</li>
-                            <li>2 Sofas + 6 Chairs</li>
-                            <li>12 Spotlights</li>
-                            <li>3 Power Sockets (15 Amp)</li>
-                            <li>Carpet Flooring</li>
+                            <li th:text="#{inquiryform.package.structure}">Modular Stall Structure (White Octanorm Panels)</li>
+                            <li th:text="#{inquiryform.package.fascia}">Fascia with Company Name</li>
+                            <li th:text="#{inquiryform.package.tables2glass2}">2 Tables + 2 Round Glass Tables</li>
+                            <li th:text="#{inquiryform.package.sofas2chairs6}">2 Sofas + 6 Chairs</li>
+                            <li th:text="#{inquiryform.package.spotlights12}">12 Spotlights</li>
+                            <li th:text="#{inquiryform.package.sockets3}">3 Power Sockets (15 Amp)</li>
+                            <li th:text="#{inquiryform.package.carpet}">Carpet Flooring</li>
                         </ul>
                     </li>
                 </ul>
@@ -272,49 +273,49 @@
         <div class="container stall-packages-grid stall-packages-grid--two">
             <article class="stall-package stall-package--blue">
                 <div class="stall-package__label" th:text="#{register.field.stallPackage}">Stall Package</div>
-                <h2>Stall Size : 3 X 9 Mtr. (Corner Stall)</h2>
+                <h2 th:text="#{inquiryform.package.size3x9}">Stall Size : 3 X 9 Mtr. (Corner Stall)</h2>
                 <ul>
-                    <li>6 Exhibitor Pass (Food coupon)</li>
-                    <li>2 Exhibitor Pass invited for pre &amp; post party</li>
-                    <li>15 Visitor Passes</li>
-                    <li>TEG Community Network Portal Access</li>
-                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
-                    <li>One-to-one messaging can be done to visitors (in app)</li>
-                    <li><strong>Visibility</strong>
+                    <li th:text="#{inquiryform.package.passes6}">6 Exhibitor Pass (Food coupon)</li>
+                    <li th:text="#{inquiryform.package.party2invited}">2 Exhibitor Pass invited for pre <li>2 Exhibitor Pass invited for pre &amp; post party</li>amp; post party</li>
+                    <li th:text="#{inquiryform.package.visitors15}">15 Visitor Passes</li>
+                    <li th:text="#{inquiryform.package.portal}">TEG Community Network Portal Access</li>
+                    <li th:text="#{inquiryform.package.meetings}">1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li th:text="#{inquiryform.package.messaging}">One-to-one messaging can be done to visitors (in app)</li>
+                    <li><strong th:text="#{inquiryform.package.visibility}">Visibility</strong>
                         <ul>
-                            <li>On Website (Logo)</li>
-                            <li>On Ground Visibility</li>
+                            <li th:text="#{inquiryform.package.websiteLogo}">On Website (Logo)</li>
+                            <li th:text="#{inquiryform.package.groundVisibility}">On Ground Visibility</li>
                         </ul>
                     </li>
-                    <li><strong>Including Infrastructure</strong>
+                    <li><strong th:text="#{inquiryform.package.infrastructure}">Including Infrastructure</strong>
                         <ul>
-                            <li>Modular Stall Structure (White Octanorm Panels)</li>
-                            <li>Fascia with Company Name</li>
-                            <li>2 Tables + 1 Round Glass Table</li>
-                            <li>1 Sofa + 4 Chairs</li>
-                            <li>9 Spotlights</li>
-                            <li>3 Power Sockets (15 Amp)</li>
-                            <li>Carpet Flooring</li>
+                            <li th:text="#{inquiryform.package.structure}">Modular Stall Structure (White Octanorm Panels)</li>
+                            <li th:text="#{inquiryform.package.fascia}">Fascia with Company Name</li>
+                            <li th:text="#{inquiryform.package.tables2glass1}">2 Tables + 1 Round Glass Table</li>
+                            <li th:text="#{inquiryform.package.sofa1chairs4}">1 Sofa + 4 Chairs</li>
+                            <li th:text="#{inquiryform.package.spotlights9}">9 Spotlights</li>
+                            <li th:text="#{inquiryform.package.sockets3}">3 Power Sockets (15 Amp)</li>
+                            <li th:text="#{inquiryform.package.carpet}">Carpet Flooring</li>
                         </ul>
                     </li>
                 </ul>
             </article>
 
             <article class="stall-package stall-package--red">
-                <div class="stall-package__label">The Catalyst Zone</div>
-                <h2>Stall Size : 2 × 2 SQ MTS</h2>
+                <div class="stall-package__label" th:text="#{inquiryform.package.catalystZone}">The Catalyst Zone</div>
+                <h2 th:text="#{inquiryform.package.size2x2}">Stall Size : 2 × 2 SQ MTS</h2>
                 <ul>
-                    <li>2 Exhibitor Passes (Food coupon)</li>
-                    <li>TEG Community Network Portal Acces</li>
-                    <li>1:1 Curated Business Meetings (Pre-scheduled)</li>
-                    <li>One-to-one messaging can be done to visitors (In app)</li>
-                    <li><strong>Including Infrastructure</strong>
+                    <li th:text="#{inquiryform.package.passes2}">2 Exhibitor Passes (Food coupon)</li>
+                    <li th:text="#{inquiryform.package.portal}">TEG Community Network Portal Acces</li>
+                    <li th:text="#{inquiryform.package.meetings}">1:1 Curated Business Meetings (Pre-scheduled)</li>
+                    <li th:text="#{inquiryform.package.messaging}">One-to-one messaging can be done to visitors (In app)</li>
+                    <li><strong th:text="#{inquiryform.package.infrastructure}">Including Infrastructure</strong>
                         <ul>
-                            <li>Modular Stall Structure (White Octanorm Panels)</li>
-                            <li>Fascia with Company Name</li>
-                            <li>1 Table + 2 Chairs</li>
-                            <li>2 Spotlights</li>
-                            <li>1 Power Socket (15 Amp)</li>
+                            <li th:text="#{inquiryform.package.structure}">Modular Stall Structure (White Octanorm Panels)</li>
+                            <li th:text="#{inquiryform.package.fascia}">Fascia with Company Name</li>
+                            <li th:text="#{inquiryform.package.table1chairs2}">1 Table + 2 Chairs</li>
+                            <li th:text="#{inquiryform.package.spotlights2}">2 Spotlights</li>
+                            <li th:text="#{inquiryform.package.socket1}">1 Power Socket (15 Amp)</li>
                         </ul>
                     </li>
                 </ul>
@@ -359,13 +360,13 @@
         <aside class="contact-reference-sidebar">
             <h2><span th:text="#{contact.compact.sidebar.title.start}">Get in</span> <em th:text="#{contact.compact.sidebar.title.emphasis}">Touch</em></h2>
             <p class="contact-reference-sidebar__intro" th:text="#{contact.compact.sidebar.intro}">You can also reach us through the following contact information.</p>
-            <section class="compact-contact-cards" aria-label="Contact details">
+            <section class="compact-contact-cards" aria-label="Contact details" th:attr="aria-label=#{inquiryform.aria.contactDetails}">
             <div><i class="bi bi-envelope-fill compact-icon--orange"></i><p><strong th:text="#{contact.email}">Email</strong><span>tec-verse@cdac.in</span></p></div>
             <div><i class="bi bi-geo-alt-fill compact-icon--green"></i><p><strong th:text="#{contact.venueOffice}">Venue Address</strong><span>Chennai Trade Centre, Nandambakkam, Chennai, Tamil Nadu 600089</span></p></div>
             <div><i class="bi bi-telephone-fill compact-icon--navy"></i><p><strong th:text="#{register.field.phone}">Phone</strong><span>+91 **********</span></p></div>
             </section>
             <section class="compact-location">
-            <div class="compact-map overflow-hidden"><iframe th:if="${!#strings.isEmpty(@environment.getProperty('tecverse.google.maps.embed-api-key'))}" th:src="@{https://www.google.com/maps/embed/v1/place(key=${@environment.getProperty('tecverse.google.maps.embed-api-key')},q='Chennai Trade Centre, Nandambakkam, Chennai',zoom=15)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Interactive map showing Chennai Trade Centre, Nandambakkam, Chennai" allowfullscreen credentialless></iframe><a th:unless="${!#strings.isEmpty(@environment.getProperty('tecverse.google.maps.embed-api-key'))}" href="https://www.google.com/maps/search/?api=1&amp;query=Chennai+Trade+Centre%2C+Nandambakkam%2C+Chennai" target="_blank" rel="noopener noreferrer">Open Chennai Trade Centre in Google Maps</a></div>
+            <div class="compact-map overflow-hidden"><iframe th:if="${!#strings.isEmpty(@environment.getProperty('tecverse.google.maps.embed-api-key'))}" th:src="@{https://www.google.com/maps/embed/v1/place(key=${@environment.getProperty('tecverse.google.maps.embed-api-key')},q='Chennai Trade Centre, Nandambakkam, Chennai',zoom=15)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Interactive map showing Chennai Trade Centre, Nandambakkam, Chennai" th:title="#{inquiryform.map.title}" allowfullscreen credentialless></iframe><a th:unless="${!#strings.isEmpty(@environment.getProperty('tecverse.google.maps.embed-api-key'))}" href="https://www.google.com/maps/search/?api=1&amp;query=Chennai+Trade+Centre%2C+Nandambakkam%2C+Chennai" target="_blank" rel="noopener noreferrer" th:text="#{inquiryform.map.open}">Open Chennai Trade Centre in Google Maps</a></div>
             <aside><h2><i class="bi bi-geo-alt-fill"></i> <span th:text="#{contact.compact.venue.title}">Venue Location</span></h2><address><strong>CHENNAI TRADE CENTRE,</strong><br>Ramapuram, Nandambakkam,<br>Chennai, Tamil Nadu 600089</address><p><i class="bi bi-signpost"></i> <span th:text="#{contact.compact.venue.landmark}">Landmark: Nandambakkam</span></p><a href="https://www.google.com/maps/search/?api=1&amp;query=Chennai+Trade+Centre%2C+Nandambakkam%2C+Chennai" target="_blank" rel="noopener"><span th:text="#{contact.compact.venue.directions}">Get Directions on Google Maps</span> <i class="bi bi-arrow-right"></i></a></aside>
             </section>
         </aside>
@@ -383,13 +384,13 @@
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content border-0 rounded-4 shadow">
             <div class="d-flex justify-content-end p-3 pb-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" th:attr="aria-label=#{register.modal.close}"></button>
             </div>
             <div class="modal-body text-center px-4 pb-4">
                 <i class="bi bi-check-circle-fill text-success fs-1" aria-hidden="true"></i>
-                <h2 id="inquiry-success-title" class="h5 fw-bold mt-3">Thank you for submitting!</h2>
-                <p id="inquiry-success-description" class="text-muted mb-4">Our team will reach out to you shortly.</p>
-                <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">OK</button>
+                <h2 id="inquiry-success-title" class="h5 fw-bold mt-3" th:text="#{inquiryform.success.title}">Thank you for submitting!</h2>
+                <p id="inquiry-success-description" class="text-muted mb-4" th:text="#{inquiryform.success.body}">Our team will reach out to you shortly.</p>
+                <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal" th:text="#{inquiryform.success.ok}">OK</button>
             </div>
         </div>
     </div>

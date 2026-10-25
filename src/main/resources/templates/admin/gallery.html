@@ -10,6 +10,47 @@
     <style>
         .thumb { width: 72px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid #dce8ef; background: #eef4f8; }
         .speaker-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 50%; border: 1px solid #dce8ef; background: #eef4f8; }
+        .bulk-upload-card { padding: 22px 26px; }
+        .bulk-upload-heading { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+        .bulk-upload-heading-icon { display: grid; flex: 0 0 42px; place-items: center; width: 42px; height: 42px; border-radius: 12px; color: #1768d4; background: #edf4ff; font-size: 1.2rem; }
+        .bulk-upload-heading h2 { margin: 0 0 4px; font-size: 1.2rem; font-weight: 750; }
+        .bulk-upload-heading p { margin: 0; color: #718096; font-size: .92rem; }
+        .bulk-upload-grid { display: grid; grid-template-columns: minmax(260px, 2fr) minmax(170px, 1.1fr) minmax(130px, .7fr) auto; align-items: start; gap: 16px; }
+        .bulk-upload-field { min-width: 0; }
+        .bulk-upload-field .form-label { display: block; min-height: 22px; margin-bottom: 7px; font-size: .92rem; font-weight: 650; }
+        .bulk-upload-field .form-control { min-height: 46px; border-color: #d6e1ef; border-radius: 10px; }
+        .bulk-upload-field input[type="file"] { padding: 5px; }
+        .bulk-upload-field input[type="file"]::file-selector-button { min-height: 34px; margin: -1px 10px -1px -1px; padding: 0 14px; border: 0; border-right: 1px solid #d6e1ef; background: #f4f8fd; color: #243a5b; }
+        .bulk-upload-field .form-text { min-height: 20px; margin-top: 5px; color: #8794a8; }
+        .bulk-upload-submit { padding-top: 29px; }
+        .bulk-upload-submit .btn { min-height: 46px; min-width: 142px; border-radius: 10px; font-weight: 700; }
+        @media (max-width: 991.98px) { .bulk-upload-grid { grid-template-columns: minmax(0, 1.5fr) minmax(160px, 1fr); } .bulk-upload-submit { padding-top: 0; } }
+        @media (max-width: 575.98px) { .bulk-upload-card { padding: 18px 16px; } .bulk-upload-grid { grid-template-columns: 1fr 1fr; gap: 12px; } .bulk-upload-field:first-child { grid-column: 1 / -1; } .bulk-upload-submit { grid-column: 1 / -1; } .bulk-upload-submit .btn { width: 100%; } }
+        .bulk-detail-list { display: grid; gap: 12px; }
+        .bulk-detail-row { display: grid; grid-template-columns: minmax(150px, .8fr) repeat(2, minmax(160px, 1fr)); gap: 12px; align-items: end; padding: 12px; border: 1px solid #e5ebf3; border-radius: 10px; background: #fbfdff; }
+        .bulk-detail-row.video-row { grid-template-columns: minmax(150px, .7fr) minmax(180px, 1fr) minmax(180px, 1fr) minmax(220px, 1.5fr); }
+        .bulk-detail-row.youtube-row { grid-template-columns: minmax(210px, 1.25fr) minmax(150px, .8fr) minmax(180px, 1fr) minmax(180px, 1.15fr) auto; }
+        .bulk-detail-row .form-label { display: block; margin-bottom: 5px; font-size: .82rem; font-weight: 650; }
+        .bulk-detail-row .form-control { min-height: 40px; }
+        .bulk-detail-name { overflow-wrap: anywhere; color: #5d6e85; font-size: .85rem; }
+        @media (max-width: 767.98px) { .bulk-detail-row, .bulk-detail-row.video-row, .bulk-detail-row.youtube-row { grid-template-columns: 1fr 1fr; } .bulk-detail-name { grid-column: 1 / -1; } }
+        @media (max-width: 480px) { .bulk-detail-row, .bulk-detail-row.video-row, .bulk-detail-row.youtube-row { grid-template-columns: 1fr; } .bulk-detail-name { grid-column: auto; } }
+        .gallery-page.admin-shell { width: min(100%, 1440px) !important; max-width: 1440px !important; padding-top: 34px !important; }
+        .gallery-page .gallery-page-heading { align-items: center !important; margin-bottom: 24px !important; }
+        .gallery-page-heading-copy { display: grid; gap: 8px; }
+        .gallery-page-heading-copy h1 { margin: 0 !important; font-size: clamp(1.65rem, 2.2vw, 2.15rem); letter-spacing: -.035em; }
+        .gallery-page-heading-copy p { margin: 0; color: #718096; font-size: .98rem; }
+        .gallery-page-heading .btn { min-height: 46px; padding: 10px 18px; border-radius: 10px; box-shadow: 0 8px 18px rgba(0,133,111,.16); }
+        .gallery-tabs { display: flex; gap: 6px !important; margin: 0 0 22px !important; padding: 6px !important; border: 1px solid #dce6ef !important; border-radius: 13px !important; background: #fff !important; box-shadow: 0 5px 16px rgba(23,32,51,.035) !important; }
+        .gallery-tabs .nav-link { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 9px !important; color: #53647c; font-size: .94rem; transition: background .18s ease, color .18s ease; }
+        .gallery-tabs .nav-link:not(.active):hover { background: #f2f7f8; color: #007b68; }
+        .gallery-tabs .nav-link.active { background: #00856f !important; box-shadow: 0 5px 12px rgba(0,133,111,.16) !important; }
+        .gallery-page .bulk-upload-card { border-color: #e1e9f0 !important; border-radius: 14px !important; box-shadow: 0 8px 24px rgba(23,32,51,.045) !important; }
+        .gallery-page .table-card { border-radius: 14px !important; box-shadow: 0 8px 24px rgba(23,32,51,.045) !important; }
+        .gallery-page .table thead th { padding: 14px 16px; white-space: nowrap; }
+        .gallery-page .table tbody td { padding: 14px 16px; }
+        .gallery-page .table tbody tr:last-child td { border-bottom: 0; }
+        @media (max-width: 575.98px) { .gallery-page.admin-shell { padding: 24px 14px 42px !important; } .gallery-page .gallery-page-heading { align-items: flex-start !important; } .gallery-page-heading .btn { width: 100%; } .gallery-tabs .nav-link { padding: 9px 11px; font-size: .88rem; } }
     </style>
 </head>
 <body class="admin-dashboard-page overflow-x-hidden">
@@ -17,11 +58,12 @@
 <div th:replace="${activeTab == 'speakers'} ? ~{admin/fragments/admin-layout :: sidebar('speaker-update')} : ~{admin/fragments/admin-layout :: sidebar('gallery')}"></div>
 <div class="admin-main-panel">
 <div th:replace="${activeTab == 'speakers'} ? ~{admin/fragments/admin-layout :: topbar('Speaker Update')} : ~{admin/fragments/admin-layout :: topbar('Gallery Management')}"></div>
-<main class="admin-shell container-fluid mx-auto">
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-        <div>
+<main class="admin-shell gallery-page container-fluid mx-auto">
+    <div class="gallery-page-heading d-flex flex-wrap justify-content-between gap-3">
+        <div class="gallery-page-heading-copy">
             <a class="text-decoration-none small fw-semibold text-success" th:href="@{/admin}"><i class="bi bi-arrow-left"></i> Dashboard</a>
-            <h1 class="h3 mt-2 mb-0" th:text="${activeTab == 'speakers'} ? 'Speaker Update' : 'Gallery Management'">Gallery Management</h1>
+            <h1 th:text="${activeTab == 'speakers'} ? 'Speaker management' : 'Gallery management'">Gallery management</h1>
+            <p th:text="${activeTab == 'speakers'} ? 'Manage speaker profiles and presentation details.' : 'Organize images, videos, and speaker profiles in one place.'">Organize images, videos, and speaker profiles in one place.</p>
         </div>
         <a th:if="${activeTab == 'images'}" class="btn btn-success fw-bold" th:href="@{/admin/gallery/images/new}"><i class="bi bi-plus-lg me-1"></i> Add Image</a>
         <a th:if="${activeTab == 'videos'}" class="btn btn-success fw-bold" th:href="@{/admin/gallery/videos/new}"><i class="bi bi-plus-lg me-1"></i> Add Video</a>
@@ -29,12 +71,28 @@
     </div>
 
     <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Saved.</div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Upload failed.</div>
 
-    <ul class="nav nav-pills mb-3 gap-2">
-        <li class="nav-item"><a th:classappend="${activeTab == 'images'} ? ' active'" class="nav-link" th:href="@{/admin/gallery(tab='images')}">Images</a></li>
-        <li class="nav-item"><a th:classappend="${activeTab == 'videos'} ? ' active'" class="nav-link" th:href="@{/admin/gallery(tab='videos')}">Videos</a></li>
-        <li class="nav-item"><a th:classappend="${activeTab == 'speakers'} ? ' active'" class="nav-link" th:href="@{/admin/gallery(tab='speakers')}">Speakers</a></li>
+    <ul class="nav nav-pills gallery-tabs">
+        <li class="nav-item"><a th:classappend="${activeTab == 'images'} ? ' active'" class="nav-link" th:href="@{/admin/gallery(tab='images')}"><i class="bi bi-images"></i> Images</a></li>
+        <li class="nav-item"><a th:classappend="${activeTab == 'videos'} ? ' active'" class="nav-link" th:href="@{/admin/gallery(tab='videos')}"><i class="bi bi-camera-video"></i> Videos</a></li>
+        <li class="nav-item"><a th:classappend="${activeTab == 'speakers'} ? ' active'" class="nav-link" th:href="@{/admin/gallery(tab='speakers')}"><i class="bi bi-people"></i> Speakers</a></li>
     </ul>
+
+    <section th:if="${activeTab == 'images'}" class="bulk-upload-card mb-4 bg-white border rounded-3 shadow-sm">
+        <form th:action="@{/admin/gallery/images/bulk}" method="post" enctype="multipart/form-data" id="bulkImageForm">
+            <div class="bulk-upload-heading">
+                <span class="bulk-upload-heading-icon"><i class="bi bi-images"></i></span>
+                <div><h2>Bulk upload images</h2><p>Select up to 20 images. Titles are generated from filenames; each image can be up to 1 MB.</p></div>
+            </div>
+            <div class="bulk-upload-grid">
+                <div class="bulk-upload-field"><label class="form-label" for="bulkImageFiles">Images</label><input class="form-control" id="bulkImageFiles" name="imageFiles" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple required><div class="form-text" id="bulkImageSelection">No images selected.</div></div>
+                <div class="bulk-upload-field"><label class="form-label" for="bulkImageCategory">Category</label><input class="form-control" id="bulkImageCategory" name="category" maxlength="120" value="Event" required></div>
+                <div class="bulk-upload-field"><label class="form-label" for="bulkImageOrder">Starting order</label><input class="form-control" id="bulkImageOrder" name="displayOrder" type="number" min="0" value="0" required></div>
+                <div class="bulk-upload-submit"><button class="btn btn-primary" type="submit"><i class="bi bi-cloud-arrow-up me-1"></i> Upload</button></div>
+            </div>
+        </form>
+    </section>
 
     <section th:if="${activeTab == 'images'}" class="table-card bg-white overflow-hidden">
         <div class="table-responsive">
@@ -63,6 +121,29 @@
         </div>
     </section>
 
+    <section th:if="${activeTab == 'videos'}" class="bulk-upload-card mb-4 bg-white border rounded-3 shadow-sm">
+        <form th:action="@{/admin/gallery/videos/bulk}" method="post" enctype="multipart/form-data" id="bulkVideoForm">
+            <div class="bulk-upload-heading"><span class="bulk-upload-heading-icon"><i class="bi bi-camera-video"></i></span><div><h2>Bulk upload videos</h2><p>Select up to 20 videos. Add an optional thumbnail and edit the title and description for each; each file can be up to 1 MB.</p></div></div>
+            <div class="bulk-upload-grid" style="grid-template-columns:minmax(260px,1.6fr) minmax(130px,.6fr) auto;">
+                <div class="bulk-upload-field"><label class="form-label" for="bulkVideoFiles">Videos</label><input class="form-control" id="bulkVideoFiles" name="videoFiles" type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.webm,.ogg,.mov" multiple required><div class="form-text" id="bulkVideoSelection">No videos selected.</div></div>
+                <div class="bulk-upload-field"><label class="form-label" for="bulkVideoOrder">Starting order</label><input class="form-control" id="bulkVideoOrder" name="displayOrder" type="number" min="0" value="0" required></div>
+                <div class="bulk-upload-submit"><button class="btn btn-primary" type="submit"><i class="bi bi-cloud-arrow-up me-1"></i> Upload videos</button></div>
+            </div>
+            <div class="bulk-detail-list mt-3" id="bulkVideoDetails"></div>
+        </form>
+    </section>
+
+    <section th:if="${activeTab == 'videos'}" class="bulk-upload-card mb-4 bg-white border rounded-3 shadow-sm">
+        <form th:action="@{/admin/gallery/videos/bulk-youtube}" method="post" enctype="multipart/form-data" id="bulkYoutubeForm">
+            <div class="bulk-upload-heading"><span class="bulk-upload-heading-icon"><i class="bi bi-youtube"></i></span><div><h2>Bulk add YouTube videos</h2><p>Add up to 20 YouTube links. Thumbnails load automatically; upload a custom thumbnail per row if needed.</p></div></div>
+            <div class="bulk-upload-grid" style="grid-template-columns:minmax(130px,.6fr) auto;">
+                <div class="bulk-upload-field"><label class="form-label" for="bulkYoutubeOrder">Starting order</label><input class="form-control" id="bulkYoutubeOrder" name="displayOrder" type="number" min="0" value="0" required></div>
+                <div class="bulk-upload-submit d-flex gap-2"><button class="btn btn-outline-primary" type="button" id="addYoutubeRow"><i class="bi bi-plus-lg me-1"></i> Add link</button><button class="btn btn-primary" type="submit"><i class="bi bi-cloud-arrow-up me-1"></i> Add videos</button></div>
+            </div>
+            <div class="bulk-detail-list mt-3" id="bulkYoutubeRows"></div>
+        </form>
+    </section>
+
     <section th:if="${activeTab == 'videos'}" class="table-card bg-white overflow-hidden">
         <div class="table-responsive">
             <table class="table align-middle mb-0 table-hover">
@@ -72,7 +153,7 @@
                 <tbody>
                 <tr th:if="${#lists.isEmpty(videos)}"><td colspan="6" class="py-5 text-center text-muted">No gallery videos saved yet.</td></tr>
                 <tr th:each="item : ${videos}">
-                    <td><img th:if="${item.thumbnailUrl}" class="thumb" th:src="@{${item.thumbnailUrl}}" th:alt="${item.title}"><span th:unless="${item.thumbnailUrl}" class="text-muted small">No thumbnail</span></td>
+                    <td><img th:if="${item.displayThumbnailUrl}" class="thumb" th:src="@{${item.displayThumbnailUrl}}" th:alt="${item.title}"><span th:unless="${item.displayThumbnailUrl}" class="text-muted small">No thumbnail</span></td>
                     <td class="fw-semibold" th:text="${item.title}">Title</td>
                     <td class="text-muted small" th:text="${item.description}">Description</td>
                     <td th:text="${item.displayOrder}">0</td>
@@ -88,6 +169,18 @@
                 </tbody>
             </table>
         </div>
+    </section>
+
+    <section th:if="${activeTab == 'speakers'}" class="bulk-upload-card mb-4 bg-white border rounded-3 shadow-sm">
+        <form th:action="@{/admin/gallery/speakers/bulk}" method="post" enctype="multipart/form-data" id="bulkSpeakerForm">
+            <div class="bulk-upload-heading"><span class="bulk-upload-heading-icon"><i class="bi bi-person-bounding-box"></i></span><div><h2>Bulk upload speakers</h2><p>Select up to 20 JPG or PNG photos, then complete each speaker's details. Photos are optimized on upload.</p></div></div>
+            <div class="bulk-upload-grid" style="grid-template-columns:minmax(260px,1.6fr) minmax(130px,.6fr) auto;">
+                <div class="bulk-upload-field"><label class="form-label" for="bulkSpeakerFiles">Speaker photos</label><input class="form-control" id="bulkSpeakerFiles" name="profileImageFiles" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple required><div class="form-text" id="bulkSpeakerSelection">No photos selected.</div></div>
+                <div class="bulk-upload-field"><label class="form-label" for="bulkSpeakerOrder">Starting order</label><input class="form-control" id="bulkSpeakerOrder" name="displayOrder" type="number" min="0" value="0" required></div>
+                <div class="bulk-upload-submit"><button class="btn btn-primary" type="submit"><i class="bi bi-cloud-arrow-up me-1"></i> Upload speakers</button></div>
+            </div>
+            <div class="bulk-detail-list mt-3" id="bulkSpeakerDetails"></div>
+        </form>
     </section>
 
     <section th:if="${activeTab == 'speakers'}" class="table-card bg-white overflow-hidden">
@@ -122,5 +215,204 @@
  </div>
  </div>
 <script th:src="@{/js/admin.js}"></script>
+<script th:nonce="${cspNonce}">
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("bulkImageFiles");
+        const form = document.getElementById("bulkImageForm");
+        if (!input || !form) return;
+        const summary = document.getElementById("bulkImageSelection");
+        input.addEventListener("change", function () {
+            summary.textContent = input.files.length ? input.files.length + " image(s) selected." : "No images selected.";
+        });
+        form.addEventListener("submit", function (event) {
+            if (input.files.length > 20) {
+                event.preventDefault();
+                summary.textContent = "Select no more than 20 images at a time.";
+                summary.classList.add("text-danger");
+                return;
+            }
+            const oversized = Array.from(input.files).some(file => file.size > 1024 * 1024);
+            if (oversized) {
+                event.preventDefault();
+                summary.textContent = "Each image must be 1 MB or smaller.";
+                summary.classList.add("text-danger");
+            }
+        });
+    });
+</script>
+<script th:nonce="${cspNonce}">
+    document.addEventListener("DOMContentLoaded", function () {
+        function baseName(filename) {
+            return filename.replace(/^.*[\\/]/, "").replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim();
+        }
+        function addTextField(row, labelText, name, value, required, maxLength, multiline) {
+            const wrapper = document.createElement("div");
+            const label = document.createElement("label");
+            label.className = "form-label";
+            label.textContent = labelText;
+            const field = document.createElement(multiline ? "textarea" : "input");
+            field.className = "form-control";
+            field.name = name;
+            field.value = value;
+            field.required = required;
+            field.maxLength = maxLength;
+            if (multiline) field.rows = 2;
+            wrapper.append(label, field);
+            row.append(wrapper);
+        }
+        function addFileName(row, filename) {
+            const name = document.createElement("div");
+            name.className = "bulk-detail-name";
+            name.textContent = filename;
+            row.append(name);
+        }
+        function addThumbnailField(row, index) {
+            const wrapper = document.createElement("div");
+            const label = document.createElement("label");
+            label.className = "form-label";
+            label.textContent = "Thumbnail (optional)";
+            const field = document.createElement("input");
+            field.className = "form-control";
+            field.type = "file";
+            field.name = "thumbnailFiles[" + index + "]";
+            field.accept = "image/jpeg,image/png,image/webp,image/gif";
+            field.addEventListener("change", function () {
+                if (field.files.length && field.files[0].size > 1024 * 1024) {
+                    field.value = "";
+                    field.setCustomValidity("Thumbnail images must be 1 MB or smaller.");
+                    field.reportValidity();
+                } else {
+                    field.setCustomValidity("");
+                }
+            });
+            wrapper.append(label, field);
+            row.append(wrapper);
+        }
+        function setupBulkForm(config) {
+            const input = document.getElementById(config.inputId);
+            const form = document.getElementById(config.formId);
+            if (!input || !form) return;
+            const summary = document.getElementById(config.summaryId);
+            const details = document.getElementById(config.detailsId);
+            input.addEventListener("change", function () {
+                details.replaceChildren();
+                summary.classList.remove("text-danger");
+                const files = Array.from(input.files);
+                summary.textContent = files.length ? files.length + " file(s) selected." : config.emptyText;
+                files.slice(0, 20).forEach(function (file, index) {
+                    const row = document.createElement("div");
+                    row.className = "bulk-detail-row " + (config.video ? "video-row" : "");
+                    addFileName(row, file.name);
+                    if (config.video) {
+                        const title = baseName(file.name) || "Gallery video";
+                        addThumbnailField(row, index);
+                        addTextField(row, "Title", "titles", title, true, 180, false);
+                        addTextField(row, "Description / category (optional)", "descriptions", title, false, 500, true);
+                    } else {
+                        addTextField(row, "Speaker name", "speakerNames", baseName(file.name) || "Speaker", true, 160, false);
+                        addTextField(row, "Designation", "speakerDesignations", "", true, 180, false);
+                        addTextField(row, "Organization", "speakerOrganizations", "", true, 180, false);
+                        addTextField(row, "Session timing (optional)", "speakerSessionTimings", "", false, 120, false);
+                    }
+                    details.append(row);
+                });
+            });
+            form.addEventListener("submit", function (event) {
+                const files = Array.from(input.files);
+                let message = "";
+                if (!files.length) message = config.emptyText;
+                else if (files.length > 20) message = "Select no more than 20 files at a time.";
+                else if (files.some(file => file.size > 1024 * 1024)) message = "Each file must be 1 MB or smaller.";
+                else if (config.speaker && files.some(file => !/\.(jpe?g|png)$/i.test(file.name))) message = "Speaker photos must be JPG or PNG files.";
+                if (message) {
+                    event.preventDefault();
+                    summary.textContent = message;
+                    summary.classList.add("text-danger");
+                }
+            });
+        }
+        setupBulkForm({ inputId: "bulkVideoFiles", formId: "bulkVideoForm", summaryId: "bulkVideoSelection", detailsId: "bulkVideoDetails", emptyText: "No videos selected.", video: true });
+        setupBulkForm({ inputId: "bulkSpeakerFiles", formId: "bulkSpeakerForm", summaryId: "bulkSpeakerSelection", detailsId: "bulkSpeakerDetails", emptyText: "No photos selected.", speaker: true });
+    });
+</script>
+<script th:nonce="${cspNonce}">
+    document.addEventListener("DOMContentLoaded", function () {
+        const rows = document.getElementById("bulkYoutubeRows");
+        const addButton = document.getElementById("addYoutubeRow");
+        const form = document.getElementById("bulkYoutubeForm");
+        if (!rows || !addButton || !form) return;
+
+        function field(row, labelText, name, type, required, maxLength, accept) {
+            const wrapper = document.createElement("div");
+            const label = document.createElement("label");
+            label.className = "form-label";
+            label.textContent = labelText;
+            const input = document.createElement("input");
+            input.className = "form-control";
+            input.type = type;
+            input.name = name;
+            input.required = required;
+            if (maxLength) input.maxLength = maxLength;
+            if (accept) input.accept = accept;
+            wrapper.append(label, input);
+            row.append(wrapper);
+            return input;
+        }
+
+        function addRow() {
+            if (rows.children.length >= 20) return;
+            const index = rows.children.length;
+            const row = document.createElement("div");
+            row.className = "bulk-detail-row youtube-row";
+            row.dataset.rowIndex = String(index);
+            field(row, "YouTube link", "youtubeUrls", "url", true, 500).placeholder = "https://youtu.be/...";
+            field(row, "Title", "youtubeTitles", "text", true, 180);
+            const description = document.createElement("div");
+            const descriptionLabel = document.createElement("label");
+            descriptionLabel.className = "form-label";
+            descriptionLabel.textContent = "Description (optional)";
+            const textarea = document.createElement("textarea");
+            textarea.className = "form-control";
+            textarea.name = "youtubeDescriptions";
+            textarea.rows = 1;
+            textarea.maxLength = 500;
+            description.append(descriptionLabel, textarea);
+            row.append(description);
+            field(row, "Custom thumbnail (optional)", "youtubeThumbnail" + index, "file", false, 0, "image/jpeg,image/png,image/webp,image/gif");
+            const removeWrap = document.createElement("div");
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "btn btn-outline-danger";
+            remove.setAttribute("aria-label", "Remove YouTube video row");
+            remove.innerHTML = '<i class="bi bi-trash" aria-hidden="true"></i>';
+            remove.addEventListener("click", function () {
+                row.remove();
+                Array.from(rows.children).forEach(function (item, newIndex) {
+                    item.dataset.rowIndex = String(newIndex);
+                    item.querySelector('input[type="file"]').name = "youtubeThumbnail" + newIndex;
+                });
+            });
+            removeWrap.append(remove);
+            row.append(removeWrap);
+            rows.append(row);
+        }
+
+        addButton.addEventListener("click", addRow);
+        form.addEventListener("submit", function (event) {
+            if (!rows.children.length) {
+                event.preventDefault();
+                addRow();
+            }
+            const invalidThumbnail = Array.from(rows.querySelectorAll('input[type="file"]')).some(function (input) {
+                return input.files.length && input.files[0].size > 1024 * 1024;
+            });
+            if (invalidThumbnail) {
+                event.preventDefault();
+                window.alert("Each thumbnail must be 1 MB or smaller.");
+            }
+        });
+        addRow();
+    });
+</script>
 </body>
 </html>

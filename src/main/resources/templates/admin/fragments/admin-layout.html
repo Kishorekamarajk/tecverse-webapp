@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 
-<aside th:fragment="sidebar(active)" class="admin-sidebar position-fixed top-0 start-0 d-flex flex-column vh-100" aria-label="Admin navigation">
+<th:block th:fragment="sidebar(active)">
+<aside th:attr="data-read-only=${adminReadOnly}" class="admin-sidebar position-fixed top-0 start-0 d-flex flex-column vh-100" aria-label="Admin navigation">
     <div class="admin-brand d-flex align-items-center">
         <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo">
         <span>
@@ -13,60 +14,62 @@
 
     <nav class="admin-side-nav d-flex flex-column flex-grow-1 gap-1">
         <a th:classappend="${active == 'dashboard'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin}">
-            <i class="bi bi-bar-chart-line"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 3v18h18"/><path d="m7 14 4-4 4 3 6-7"/><path d="M17 6h4v4"/></svg>
             <span>Main Dashboard</span>
         </a>
 
         <div class="admin-nav-label">Core Modules</div>
 
         <a th:classappend="${active == 'news'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/news-updates}">
-            <i class="bi bi-newspaper"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h15v16H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M7 8h8M7 12h8M7 16h5M19 8h2v10a2 2 0 0 1-2 2"/></svg>
             <span>News &amp; Updates</span>
         </a>
         <a th:classappend="${active == 'gallery'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/gallery}">
-            <i class="bi bi-images"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="15" height="14" rx="2"/><path d="m4 16 4-4 3 3 3-4 4 5M16 7h4a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8"/><circle cx="8" cy="8" r="1"/></svg>
             <span>Gallery</span>
         </a>
         <a th:classappend="${active == 'speaker-update'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/speaker-update}">
-            <i class="bi bi-mic"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg>
             <span>Speaker Update</span>
         </a>
         <a th:classappend="${active == 'id-cards'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/id-cards}">
-            <i class="bi bi-person-vcard"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2.5"/><path d="M5.5 17a3.5 3.5 0 0 1 7 0M15 9h3M15 13h3M15 17h2"/></svg>
             <span>ID Card Generator</span>
         </a>
         <a th:classappend="${active == 'exhibitor-logos'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/exhibitor-logos}">
-            <i class="bi bi-shop-window"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10h18l-1.5-6h-15L3 10Z"/><path d="M5 10v10h14V10M9 20v-6h6v6M3 10a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/></svg>
             <span>Exhibitor Logos</span>
         </a>
         <a th:classappend="${active == 'chief-guests'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/chief-guests}">
-            <i class="bi bi-person-badge"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3 19a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5"/></svg>
             <span>Chief Guests</span>
         </a>
         <a th:classappend="${active == 'important-dates'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/important-dates}">
-            <i class="bi bi-calendar3"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18M7 14h.01M12 14h.01M17 14h.01M7 17h.01M12 17h.01"/></svg>
             <span>Important Dates</span>
         </a>
         <a th:classappend="${active == 'faqs'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/faqs}">
-            <i class="bi bi-question-circle"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.3 1.7c-1.2 1.1-1.9 1.5-1.9 3M12 17h.01"/></svg>
             <span>FAQ</span>
         </a>
         <a th:classappend="${active == 'schedule'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/conference-schedule}">
-            <i class="bi bi-calendar-event"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18M8 14h3v3H8zM15 14h2"/></svg>
             <span>Conference Schedule</span>
         </a>
         <a th:classappend="${active == 'thematic'} ? ' is-active'" class="admin-side-link position-relative d-flex align-items-center text-decoration-none" th:href="@{/admin/thematic-cards}">
-            <i class="bi bi-grid-3x3-gap"></i>
+            <svg class="admin-nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
             <span>Thematic Areas</span>
         </a>
     </nav>
 
     <form class="admin-sidebar-logout" th:action="@{/admin/logout}" method="post">
         <button class="btn btn-outline-secondary w-100" type="submit">
-            <i class="bi bi-box-arrow-right me-1"></i> Logout
+            <svg class="admin-nav-icon admin-logout-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"/></svg> Logout
         </button>
     </form>
 </aside>
+<script th:src="@{/js/admin-readonly.js}" defer></script>
+</th:block>
 
 <header th:fragment="topbar(title)" class="admin-topbar sticky-top d-flex align-items-center">
     <div class="admin-breadcrumb d-flex align-items-center">

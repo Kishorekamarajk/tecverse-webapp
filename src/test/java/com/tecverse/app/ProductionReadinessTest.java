@@ -70,11 +70,11 @@ class ProductionReadinessTest {
         MockHttpServletRequest req = new MockHttpServletRequest();
         req.setSession(new MockHttpSession());
         OtpSessionVerification.markVerified(req, OtpSessionVerification.Purpose.TICKET, "visitor@example.in");
-        // Email alone is not enough: the mobile number must also be OTP-verified.
-        mvc.perform(get("/ticket/details-step").session((MockHttpSession) req.getSession()))
-                .andExpect(status().isForbidden());
-
-        OtpSessionVerification.markVerified(req, OtpSessionVerification.Purpose.TICKET_MOBILE, "9876543210");
+        // Mobile OTP verification is disabled for now, so email verification alone releases step 2.
+        // Restore these lines when the mobile check in PageController.ticketDetailsStep is re-enabled.
+        // mvc.perform(get("/ticket/details-step").session((MockHttpSession) req.getSession()))
+        //         .andExpect(status().isForbidden());
+        // OtpSessionVerification.markVerified(req, OtpSessionVerification.Purpose.TICKET_MOBILE, "9876543210");
         mvc.perform(get("/ticket/details-step").session((MockHttpSession) req.getSession()))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("id=\"detailsForm\"")));

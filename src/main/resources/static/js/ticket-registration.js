@@ -26,8 +26,10 @@ const ministries=[
 "Ministry of Statistics and Programme Implementation","Ministry of Steel","Ministry of Textiles","Ministry of Tourism",
 "Ministry of Tribal Affairs","Ministry of Women and Child Development","Ministry of Youth Affairs and Sports"];
 const states=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
+function populateApplicantStateSelect(){const select=$('#applicantState');if(select)select.innerHTML='<option value="">Select your state or union territory</option>'+states.map(state=>`<option value="${esc(state)}">${esc(state)}</option>`).join('');}
 const departments=["General Administration","Finance","Home","Education","Higher Education","School Education","Health and Family Welfare","Industries and Commerce","Information Technology / Electronics","Science and Technology","Agriculture","Animal Husbandry and Fisheries","Co-operation","Rural Development","Urban Development / Municipal Administration","Revenue","Transport","Public Works","Water Resources","Energy","Environment and Forests","Labour and Employment","Skill Development","Tourism and Culture","Social Welfare","Women and Child Development","Tribal Welfare","Food and Civil Supplies","Information and Public Relations","Planning","Law","Personnel","Other"];
-let verified=false, emailVerified=false, mobileVerified=false, timer=null, mobileTimer=null, rateLimitTimer=null;
+// Mobile OTP verification is disabled for now, so the mobile number counts as verified.
+let verified=false, emailVerified=false, mobileVerified=true, timer=null, mobileTimer=null, rateLimitTimer=null;
 
 function msg(el,text,ok=false){el.textContent=text;el.className='tr-msg small fw-semibold mt-3 '+(ok?'text-success':'text-danger');}
 
@@ -42,7 +44,9 @@ function setLoading(btn,on,loadingLabel){
     btn.classList.remove('is-loading');btn.disabled=false;btn.removeAttribute('aria-busy');btn.removeAttribute('aria-label');
   }
 }
-function overlay(on,text){const o=$('#trOverlay');if(!o)return;if(!window.bootstrap?.Modal)return;if(text)$('#trOverlayText').textContent=text;const modal=window.bootstrap.Modal.getOrCreateInstance(o);if(on)modal.show();else modal.hide();}
+function overlay(on,text){const o=$('#trOverlay');if(!o)return;if(!window.bootstrap?.Modal)return;if(text)$('#trOverlayText').textContent=text;const modal=window.bootstrap.Modal.getOrCreateInstance(o);o.dataset.open=on?'1':'';if(on){modal.show();return;}modal.hide();
+ // Bootstrap ignores hide() while the fade-in is still running (a fast error response), so hide again once it has opened.
+ o.addEventListener('shown.bs.modal',()=>{if(!o.dataset.open)modal.hide();},{once:true});}
 function shakeOtp(){$$('#emailOtpInputs input').forEach(i=>{i.classList.remove('tr-shake');void i.offsetWidth;i.classList.add('tr-shake');});}
 
 const STEP_N={verify:1,details:2,preview:3,complete:4};
@@ -196,7 +200,7 @@ function renderConditional(){
   h+=field('Designation / job title','designation','text','required')+cityField()+'</div>';
  } else if(cat==='STATE_GOVERNMENT'){
   h='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">State Government</div><div class="tr-grid row">';
-  h+=select('State / Union Territory','stateName',states,'required')+select('Department','stateDepartment',departments,'required');
+  h+=select('Department','stateDepartment',departments,'required');
   h+=field('Organization / office name','organizationName','text','required')+field('Designation / job title','designation','text','required');
   h+=cityField()+'</div>';
  } else if(cat==='INDUSTRY_STARTUP'){
@@ -228,6 +232,7 @@ function renderPassport(){
 }
 function collect(){
  const fd=new FormData($('#detailsForm')); const o=Object.fromEntries(fd.entries());if(o.organizationLocationChoice){o.organizationLocation=o.organizationLocationChoice==='__OTHER__'?(o.organizationLocationOther||'').trim():o.organizationLocationChoice;delete o.organizationLocationChoice;delete o.organizationLocationOther;}o.email=$('#email').value.trim().toLowerCase();o.phone=$('#phone').value.trim();o.officialName=$('#verifyName').value.trim();
+ if(o.category==='STATE_GOVERNMENT')o.stateName=o.applicantState;
  o.password=$('#password').value; o.confirmPassword=$('#confirmPassword').value;
  o.attendanceDays=fd.getAll('attendanceDays'); return o;
 }
@@ -252,7 +257,7 @@ function validateTicketFields(form){
  return valid;
 }
 function preview(){
- const o=collect(); const labels={category:'Registration category',officialName:'Full name',email:'Email address',phone:'Mobile number',citizenshipStatus:'Citizenship / residency status',academiaType:'Academia type',collegeName:'Institution',collegeDistrict:'District',collegeState:'State / Union Territory',universityName:'University',academiaRole:'Participant role',registerNumber:'Student / staff ID number',centralMinistry:'Ministry / department',stateName:'State / Union Territory',stateDepartment:'Department',organizationName:'Organization / office',organizationLocation:'City / office location',designation:'Designation / job title',industryOrStartup:'Organization type',passportNumber:'Passport number',passportValidUntil:'Passport expiry date',passportName:'Name as shown on passport'};
+ const o=collect(); const labels={category:'Registration category',officialName:'Full name',email:'Email address',phone:'Mobile number',citizenshipStatus:'Citizenship / residency status',applicantState:'State / Union Territory',academiaType:'Academia type',collegeName:'Institution',collegeDistrict:'District',collegeState:'Institution state / union territory',universityName:'University',academiaRole:'Participant role',registerNumber:'Student / staff ID number',centralMinistry:'Ministry / department',stateName:'Government state / union territory',stateDepartment:'Department',organizationName:'Organization / office',organizationLocation:'City / office location',designation:'Designation / job title',industryOrStartup:'Organization type',passportNumber:'Passport number',passportValidUntil:'Passport expiry date',passportName:'Name as shown on passport'};
  $('#preview').innerHTML=Object.entries(labels).filter(([k])=>o[k]).map(([k,l])=>`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">${esc(l)}</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o[k])}</strong></div>`).join('')+`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">Participation Preference</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o.attendanceDays.join(', '))}</strong></div>`;
  window.ticketPayload=o; show('preview');
 }
@@ -304,6 +309,7 @@ $('#registerStart').onclick=()=>{
  }
  proceedAfterVerification();
 };
+/* Mobile OTP verification is disabled for now; remove this comment to restore it.
 // Mobile number verification by SMS OTP (must be completed before the email OTP step).
 $('#sendMobileOtp').onclick=async()=>{
  if(mobileVerified)return;
@@ -332,6 +338,8 @@ function setMobileVerifiedUi(on){
  $('#phone').readOnly=on;$('#mobileOtpBox').hidden=true;clearInterval(mobileTimer);
  b.disabled=on;b.innerHTML=on?'<i class="bi bi-check-circle-fill"></i> Verified':'Verify Mobile';delete b.dataset.label;
 }
+*/
+function setMobileVerifiedUi(on){}
 // Six single-digit boxes per OTP: auto-advance, paste-to-fill, backspace/arrow navigation, Enter submits.
 function wireOtpBoxes(container,submitButton){
 const otpInputs=$$(container+' input');
@@ -359,7 +367,7 @@ otpInputs.forEach((input,index)=>{
 });
 }
 wireOtpBoxes('#emailOtpInputs','#verifyOtp');
-wireOtpBoxes('#mobileOtpInputs','#verifyMobileOtp');
+// wireOtpBoxes('#mobileOtpInputs','#verifyMobileOtp');
 $('#verifyOtp').onclick=async()=>{
  const btn=$('#verifyOtp'); const otp=$$('#emailOtpInputs input').map(x=>x.value).join(''),m=$('#verifyMsg');
  if(otp.length!==6){msg(m,'Enter the complete 6-digit OTP.');shakeOtp();return;}
@@ -385,7 +393,7 @@ async function proceedAfterVerification(){
  const m=$('#verifyMsg');
  // The verify responses alone never advance the form: step 2 is only released by the server
  // to a session that really completed both OTP verifications.
- if(!await loadDetailsStep()){msg(m,'OTP verification could not be confirmed. Please verify again.');emailVerified=mobileVerified=false;setEmailVerifiedUi(false);setMobileVerifiedUi(false);return;}
+ if(!await loadDetailsStep()){msg(m,'OTP verification could not be confirmed. Please verify again.');emailVerified=false;setEmailVerifiedUi(false);setMobileVerifiedUi(false);return;}
  verified=true;
  const verifiedName=$('#verifyName').value.trim();
  $('#detailsForm [name="officialName"]').value=verifiedName;
@@ -404,6 +412,7 @@ async function loadDetailsStep(){
  const doc=new DOMParser().parseFromString(await r.text(),'text/html'), form=doc.querySelector('form#detailsForm[data-view="details"]');
  if(!form)return false;
  $('#detailsStepHost').replaceChildren(document.adoptNode(form));
+ populateApplicantStateSelect();
  bindDetailsStep();
  window.TecverseValidation?.init($('#detailsForm'));
  return true;
@@ -413,8 +422,11 @@ $('#category').onchange=()=>{renderConditional();renderPassport();};$('#citizens
 document.querySelector('#conditional').addEventListener('change',e=>{if(e.target.name==='academiaRole')updateAcademiaRoleFields();if(e.target.name==='organizationLocationChoice'){const other=e.target.value==='__OTHER__',wrap=$('#organizationLocationOtherWrap'),input=$('#organizationLocationOther');if(wrap&&input){wrap.hidden=!other;input.disabled=!other;input.required=other;if(!other)input.value='';}}});
 document.querySelector('#conditional').addEventListener('input',e=>{const rule=FREE_TEXT_VALIDATION[e.target.name];if(!rule)return;const value=e.target.value.trim();e.target.setCustomValidity(value&&!rule.pattern.test(value)?rule.message:'');if(e.target.hasAttribute('aria-invalid'))e.target.setAttribute('aria-invalid',String(!e.target.validity.valid));});
 $('#backVerify').onclick=()=>show('verify');
-$('#detailsForm').onsubmit=e=>{e.preventDefault();const days=$$('input[name="attendanceDays"]:checked');const m=$('#detailsMsg');if(!validateTicketFields(e.currentTarget))return;if(!$('#category').value){msg(m,'Choose your registration type.');return;}if(!days.length){msg(m,'Select at least one participation day.');return;}if(days.length===2){days[0].checked=false;days[1].checked=false;const both=$$('input[name="attendanceDays"]')[2];both.checked=true;}preview();};
-$$('input[name="attendanceDays"]').forEach(i=>i.onchange=()=>{if(i.value==='BOTH'&&i.checked)$$('input[name="attendanceDays"]').slice(0,2).forEach(x=>x.checked=false);else if(i.checked)$$('input[name="attendanceDays"]')[2].checked=false;});
+$('#detailsForm').onsubmit=e=>{e.preventDefault();const days=$$('input[name="attendanceDays"]:checked');const m=$('#detailsMsg');if(!validateTicketFields(e.currentTarget))return;if(!$('#category').value){msg(m,'Choose your registration type.');return;}if(!days.length){msg(m,'Select Day 1, Day 2, or Both Days.');return;}if(days.length>1){msg(m,'Choose only one option: Day 1, Day 2, or Both Days.');days[0].focus();return;}preview();};
+$$('input[name="attendanceDays"]').forEach(input=>input.addEventListener('change',()=>{
+ if(!input.checked)return;
+ $$('input[name="attendanceDays"]').forEach(other=>{if(other!==input)other.checked=false;});
+}));
 }
 $('#editForm').onclick=()=>show('details');
 const categoryLabels={ACADEMIA:'Academia',CENTRAL_GOVERNMENT:'Central Government',STATE_GOVERNMENT:'State Government',INDUSTRY_STARTUP:'Industry / Startup',VIP_SPECIAL_INVITEE:'VIP / Special Invitee',SPEAKER:'Speaker',ORGANIZER:'Organizer'};
@@ -502,7 +514,7 @@ $('#submitFinal').onclick=async()=>{
  if(!window.ticketPayload?.attendanceDays?.length){msg(m,'Select at least one participation day.');show('details');return;}
  setLoading(btn,true); overlay(true,'Submitting your registration…');
  try{const result=await post(API.register,window.ticketPayload);const data=result.data||result;$('#completeEmail').textContent=data.email;$('#confirmationEmailStatus').textContent=data.confirmationEmailSent?'Your confirmation email is on its way to':'Thanks for registering for TecVerse 2026. Further details will be shared at';show('complete');showRegistrationCelebration();launchIdCard(data,window.ticketPayload);}
- catch(e){if(e.status===403){verified=false;emailVerified=false;mobileVerified=false;setEmailVerifiedUi(false);setMobileVerifiedUi(false);['#verifyName','#email','#phone'].forEach(s=>{$(s).readOnly=false;});show('verify');msg($('#verifyMsg'),e.message);return;}msg(m,e.message);}
+ catch(e){if(e.status===403){verified=false;emailVerified=false;setEmailVerifiedUi(false);setMobileVerifiedUi(false);['#verifyName','#email','#phone'].forEach(s=>{$(s).readOnly=false;});show('verify');msg($('#verifyMsg'),e.message);return;}msg(m,e.message);}
  finally{setLoading(btn,false);overlay(false);}
 };
 

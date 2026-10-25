@@ -6,6 +6,38 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .exhibitor-bulk-card{padding:25px 28px;border-color:#e1e9f0!important;border-radius:16px!important;box-shadow:0 10px 30px rgba(23,32,51,.055)!important}
+        .exhibitor-bulk-heading{display:flex;align-items:center;gap:15px;margin-bottom:24px}
+        .exhibitor-bulk-icon{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border-radius:14px;background:#edf4ff;color:#1768d4;font-size:1.3rem}
+        .exhibitor-bulk-heading h2{margin:0 0 5px;font-size:1.2rem;font-weight:750;letter-spacing:-.02em}
+        .exhibitor-bulk-heading p{margin:0;color:#718096;font-size:.94rem}
+        .exhibitor-bulk-grid{display:grid;grid-template-columns:minmax(260px,1fr) minmax(170px,.48fr) auto;align-items:end;gap:16px}
+        .exhibitor-bulk-grid>div{min-width:0}
+        .exhibitor-bulk-grid .form-label{margin-bottom:8px;color:#253047;font-size:.92rem}
+        .exhibitor-bulk-grid .form-control{min-height:48px;border-color:#d8e3ec;border-radius:10px;background:#fbfdff}
+        .exhibitor-bulk-grid input[type=file]{padding:5px}
+        .exhibitor-bulk-grid input[type=file]::file-selector-button{min-height:36px;margin:-1px 12px -1px -1px;padding:0 14px;border:0;border-right:1px solid #d8e3ec;border-radius:7px 0 0 7px;background:#f1f6fb;color:#30435e;font-weight:600}
+        .exhibitor-bulk-grid .btn{min-height:48px;padding:0 20px;border-radius:10px;font-weight:700;white-space:nowrap}
+        .exhibitor-bulk-details{display:grid;gap:12px;margin-top:18px}
+        .exhibitor-bulk-row{display:grid;grid-template-columns:100px minmax(150px,.85fr) minmax(170px,1fr) minmax(190px,1fr);gap:14px;align-items:end;padding:14px;border:1px solid #e5ebf3;border-radius:12px;background:linear-gradient(110deg,#fbfdff,#fff)}
+        .exhibitor-bulk-preview{display:grid;gap:6px;justify-items:center;min-width:0}
+        .exhibitor-bulk-preview img{width:76px;height:54px;object-fit:contain;padding:5px;border:1px solid #e5ebf3;border-radius:9px;background:white}
+        .exhibitor-bulk-filename{max-width:100%;color:#7a8798;font-size:.72rem;overflow-wrap:anywhere;text-align:center}
+        .exhibitor-bulk-row .form-label{margin-bottom:6px;color:#384860;font-size:.82rem;font-weight:650}
+        .exhibitor-bulk-row .form-control{min-height:42px;border-color:#dbe5ee;border-radius:9px;background:#fff}
+        .exhibitor-page-heading{align-items:center!important;margin-bottom:26px!important}
+        .exhibitor-page-heading h1{margin:0 0 5px!important;font-size:clamp(1.65rem,2.2vw,2.1rem);letter-spacing:-.035em}
+        .exhibitor-page-heading p{margin:0!important;color:#718096;font-size:.98rem}
+        .exhibitor-page-heading .btn{min-height:48px;padding:10px 18px;border-radius:10px;white-space:nowrap}
+        .exhibitor-bulk-grid{grid-template-columns:minmax(0,2fr) minmax(210px,.9fr) auto;column-gap:20px}
+        .exhibitor-bulk-grid>div{align-self:start}
+        .exhibitor-bulk-grid .form-text{min-height:20px;margin-top:7px;line-height:1.4}
+        .exhibitor-bulk-grid>button{align-self:end;margin-bottom:27px;min-width:220px}
+        @media(max-width:767.98px){.exhibitor-bulk-card{padding:20px 18px}.exhibitor-bulk-grid{grid-template-columns:1fr 1fr}.exhibitor-bulk-grid>div:first-child{grid-column:1/-1}.exhibitor-bulk-grid>button{grid-column:1/-1}.exhibitor-bulk-row{grid-template-columns:82px 1fr 1fr}.exhibitor-bulk-preview{grid-row:span 2}.exhibitor-bulk-row>div:last-child{grid-column:2/-1}}
+        @media(max-width:767.98px){.exhibitor-bulk-grid>button{margin-bottom:0;min-width:0}.exhibitor-page-heading .btn{width:100%}}
+        @media(max-width:480px){.exhibitor-bulk-grid{grid-template-columns:1fr}.exhibitor-bulk-grid>div:first-child,.exhibitor-bulk-grid>button{grid-column:auto}.exhibitor-bulk-row{grid-template-columns:1fr}.exhibitor-bulk-preview{grid-row:auto;justify-items:start;grid-column:auto}.exhibitor-bulk-filename{text-align:left}.exhibitor-bulk-row>div:last-child{grid-column:auto}.exhibitor-bulk-grid .btn{width:100%}}
+    </style>
 </head>
 <body class="admin-dashboard-page overflow-x-hidden">
 <div class="admin-app-shell min-vh-100 overflow-x-hidden">
@@ -13,12 +45,25 @@
 <div class="admin-main-panel">
 <div th:replace="~{admin/fragments/admin-layout :: topbar('Exhibitor Logos')}"></div>
 <main class="admin-shell container-fluid mx-auto">
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="exhibitor-page-heading d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div><h1 class="h3 mb-1">Exhibitor Logos</h1><p class="text-muted mb-0">Manage the logos and stall allocations shown on the home page.</p></div>
         <a class="btn btn-success fw-bold" th:href="@{/admin/exhibitor-logos/new}"><i class="bi bi-plus-lg me-1"></i> Add Exhibitor Logo</a>
     </div>
     <div th:if="${param.saved}" class="alert alert-success">Exhibitor logo added.</div>
     <div th:if="${param.updated}" class="alert alert-success">Exhibitor logo updated.</div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Exhibitor photos uploaded.</div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Bulk upload failed.</div>
+    <section class="exhibitor-bulk-card mb-4 bg-white border rounded-3 shadow-sm">
+        <form th:action="@{/admin/exhibitor-logos/bulk}" method="post" enctype="multipart/form-data" id="bulkExhibitorForm">
+            <div class="exhibitor-bulk-heading"><span class="exhibitor-bulk-icon"><i class="bi bi-buildings"></i></span><div><h2>Bulk upload exhibitor photos</h2><p>Select up to 20 logos, then enter the company and stall details for each photo.</p></div></div>
+            <div class="exhibitor-bulk-grid">
+                <div><label class="form-label fw-semibold" for="exhibitorImages">Select exhibitor logos <span class="badge rounded-pill text-bg-light border ms-1">Up to 20</span></label><input class="form-control" id="exhibitorImages" name="imageFiles" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple required><div class="form-text" id="exhibitorImageSummary">No photos selected · Maximum 1 MB per image</div></div>
+                <div><label class="form-label fw-semibold" for="exhibitorStartingOrder">Starting display order</label><input class="form-control" id="exhibitorStartingOrder" name="displayOrder" type="number" min="0" value="0" required><div class="form-text">Order increases for each logo.</div></div>
+                <button class="btn btn-primary" type="submit"><i class="bi bi-cloud-arrow-up me-1"></i> Upload exhibitors</button>
+            </div>
+            <div class="exhibitor-bulk-details" id="exhibitorBulkDetails"></div>
+        </form>
+    </section>
     <section class="table-card bg-white overflow-hidden"><div class="table-responsive">
         <table class="table align-middle mb-0 table-hover">
             <thead class="table-light"><tr><th>Logo</th><th>Company</th><th>Stall Allocation</th><th>Order</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
@@ -39,4 +84,46 @@
     </div></section>
 </main></div></div>
 <script th:src="@{/js/admin.js}"></script>
+<script th:nonce="${cspNonce}">
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("exhibitorImages");
+        const details = document.getElementById("exhibitorBulkDetails");
+        const summary = document.getElementById("exhibitorImageSummary");
+        const form = document.getElementById("bulkExhibitorForm");
+        if (!input || !details || !summary || !form) return;
+
+        function addField(row, labelText, name, maxLength, placeholder, type) {
+            const wrapper = document.createElement("div");
+            const label = document.createElement("label"); label.className = "form-label fw-semibold"; label.textContent = labelText;
+            const field = document.createElement("input"); field.className = "form-control"; field.type = type || "text"; field.name = name; field.maxLength = maxLength; field.placeholder = placeholder || "";
+            if (field.type !== "url") field.required = true;
+            wrapper.append(label, field); row.append(wrapper);
+        }
+
+        input.addEventListener("change", function () {
+            details.replaceChildren(); summary.classList.remove("text-danger");
+            const files = Array.from(input.files);
+            summary.textContent = files.length ? files.length + " photo(s) selected. Add company and stall details below." : "No photos selected · Maximum 1 MB per image";
+            files.slice(0, 20).forEach(function (file) {
+                const row = document.createElement("div"); row.className = "exhibitor-bulk-row";
+                const preview = document.createElement("div"); preview.className = "exhibitor-bulk-preview";
+                const image = document.createElement("img"); image.src = URL.createObjectURL(file); image.alt = "Selected logo preview";
+                const filename = document.createElement("span"); filename.className = "exhibitor-bulk-filename"; filename.textContent = file.name;
+                preview.append(image, filename); row.append(preview);
+                addField(row, "Company name", "companyNames", 180, "Company or exhibitor name");
+                addField(row, "Stall allocation", "stallAllocations", 80, "e.g. A12 or 3 × 6");
+                addField(row, "Website URL (optional)", "websiteUrls", 500, "https://example.com", "url");
+                details.append(row);
+            });
+        });
+
+        form.addEventListener("submit", function (event) {
+            const files = Array.from(input.files); let message = "";
+            if (!files.length) message = "Choose at least one exhibitor photo.";
+            else if (files.length > 20) message = "Select no more than 20 photos at a time.";
+            else if (files.some(function (file) { return file.size > 1024 * 1024; })) message = "Each exhibitor photo must be 1 MB or smaller.";
+            if (message) { event.preventDefault(); summary.textContent = message; summary.classList.add("text-danger"); }
+        });
+    });
+</script>
 </body></html>

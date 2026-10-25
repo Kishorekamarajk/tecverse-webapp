@@ -35,6 +35,7 @@ public class TicketRegistration {
     @Column(name="central_ministry",length=250) private String centralMinistry;
     @Column(name="state_name",length=120) private String stateName;
     @Column(name="state_department",length=250) private String stateDepartment;
+    @Column(name="applicant_state",length=100) private String applicantState;
     @Column(name="organization_name",length=250) private String organizationName;
     @Column(name="organization_location",length=250) private String organizationLocation;
     @Column(length=150) private String designation;
@@ -59,6 +60,7 @@ public class TicketRegistration {
     public String getCollegeDistrict(){return collegeDistrict;} public String getCollegeState(){return collegeState;} public String getUniversityName(){return universityName;}
     public String getAcademiaRole(){return academiaRole;} public String getRegisterNumber(){return registerNumber;} public String getCentralMinistry(){return centralMinistry;}
     public String getStateName(){return stateName;} public String getStateDepartment(){return stateDepartment;} public String getOrganizationName(){return organizationName;}
+    public String getApplicantState(){return applicantState;}
     public String getOrganizationLocation(){return organizationLocation;} public String getDesignation(){return designation;} public String getIndustryOrStartup(){return industryOrStartup;}
     public String getCitizenshipStatus(){return citizenshipStatus;} public String getPassportNumber(){return passportNumber;} public String getPassportValidUntil(){return passportValidUntil;}
     public String getPassportName(){return passportName;} public String getAttendanceDays(){return attendanceDays;} public LocalDateTime getCreatedAt(){return createdAt;}
@@ -70,6 +72,7 @@ public class TicketRegistration {
     public void setCollegeName(String v){collegeName=v;} public void setCollegeDistrict(String v){collegeDistrict=v;} public void setCollegeState(String v){collegeState=v;}
     public void setUniversityName(String v){universityName=v;} public void setAcademiaRole(String v){academiaRole=v;} public void setRegisterNumber(String v){registerNumber=v;}
     public void setCentralMinistry(String v){centralMinistry=v;} public void setStateName(String v){stateName=v;} public void setStateDepartment(String v){stateDepartment=v;}
+    public void setApplicantState(String v){applicantState=v;}
     public void setOrganizationName(String v){organizationName=v;} public void setOrganizationLocation(String v){organizationLocation=v;} public void setDesignation(String v){designation=v;}
     public void setIndustryOrStartup(String v){industryOrStartup=v;} public void setCitizenshipStatus(String v){citizenshipStatus=v;} public void setPassportNumber(String v){passportNumber=v;}
     public void setPassportValidUntil(String v){passportValidUntil=v;} public void setPassportName(String v){passportName=v;} public void setAttendanceDays(String v){attendanceDays=v;}

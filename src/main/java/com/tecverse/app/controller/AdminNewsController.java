@@ -1,7 +1,14 @@
 package com.tecverse.app.controller;
 
 import java.time.LocalTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,6 +70,7 @@ public class AdminNewsController {
     @GetMapping("/admin")
     public String dashboard(Model model) {
         model.addAttribute("submissionCounts", adminDashboardService.getSubmissionCounts());
+        model.addAttribute("dashboardAnalytics", adminDashboardService.getAnalytics());
         return "admin/dashboard";
     }
 
@@ -136,6 +144,91 @@ public class AdminNewsController {
         return "redirect:/admin/conference-schedule";
     }
 
+    @PostMapping("/admin/conference-schedule/bulk")
+    public String saveConferenceScheduleBulk(
+            @RequestParam("imageFiles") List<MultipartFile> imageFiles,
+            @RequestParam("dayNumbers") List<Integer> dayNumbers,
+            @RequestParam("scheduleDates") List<String> scheduleDates,
+            @RequestParam("sessionTitles") List<String> sessionTitles,
+            @RequestParam("startTimes") List<String> startTimes,
+            @RequestParam("endTimes") List<String> endTimes,
+            @RequestParam(value = "displayOrder", defaultValue = "0") int displayOrder,
+            RedirectAttributes redirectAttributes) {
+        List<MultipartFile> selected = imageFiles == null ? List.of()
+                : imageFiles.stream().filter(file -> file != null && !file.isEmpty()).toList();
+        int count = selected.size();
+        if (count == 0 || count > 20 || dayNumbers == null || dayNumbers.size() != count
+                || scheduleDates == null || scheduleDates.size() != count
+                || sessionTitles == null || sessionTitles.size() != count
+                || startTimes == null || startTimes.size() != count
+                || endTimes == null || endTimes.size() != count) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Select 1 to 20 schedule images and complete every session.");
+            return "redirect:/admin/conference-schedule";
+        }
+        if (displayOrder < 0 || displayOrder > Integer.MAX_VALUE - count) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Starting display order is outside the supported range.");
+            return "redirect:/admin/conference-schedule";
+        }
+
+        List<LocalDate> dates = new ArrayList<>(count);
+        List<LocalTime> starts = new ArrayList<>(count);
+        List<LocalTime> ends = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            String title = sessionTitles.get(i) == null ? "" : sessionTitles.get(i).trim();
+            if (dayNumbers.get(i) == null || dayNumbers.get(i) < 1 || dayNumbers.get(i) > 3
+                    || title.isBlank() || title.length() > 220) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Choose Day 1 to 3 and enter a session title up to 220 characters for every row.");
+                return "redirect:/admin/conference-schedule";
+            }
+            try {
+                dates.add(LocalDate.parse(scheduleDates.get(i)));
+                LocalTime start = LocalTime.parse(startTimes.get(i));
+                LocalTime end = LocalTime.parse(endTimes.get(i));
+                if (!end.isAfter(start)) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Every session end time must be later than its start time.");
+                    return "redirect:/admin/conference-schedule";
+                }
+                starts.add(start);
+                ends.add(end);
+            } catch (DateTimeParseException | NullPointerException ex) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Choose a valid date and start/end time for each schedule item.");
+                return "redirect:/admin/conference-schedule";
+            }
+        }
+
+        List<String> imageUrls = new ArrayList<>();
+        try {
+            imageUrls.addAll(galleryStorageService.uploadImages(selected, "schedule"));
+            List<ConferenceScheduleItem> items = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                ConferenceScheduleItem item = new ConferenceScheduleItem();
+                item.setDayNumber(dayNumbers.get(i));
+                item.setScheduleDate(dates.get(i));
+                item.setSessionTitle(sessionTitles.get(i).trim());
+                item.setImageUrl(imageUrls.get(i));
+                item.setTimeValue(starts.get(i).toString());
+                item.setTimeLabel(toScheduleDisplayTime(starts.get(i).toString()) + " - " + toScheduleDisplayTime(ends.get(i).toString()));
+                item.setDisplayOrder(displayOrder + i);
+                item.setHighlighted(false);
+                item.setActive(true);
+                items.add(item);
+            }
+            conferenceScheduleItemRepository.saveAll(items);
+            redirectAttributes.addFlashAttribute("successMessage", items.size() + " conference schedule items added successfully.");
+        } catch (RuntimeException ex) {
+            for (String imageUrl : imageUrls) {
+                try {
+                    galleryStorageService.deleteStoredMedia(imageUrl);
+                } catch (RuntimeException ignored) {
+                    // Keep the original bulk upload error visible to the admin.
+                }
+            }
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage() == null
+                    ? "Unable to save conference schedule items. Please try again." : ex.getMessage());
+        }
+        return "redirect:/admin/conference-schedule";
+    }
+
     @PostMapping("/admin/conference-schedule/{id}")
     public String updateConferenceSchedule(@PathVariable Long id,
                                            @Valid @ModelAttribute("conferenceScheduleItemForm") ConferenceScheduleItemForm form,
@@ -176,9 +269,9 @@ public class AdminNewsController {
         form.setDayNumber(item.getDayNumber());
         form.setScheduleDate(item.getScheduleDate());
         form.setSessionTitle(item.getSessionTitle());
-        form.setStartTime(item.getTimeValue());
+        form.setStartTime(toScheduleTimeInput(item.getTimeValue()));
         String[] range = item.getTimeLabel().split("\\s+-\\s+", 2);
-        form.setEndTime(range.length == 2 ? range[1] : item.getTimeValue());
+        form.setEndTime(toScheduleTimeInput(range.length == 2 ? range[1] : item.getTimeValue()));
         form.setDisplayOrder(item.getDisplayOrder());
         form.setHighlighted(item.isHighlighted());
         form.setActive(item.isActive());
@@ -190,11 +283,34 @@ public class AdminNewsController {
         item.setScheduleDate(form.getScheduleDate());
         item.setSessionTitle(form.getSessionTitle().trim());
         item.setImageUrl(imageUrl);
-        item.setTimeLabel(form.getStartTime().trim() + " - " + form.getEndTime().trim());
+        item.setTimeLabel(toScheduleDisplayTime(form.getStartTime()) + " - " + toScheduleDisplayTime(form.getEndTime()));
         item.setTimeValue(form.getStartTime().trim());
         item.setDisplayOrder(form.getDisplayOrder());
         item.setHighlighted(form.isHighlighted());
         item.setActive(form.isActive());
+    }
+
+    private static final DateTimeFormatter SCHEDULE_DISPLAY_TIME = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);
+    private static final DateTimeFormatter SCHEDULE_TWELVE_HOUR_TIME = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+
+    private static String toScheduleDisplayTime(String value) {
+        return LocalTime.parse(value.trim()).format(SCHEDULE_DISPLAY_TIME);
+    }
+
+    // Accepts "14:00", "2:00 pm" or "02:00 PM" and returns the HH:mm value expected by <input type="time">.
+    private static String toScheduleTimeInput(String value) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim().replaceAll("\\s+", " ").toUpperCase(Locale.ENGLISH);
+        try {
+            LocalTime time = normalized.endsWith("AM") || normalized.endsWith("PM")
+                    ? LocalTime.parse(normalized, SCHEDULE_TWELVE_HOUR_TIME)
+                    : LocalTime.parse(normalized);
+            return time.format(DateTimeFormatter.ofPattern("HH:mm"));
+        } catch (DateTimeParseException ex) {
+            return value.trim();
+        }
     }
 
     @PostMapping("/admin/conference-schedule/{id}/delete")
@@ -347,6 +463,74 @@ public class AdminNewsController {
         return "redirect:/admin/news-updates";
     }
 
+    @PostMapping("/admin/news-updates/bulk")
+    public String saveBulk(@RequestParam("imageFiles") List<MultipartFile> imageFiles,
+                           @RequestParam("titles") List<String> titles,
+                           @RequestParam("publishedDates") List<String> publishedDates,
+                           @RequestParam("excerpts") List<String> excerpts,
+                           @RequestParam("contents") List<String> contents,
+                           RedirectAttributes redirectAttributes) {
+        List<MultipartFile> selected = imageFiles == null ? List.of()
+                : imageFiles.stream().filter(file -> file != null && !file.isEmpty()).toList();
+        int count = selected.size();
+        if (count == 0 || count > 20 || titles == null || titles.size() != count
+                || publishedDates == null || publishedDates.size() != count
+                || excerpts == null || excerpts.size() != count || contents == null || contents.size() != count) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Select 1 to 20 news photos and complete every news item.");
+            return "redirect:/admin/news-updates";
+        }
+
+        List<LocalDate> dates = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            String title = titles.get(i) == null ? "" : titles.get(i).trim();
+            String excerpt = excerpts.get(i) == null ? "" : excerpts.get(i).trim();
+            String content = contents.get(i) == null ? "" : contents.get(i).trim();
+            if (title.isBlank() || title.length() > 220 || excerpt.isBlank() || excerpt.length() > 500
+                    || content.isBlank() || content.length() > 10_000) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Check each title, excerpt, and full content length.");
+                return "redirect:/admin/news-updates";
+            }
+            try {
+                dates.add(LocalDate.parse(publishedDates.get(i)));
+            } catch (DateTimeParseException | NullPointerException ex) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Choose a valid publication date for each news item.");
+                return "redirect:/admin/news-updates";
+            }
+        }
+
+        List<String> imageUrls = new ArrayList<>();
+        try {
+            imageUrls.addAll(galleryStorageService.uploadImages(selected, "news"));
+            Set<String> reservedSlugs = new HashSet<>();
+            List<NewsUpdate> updates = new ArrayList<>(count);
+            for (int i = 0; i < count; i++) {
+                NewsUpdate update = new NewsUpdate();
+                String title = titles.get(i).trim();
+                update.setTitle(title);
+                update.setSlug(uniqueSlug(title, reservedSlugs));
+                update.setPublishedDate(dates.get(i));
+                update.setImageUrl(imageUrls.get(i));
+                update.setExcerpt(excerpts.get(i).trim());
+                update.setContent(contents.get(i).trim());
+                update.setActive(true);
+                updates.add(update);
+            }
+            newsUpdateRepository.saveAll(updates);
+            redirectAttributes.addFlashAttribute("successMessage", updates.size() + " news updates uploaded successfully.");
+        } catch (RuntimeException ex) {
+            for (String imageUrl : imageUrls) {
+                try {
+                    galleryStorageService.deleteStoredMedia(imageUrl);
+                } catch (RuntimeException ignored) {
+                    // Preserve the original bulk upload error for the admin.
+                }
+            }
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage() == null
+                    ? "Unable to save news updates. Please try again." : ex.getMessage());
+        }
+        return "redirect:/admin/news-updates";
+    }
+
     @PostMapping("/admin/news-updates/{id}/delete")
     public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (newsUpdateRepository.existsById(id)) {
@@ -365,6 +549,16 @@ public class AdminNewsController {
         while (newsUpdateRepository.existsBySlug(candidate)) {
             candidate = base + "-" + suffix;
             suffix++;
+        }
+        return candidate;
+    }
+
+    private String uniqueSlug(String title, Set<String> reservedSlugs) {
+        String base = slugify(title);
+        String candidate = base;
+        int suffix = 2;
+        while (newsUpdateRepository.existsBySlug(candidate) || !reservedSlugs.add(candidate)) {
+            candidate = base + "-" + suffix++;
         }
         return candidate;
     }

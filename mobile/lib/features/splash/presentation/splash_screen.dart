@@ -48,7 +48,12 @@ class _SplashScreenState extends State<SplashScreen>
       (_) => _updateCountdown(),
     );
 
-    _startLoadingSequence();
+    // Session restoration updates AuthController (a ChangeNotifier). Defer it
+    // until the first frame is mounted so Provider dependents are not notified
+    // while the widget tree is still being built.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _startLoadingSequence();
+    });
   }
 
   void _updateCountdown() {

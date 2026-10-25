@@ -35,16 +35,30 @@ void main() {
     client: apiClient,
   );
 
+  final authController = AuthController(
+    repository: authRepository,
+    sessionManager: sessionManager,
+  );
+
+  // Any screen that hits an expired session signs out once and returns to login.
+  var handlingExpiry = false;
+  ApiClient.onSessionExpired = () async {
+    if (handlingExpiry || !sessionManager.isAuthenticated) return;
+    handlingExpiry = true;
+    try {
+      await authController.handleSessionExpired();
+      VoiceNavigationService.navigatorKey.currentState
+          ?.pushNamedAndRemoveUntil(AppRouter.login, (route) => false);
+    } finally {
+      handlingExpiry = false;
+    }
+  };
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<SessionManager>.value(value: sessionManager),
-        ChangeNotifierProvider<AuthController>(
-          create: (_) => AuthController(
-            repository: authRepository,
-            sessionManager: sessionManager,
-          ),
-        ),
+        ChangeNotifierProvider<AuthController>.value(value: authController),
         ChangeNotifierProvider<DigitalPassController>(
           create: (_) => DigitalPassController(
             repository: digitalPassRepository,

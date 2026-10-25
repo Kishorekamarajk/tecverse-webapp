@@ -278,7 +278,20 @@ class _DigitalPassCardState extends State<DigitalPassCard>
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          QrImageView(
+                          if (pass.scannableInfo.isEmpty)
+                            const SizedBox(
+                              width: 186,
+                              height: 186,
+                              child: Center(
+                                child: Text(
+                                  'QR code unavailable.\nReopen your pass when you are online.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Color(0xFF64748B), fontSize: 13),
+                                ),
+                              ),
+                            )
+                          else
+                            QrImageView(
                             data: pass.scannableInfo,
                             version: QrVersions.auto,
                             size: 186,
