@@ -665,12 +665,12 @@ class _ScheduleScreenState extends State<ScheduleScreen>
 
                 const SizedBox(height: 2),
 
-                // Title: TEC-VERSE 2026
+                // Title: Tec-Verse 2026
                 RichText(
                   text: const TextSpan(
                     children: [
                       TextSpan(
-                        text: 'TEC-VERSE ',
+                        text: 'Tec-Verse ',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w900,

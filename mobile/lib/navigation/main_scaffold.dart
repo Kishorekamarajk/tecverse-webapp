@@ -11,7 +11,7 @@ import '../features/profile/presentation/profile_screen.dart';
 import '../features/schedule/presentation/schedule_screen.dart';
 import '../features/sessions/presentation/sessions_screen.dart';
 
-/// Adaptive Navigation Shell for TEC-VERSE 2026.
+/// Adaptive Navigation Shell for Tec-Verse 2026.
 ///
 /// Responsive Behavior:
 /// - Mobile: Compact, floating-style bottom navigation bar with frosted glass blur.
@@ -127,7 +127,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'TEC-VERSE',
+                              'Tec-Verse',
                               style: AppTypography.headlineMedium.copyWith(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,

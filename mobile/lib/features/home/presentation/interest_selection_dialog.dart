@@ -80,7 +80,7 @@ class _InterestSelectionSheetState extends State<InterestSelectionSheet> {
           ),
           const SizedBox(height: 18),
           Text(
-            'Personalize Your TEC-VERSE Experience',
+            'Personalize Your Tec-Verse Experience',
             textAlign: TextAlign.center,
             style: AppTypography.headlineMedium.copyWith(fontSize: 18),
           ),

@@ -5,8 +5,8 @@
 <nav th:fragment="navbar(active)" class="navbar navbar-expand-xl site-navbar fixed-top">
     <div class="container-custom">
         <a class="navbar-brand" th:href="@{/}">
-            <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" th:alt="#{misc.logo.tecverse}" class="navbar-logo d-block object-fit-contain" />
-            <span class="navbar-brand-text" th:text="#{brand.name}">Tec-verse 2026</span>
+            <img th:src="@{/images/tecverselogo.png}" alt="Tec-Verse logo" th:alt="#{misc.logo.tecverse}" class="navbar-logo d-block object-fit-contain" />
+            <span class="navbar-brand-text" th:text="#{brand.name}">Tec-Verse 2026</span>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNav"
@@ -17,7 +17,7 @@
         <div class="offcanvas offcanvas-end" tabindex="-1" id="mainNav" aria-labelledby="mainNavLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="mainNavLabel">
-                    <a class="offcanvas-title-link" th:href="@{/}" th:text="#{contact.title}">Tec-verse 2026</a>
+                    <a class="offcanvas-title-link" th:href="@{/}" th:text="#{contact.title}">Tec-Verse 2026</a>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
                         data-bs-target="#mainNav" aria-label="Close" th:aria-label="#{register.modal.close}"></button>
@@ -28,14 +28,14 @@
                         <a class="nav-link" th:classappend="${active == 'retreat'} ? 'active'" th:href="@{/retreat-2026}" th:text="#{nav.glance}">Time Line</a>
                     </li>
                                                <!-- <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" th:href="@{/retreat-2024}">Tec-verse 2024</a></li>
-                            <li><a class="dropdown-item" th:href="@{/retreat-2025}">Tec-verse 2025</a></li> 
-                            <li><a class="dropdown-item" th:href="@{/retreat-2026}" th:text="#{contact.title}">Tec-verse 2026</a></li>
+                            <li><a class="dropdown-item" th:href="@{/retreat-2024}">Tec-Verse 2024</a></li>
+                            <li><a class="dropdown-item" th:href="@{/retreat-2025}">Tec-Verse 2025</a></li> 
+                            <li><a class="dropdown-item" th:href="@{/retreat-2026}" th:text="#{contact.title}">Tec-Verse 2026</a></li>
                         </ul> -->
 
 
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${active == 'about'} ? 'active'" th:href="@{/about}" th:text="#{nav.about}">About Tec-verse</a>
+                        <a class="nav-link" th:classappend="${active == 'about'} ? 'active'" th:href="@{/about}" th:text="#{nav.about}">About Tec-Verse</a>
                     </li>
 
 

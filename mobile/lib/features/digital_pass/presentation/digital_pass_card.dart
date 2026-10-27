@@ -107,7 +107,7 @@ class _DigitalPassCardState extends State<DigitalPassCard>
                 color: const Color(0xFFFF6B00),
                 alignment: Alignment.center,
                 child: const Text(
-                  'TEC-VERSE 2026',
+                  'Tec-Verse 2026',
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),

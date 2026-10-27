@@ -108,7 +108,7 @@ class DomainStyleHelper {
 }
 
 /// Premium Technology Conference Session Card.
-/// Matches the exact pixel-perfect design in the TEC-VERSE 2026 Programme interface.
+/// Matches the exact pixel-perfect design in the Tec-Verse 2026 Programme interface.
 class RecommendedSessionCard extends StatefulWidget {
   final SessionItem session;
   final VoidCallback? onAddToSchedule;

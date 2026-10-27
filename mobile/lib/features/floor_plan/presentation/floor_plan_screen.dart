@@ -13,7 +13,7 @@ import 'widgets/floor_plan_search_sheet.dart';
 import 'widgets/floor_plan_legend_sheet.dart';
 import 'widgets/download_floor_plan_dialog.dart';
 
-/// Professional, futuristic interactive venue Floor Plan screen for TEC-VERSE 2026.
+/// Professional, futuristic interactive venue Floor Plan screen for Tec-Verse 2026.
 ///
 /// Models Chennai Trade Centre (CTC), Nandambakkam:
 /// - Halls 1 to 8, Convention Centre, Conference Halls 1-3

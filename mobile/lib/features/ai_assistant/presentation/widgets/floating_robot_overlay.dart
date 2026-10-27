@@ -131,7 +131,7 @@ class _FloatingRobotOverlayState extends State<FloatingRobotOverlay>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'TEC-VERSE Assistant',
+                        'Tec-Verse Assistant',
                         style: AppTypography.headlineMedium.copyWith(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,

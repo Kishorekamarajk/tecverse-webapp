@@ -186,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Title & Slogan
               Text(
-                'TEC-VERSE 2026',
+                'Tec-Verse 2026',
                 textAlign: TextAlign.center,
                 style: AppTypography.displayMedium.copyWith(
                   letterSpacing: 1.0,
@@ -346,7 +346,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Register on TEC-VERSE Website',
+                                'Register on Tec-Verse Website',
                                 style: AppTypography.labelLarge.copyWith(
                                   color: AppColors.cyanAccent,
                                   fontSize: 13,

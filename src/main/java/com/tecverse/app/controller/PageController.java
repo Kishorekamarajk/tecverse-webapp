@@ -342,7 +342,7 @@ public class PageController {
                             "AI is moving from differentiator to baseline. Customers expect personalization, enterprises expect automation, and investors expect intelligent systems that can scale.",
                             "This shift is not limited to the technology industry. Manufacturing, logistics, healthcare, retail, real estate, and finance are all being reshaped by intelligent workflows.",
                             "Chennai's strength has always been execution. As AI rewrites the logic of every industry it touches, the next advantage will belong to organizations that combine execution with adoption.",
-                            "That is where platforms like Tec-verse matter: they bring solution providers, industry adopters, and decision-makers into the same room so the conversation moves from concept to implementation."
+                            "That is where platforms like Tec-Verse matter: they bring solution providers, industry adopters, and decision-makers into the same room so the conversation moves from concept to implementation."
                     )
             ),
             new NewsItem(
@@ -636,7 +636,7 @@ public class PageController {
         if (!OtpSessionVerification.hasVerification(request, OtpSessionVerification.Purpose.TICKET)) {
             throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Email verification is required.");
         }
-        // Mobile OTP verification is disabled for now; uncomment to require it again.
+        // Temporary mobile OTP bypass; restore this check to require mobile verification.
         // if (!OtpSessionVerification.hasVerification(request, OtpSessionVerification.Purpose.TICKET_MOBILE)) {
         //     throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Mobile number verification is required.");
         // }
@@ -647,7 +647,7 @@ public class PageController {
     public String ticketConfirmation(@RequestParam(required = false) String pass,
                                      @RequestParam(required = false) String email,
                                      Model model) {
-        model.addAttribute("selectedPass", blankToNull(pass) == null ? "Tec-verse Pass" : pass.trim());
+        model.addAttribute("selectedPass", blankToNull(pass) == null ? "Tec-Verse Pass" : pass.trim());
         model.addAttribute("verifiedEmail", blankToNull(email) == null ? "your verified email" : email.trim());
         return "ticket-confirmation";
     }
@@ -720,7 +720,7 @@ public class PageController {
             case "Dinner" -> new SchedulePresentation("egg-fried", "An evening of networking.");
             case "Welcome Address" -> new SchedulePresentation("person-fill", "Setting the tone for an inspiring day.");
             case "MoU Signing Inauguration" -> new SchedulePresentation("file-earmark-text-fill", "Strengthening collaborations.");
-            default -> new SchedulePresentation("calendar-event", "Tec-verse 2026 event schedule.");
+            default -> new SchedulePresentation("calendar-event", "Tec-Verse 2026 event schedule.");
         };
     }
 
@@ -1005,7 +1005,7 @@ public class PageController {
                 item("What technology domains are covered?", "The program covers AI, cyber security, HPC, cloud, quantum computing, ESDM, digital governance, data platforms, health informatics and other strategic technologies.", "question-circle", null),
                 item("Is the retreat open to students?", "Selected students, research scholars and academic representatives may be invited through institutional channels, especially for research showcases and knowledge sessions.", "question-circle", null),
                 item("Can organizations propose collaboration?", "Yes. Organizations can propose collaboration through official channels, detailing the technology area, expected outcomes, research relevance and implementation pathway.", "question-circle", null),
-                item("Where will official updates be published?", "Official schedules, participation details, speaker announcements and post-event updates will be shared through CDAC and Tec-verse communication channels.", "question-circle", null)
+                item("Where will official updates be published?", "Official schedules, participation details, speaker announcements and post-event updates will be shared through CDAC and Tec-Verse communication channels.", "question-circle", null)
         );
     }
 

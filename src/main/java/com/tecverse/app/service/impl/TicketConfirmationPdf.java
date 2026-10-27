@@ -28,7 +28,7 @@ final class TicketConfirmationPdf {
         rect(30, 30, 535, 782, "0.22 0.63 0.46", 0.9f, false);
 
         rect(48, 710, 499, 82, "0.04 0.13 0.27", 0, true);
-        text(68, 766, "TEC-VERSE 2026", 12, true, "0.98 0.67 0.16");
+        text(68, 766, "Tec-Verse 2026", 12, true, "0.98 0.67 0.16");
         text(68, 739, "REGISTRATION CONFIRMATION", 20, true, "1 1 1");
         text(68, 721, "VISITOR PASS  |  CHENNAI TRADE CENTRE", 9, false, "0.84 0.90 0.97");
 
@@ -44,8 +44,8 @@ final class TicketConfirmationPdf {
         text(50, 469, "VENUE ENTRY GUIDELINES", 10, true, "0.04 0.13 0.27");
         line(50, 460, 545, 460, "0.85 0.89 0.93", 0.8f);
         List<String> guidance = List.of(
-                "Install the Tec-verse app from Google Play before you arrive.",
-                "Sign in with the Gmail address and password used for your Tec-verse",
+                "Install the Tec-Verse app from Google Play before you arrive.",
+                "Sign in with the Gmail address and password used for your Tec-Verse",
                 "registration.",
                 "Your registration details, QR scanner and venue information are in the app.",
                 "At the entrance, use the app's QR scanner to verify your registration.",
@@ -62,12 +62,12 @@ final class TicketConfirmationPdf {
 
         rect(50, 214, 495, 42, "0.92 0.97 0.94", 0, true);
         text(62, 238, "AT THE ENTRANCE", 8, true, "0.05 0.38 0.26");
-        text(62, 222, "Open the Tec-verse app and present your registration QR code.", 8, false, "0.18 0.30 0.25");
+        text(62, 222, "Open the Tec-Verse app and present your registration QR code.", 8, false, "0.18 0.30 0.25");
 
         line(50, 190, 545, 190, "0.85 0.89 0.93", 0.8f);
         text(50, 170, "EVENT TIMELINE & VISITOR GUIDANCE", 9, true, "0.04 0.13 0.27");
         text(50, 153, "The event timeline and visitor guide are attached to your confirmation email.", 8, false, "0.30 0.36 0.43");
-        text(50, 76, "Tec-verse 2026  |  Please follow all instructions from venue staff.", 8, false, "0.35 0.41 0.48");
+        text(50, 76, "Tec-Verse 2026  |  Please follow all instructions from venue staff.", 8, false, "0.35 0.41 0.48");
     }
 
     private void detailRow(float x, float y, String label, String value) {
@@ -128,7 +128,7 @@ final class TicketConfirmationPdf {
         objects.add(streamObject.toByteArray());
 
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
-        pdf.writeBytes(ascii("%PDF-1.4\n% Tec-verse confirmation\n"));
+        pdf.writeBytes(ascii("%PDF-1.4\n% Tec-Verse confirmation\n"));
         List<Integer> offsets = new ArrayList<>();
         for (int i = 0; i < objects.size(); i++) {
             offsets.add(pdf.size());

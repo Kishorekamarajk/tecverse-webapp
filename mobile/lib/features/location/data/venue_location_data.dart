@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:url_launcher/url_launcher.dart';
 import '../domain/location_models.dart';
 
-/// Centralized Venue Location Repository and Navigation Service for TEC-VERSE 2026.
+/// Centralized Venue Location Repository and Navigation Service for Tec-Verse 2026.
 ///
 /// Uses verified GPS coordinates for Chennai Trade Centre (CTC), Nandambakkam.
 class VenueLocationData {

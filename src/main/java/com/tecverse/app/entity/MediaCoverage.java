@@ -228,7 +228,7 @@ public class MediaCoverage {
 
     public String getDescriptionPreview() {
         if (description == null || description.isBlank()) {
-            return "View the original update from the official Tec-verse channel.";
+            return "View the original update from the official Tec-Verse channel.";
         }
         String compact = description.replaceAll("\\s+", " ").trim();
         if (compact.length() <= CARD_DESCRIPTION_PREVIEW_LENGTH) {

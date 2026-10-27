@@ -79,7 +79,7 @@ void main() {
     test('Test C: Unregistered user -> Registration error message, NOT timeout', () async {
       final mockHttpClient = MockClient((request) async {
         return http.Response(
-          jsonEncode({'message': 'You are not registered for TEC-VERSE 2026.', 'code': 'USER_NOT_REGISTERED'}),
+          jsonEncode({'message': 'You are not registered for Tec-Verse 2026.', 'code': 'USER_NOT_REGISTERED'}),
           401,
         );
       });

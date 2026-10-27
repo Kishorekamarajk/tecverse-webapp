@@ -144,7 +144,7 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
 
     if (!started && mounted) {
       setState(() {
-        _transcriptText = 'Microphone unavailable. Allow microphone access for TEC-VERSE in your phone Settings, or tap a prompt below.';
+        _transcriptText = 'Microphone unavailable. Allow microphone access for Tec-Verse in your phone Settings, or tap a prompt below.';
       });
     }
   }

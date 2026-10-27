@@ -116,7 +116,7 @@ public class YouTubeVideoFetcher implements SocialMediaFetcher {
                 ? "YouTube Video"
                 : truncate(HtmlUtils.htmlUnescape(snippet.title()).trim(), MAX_TITLE_LENGTH);
         String description = isBlank(snippet.description())
-                ? "Watch this video on the official Tec-verse YouTube channel."
+                ? "Watch this video on the official Tec-Verse YouTube channel."
                 : HtmlUtils.htmlUnescape(snippet.description()).trim();
         String sourceName = defaultIfBlank(config.getChannelName(), snippet.channelTitle());
 

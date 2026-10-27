@@ -39,14 +39,14 @@ public class SponsorOtpServiceImpl implements SponsorOtpService {
 
         String displayName = name == null || name.isBlank() ? "Sponsor" : name.trim();
         String body = "Hello " + displayName + ",\n\n"
-                + "Your Tec-verse 2026 sponsor email verification OTP is: " + otp + "\n\n"
+                + "Your Tec-Verse 2026 sponsor email verification OTP is: " + otp + "\n\n"
                 + "This OTP is valid for 10 minutes. Do not share this OTP with anyone.\n\n"
-                + "Tec-verse Team";
+                + "Tec-Verse Team";
 
         try {
             mailDeliveryService.sendSimple(
                     normalized,
-                    "Tec-verse 2026 Sponsor Email Verification OTP",
+                    "Tec-Verse 2026 Sponsor Email Verification OTP",
                     body,
                     "Sponsor OTP"
             );

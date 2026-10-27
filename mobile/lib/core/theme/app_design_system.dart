@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Centralized Spacing System for TEC-VERSE 2026.
+/// Centralized Spacing System for Tec-Verse 2026.
 class AppSpacing {
   AppSpacing._();
 

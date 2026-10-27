@@ -16,7 +16,7 @@ import '../domain/ai_message.dart';
 import '../domain/faq_item.dart';
 import 'widgets/voice_assistant_modal.dart';
 
-/// Professional, futuristic "Ask TEC-VERSE" AI Delegate Assistant & Copilot.
+/// Professional, futuristic "Ask Tec-Verse" AI Delegate Assistant & Copilot.
 class AiAssistantScreen extends StatefulWidget {
   const AiAssistantScreen({super.key});
 
@@ -52,11 +52,11 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     _messages.add(
       AiMessage(
         id: 'welcome-msg',
-        text: '👋 **Hello! I am the TEC-VERSE 2026 FAQ Assistant.**\n\n'
+        text: '👋 **Hello! I am the Tec-Verse 2026 FAQ Assistant.**\n\n'
             'Ask me about:\n'
             '• Event dates, venue & schedule\n'
             '• Registration & your Digital Pass\n'
-            '• Common questions about TEC-VERSE\n'
+            '• Common questions about Tec-Verse\n'
             '• Opening screens, e.g. "Go to Floor Plan"\n\n'
             'Tap the **Microphone icon** below for hands-free voice assistance!',
         sender: MessageSender.assistant,
@@ -262,7 +262,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'ASK TEC-VERSE',
+                'ASK Tec-Verse',
                 style: AppTypography.headlineMedium.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
@@ -775,7 +775,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                   color: AppColors.textPrimary,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Ask anything about TEC-VERSE 2026...',
+                  hintText: 'Ask anything about Tec-Verse 2026...',
                   hintStyle: AppTypography.bodySmall.copyWith(
                     fontSize: 12.5,
                     color: AppColors.textMuted,

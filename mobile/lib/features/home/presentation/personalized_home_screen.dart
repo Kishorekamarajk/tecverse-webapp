@@ -18,7 +18,7 @@ import '../../notifications/presentation/widgets/notifications_sheet.dart';
 import '../data/event_repository.dart';
 import '../domain/important_date_item.dart';
 
-/// TEC-VERSE 2026 Executive Home Screen matching the reference design.
+/// Tec-Verse 2026 Executive Home Screen matching the reference design.
 class PersonalizedHomeScreen extends StatefulWidget {
   final void Function(int)? onNavigateTab;
 
@@ -188,7 +188,7 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   const Text(
-                                    'TEC-VERSE',
+                                    'Tec-Verse',
                                     style: TextStyle(
                                       fontSize: 16.5,
                                       fontWeight: FontWeight.w900,
@@ -196,7 +196,7 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
                                       color: Color(0xFF102A43),
                                     ),
                                   ),
-                                  const SizedBox(width: 6),
+                                  const SizedBox(width: 10),
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
@@ -495,10 +495,10 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title: TEC-VERSE 2026
+                  // Title: Tec-Verse 2026
                   const Text.rich(
                     TextSpan(
-                      text: 'TEC-VERSE ',
+                      text: 'Tec-Verse',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
@@ -506,6 +506,7 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
                         color: Color(0xFF102A43),
                       ),
                       children: [
+                        WidgetSpan(child: SizedBox(width: 8)),
                         TextSpan(
                           text: '2026',
                           style: TextStyle(
@@ -523,7 +524,7 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
 
                   // Tagline
                   const Text(
-                    'Explore. Innovate.\nEmpower the Future.',
+                    'Connect. Collaborate.Innovate',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,

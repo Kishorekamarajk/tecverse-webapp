@@ -13,18 +13,18 @@
                 <div><strong th:text="#{footer.support.help.title}">Help Desk</strong><span th:text="#{footer.support.help.desc}">Conference support and queries</span></div>
                 <span class="site-footer__support-arrow" aria-hidden="true"><i class="bi bi-arrow-right"></i></span>
             </a></div>
-            <div class="col-12 col-md-6"><button class="site-footer__support-item site-footer__support-item--tour align-items-center position-relative text-decoration-none" type="button" data-virtual-tour-open aria-haspopup="dialog" aria-controls="virtualTourModal">
+            <div class="col-12 col-md-6"><a class="site-footer__support-item site-footer__support-item--tour align-items-center position-relative text-decoration-none" th:href="@{/#venue}">
                 <span class="site-footer__support-icon"><i class="bi bi-badge-vr"></i></span>
-                <div><strong th:text="#{footer.support.tour.title}">Virtual Tour</strong><span th:text="#{footer.support.tour.desc}">Explore the Tec-verse venue experience</span></div>
+                <div><strong th:text="#{footer.support.tour.title}">Virtual Tour</strong><span th:text="#{footer.support.tour.desc}">Explore the Tec-Verse venue experience</span></div>
                 <span class="site-footer__support-arrow" aria-hidden="true"><i class="bi bi-arrow-right"></i></span>
-            </button></div>
+            </a></div>
         </section>
 
         <section class="site-footer__main d-grid">
             <div class="site-footer__brand">
-                <a th:href="@{/}" class="site-footer__brand-link d-inline-flex align-items-center text-decoration-none" aria-label="Tec-verse home" th:aria-label="#{misc.footer.homeAria}">
-                    <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" th:alt="#{misc.logo.tecverse}">
-                    <span>Tec-verse <b>2026</b></span>
+                <a th:href="@{/}" class="site-footer__brand-link d-inline-flex align-items-center text-decoration-none" aria-label="Tec-Verse home" th:aria-label="#{misc.footer.homeAria}">
+                    <img th:src="@{/images/tecverselogo.png}" alt="Tec-Verse logo" th:alt="#{misc.logo.tecverse}">
+                    <span>Tec-Verse <b>2026</b></span>
                 </a>
                 <p th:text="#{footer.tagline}">A premier platform showcasing breakthrough technologies and fostering innovation and collaboration.</p>
                 <div class="site-footer__institutions align-items-center" aria-label="Organizing institutions" th:aria-label="#{misc.footer.institutionsAria}">
@@ -34,8 +34,8 @@
                 </div>
             </div>
 
-            <nav class="site-footer__links d-flex flex-column align-items-start" aria-label="Tec-verse navigation" th:aria-label="#{misc.footer.navAria}">
-                <h3 th:text="#{misc.footer.brandHeading}">Tec-verse</h3>
+            <nav class="site-footer__links d-flex flex-column align-items-start" aria-label="Tec-Verse navigation" th:aria-label="#{misc.footer.navAria}">
+                <h3 th:text="#{misc.footer.brandHeading}">Tec-Verse</h3>
                 <a th:href="@{/}" th:text="#{nav.home}">Home</a>
                 <!-- <a th:href="@{/about}" th:text="#{footer.link.about}">About</a> -->
                 <a th:href="@{/#exhibitors}" th:text="#{footer.link.exhibitors}">Exhibitors</a>
@@ -54,7 +54,7 @@
 
             <nav class="site-footer__links d-flex flex-column align-items-start" aria-label="Resource links" th:aria-label="#{misc.footer.resourcesAria}">
                 <h3 th:text="#{footer.resources}">Resources</h3>
-                <!-- <a th:href="@{/docs/tecverse-brochure.pdf}" download="Tec-verse-2026-Brochure.pdf" type="application/pdf" th:text="#{footer.link.brochure}">Brochure</a> -->
+                <!-- <a th:href="@{/docs/tecverse-brochure.pdf}" download="Tec-Verse-2026-Brochure.pdf" type="application/pdf" th:text="#{footer.link.brochure}">Brochure</a> -->
                 <a th:href="@{/retreat-2026}" th:text="#{footer.link.schedule}">Programme Schedule</a>
                 <a th:href="@{/news-updates}" th:text="#{footer.link.press}">Press Release</a>
                 <!-- <a th:href="@{/about}" th:text="#{footer.link.accessibility}">Accessibility</a> -->
@@ -63,13 +63,13 @@
 
             <section class="site-footer__connect" aria-label="Follow updates" th:aria-label="#{footer.follow}">
                 <h3 th:text="#{footer.follow}">Follow Updates</h3>
-                <p th:text="#{footer.follow.desc}">Stay connected with official Tec-verse announcements and event highlights.</p>
+                <p th:text="#{footer.follow.desc}">Stay connected with official Tec-Verse announcements and event highlights.</p>
                 <a class="site-footer__contact d-inline-flex align-items-center text-decoration-none" href="mailto:tec-verse@cdac.in"><i class="bi bi-envelope"></i> tec-verse@cdac.in</a>
                 <!-- <a class="site-footer__contact d-inline-flex align-items-center text-decoration-none" th:href="@{/privacy-policy}" href="/privacy-policy"><i class="bi bi-shield-lock"></i> <th:block th:text="#{misc.privacy.heading}">Privacy Policy</th:block></a> -->
                 <div class="site-footer__socials flex-wrap">
-                    <a class="site-footer__social site-footer__social--facebook" href="https://www.facebook.com/CDACINDIA/" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                    <a class="site-footer__social site-footer__social--instagram" href="https://www.instagram.com/c_dacindia/" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                    <a class="site-footer__social site-footer__social--linkedin" href="https://www.linkedin.com/company/cdacindia/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    <a class="site-footer__social site-footer__social--facebook" href="https://www.facebook.com/profile.php?id=61593166749801" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a class="site-footer__social site-footer__social--instagram" href="https://www.instagram.com/cdactecverse/" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a class="site-footer__social site-footer__social--linkedin" href="https://www.linkedin.com/in/tec-verse-4412b042a" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
                     <a class="site-footer__social site-footer__social--youtube" href="https://www.youtube.com/@TecVerse-CDAC" target="_blank" rel="noopener" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
                 </div>
             </section>
@@ -80,49 +80,6 @@
         </section>
 
     </div>
-
-    <div class="virtual-tour-modal" id="virtualTourModal" role="dialog" aria-modal="true" aria-labelledby="virtualTourTitle" hidden>
-        <button class="virtual-tour-modal__backdrop" type="button" data-virtual-tour-close aria-label="Close virtual tour" th:aria-label="#{misc.footer.closeTourAria}"></button>
-        <section class="virtual-tour-modal__panel">
-            <header class="virtual-tour-modal__header">
-                <h2 id="virtualTourTitle" th:text="#{misc.footer.tourTitle}">Tec-verse Virtual Tour</h2>
-                <button type="button" class="virtual-tour-modal__close" data-virtual-tour-close aria-label="Close video" th:aria-label="#{misc.footer.closeVideoAria}"><i class="bi bi-x-lg"></i></button>
-            </header>
-            <div class="virtual-tour-modal__video"><iframe title="Tec-verse virtual tour video" th:title="#{misc.footer.tourVideoTitle}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
-        </section>
-    </div>
-
-    <script th:nonce="${cspNonce}">
-        (function () {
-            var modal = document.getElementById('virtualTourModal');
-            if (!modal || modal.dataset.initialized) return;
-            modal.dataset.initialized = 'true';
-            var frame = modal.querySelector('iframe');
-            var opener = document.querySelector('[data-virtual-tour-open]');
-            var videoUrl = 'https://www.youtube-nocookie.com/embed/y9z789Sitrs?autoplay=1&rel=0';
-            function closeTour() {
-                modal.hidden = true;
-                frame.src = '';
-                document.body.classList.remove('virtual-tour-open');
-                if (opener) opener.focus();
-            }
-            document.querySelectorAll('[data-virtual-tour-open]').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    opener = button;
-                    modal.hidden = false;
-                    frame.src = videoUrl;
-                    document.body.classList.add('virtual-tour-open');
-                    modal.querySelector('.virtual-tour-modal__close').focus();
-                });
-            });
-            modal.querySelectorAll('[data-virtual-tour-close]').forEach(function (button) {
-                button.addEventListener('click', closeTour);
-            });
-            document.addEventListener('keydown', function (event) {
-                if (!modal.hidden && event.key === 'Escape') closeTour();
-            });
-        }());
-    </script>
 
     <div th:replace="~{fragments/floating-actions :: floating-actions}"></div>
 </footer>

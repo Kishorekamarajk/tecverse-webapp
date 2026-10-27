@@ -50,7 +50,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
 
     // Verify Title and Subtitle
-    expect(find.text('TEC-VERSE 2026'), findsOneWidget);
+    expect(find.text('Tec-Verse 2026'), findsOneWidget);
     expect(find.text('Bridging Research. Building the Future.'), findsOneWidget);
 
     // Verify Form Fields
@@ -60,7 +60,7 @@ void main() {
     // Verify Action Buttons
     expect(find.text('LOGIN'), findsOneWidget);
     expect(find.text('Forgot Password?'), findsOneWidget);
-    expect(find.text('Register on TEC-VERSE Website'), findsOneWidget);
+    expect(find.text('Register on Tec-Verse Website'), findsOneWidget);
 
     // Verify Approved Institutional Branding
     expect(find.text('MeitY'), findsOneWidget);

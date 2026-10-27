@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../authentication/presentation/auth_controller.dart';
 import '../../../navigation/app_router.dart';
 
-/// Cinematic TEC-VERSE 2026 intro with a corridor, subtle T mark, live countdown, zoom reveal, and timed loading progress.
+/// Cinematic Tec-Verse 2026 intro with a corridor, subtle T mark, live countdown, zoom reveal, and timed loading progress.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -338,7 +338,7 @@ class _SplashScreenState extends State<SplashScreen>
                     child: FadeTransition(
                       opacity: countdownOpacity,
                       child: Text(
-                        'TEC-VERSE 2026  ·  CHENNAI',
+                        'Tec-Verse 2026  ·  CHENNAI',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.58),
@@ -359,7 +359,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   // ===========================================================================
-  // 2. BRAND TITLE SECTION (TEC-VERSE 2026 + Golden Orbit Swoosh)
+  // 2. BRAND TITLE SECTION (Tec-Verse 2026 + Golden Orbit Swoosh)
   // ===========================================================================
   Widget _buildBrandTitleSection() {
     return Stack(

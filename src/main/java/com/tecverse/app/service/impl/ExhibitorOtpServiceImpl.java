@@ -35,14 +35,14 @@ public class ExhibitorOtpServiceImpl implements ExhibitorOtpService {
 
         String displayName = name == null || name.isBlank() ? "Exhibitor" : name.trim();
         String body = "Hello " + displayName + ",\n\n"
-                + "Your Tec-verse 2026 exhibitor verification OTP is " + otp + ".\n"
+                + "Your Tec-Verse 2026 exhibitor verification OTP is " + otp + ".\n"
                 + "This OTP is valid for 5 minutes.\n\n"
-                + "Tec-verse Team";
+                + "Tec-Verse Team";
 
         try {
             mailDeliveryService.sendSimple(
                     normalized,
-                    "Tec-verse Exhibitor Email Verification OTP",
+                    "Tec-Verse Exhibitor Email Verification OTP",
                     body,
                     "Exhibitor OTP"
             );

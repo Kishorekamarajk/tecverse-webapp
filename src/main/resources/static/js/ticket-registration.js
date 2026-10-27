@@ -28,8 +28,7 @@ const ministries=[
 const states=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 function populateApplicantStateSelect(){const select=$('#applicantState');if(select)select.innerHTML='<option value="">Select your state or union territory</option>'+states.map(state=>`<option value="${esc(state)}">${esc(state)}</option>`).join('');}
 const departments=["General Administration","Finance","Home","Education","Higher Education","School Education","Health and Family Welfare","Industries and Commerce","Information Technology / Electronics","Science and Technology","Agriculture","Animal Husbandry and Fisheries","Co-operation","Rural Development","Urban Development / Municipal Administration","Revenue","Transport","Public Works","Water Resources","Energy","Environment and Forests","Labour and Employment","Skill Development","Tourism and Culture","Social Welfare","Women and Child Development","Tribal Welfare","Food and Civil Supplies","Information and Public Relations","Planning","Law","Personnel","Other"];
-// Mobile OTP verification is disabled for now, so the mobile number counts as verified.
-let verified=false, emailVerified=false, mobileVerified=true, timer=null, mobileTimer=null, rateLimitTimer=null;
+let verified=false, emailVerified=false, mobileVerified=false, timer=null, mobileTimer=null, rateLimitTimer=null;
 
 function msg(el,text,ok=false){el.textContent=text;el.className='tr-msg small fw-semibold mt-3 '+(ok?'text-success':'text-danger');}
 
@@ -191,7 +190,7 @@ function renderConditional(){
   h+=select('Participant role','academiaRole',['Student','Professor / Faculty','Research Scholar'],'required');
   h+=field('Institution name','collegeName','text','list="collegeList" required');
   h+='<datalist id="collegeList"><option value="Anna University"><option value="Indian Institute of Technology Madras"><option value="University of Delhi"><option value="Indian Institute of Science"><option value="Amrita Vishwa Vidyapeetham"></datalist>';
-  h+=field('District','collegeDistrict','text','required')+field('State / Union Territory','collegeState','text','required');
+  h+=field('District','collegeDistrict','text','required');
   h+=field('University / affiliating institution','universityName','text','required');
   h+='</div>';
  } else if(cat==='CENTRAL_GOVERNMENT'){
@@ -232,7 +231,8 @@ function renderPassport(){
 }
 function collect(){
  const fd=new FormData($('#detailsForm')); const o=Object.fromEntries(fd.entries());if(o.organizationLocationChoice){o.organizationLocation=o.organizationLocationChoice==='__OTHER__'?(o.organizationLocationOther||'').trim():o.organizationLocationChoice;delete o.organizationLocationChoice;delete o.organizationLocationOther;}o.email=$('#email').value.trim().toLowerCase();o.phone=$('#phone').value.trim();o.officialName=$('#verifyName').value.trim();
- if(o.category==='STATE_GOVERNMENT')o.stateName=o.applicantState;
+  if(o.category==='STATE_GOVERNMENT')o.stateName=o.applicantState;
+  if(o.category==='ACADEMIA')o.collegeState=o.applicantState;
  o.password=$('#password').value; o.confirmPassword=$('#confirmPassword').value;
  o.attendanceDays=fd.getAll('attendanceDays'); return o;
 }
@@ -257,7 +257,7 @@ function validateTicketFields(form){
  return valid;
 }
 function preview(){
- const o=collect(); const labels={category:'Registration category',officialName:'Full name',email:'Email address',phone:'Mobile number',citizenshipStatus:'Citizenship / residency status',applicantState:'State / Union Territory',academiaType:'Academia type',collegeName:'Institution',collegeDistrict:'District',collegeState:'Institution state / union territory',universityName:'University',academiaRole:'Participant role',registerNumber:'Student / staff ID number',centralMinistry:'Ministry / department',stateName:'Government state / union territory',stateDepartment:'Department',organizationName:'Organization / office',organizationLocation:'City / office location',designation:'Designation / job title',industryOrStartup:'Organization type',passportNumber:'Passport number',passportValidUntil:'Passport expiry date',passportName:'Name as shown on passport'};
+ const o=collect(); const labels={category:'Registration category',officialName:'Full name',email:'Email address',phone:'Mobile number',citizenshipStatus:'Citizenship / residency status',applicantState:'State / Union Territory',academiaType:'Academia type',collegeName:'Institution',collegeDistrict:'District',universityName:'University',academiaRole:'Participant role',registerNumber:'Student / staff ID number',centralMinistry:'Ministry / department',stateName:'Government state / union territory',stateDepartment:'Department',organizationName:'Organization / office',organizationLocation:'City / office location',designation:'Designation / job title',industryOrStartup:'Organization type',passportNumber:'Passport number',passportValidUntil:'Passport expiry date',passportName:'Name as shown on passport'};
  $('#preview').innerHTML=Object.entries(labels).filter(([k])=>o[k]).map(([k,l])=>`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">${esc(l)}</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o[k])}</strong></div>`).join('')+`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">Participation Preference</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o.attendanceDays.join(', '))}</strong></div>`;
  window.ticketPayload=o; show('preview');
 }
@@ -265,7 +265,7 @@ async function post(url,data){const r=await fetch(url,{method:'POST',headers:{'C
 
 $('#sendOtp').onclick=async()=>{
  if(window.jQuery && !window.jQuery('#ticketVerifyForm').valid())return;
- const btn=$('#sendOtp'); const name=$('#verifyName').value.trim(),email=$('#email').value.trim(),phone=$('#phone').value.trim(),password=$('#password').value,confirmPassword=$('#confirmPassword').value,m=$('#verifyMsg');
+ const btn=$('#sendOtp'); const name=$('#verifyName').value.trim(),email=$('#email').value.trim(),phone=$('#phone').value.trim(),password=$('#password').value,confirmPassword=$('#confirmPassword').value,m=$('#verifyMsg'),otpMessage=$('#otpBox').hidden?m:$('#emailOtpMsg');
  if(!name||!email||!phone||!password||!confirmPassword){msg(m,'Enter your name, email, phone number, and password.');return;}
  if(!/^[\p{L}\p{M}][\p{L}\p{M} .,'’\-]{1,149}$/u.test(name)){msg(m,'Use letters, spaces, periods, apostrophes, commas, or hyphens for your name.');return;}
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg(m,'Enter a valid email address.');return;}
@@ -278,13 +278,12 @@ $('#sendOtp').onclick=async()=>{
  if(emailVerified)return;
  let retryAfterSeconds=0;
  setLoading(btn,true);
- try{await post(API.send,{fullName:name,email,phone,passType:'Tec-verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;msg(m,'OTP sent. Check your email.',true);startTimer();$$('#emailOtpInputs input')[0]?.focus();}
- catch(e){msg(m,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
- finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
+ try{await post(API.send,{fullName:name,email,phone,passType:'Tec-Verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;msg($('#emailOtpMsg'),'OTP request accepted. Check your email shortly.',true);m.textContent='';startTimer();$$('#emailOtpInputs input')[0]?.focus();}
+ catch(e){msg(otpMessage,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
+ finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,otpMessage);}
 };
 function startTimer(){let n=60;$('#resendOtp').disabled=true;clearInterval(timer);timer=setInterval(()=>{n--;$('#resendOtp').textContent=n>0?`Resend OTP (${n}s)`:'Resend OTP';if(n<=0){clearInterval(timer);$('#resendOtp').disabled=false;}},1000);$('#resendOtp').textContent='Resend OTP (60s)';}
-function startRateLimitCountdown(button,seconds){
- const message=$('#verifyMsg');
+function startRateLimitCountdown(button,seconds,message=$('#verifyMsg')){
  let remaining=Math.max(1,seconds);
  clearInterval(rateLimitTimer);
  const originalLabel=button.dataset.label||button.innerHTML;
@@ -300,37 +299,36 @@ function startRateLimitCountdown(button,seconds){
 $('#resendOtp').onclick=()=>$('#sendOtp').click();
 $('#registerStart').onclick=()=>{
  if(window.jQuery && !window.jQuery('#ticketVerifyForm').valid())return;
- if(!emailVerified||!mobileVerified){
+ if(!emailVerified){
   const missing=[];
   if(!emailVerified)missing.push('email');
-  if(!mobileVerified)missing.push('mobile');
+  // if(!mobileVerified)missing.push('mobile'); // Temporary mobile OTP bypass.
   msg($('#verifyMsg'),`Please verify your ${missing.join(' and ')} OTP${missing.length>1?'s':''} before registering.`);
   return;
  }
  proceedAfterVerification();
 };
-/* Mobile OTP verification is disabled for now; remove this comment to restore it.
-// Mobile number verification by SMS OTP (must be completed before the email OTP step).
+/* Temporary mobile OTP bypass. Restore this block and the mobile controls in ticket.html to re-enable.
 $('#sendMobileOtp').onclick=async()=>{
  if(mobileVerified)return;
- const btn=$('#sendMobileOtp'),phone=$('#phone').value.trim(),m=$('#verifyMsg');
+ const btn=$('#sendMobileOtp'),phone=$('#phone').value.trim(),m=$('#verifyMsg'),otpMessage=$('#mobileOtpBox').hidden?m:$('#mobileOtpMsg');
  if(!/^(?:\+91[-\s]?)?[6-9]\d{9}$/.test(phone)){msg(m,'Enter a valid 10-digit Indian mobile number.');return;}
  let retryAfterSeconds=0;
  setLoading(btn,true,'Sending…');
- try{await post(API.sendMobile,{phone});$('#otpMobile').textContent=phone;$('#mobileOtpBox').hidden=false;$$('#mobileOtpInputs input').forEach(i=>{i.value='';});msg(m,'OTP sent to your mobile number by SMS.',true);startMobileTimer();$$('#mobileOtpInputs input')[0]?.focus();}
- catch(e){msg(m,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
- finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
+ try{await post(API.sendMobile,{phone});$('#otpMobile').textContent=phone;$('#mobileOtpBox').hidden=false;$$('#mobileOtpInputs input').forEach(i=>{i.value='';});msg($('#mobileOtpMsg'),'OTP sent to your mobile number by SMS.',true);m.textContent='';startMobileTimer();$$('#mobileOtpInputs input')[0]?.focus();}
+ catch(e){msg(otpMessage,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
+ finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,otpMessage);}
 };
 function startMobileTimer(){let n=60;const b=$('#resendMobileOtp');b.disabled=true;clearInterval(mobileTimer);mobileTimer=setInterval(()=>{n--;b.textContent=n>0?`Resend OTP (${n}s)`:'Resend OTP';if(n<=0){clearInterval(mobileTimer);b.disabled=false;}},1000);b.textContent='Resend OTP (60s)';}
 $('#resendMobileOtp').onclick=()=>$('#sendMobileOtp').click();
 $('#verifyMobileOtp').onclick=async()=>{
- const btn=$('#verifyMobileOtp'),otp=$$('#mobileOtpInputs input').map(x=>x.value).join(''),m=$('#verifyMsg');
+ const btn=$('#verifyMobileOtp'),otp=$$('#mobileOtpInputs input').map(x=>x.value).join(''),m=$('#mobileOtpMsg');
  if(otp.length!==6){msg(m,'Enter the complete 6-digit OTP sent to your mobile.');return;}
  let retryAfterSeconds=0;
  setLoading(btn,true);
  try{await post(API.verifyMobile,{phone:$('#phone').value.trim(),otp});mobileVerified=true;if(!emailVerified)msg(m,'Mobile number verified. Now click Send OTP next to your email to verify it.',true);}
  catch(e){msg(m,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
- finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
+ finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,m);}
  if(mobileVerified)setMobileVerifiedUi(true);
 };
 function setMobileVerifiedUi(on){
@@ -339,7 +337,6 @@ function setMobileVerifiedUi(on){
  b.disabled=on;b.innerHTML=on?'<i class="bi bi-check-circle-fill"></i> Verified':'Verify Mobile';delete b.dataset.label;
 }
 */
-function setMobileVerifiedUi(on){}
 // Six single-digit boxes per OTP: auto-advance, paste-to-fill, backspace/arrow navigation, Enter submits.
 function wireOtpBoxes(container,submitButton){
 const otpInputs=$$(container+' input');
@@ -367,19 +364,19 @@ otpInputs.forEach((input,index)=>{
 });
 }
 wireOtpBoxes('#emailOtpInputs','#verifyOtp');
-// wireOtpBoxes('#mobileOtpInputs','#verifyMobileOtp');
+// wireOtpBoxes('#mobileOtpInputs','#verifyMobileOtp'); // Disabled with mobile OTP controls above.
 $('#verifyOtp').onclick=async()=>{
- const btn=$('#verifyOtp'); const otp=$$('#emailOtpInputs input').map(x=>x.value).join(''),m=$('#verifyMsg');
+ const btn=$('#verifyOtp'); const otp=$$('#emailOtpInputs input').map(x=>x.value).join(''),m=$('#emailOtpMsg');
  if(otp.length!==6){msg(m,'Enter the complete 6-digit OTP.');shakeOtp();return;}
  let retryAfterSeconds=0;
  setLoading(btn,true);
  try{
   await post(API.verify,{email:$('#email').value.trim(),otp});
   emailVerified=true;
-  if(!mobileVerified)msg(m,'Email verified. Now click Verify Mobile to verify your mobile number.',true);
+  msg(m,'Email verified successfully. You can continue.',true);
  }
  catch(e){msg(m,e.message);shakeOtp();if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
- finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds);}
+ finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,m);}
  if(emailVerified)setEmailVerifiedUi(true);
 };
 const sendOtpLabel=$('#sendOtp').innerHTML;
@@ -391,9 +388,8 @@ function setEmailVerifiedUi(on){
 // Runs once both email and mobile OTPs are verified.
 async function proceedAfterVerification(){
  const m=$('#verifyMsg');
- // The verify responses alone never advance the form: step 2 is only released by the server
- // to a session that really completed both OTP verifications.
- if(!await loadDetailsStep()){msg(m,'OTP verification could not be confirmed. Please verify again.');emailVerified=false;setEmailVerifiedUi(false);setMobileVerifiedUi(false);return;}
+ // The server confirms email verification; mobile OTP is temporarily optional.
+ if(!await loadDetailsStep()){msg(m,'Email OTP verification could not be confirmed. Please verify again.');emailVerified=false;setEmailVerifiedUi(false);return;}
  verified=true;
  const verifiedName=$('#verifyName').value.trim();
  $('#detailsForm [name="officialName"]').value=verifiedName;
@@ -401,7 +397,7 @@ async function proceedAfterVerification(){
  $('#email').readOnly=true;
  $('#phone').readOnly=true;
  $('#detailsForm [name="officialName"]').readOnly=true;
- msg(m,'Mobile and email verified successfully. Your verified name, email, and phone number are locked.',true);
+ msg(m,'Email verified successfully. Your verified name, email, and phone number are locked.',true);
  show('details');
 }
 async function loadDetailsStep(){
@@ -459,7 +455,7 @@ function showRegistrationCelebration(){
  title.textContent='Registration successful!';
  title.style.cssText='margin:0 0 10px;font-size:26px;font-weight:800';
  const message=document.createElement('p');
- message.textContent='Your registration has been submitted. We look forward to seeing you at TecVerse 2026.';
+ message.textContent='Your registration has been submitted. We look forward to seeing you at Tec-Verse 2026.';
  message.style.cssText='margin:0 0 24px;color:#536174;font-size:16px;line-height:1.5';
  const close=document.createElement('button');
  close.type='button';
@@ -513,7 +509,7 @@ $('#submitFinal').onclick=async()=>{
  if(!validateTicketFields($('#detailsForm'))){show('details');return;}
  if(!window.ticketPayload?.attendanceDays?.length){msg(m,'Select at least one participation day.');show('details');return;}
  setLoading(btn,true); overlay(true,'Submitting your registration…');
- try{const result=await post(API.register,window.ticketPayload);const data=result.data||result;$('#completeEmail').textContent=data.email;$('#confirmationEmailStatus').textContent=data.confirmationEmailSent?'Your confirmation email is on its way to':'Thanks for registering for TecVerse 2026. Further details will be shared at';show('complete');showRegistrationCelebration();launchIdCard(data,window.ticketPayload);}
+ try{const result=await post(API.register,window.ticketPayload);const data=result.data||result,status=$('#confirmationEmailStatus');$('#completeEmail').textContent=data.email;status.textContent=data.confirmationEmailSent?status.dataset.emailSent:status.dataset.emailPending;show('complete');showRegistrationCelebration();launchIdCard(data,window.ticketPayload);}
  catch(e){if(e.status===403){verified=false;emailVerified=false;setEmailVerifiedUi(false);setMobileVerifiedUi(false);['#verifyName','#email','#phone'].forEach(s=>{$(s).readOnly=false;});show('verify');msg($('#verifyMsg'),e.message);return;}msg(m,e.message);}
  finally{setLoading(btn,false);overlay(false);}
 };

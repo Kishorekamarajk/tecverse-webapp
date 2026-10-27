@@ -43,7 +43,7 @@ void main() {
       expect(pass.holderName, 'Dr. Kishore Kumar');
       expect(pass.organization, 'C-DAC Chennai');
       expect(pass.status, PassStatus.active);
-      expect(pass.eventName, 'TEC-VERSE 2026');
+      expect(pass.eventName, 'Tec-Verse 2026');
       expect(pass.venue, 'CHENNAI TRADE CENTRE, NANDAMBAKKAM, CHENNAI 600089');
     });
 

@@ -24,9 +24,9 @@ public class GalleryVideoSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         List<GalleryVideo> videos = new ArrayList<>();
 
-        addIfMissing(videos, "Tec-verse Previous Edition Recap",
-                "Highlights from the previous Tec-verse edition.", "vid.mp4", "event1.jpg", 10);
-        addIfMissing(videos, "Tec-verse Innovation Showcase",
+        addIfMissing(videos, "Tec-Verse Previous Edition Recap",
+                "Highlights from the previous Tec-Verse edition.", "vid.mp4", "event1.jpg", 10);
+        addIfMissing(videos, "Tec-Verse Innovation Showcase",
                 "Moments from demos, exhibits, and delegate interactions.", "mov.mp4", "event4.jpg", 20);
 
         if (!videos.isEmpty()) {

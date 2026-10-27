@@ -1,37 +1,41 @@
 package com.tecverse.app.service.impl;
 
-import com.tecverse.app.dto.TicketRegistrationRequest;
-import com.tecverse.app.dto.TicketRegistrationResponse;
-import com.tecverse.app.entity.TicketRegistration;
-import com.tecverse.app.repository.TicketRegistrationRepository;
-import com.tecverse.app.service.TicketRegistrationService;
-import com.tecverse.app.service.TicketOtpService;
-import com.tecverse.app.service.QRCodeGeneratorService;
-import com.tecverse.app.event.TicketRegistrationSavedEvent;
-import org.springframework.context.ApplicationEventPublisher;
-import com.tecverse.app.util.ValidationUtil;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.tecverse.app.dto.TicketRegistrationRequest;
+import com.tecverse.app.dto.TicketRegistrationResponse;
+import com.tecverse.app.entity.TicketRegistration;
+import com.tecverse.app.event.TicketRegistrationSavedEvent;
+import com.tecverse.app.repository.TicketRegistrationRepository;
+import com.tecverse.app.service.QRCodeGeneratorService;
+import com.tecverse.app.service.TicketOtpService;
+import com.tecverse.app.service.TicketRegistrationService;
+import com.tecverse.app.util.ValidationUtil;
 
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.util.ByteArrayDataSource;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import java.util.List;
-import java.util.Comparator;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class TicketRegistrationServiceImpl implements TicketRegistrationService {
@@ -40,25 +44,24 @@ public class TicketRegistrationServiceImpl implements TicketRegistrationService 
     private final TicketRegistrationRepository repo;
     private final JavaMailSender mailSender;
     private final TicketOtpService otpService;
+    private final QRCodeGeneratorService qrCodeGeneratorService;
     private final String fromAddress;
     private final PasswordEncoder passwordEncoder;
     private final com.tecverse.app.service.TicketRegistrationReferenceService referenceService;
     private final ApplicationEventPublisher eventPublisher;
     private final Validator validator;
-    private final QRCodeGeneratorService qrCodeGeneratorService;
     private final String appUrl;
     private final TransactionTemplate transactionTemplate;
 
-    public TicketRegistrationServiceImpl(TicketRegistrationRepository repo, JavaMailSender mailSender, TicketOtpService otpService, PasswordEncoder passwordEncoder,
+    public TicketRegistrationServiceImpl(TicketRegistrationRepository repo, JavaMailSender mailSender, TicketOtpService otpService, QRCodeGeneratorService qrCodeGeneratorService, PasswordEncoder passwordEncoder,
                                          com.tecverse.app.service.TicketRegistrationReferenceService referenceService,
                                          ApplicationEventPublisher eventPublisher,
                                          Validator validator,
-                                         QRCodeGeneratorService qrCodeGeneratorService,
                                          PlatformTransactionManager transactionManager,
                                          @Value("${spring.mail.username:}") String fromAddress,
                                          @Value("${app.url:http://localhost:8080}") String appUrl) {
-        this.repo=repo; this.mailSender=mailSender; this.otpService=otpService; this.passwordEncoder=passwordEncoder; this.referenceService=referenceService; this.eventPublisher=eventPublisher; this.validator=validator; this.fromAddress=fromAddress;
-        this.qrCodeGeneratorService=qrCodeGeneratorService; this.appUrl=appUrl;
+        this.repo=repo; this.mailSender=mailSender; this.otpService=otpService; this.qrCodeGeneratorService=qrCodeGeneratorService; this.passwordEncoder=passwordEncoder; this.referenceService=referenceService; this.eventPublisher=eventPublisher; this.validator=validator; this.fromAddress=fromAddress;
+        this.appUrl=appUrl;
         this.transactionTemplate=new TransactionTemplate(transactionManager);
     }
 
@@ -90,7 +93,7 @@ public class TicketRegistrationServiceImpl implements TicketRegistrationService 
             repo.saveAndFlush(e);
             eventPublisher.publishEvent(new TicketRegistrationSavedEvent(e.getId()));
             if (otpService instanceof com.tecverse.app.service.impl.TicketOtpServiceImpl impl) impl.consumeEmailVerification(email);
-            return new TicketRegistrationResponse(ref,email,"Registration saved; confirmation email will be sent shortly.",false,e.getScanToken());
+            return new TicketRegistrationResponse(ref,email,"Registration completed; digital entry pass confirmation is being sent.",false,e.getScanToken());
         }
         if(repo.existsByEmail(email)) throw new IllegalArgumentException("This email is already registered.");
         throw new IllegalArgumentException("This phone number is already registered.");
@@ -152,8 +155,6 @@ public class TicketRegistrationServiceImpl implements TicketRegistrationService 
         }));
     }
 
-    @Scheduled(fixedDelayString = "${tecverse.mail.confirmation-retry-ms:300000}",
-            initialDelayString = "${tecverse.mail.confirmation-retry-initial-ms:60000}")
     public void retryPendingConfirmationEmails() {
         List<TicketRegistration> pending = repo
                 .findTop25ByConfirmationEmailSentFalseAndConfirmationEmailAttemptsLessThanOrderByCreatedAtAsc(
@@ -164,31 +165,38 @@ public class TicketRegistrationServiceImpl implements TicketRegistrationService 
     private boolean sendConfirmation(TicketRegistration e){
         try {
             String scanUrl=appUrl.replaceAll("/+$", "")+"/ticket/scan/"+e.getScanToken();
-            byte[] qrPng=qrCodeGeneratorService.generateQRCodeImageBytes(scanUrl,360,360);
+            byte[] qrImage=qrCodeGeneratorService.generateQRCodeImageBytes(scanUrl,360,360);
             var msg=mailSender.createMimeMessage();
             // Two body variants (plain text and HTML) require multipart alternative mode.
             var helper=new MimeMessageHelper(msg,true,"UTF-8");
             if(fromAddress!=null&&!fromAddress.isBlank()) helper.setFrom(fromAddress);
             helper.setTo(e.getEmail());
-            helper.setSubject("Registration Confirmed | Tec-Verse 2026 — Your Official Entry Pass");
+            helper.setSubject("Registration Confirmed | Tec-Verse 2026 | "+e.getReferenceNumber());
+            helper.setText(confirmationText(e), confirmationHtml(e));
             ClassPathResource logo=new ClassPathResource("static/images/tecverselogo.png");
-            boolean hasLogo=logo.exists();
-            helper.setText(confirmationText(e), confirmationHtml(e,hasLogo));
-            helper.addInline("participantQr",new ByteArrayResource(qrPng),"image/png");
-            if(hasLogo)helper.addInline("tecVerseLogo",logo,"image/png");
+            if(logo.exists()) {
+                MimeBodyPart logoPart=new MimeBodyPart();
+                logoPart.setDataHandler(new jakarta.activation.DataHandler(
+                        new ByteArrayDataSource(logo.getInputStream(),"image/png")));
+                logoPart.setFileName("tecverse.png");
+                logoPart.setHeader("Content-ID","<tecVerseLogo>");
+                logoPart.setDisposition(MimeBodyPart.INLINE);
+                helper.getMimeMultipart().addBodyPart(logoPart);
+            }
+            helper.addInline("participantQr",new ByteArrayResource(qrImage),"image/png");
             mailSender.send(msg);
             log.info("Ticket confirmation email accepted by SMTP for registration {}.", e.getReferenceNumber());
             return true;
-        } catch(MessagingException | MailException | java.io.IOException | IllegalArgumentException ex) {
+        } catch(MessagingException | MailException | IllegalArgumentException | IOException ex) {
             log.warn("Ticket registration {} confirmation email attempt {} failed; it remains queued for retry when available (maximum {} attempts).",
                     e.getReferenceNumber(), e.getConfirmationEmailAttempts(), MAX_CONFIRMATION_EMAIL_ATTEMPTS, ex);
             return false;
         }
     }
-    private String confirmationHtml(TicketRegistration e,boolean hasLogo) {
+    private String confirmationHtml(TicketRegistration e) {
         String designation=firstNonBlank(e.getDesignation(),e.getAcademiaRole());
         String organization=firstNonBlank(e.getOrganizationName(),e.getCollegeName(),e.getUniversityName(),e.getAcademiaType());
-        String logo=hasLogo?"<img src=\"cid:tecVerseLogo\" width=\"54\" height=\"54\" alt=\"Tec-Verse logo\" style=\"display:block;width:54px;height:54px;object-fit:contain;border:0;\">":"<span style=\"font-size:22px;font-weight:800;letter-spacing:2px;color:#ffffff;\">TEC-VERSE</span>";
+        String logo="<img src=\"cid:tecVerseLogo\" width=\"54\" height=\"54\" alt=\"Tec-Verse logo\" style=\"display:block;width:54px;height:54px;object-fit:contain;border:0;\">";
         return "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><style>"
                 + "@media only screen and (max-width:620px){.email-shell{width:100%!important}.email-pad{padding-left:20px!important;padding-right:20px!important}.stack-column{display:block!important;width:100%!important;max-width:100%!important}.pass-cell{padding:20px 0 0!important}}"
                 + "</style></head><body style=\"margin:0;padding:0;background:#f2f5fb;font-family:Arial,Helvetica,sans-serif;color:#17243b;\">"

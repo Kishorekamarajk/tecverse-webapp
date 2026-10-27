@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{sponsor.title}">Become a Sponsor | Tec-verse 2026</title>
+    <title th:text="#{sponsor.title}">Become a Sponsor | Tec-Verse 2026</title>
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
 
 
@@ -48,8 +48,8 @@
 
         <div class="container sp-hero__inner d-grid align-items-center" style="position: relative; z-index: 2;">
             <div class="sp-hero__copy" data-reveal="fade-up">
-                <span class="sp-kicker d-inline-flex align-items-center gap-[0.55rem] font-[800] text-uppercase" style="animation: slideUp 0.8s ease-out 0.2s both;"><i class="bi bi-gem"></i> <th:block th:text="#{sponsor.hero.kicker}">Tec-verse 2026 Sponsorship</th:block></span>
-                <h1 id="sponsor-hero-title" style="animation: slideUp 0.8s ease-out 0.4s both;" th:text="#{sponsor.hero.title}">Become a Sponsor at Tec-verse 2026</h1>
+                <span class="sp-kicker d-inline-flex align-items-center gap-[0.55rem] font-[800] text-uppercase" style="animation: slideUp 0.8s ease-out 0.2s both;"><i class="bi bi-gem"></i> <th:block th:text="#{sponsor.hero.kicker}">Tec-Verse 2026 Sponsorship</th:block></span>
+                <h1 id="sponsor-hero-title" style="animation: slideUp 0.8s ease-out 0.4s both;" th:text="#{sponsor.hero.title}">Become a Sponsor at Tec-Verse 2026</h1>
                 <p style="animation: slideUp 0.8s ease-out 0.6s both;" th:text="#{sponsor.hero.desc}">Explore structured partnership opportunities designed for visibility, engagement, and institutional collaboration.</p>
                 <div class="sp-actions d-flex flex-wrap gap-[0.9rem]" style="animation: slideUp 0.8s ease-out 0.8s both;">
                     <a href="#sponsor-packages" class="sp-btn sp-btn--primary align-items-center justify-content-center gap-[0.55rem] font-[800]" style="transition: all 0.3s ease; position: relative; overflow: hidden;">
@@ -160,17 +160,17 @@
             <div class="sp-section-head" data-reveal="fade-up">
                 <span th:text="#{sponsor.contact.kicker}">Sponsor Registration</span>
                 <h2 id="sponsor-contact-title" th:text="#{sponsor.contact.title}">Register Your Sponsorship Interest</h2>
-                <p th:text="#{sponsor.contact.desc}">Select your preferred package, provide your organization details, and verify your official email. Our Tec-verse team will contact you with the sponsorship confirmation and payment process.</p>
+                <p th:text="#{sponsor.contact.desc}">Select your preferred package, provide your organization details, and verify your official email. Our Tec-Verse team will contact you with the sponsorship confirmation and payment process.</p>
             </div>
             <div class="sp-contact-grid d-grid align-items-stretch position-relative">
                 <aside class="sp-contact-card overflow-hidden" data-reveal="fade-up">
                     <figure class="sp-sponsor-process-visual">
-                        <img th:src="@{/images/tieup.png}" alt="Tec-verse sponsorship partnership" th:alt="#{sponsor.process.imageAlt}" loading="lazy">
+                        <img th:src="@{/images/tieup.png}" alt="Tec-Verse sponsorship partnership" th:alt="#{sponsor.process.imageAlt}" loading="lazy">
                     </figure>
                     <div class="sp-sponsor-process-content">
                         <span class="sp-kicker d-inline-flex align-items-center gap-[0.55rem] font-[800] text-uppercase"><i class="bi bi-envelope-paper"></i> <th:block th:text="#{sponsor.process.kicker}">Sponsor Process</th:block></span>
                         <h3 th:text="#{sponsor.process.title}">What Happens Next?</h3>
-                        <p><strong>1.</strong> <th:block th:text="#{sponsor.process.step1}">Choose a sponsorship package</th:block><br><strong>2.</strong> <th:block th:text="#{sponsor.process.step2}">Verify your email with OTP</th:block><br><strong>3.</strong> <th:block th:text="#{sponsor.process.step3}">Submit your sponsorship interest</th:block><br><strong>4.</strong> <th:block th:text="#{sponsor.process.step4}">Tec-verse team contacts you</th:block><br><strong>5.</strong> <th:block th:text="#{sponsor.process.step5}">Package confirmation, invoice and payment follow-up</th:block></p>
+                        <p><strong>1.</strong> <th:block th:text="#{sponsor.process.step1}">Choose a sponsorship package</th:block><br><strong>2.</strong> <th:block th:text="#{sponsor.process.step2}">Verify your email with OTP</th:block><br><strong>3.</strong> <th:block th:text="#{sponsor.process.step3}">Submit your sponsorship interest</th:block><br><strong>4.</strong> <th:block th:text="#{sponsor.process.step4}">Tec-Verse team contacts you</th:block><br><strong>5.</strong> <th:block th:text="#{sponsor.process.step5}">Package confirmation, invoice and payment follow-up</th:block></p>
                         <p style="font-size:.9rem;opacity:.85" th:text="#{sponsor.process.note}">No bank, card, or payment details are collected through this public form.</p>
                         <div class="sp-contact-list mt-[1.6rem]">
                             <a href="mailto:tec-verse@cdac.in"><i class="bi bi-envelope-fill"></i>tec-verse@cdac.in</a>
@@ -198,7 +198,7 @@
                     <div class="sp-field"><label for="sponsorWebsite" th:text="#{sponsor.field.website}">Company Website</label><input id="sponsorWebsite" name="website" type="url" placeholder="https://example.com" th:value="${inquiry != null ? inquiry.website : ''}" maxlength="255"></div>
                     <div class="sp-field"><label for="sponsorIndustry" th:text="#{sponsor.field.industry}">Industry / Category</label><input id="sponsorIndustry" name="industry" type="text" placeholder="Industry / Category" th:placeholder="#{sponsor.placeholder.industry}" th:value="${inquiry != null ? inquiry.industry : ''}" maxlength="100"></div>
                     <div class="sp-field sp-field--full"><label for="sponsorMessage" th:text="#{sponsor.field.message}">Message / Requirements</label><textarea id="sponsorMessage" name="message" rows="4" placeholder="Any message or sponsorship requirements" th:placeholder="#{sponsor.placeholder.requirements}" th:text="${inquiry != null ? inquiry.message : ''}" maxlength="5000"></textarea></div>
-                    <div class="sp-field sp-field--full"><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" required style="margin-top:4px"> <span th:text="#{sponsor.consent}">I confirm that the above information is correct and agree to be contacted by the Tec-verse organizing team regarding sponsorship, package confirmation, invoice and payment.</span></label></div>
+                    <div class="sp-field sp-field--full"><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" required style="margin-top:4px"> <span th:text="#{sponsor.consent}">I confirm that the above information is correct and agree to be contacted by the Tec-Verse organizing team regarding sponsorship, package confirmation, invoice and payment.</span></label></div>
                     <button type="submit" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="sponsorSubmit" th:text="#{sponsor.form.submitInterest}">Submit Sponsorship Interest</button>
                 </form>
             </div>
@@ -300,7 +300,7 @@
             }
         </style>
         <div class="container">
-            <div class="sp-section-head" data-reveal="fade-up"><span th:text="#{sponsor.packages.kicker}">Official Packages</span><h2 id="sponsor-packages-title" th:text="#{sponsor.packages.title}">Tec-verse 2026 Sponsorship Packages</h2><p th:text="#{sponsor.packages.desc}">Select a package to pre-fill the sponsorship registration form.</p></div>
+            <div class="sp-section-head" data-reveal="fade-up"><span th:text="#{sponsor.packages.kicker}">Official Packages</span><h2 id="sponsor-packages-title" th:text="#{sponsor.packages.title}">Tec-Verse 2026 Sponsorship Packages</h2><p th:text="#{sponsor.packages.desc}">Select a package to pre-fill the sponsorship registration form.</p></div>
             <div class="sp-package-grid d-grid">
                 <article class="sp-package sp-package--featured" data-tier="platinum" data-reveal="zoom" data-reveal-delay="100"><div class="sp-package__medal"><i class="bi bi-gem"></i></div><h3 th:text="#{sponsor.tier.platinum}">Platinum</h3><div class="sp-package__label" th:text="#{sponsor.tier.platinum.label}">Premium Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;15,00,000</div><ul><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.platinum.vipSeating}">VIP seating: Yes (inauguration &amp; valedictory)</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.passes10}">10 technical session passes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.platinum.sessions}">4 panel discussions + 4 parallel technical sessions</th:block></li><li><i class="bi bi-star-fill"></i><th:block th:text="#{sponsor.benefit.mainStageLogo}">Main stage logo branding</th:block></li><li><i class="bi bi-cup-hot-fill"></i><th:block th:text="#{sponsor.benefit.platinum.lounge}">VIP lounge: 7 people for both days</th:block></li><li><i class="bi bi-tools"></i><th:block th:text="#{sponsor.benefit.platinum.dining}">VIP dining: 4 people for both days</th:block></li><li><i class="bi bi-shop"></i><th:block th:text="#{sponsor.benefit.platinum.stall}">Premium category stall</th:block></li><li><i class="bi bi-megaphone-fill"></i><th:block th:text="#{sponsor.benefit.logoMaterialsKits}">Logo in marketing materials, sign boards and kits</th:block></li><li><i class="bi bi-file-earmark-text-fill"></i><th:block th:text="#{sponsor.benefit.platinum.cscWriteup}">CSC participation + technical write-up in event report</th:block></li></ul><button type="button" data-select-sponsor="Platinum"><th:block th:text="#{sponsor.tier.platinum.choose}">Choose Platinum</th:block> <i class="bi bi-arrow-right"></i></button></article>
                 <article class="sp-package sp-package--gold" data-tier="gold" data-reveal="zoom" data-reveal-delay="120"><div class="sp-package__popular"><i class="bi bi-stars"></i> <th:block th:text="#{sponsor.tier.mostPopular}">Most Popular</th:block></div><div class="sp-package__medal"><i class="bi bi-trophy-fill"></i></div><h3 th:text="#{sponsor.tier.gold}">Gold</h3><div class="sp-package__label" th:text="#{sponsor.tier.gold.label}">Strategic Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;10,00,000</div><ul><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.gold.vipSeating}">VIP seating: Yes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.passes10}">10 technical session passes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.gold.sessions}">3 panel discussions + 3 parallel sessions</th:block></li><li><i class="bi bi-star-fill"></i><th:block th:text="#{sponsor.benefit.mainStageLogo}">Main stage logo branding</th:block></li><li><i class="bi bi-cup-hot-fill"></i><th:block th:text="#{sponsor.benefit.gold.lounge}">VIP lounge: 5 people</th:block></li><li><i class="bi bi-tools"></i><th:block th:text="#{sponsor.benefit.gold.dining}">VIP dining: 2 people</th:block></li><li><i class="bi bi-shop"></i><th:block th:text="#{sponsor.benefit.gold.stall}">Large stall</th:block></li><li><i class="bi bi-megaphone-fill"></i><th:block th:text="#{sponsor.benefit.logoMaterialsKits}">Logo in marketing materials, sign boards and kits</th:block></li><li><i class="bi bi-file-earmark-text-fill"></i><th:block th:text="#{sponsor.benefit.gold.cscWriteup}">CSC participation + technical write-up</th:block></li></ul><button type="button" data-select-sponsor="Gold"><th:block th:text="#{sponsor.tier.gold.choose}">Choose Gold</th:block> <i class="bi bi-arrow-right"></i></button></article>
@@ -316,7 +316,7 @@
             <div class="sp-section-head" data-reveal="fade-up">
                 <span th:text="#{sponsor.faq.kicker}">FAQ</span>
                 <h2 id="sponsor-faq-title" th:text="#{sponsor.faq.title}">Sponsor FAQ</h2>
-                <p th:text="#{sponsor.faq.desc}">Quick answers for brands and organisations planning to partner with Tec-verse 2026.</p>
+                <p th:text="#{sponsor.faq.desc}">Quick answers for brands and organisations planning to partner with Tec-Verse 2026.</p>
             </div>
 
             <div class="sp-sponsor-faq-grid" data-reveal="fade-up" data-reveal-delay="120">
@@ -325,7 +325,7 @@
                         <span class="sp-sponsor-faq-question"><i class="bi bi-gem"></i> <th:block th:text="#{sponsor.faq.q1}">Which sponsor packages are available?</th:block></span>
                         <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
                     </summary>
-                    <p th:text="#{sponsor.faq.a1}">Tec-verse sponsorship is available through five official packages: Platinum, Gold, Silver, Copper and Bronze. Each package includes different levels of branding, passes, session access, stall visibility and hospitality benefits.</p>
+                    <p th:text="#{sponsor.faq.a1}">Tec-Verse sponsorship is available through five official packages: Platinum, Gold, Silver, Copper and Bronze. Each package includes different levels of branding, passes, session access, stall visibility and hospitality benefits.</p>
                 </details>
 
                 <details class="sp-sponsor-faq-card">
@@ -341,7 +341,7 @@
                         <span class="sp-sponsor-faq-question"><i class="bi bi-credit-card-2-front"></i> <th:block th:text="#{sponsor.faq.q3}">Do we need to pay on this website?</th:block></span>
                         <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
                     </summary>
-                    <p th:text="#{sponsor.faq.a3}">No bank, card or payment details are collected through this public form. After submission, the Tec-verse team will contact you for package confirmation, invoice details and payment follow-up.</p>
+                    <p th:text="#{sponsor.faq.a3}">No bank, card or payment details are collected through this public form. After submission, the Tec-Verse team will contact you for package confirmation, invoice details and payment follow-up.</p>
                 </details>
 
                 <details class="sp-sponsor-faq-card">
@@ -381,7 +381,7 @@
                         <span class="sp-sponsor-faq-question"><i class="bi bi-clock-history"></i> <th:block th:text="#{sponsor.faq.q8}">What happens after form submission?</th:block></span>
                         <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
                     </summary>
-                    <p th:text="#{sponsor.faq.a8}">After your enquiry is submitted, the Tec-verse team reviews the organisation details, preferred package and message. They will then contact you for confirmation, documentation and next steps.</p>
+                    <p th:text="#{sponsor.faq.a8}">After your enquiry is submitted, the Tec-Verse team reviews the organisation details, preferred package and message. They will then contact you for confirmation, documentation and next steps.</p>
                 </details>
             </div>
         </div>

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,7 @@ public class TicketOtpServiceImpl implements TicketOtpService {
         if (registrationRepository.existsByPhone(mobile)) throw new IllegalArgumentException("This phone number is already registered.");
         String otp = String.format("%06d", RANDOM.nextInt(1_000_000));
         // Must match the licensed DLT template word for word, or the gateway rejects the SMS.
-        String msg = "Dear Patron, Use OTP " + otp + " to verify your mobile number and start your engagement on the SSM Portal - Team SSM";
+        String msg = "Dear Patron, Use OTP " + otp + " to verify your mobile number and complete your registration on the Tec-Verse Portal. Please do not share this OTP with anyone. Team Tec-Verse";
         String output = smsServices.sendOtpSMS(smsUsername, smsPassword, msg, smsSenderId, mobile, smsSecureKey, smsTemplateId);
         if (output == null || !output.contains(SMSServices.SUCCESS_MARKER)) {
             log.error("OTP SMS sending FAILED for mobile ending {}: {}", mobile.substring(Math.max(0, mobile.length() - 4)), output);
@@ -130,22 +131,26 @@ public class TicketOtpServiceImpl implements TicketOtpService {
         String normalizedPhone = ValidationUtil.normalizeIndianMobile(request.getPhone());
         if (registrationRepository.existsByPhone(normalizedPhone)) throw new IllegalArgumentException("This phone number is already registered.");
         String otp = String.format("%06d", RANDOM.nextInt(1_000_000));
-        otpStore.put(email, new OtpEntry(otp, LocalDateTime.now().plus(OTP_VALIDITY)));
+        OtpEntry entry = new OtpEntry(otp, LocalDateTime.now().plus(OTP_VALIDITY));
+        otpStore.put(email, entry);
 
-        try {
-            boolean sent = mailDeliveryService.sendSimple(
-                    email,
-                    "Tec-verse ticket verification OTP",
-                    buildMessage(request, otp),
-                    "Ticket OTP"
-            );
-            if (!sent) {
-                throw new IllegalStateException("Unable to send email right now. Please try again later.");
+        // Do not hold the ticket form request open while the SMTP server completes delivery.
+        // The OTP is available to verification as soon as the email arrives; on a delivery
+        // failure remove only this request's OTP so a newer resend is not affected.
+        CompletableFuture.runAsync(() -> {
+            try {
+                boolean sent = mailDeliveryService.sendSimple(
+                        email,
+                        "Tec-Verse ticket verification OTP",
+                        buildMessage(request, otp),
+                        "Ticket OTP"
+                );
+                if (!sent) throw new IllegalStateException("SMTP did not accept the ticket OTP email.");
+            } catch (RuntimeException ex) {
+                otpStore.remove(email, entry);
+                log.warn("Ticket email OTP delivery failed; the affected OTP was invalidated.", ex);
             }
-        } catch (IllegalStateException ex) {
-            otpStore.remove(email);
-            throw ex;
-        }
+        });
     }
 
     @Override
@@ -190,8 +195,8 @@ public class TicketOtpServiceImpl implements TicketOtpService {
         passwordResetOtpAttempts.remove(normalizedEmail);
         verifiedPasswordResets.remove(normalizedEmail);
         passwordResetOtps.put(normalizedEmail, new OtpEntry(otp, LocalDateTime.now().plus(OTP_VALIDITY)));
-        if (!mailDeliveryService.sendSimple(normalizedEmail, "Tec-verse app password reset OTP",
-                "Your Tec-verse app password reset OTP is " + otp + ". It is valid for 5 minutes.\n\nTec-verse Team",
+        if (!mailDeliveryService.sendSimple(normalizedEmail, "Tec-Verse app password reset OTP",
+                "Your Tec-Verse app password reset OTP is " + otp + ". It is valid for 5 minutes.\n\nTec-verse Team",
                 "Mobile password reset OTP")) {
             passwordResetOtps.remove(normalizedEmail);
             passwordResetOtpAttempts.remove(normalizedEmail);

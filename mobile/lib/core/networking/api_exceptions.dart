@@ -1,4 +1,4 @@
-/// Base exception for TEC-VERSE API errors.
+/// Base exception for Tec-Verse API errors.
 abstract class ApiException implements Exception {
   final String message;
   final int? statusCode;
@@ -24,7 +24,7 @@ class UserNotRegisteredException extends ApiException {
 
 /// Thrown when user registration exists but is pending / not approved.
 class RegistrationPendingException extends ApiException {
-  const RegistrationPendingException([super.message = 'Your registration is not yet approved for TEC-VERSE 2026.'])
+  const RegistrationPendingException([super.message = 'Your registration is not yet approved for Tec-Verse 2026.'])
       : super(statusCode: 403);
 }
 

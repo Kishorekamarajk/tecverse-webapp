@@ -8,7 +8,7 @@ import '../domain/location_models.dart';
 import '../data/venue_location_data.dart';
 import 'widgets/manual_location_dialog.dart';
 
-/// Dedicated Event Location & Navigation screen for TEC-VERSE 2026.
+/// Dedicated Event Location & Navigation screen for Tec-Verse 2026.
 ///
 /// Features:
 /// - Destination: Chennai Trade Centre (CTC), Nandambakkam (13.0148, 80.1909)
@@ -85,7 +85,7 @@ class _LocationScreenState extends State<LocationScreen> with SingleTickerProvid
   }
 
   void _handleShareLocation() {
-    final text = 'TEC-VERSE 2026 Venue: ${VenueLocationData.venue.name}, ${VenueLocationData.venue.fullAddress}';
+    final text = 'Tec-Verse 2026 Venue: ${VenueLocationData.venue.name}, ${VenueLocationData.venue.fullAddress}';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Location copied: $text'),

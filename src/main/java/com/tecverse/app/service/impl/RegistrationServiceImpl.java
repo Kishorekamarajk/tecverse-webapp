@@ -198,12 +198,12 @@ public class RegistrationServiceImpl implements RegistrationService {
                 + "Company: " + registration.getCompanyName() + "\n"
                 + "Stall Package: " + registration.getStallPackage() + "\n\n"
                 + "Our team will review your application and contact you regarding the next steps.\n\n"
-                + "Tec-verse Team";
+                + "Tec-Verse Team";
 
         try {
             mailDeliveryService.sendSimple(
                     registration.getEmail(),
-                    "Tec-verse 2026 Exhibitor Registration - " + registration.getReferenceNumber(),
+                    "Tec-Verse 2026 Exhibitor Registration - " + registration.getReferenceNumber(),
                     body,
                     "Exhibitor confirmation"
             );

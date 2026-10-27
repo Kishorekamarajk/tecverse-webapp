@@ -193,7 +193,7 @@
         // starts automatically and on time.
         showSoundHint('Tap anywhere to enter');
 
-        // Tec-verse splash remains for 6 seconds, then the 6-second countdown appears.
+        // Tec-Verse splash remains for 6 seconds, then the 6-second countdown appears.
         window.setTimeout(function () {
             if (!finished) startCountdown();
         }, splashDuration);

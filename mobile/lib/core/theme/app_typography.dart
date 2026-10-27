@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
-/// Centralized Inter Typography for TEC-VERSE 2026.
+/// Centralized Inter Typography for Tec-Verse 2026.
 /// Apple-level typographic clarity, strong hierarchy, and restrained uppercase usage.
 class AppTypography {
   AppTypography._();

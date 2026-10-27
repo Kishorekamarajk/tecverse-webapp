@@ -34,7 +34,7 @@ enum RegistrationStatus {
   }
 }
 
-/// Attendee Profile synchronized from the TEC-VERSE website registration database.
+/// Attendee Profile synchronized from the Tec-Verse website registration database.
 class UserProfile {
   final String id;
   final String referenceNumber; // 12-digit reference from tecverse_ticket_registrations
@@ -123,7 +123,7 @@ class UserProfile {
       organization: json['organization']?.toString() ??
           json['organizationName']?.toString() ??
           json['collegeName']?.toString() ??
-          'TEC-VERSE Attendee',
+          'Tec-Verse Attendee',
       designation: json['designation']?.toString() ??
           json['academiaRole']?.toString() ??
           'Delegate',

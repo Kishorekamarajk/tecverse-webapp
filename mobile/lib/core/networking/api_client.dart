@@ -7,7 +7,7 @@ import '../config/api_config.dart';
 import '../constants/api_constants.dart';
 import 'api_exceptions.dart';
 
-/// Central HTTP Client for TEC-VERSE backend communication.
+/// Central HTTP Client for Tec-Verse backend communication.
 ///
 /// Features:
 /// - Configurable base URL with multi-candidate network fallback (Wi-Fi, ADB reverse, Emulator)

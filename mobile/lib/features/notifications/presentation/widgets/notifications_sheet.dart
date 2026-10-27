@@ -456,7 +456,7 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
             ),
             const SizedBox(height: 4),
             Text(
-              'You are all caught up for TEC-VERSE 2026.',
+              'You are all caught up for Tec-Verse 2026.',
               style: AppTypography.bodySmall.copyWith(
                 fontSize: 12,
                 color: AppColors.textSecondary,

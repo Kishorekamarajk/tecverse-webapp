@@ -113,7 +113,7 @@ void main() {
     );
   }
 
-  group('TEC-VERSE 2026 Premium UI & Zero-Overflow Tests', () {
+  group('Tec-Verse 2026 Premium UI & Zero-Overflow Tests', () {
     testWidgets('Home screen renders without overflow on 360px width phone', (tester) async {
       tester.view.physicalSize = const Size(360, 640);
       tester.view.devicePixelRatio = 1.0;
@@ -124,7 +124,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       // Verify Title & Brand & Live Countdown
-      expect(find.text('TEC-VERSE 2026'), findsWidgets);
+      expect(find.text('Tec-Verse 2026'), findsWidgets);
       expect(find.text('DIGITAL EVENT PASS'), findsOneWidget);
       expect(find.byType(HeroLiveCountdownWidget), findsOneWidget);
 
@@ -159,7 +159,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        expect(find.text('TEC-VERSE 2026'), findsWidgets);
+        expect(find.text('Tec-Verse 2026'), findsWidgets);
         expect(find.text('DIGITAL EVENT PASS'), findsOneWidget);
       }
       tester.view.resetPhysicalSize();
@@ -288,7 +288,7 @@ void main() {
       expect(find.text('PROFILE'), findsOneWidget);
       expect(find.text('Dr. Kishore Kumar'), findsOneWidget);
       expect(find.text('Reference No.'), findsOneWidget);
-      expect(find.text('SIGN OUT OF TEC-VERSE'), findsOneWidget);
+      expect(find.text('SIGN OUT OF Tec-Verse'), findsOneWidget);
     });
 
     testWidgets('FloorPlanScreen renders header, tech zones, and interactive map controls', (tester) async {

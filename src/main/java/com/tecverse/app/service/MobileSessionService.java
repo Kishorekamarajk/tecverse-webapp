@@ -140,7 +140,7 @@ public class MobileSessionService {
 
     public static Map<String, Object> profile(TicketRegistration attendee) {
         String organization = firstNonBlank(attendee.getCollegeName(), attendee.getUniversityName(),
-                attendee.getOrganizationName(), attendee.getCentralMinistry(), attendee.getStateDepartment(), "TEC-VERSE Attendee");
+                attendee.getOrganizationName(), attendee.getCentralMinistry(), attendee.getStateDepartment(), "Tec-Verse Attendee");
         String designation = firstNonBlank(attendee.getDesignation(), attendee.getAcademiaRole(), "Delegate");
         return Map.ofEntries(
                 Map.entry("id", attendee.getId()), Map.entry("referenceNumber", attendee.getReferenceNumber()),

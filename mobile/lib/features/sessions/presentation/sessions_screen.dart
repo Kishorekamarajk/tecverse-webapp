@@ -49,7 +49,7 @@ class _SessionsScreenState extends State<SessionsScreen> {
     'Robotics & Automation',
   ];
 
-  // Master Sessions Catalog matching TEC-VERSE 2026 Programme
+  // Master Sessions Catalog matching Tec-Verse 2026 Programme
   static const List<SessionItem> _allSessions = [
     // ─── Day 1 Sessions ───
     SessionItem(
@@ -655,12 +655,12 @@ class _SessionsScreenState extends State<SessionsScreen> {
 
                 const SizedBox(height: 2),
 
-                // Main Title: TEC-VERSE 2026
+                // Main Title: Tec-Verse 2026
                 RichText(
                   text: const TextSpan(
                     children: [
                       TextSpan(
-                        text: 'TEC-VERSE ',
+                        text: 'Tec-Verse ',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,

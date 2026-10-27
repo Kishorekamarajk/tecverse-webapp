@@ -39,7 +39,7 @@ public class AdminIdCardPdfService {
     @Transactional
     public GeneratedCard generate(String name, String designation, String organization, String category, byte[] photoBytes) throws IOException {
         String reference = nextReference(category);
-        String qrValue = "TECVERSE 2026 ID CARD\nReference: " + reference + "\nCategory: " + category
+        String qrValue = "Tec-Verse 2026 ID CARD\nReference: " + reference + "\nCategory: " + category
                 + "\nName: " + name + "\nDesignation: " + designation + "\nOrganization: " + organization;
         byte[] qrBytes = qrCodeGeneratorService.generateQRCodeImageBytes(qrValue, 360, 360);
         BufferedImage qr = ImageIO.read(new ByteArrayInputStream(qrBytes));
@@ -322,7 +322,7 @@ public class AdminIdCardPdfService {
         objects.add(ascii("<< /Length " + content.length + " >>\nstream\n" + new String(content, StandardCharsets.US_ASCII) + "\nendstream"));
 
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
-        pdf.writeBytes(ascii("%PDF-1.4\n% Tec-verse ID card\n"));
+        pdf.writeBytes(ascii("%PDF-1.4\n% Tec-Verse ID card\n"));
         List<Integer> offsets = new ArrayList<>();
         for (int i = 0; i < objects.size(); i++) {
             offsets.add(pdf.size());

@@ -60,8 +60,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>TEC-VERSE uses your microphone for voice commands and interactive venue assistance.</string>
+	<string>Tec-Verse uses your microphone for voice commands and interactive venue assistance.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>TEC-VERSE uses speech recognition to navigate conference schedules and exhibition tracks.</string>
+	<string>Tec-Verse uses speech recognition to navigate conference schedules and exhibition tracks.</string>
 </dict>
 </plist>

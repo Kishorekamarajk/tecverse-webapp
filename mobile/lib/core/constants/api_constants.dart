@@ -1,8 +1,8 @@
 import '../config/api_config.dart';
 
-/// API Constants for TEC-VERSE 2026.
+/// API Constants for Tec-Verse 2026.
 ///
-/// Designed to connect directly to the local TEC-VERSE backend
+/// Designed to connect directly to the local Tec-Verse backend
 /// (running by default on port 3000) while remaining fully configurable through
 /// environment variables or build flags.
 class ApiConstants {

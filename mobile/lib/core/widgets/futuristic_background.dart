@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// TEC-VERSE Premium Light Ambient Background.
+/// Tec-Verse Premium Light Ambient Background.
 ///
 /// Features:
 /// - Very light lavender / off-white base

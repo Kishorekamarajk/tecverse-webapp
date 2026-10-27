@@ -26,13 +26,13 @@ public class GalleryImageSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         List<GalleryImage> images = new ArrayList<>();
         List<GalleryImage> existing = galleryImageRepository.findAllByOrderByDisplayOrderAscIdAsc();
-        List<String> sampleTitles = List.of("Tec-verse Previous Edition Highlights", "Inaugural Address",
+        List<String> sampleTitles = List.of("Tec-Verse Previous Edition Highlights", "Inaugural Address",
                 "Startup Pavilion", "Tech Demo Zone", "Delegate Meetup");
 
         for (int number = 1; number <= 26; number++) {
             String fileName = "img" + number + (number <= 3 ? ".jfif" : ".png");
             String imageUrl = "/images/" + fileName;
-            String title = "Tec-verse Gallery Photo " + number;
+            String title = "Tec-Verse Gallery Photo " + number;
             if (!imageExists(fileName)) {
                 throw new IllegalStateException("Missing gallery photo: " + fileName);
             }

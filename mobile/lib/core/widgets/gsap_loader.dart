@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
 
-/// GSAP-Inspired Kinetic Quantum Loader for TEC-VERSE.
+/// GSAP-Inspired Kinetic Quantum Loader for Tec-Verse.
 ///
 /// Replicates GreenSock (GSAP) high-precision timeline physics:
 /// - Staggered multi-axis kinetic rotation

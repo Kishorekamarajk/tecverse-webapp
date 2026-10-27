@@ -1,21 +1,22 @@
 (function initTecVerseAssistant() {
     "use strict";
 
-    var TECVERSE_WHATSAPP_NUMBER = "910000000000";
+    var TECVERSE_WHATSAPP_NUMBER = "919445128289"; // Tec-Verse WhatsApp number for support
+    var TECVERSE_WHATSAPP_DEFAULT_MESSAGE = "Welcome to Tec-Verse 2026! How can we assist you?";
     var scriptSrc = document.currentScript && document.currentScript.src ? document.currentScript.src : "";
     var appBaseUrl = scriptSrc.replace(/\/js\/tecverse-chatbot\.js(?:\?.*)?$/, "");
     var chatbotFaqUrl = appBaseUrl + "/api/chatbot/faqs";
-    var fallbackAnswer = "I'm sorry, I don't have that information yet. Please contact the Tec-verse support team for assistance.";
+    var fallbackAnswer = "I'm sorry, I don't have that information yet. Please contact the Tec-Verse support team for assistance.";
 
     var quickQuestions = [
-        "What is Tec-verse?",
+        "What is Tec-Verse?",
         "How to register?",
         "How to login?",
         "How to participate in the exhibition?",
         "What are the available categories?",
         "How can companies register?",
         "What are the event dates?",
-        "How can I contact Tec-verse?",
+        "How can I contact Tec-Verse?",
         "How can I become an exhibitor?"
     ];
 
@@ -24,19 +25,19 @@
             key: "what is tecverse",
             phrases: ["what is tecverse", "what is techverse", "about tecverse", "about techverse", "tell me about tecverse"],
             keywords: ["what", "tecverse"],
-            answer: "Tec-verse 2026 is a flagship technology event bringing together innovators, industry leaders, researchers, startups, institutions, academia, government organizations, industry experts, and policymakers to explore emerging technologies and digital solutions."
+            answer: "Tec-Verse 2026 is a flagship technology event bringing together innovators, industry leaders, researchers, startups, institutions, academia, government organizations, industry experts, and policymakers to explore emerging technologies and digital solutions."
         },
         {
             key: "how to register",
             phrases: ["how to register", "how do i register", "how can i register", "registration process", "register for tecverse"],
             keywords: ["register"],
-            answer: "Use the Register option in the site navigation to open the exhibitor registration form. Complete the company, contact, and exhibition details, then submit the application. After successful submission, the Tec-verse team will review it and contact you."
+            answer: "Use the Register option in the site navigation to open the exhibitor registration form. Complete the company, contact, and exhibition details, then submit the application. After successful submission, the Tec-Verse team will review it and contact you."
         },
         {
             key: "how to login",
             phrases: ["how to login", "how do i login", "login", "sign in", "signin"],
             keywords: ["login"],
-            answer: "I don't see login instructions in the current Tec-verse portal content. Please contact the Tec-verse support team for assistance."
+            answer: "I don't see login instructions in the current Tec-Verse portal content. Please contact the Tec-Verse support team for assistance."
         },
         {
             key: "participate exhibition",
@@ -60,31 +61,31 @@
             key: "event dates",
             phrases: ["what are the event dates", "event dates", "when is tecverse", "when and where", "date"],
             keywords: ["date"],
-            answer: "The home page badge lists Tec-verse as 26-27 NOV 2026. Other date, entry, and schedule details should be confirmed from the official updates or support team."
+            answer: "The home page badge lists Tec-Verse as 26-27 NOV 2026. Other date, entry, and schedule details should be confirmed from the official updates or support team."
         },
         {
             key: "contact",
             phrases: ["how can i contact tecverse", "contact tecverse", "contact support", "help desk", "support team"],
             keywords: ["contact"],
-            answer: "Use the Contact Us page from the Tec-verse navigation for participation, sponsorship, exhibition, and event support queries."
+            answer: "Use the Contact Us page from the Tec-Verse navigation for participation, sponsorship, exhibition, and event support queries."
         },
         {
             key: "become exhibitor",
             phrases: ["how can i become an exhibitor", "become an exhibitor", "exhibitor registration", "book stall", "stall registration"],
             keywords: ["exhibitor"],
-            answer: "Open the Register page to apply as an exhibitor. The application asks for company information, contact information, and exhibition details. After submission, the Tec-verse team will review your application and contact you."
+            answer: "Open the Register page to apply as an exhibitor. The application asks for company information, contact information, and exhibition details. After submission, the Tec-Verse team will review your application and contact you."
         },
         {
             key: "sponsor",
             phrases: ["become sponsor", "sponsorship", "sponsor tecverse", "how to sponsor"],
             keywords: ["sponsor"],
-            answer: "Use the Become Sponsor option in the navigation to send a sponsorship enquiry. The Tec-verse team will follow up with the relevant details."
+            answer: "Use the Become Sponsor option in the navigation to send a sponsorship enquiry. The Tec-Verse team will follow up with the relevant details."
         },
         {
             key: "venue",
             phrases: ["venue", "where is tecverse", "location", "chennai trade centre"],
             keywords: ["venue"],
-            answer: "The portal lists Chennai Trade Centre in Nandambakkam as the venue section location. Please confirm final venue and access details through official Tec-verse updates or the support team."
+            answer: "The portal lists Chennai Trade Centre in Nandambakkam as the venue section location. Please confirm final venue and access details through official Tec-Verse updates or the support team."
         }
     ];
 
@@ -258,7 +259,8 @@
         }
 
         if (whatsAppLink) {
-            whatsAppLink.href = "https://wa.me/" + TECVERSE_WHATSAPP_NUMBER;
+            whatsAppLink.href = "https://wa.me/" + TECVERSE_WHATSAPP_NUMBER
+                + "?text=" + encodeURIComponent(TECVERSE_WHATSAPP_DEFAULT_MESSAGE);
         }
 
         function scrollToLatest() {
@@ -284,7 +286,7 @@
             var bubble = createElement("div", "tecverse-chatbot__bubble");
             var typing = createElement("span", "tecverse-chatbot__typing d-inline-flex align-items-center gap-1");
 
-            typing.setAttribute("aria-label", "Tec-verse Assistant is typing");
+            typing.setAttribute("aria-label", "Tec-Verse Assistant is typing");
             typing.appendChild(createElement("span", "rounded-circle"));
             typing.appendChild(createElement("span", "rounded-circle"));
             typing.appendChild(createElement("span", "rounded-circle"));
@@ -351,7 +353,7 @@
             renderQuickQuestions(loadedQuestions.length ? loadedQuestions : quickQuestions);
         });
 
-        addMessage("Welcome to Tec-verse support. You can type your question below or tap a quick question to get instant help.", "assistant");
+        addMessage("Welcome to Tec-Verse support. You can type your question below or tap a quick question to get instant help.", "assistant");
 
         openButton.addEventListener("click", function () {
             if (chatbot.classList.contains("is-open")) {

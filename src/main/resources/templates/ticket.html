@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <th:block th:replace="~{fragments/analytics :: gtag}"></th:block>
-<title th:text="#{ticketpage.title}">Delegate Registration | Tec-verse 2026</title>
+<title th:text="#{ticketpage.title}">Delegate Registration | Tec-Verse 2026</title>
 <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
 
 
@@ -56,12 +56,21 @@ body.ticket-page{background:#F6F8FC}
 .rg-flow-item p{font-size:.85rem;color:var(--mut);margin:0}
 
 /* Section */
-.rg-shell{padding:16px 0 80px}
-.rg-head{margin-bottom:28px}
-.rg-head h2{font-weight:800;letter-spacing:-.025em;font-size:1.9rem;margin:0 0 6px}
+.rg-shell{padding:148px 0 48px;scroll-margin-top:148px}
+.rg-head{margin-bottom:12px}
+.rg-head h2{font-weight:800;letter-spacing:-.025em;font-size:1.8rem;margin:0 0 4px}
 .rg-head p{color:var(--mut);margin:0}
-.rg-card{background:#fff;border:1px solid var(--bd);border-radius:24px;box-shadow:0 1px 2px rgba(14,36,66,.04),0 24px 48px -28px rgba(14,36,66,.2);padding:40px}
-@media(max-width:575px){.rg-card{padding:22px;border-radius:18px}}
+.rg-card{background:#fff;border:1px solid var(--bd);border-radius:24px;box-shadow:0 1px 2px rgba(14,36,66,.04),0 24px 48px -28px rgba(14,36,66,.2);padding:28px}
+@media(max-width:575px){.rg-card{padding:20px;border-radius:18px}}
+.ticket-stall-help{position:relative;display:flex;align-items:center;justify-content:flex-start;gap:12px;width:58.333%;margin:8px 0 14px;padding:10px 16px;overflow:hidden;border:1px solid #c7d2fe;border-radius:14px;background:linear-gradient(110deg,#eef2ff,#f8faff 58%,#f0f9ff);box-shadow:0 6px 18px rgba(49,46,129,.08),inset 0 1px #fff;text-align:left;color:#172554;font-size:.92rem;line-height:1.45}
+.ticket-stall-help:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(180deg,#6366f1,#38bdf8)}
+.ticket-stall-help i{flex:none;display:grid;width:40px;height:40px;place-items:center;border:1px solid #c7d2fe;border-radius:12px;background:#fff;color:#4338ca;font-size:1.1rem;box-shadow:0 3px 10px rgba(79,70,229,.14)}
+.ticket-stall-help strong{font-weight:700;letter-spacing:.005em}
+.ticket-stall-help a{color:#3730a3;font-weight:800;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;white-space:nowrap;transition:color .18s}
+.ticket-stall-help a:hover{color:#1e1b4b}
+@media(max-width:991.98px){.ticket-stall-help{width:100%}}
+@media(max-width:1199.98px){.rg-shell{padding-top:104px;scroll-margin-top:104px}}
+@media(max-width:575px){.ticket-stall-help{align-items:flex-start;gap:10px;margin:8px 0 12px;padding:10px 12px;font-size:.84rem}.ticket-stall-help i{width:32px;height:32px;margin-top:1px;border-radius:9px}}
 
 /* Form */
 .rg-sec{display:flex;align-items:center;gap:14px;margin:0 0 24px}
@@ -108,7 +117,7 @@ body.ticket-page{background:#F6F8FC}
 .tr-otp-resend:disabled{color:#94A3B8;text-decoration:none;cursor:default}
 @media(max-width:360px){.rg-card{padding:16px}.tr-otp-inputs{gap:4px}.tr-otp-inputs .form-control{width:32px;height:36px}}
 /* Keep the email and mobile verification controls aligned as each OTP panel opens. */
-.tr-verify-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px;row-gap:22px;align-items:start}
+.tr-verify-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px;row-gap:16px;align-items:start}
 .tr-verify-field{min-width:0}
 .rg .tr-password-hint{display:flex;align-items:flex-start;gap:6px;color:var(--err)!important;line-height:1.45}
 .tr-password-hint i{flex:none;margin-top:1px}
@@ -118,7 +127,7 @@ body.ticket-page{background:#F6F8FC}
 .tr-verify-password{grid-column:2;grid-row:2}
 .tr-verify-confirm{grid-column:1;grid-row:3}
 .tr-verify-register{grid-column:2;grid-row:3;align-self:end;display:flex;justify-content:flex-end}
-.tr-verify-register .btn{min-width:170px;height:54px;font-size:1rem;border-radius:14px;background:var(--pri);box-shadow:0 12px 24px -12px rgba(108,99,255,.65)}
+.tr-verify-register .btn{min-width:170px;height:48px;font-size:1rem;border-radius:14px;background:var(--pri);box-shadow:0 12px 24px -12px rgba(108,99,255,.65)}
 .tr-verify-register .btn:hover{background:var(--pri-d);transform:translateY(-1px)}
 .tr-verify-grid>.tr-verify-email .tr-otp{background:linear-gradient(145deg,#F4F3FF,#FAFAFF);border-color:#DEDCFF;border-radius:14px;padding:16px}
 .tr-verify-grid>.tr-verify-mobile .tr-otp{background:linear-gradient(145deg,#FFF7F0,#FFFAF6);border-color:#FFE0C9;border-radius:14px;padding:16px}
@@ -171,7 +180,9 @@ body.ticket-page{background:#F6F8FC}
 }
 
 /* Sidebar */
-.rg-side{position:sticky;top:96px;display:flex;align-items:stretch;justify-content:center}
+.rg-side{position:relative;top:auto;display:flex;align-items:flex-start;justify-content:stretch;width:100%;margin:0}
+.ticket-info-column{transform:translateY(-90px)}
+@media(max-width:1199.98px){.ticket-info-column{transform:none}}
 @media(max-width:991.98px){.rg-side{position:static}}
 .rg-pass{position:relative;overflow:hidden;border-radius:22px;padding:22px;color:#fff;background:linear-gradient(145deg,#0E2442,#17406B);box-shadow:0 28px 50px -26px rgba(14,36,66,.7)}
 .rg-pass::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(232,113,10,.55),transparent 70%)}
@@ -183,7 +194,7 @@ body.ticket-page{background:#F6F8FC}
 .rg-pass-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .rg-pass-row b{font-size:.88rem;font-weight:700}
 .rg-pass-foot{margin-top:18px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.3);font-size:.74rem;opacity:.85;display:flex;gap:8px;align-items:center}
-.rg-info{width:100%;max-width:400px;height:auto;margin-inline:auto;padding:11px;background:linear-gradient(145deg,#fff,#f7faff);border:1px solid #e5edf8;border-radius:22px;box-shadow:0 22px 48px -24px rgba(65,110,167,.28);display:flex;flex-direction:column;gap:10px}
+.rg-info{width:100%;max-width:360px;height:auto;margin:0 auto;padding:11px;background:linear-gradient(145deg,#fff,#f7faff);border:1px solid #e5edf8;border-radius:22px;box-shadow:0 22px 48px -24px rgba(65,110,167,.28);display:flex;flex-direction:column;gap:10px}
 @media(max-width:991.98px){.rg-info{max-width:100%}}
 .rg-info-banner{position:relative;display:flex;align-items:center;gap:12px;min-height:82px;padding:13px 16px;overflow:hidden;border-radius:16px;background:linear-gradient(115deg,#102b66,#073c82 68%,#087abd);color:#fff}
 .rg-info-banner::after{content:"";position:absolute;width:120px;height:120px;right:-25px;top:-34px;border:1px solid rgba(102,220,255,.4);border-radius:50%;box-shadow:0 0 0 10px rgba(65,189,255,.08),0 0 0 22px rgba(65,189,255,.06)}
@@ -305,18 +316,18 @@ body.ticket-page{background:#F6F8FC}
 <main class="rg" th:style="|background-image:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,.22)),url('@{/images/registerback.png}');background-size:cover;background-position:center;background-repeat:no-repeat;|">
   <div class="rg-flag"></div>
 
-<section>
-  <br><br>  <br><br>  
-</section>
-
   <section id="registration" class="rg-shell" aria-labelledby="registration-title">
     <div class="container">
       <div class="rg-head rg-reveal">
         <h2 id="registration-title" th:text="#{footer.link.delegate}">Registration</h2>
         <!-- <p>Fields marked <span class="text-danger fw-bold">*</span> are mandatory. Enter details exactly as per your Government-issued ID.</p> -->
       </div>
+      <div class="ticket-stall-help" role="note">
+        <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+        <strong th:utext="#{ticketpage.stallHelp}">For stall booking confirmation or stall-related queries, please contact <a href="mailto:stalls-tecverse@cdac.in">stalls-tecverse@cdac.in</a>.</strong>
+      </div>
 
-      <div class="row g-4 align-items-stretch">
+      <div class="row g-4 align-items-start">
         <div class="col-12 col-lg-7 rg-reveal">
           <div class="rg-card tr-card">
 
@@ -326,11 +337,11 @@ body.ticket-page{background:#F6F8FC}
             </div>
 
             <form id="ticketVerifyForm" class="tr-view" data-view="verify" data-jquery-validate novalidate>
-              <!-- <div class="rg-sec"><i class="bi bi-shield-lock"></i><h3>Email Verification<small>Your information is collected only for TecVerse 2026 purposes and will be kept private and secure.</small></h3></div>
+              <!-- <div class="rg-sec"><i class="bi bi-shield-lock"></i><h3>Email Verification<small>Your information is collected only for Tec-Verse 2026 purposes and will be kept private and secure.</small></h3></div>
               <div class="rg-note"><i class="bi bi-info-circle"></i><span> It will not be shared with external organisations.</span></div> -->
               <div class="tr-verify-grid">
                 <div class="tr-verify-field tr-verify-name"><label class="rg-f"><span th:text="#{ticket.verify.fullName}">Full Name</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="verifyName" name="verifyName" type="text" autocomplete="name" th:placeholder="#{ticket.verify.placeholder.fullName}" maxlength="150" required></label></div>
-                <div class="tr-verify-field tr-verify-mobile"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required><!-- Mobile OTP verification disabled for now; remove the markers to restore it. --><!--/*--><button type="button" id="sendMobileOtp" class="btn tr-primary" th:text="#{ticket.verify.sendOtp}">Send OTP</button><!--*/--></span></label>
+                <div class="tr-verify-field tr-verify-mobile"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required><!-- Temporary mobile OTP bypass: remove the Thymeleaf comment markers to restore the controls. --><!--/*--><button type="button" id="sendMobileOtp" class="btn tr-primary">Send OTP</button><!--*/--></span></label>
                   <!--/*-->
                   <div id="mobileOtpBox" class="tr-otp" hidden>
                     <p class="tr-otp-note"><span th:text="#{ticketpage.otp.mobileNote}">Enter the OTP sent by SMS to</span> <strong id="otpMobile"></strong></p>
@@ -341,6 +352,7 @@ body.ticket-page{background:#F6F8FC}
                       <button type="button" id="verifyMobileOtp" class="btn tr-otp-btn" th:text="#{ticketpage.otp.verify}">Verify</button>
                     </div>
                     <button id="resendMobileOtp" class="tr-otp-resend" type="button" th:text="#{ticketpage.otp.resend}">Resend OTP</button>
+                    <div id="mobileOtpMsg" class="tr-msg small fw-semibold" role="status" aria-live="polite"></div>
                   </div>
                   <!--*/-->
                 </div>
@@ -354,6 +366,7 @@ body.ticket-page{background:#F6F8FC}
                       <button type="button" id="verifyOtp" class="btn tr-otp-btn" th:text="#{ticketpage.otp.verify}">Verify</button>
                     </div>
                     <button id="resendOtp" class="tr-otp-resend" type="button" th:text="#{ticketpage.otp.resend}">Resend OTP</button>
+                    <div id="emailOtpMsg" class="tr-msg small fw-semibold" role="status" aria-live="polite"></div>
                   </div>
                 </div>
                 <div class="tr-verify-field tr-verify-password"><label class="rg-f"><span th:text="#{ticket.verify.createPassword}">Create Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="8+ characters" th:placeholder="#{ticket.verify.placeholder.password}" required><button class="btn password-toggle" type="button" data-password-target="password" aria-label="Show password" th:aria-label="#{ticketpage.password.show}" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span><small class="tr-password-hint fw-normal d-block mt-1"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i><span th:text="#{ticketpage.password.hint}">Use 8+ characters with an uppercase letter, a number, and a symbol.</span></small></label></div>
@@ -382,7 +395,7 @@ body.ticket-page{background:#F6F8FC}
               <canvas id="confettiCanvas" class="tr-confetti-canvas" aria-hidden="true"></canvas>
               <div class="tr-complete-intro">
                 <h2 th:text="#{ticketpage.complete.title}">Registration Successful</h2>
-                <p><span id="confirmationEmailStatus" th:text="#{ticketpage.complete.emailPreparing}">An acknowledgement email is being prepared for your registration.</span> <strong id="completeEmail"></strong></p>
+                <p><span id="confirmationEmailStatus" th:text="#{ticketpage.complete.emailPending}" th:data-email-sent="#{ticketpage.complete.emailSent}" th:data-email-pending="#{ticketpage.complete.emailPending}">A confirmation email with your digital entry pass will be sent to</span> <strong id="completeEmail"></strong></p>
               </div>
 
               <div class="id-card-stage" id="idCardStage">
@@ -390,7 +403,7 @@ body.ticket-page{background:#F6F8FC}
                   <div class="id-card__top-cap" aria-hidden="true"></div>
                   <div class="id-card__header">
                     <div class="id-card__planet">
-                      <img class="id-card__logo" th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" th:alt="#{ticketpage.logoAlt}">
+                      <img class="id-card__logo" th:src="@{/images/tecverselogo.png}" alt="Tec-Verse logo" th:alt="#{ticketpage.logoAlt}">
                       <div class="id-card__planet-core"></div>
                       <div class="id-card__planet-ring"></div>
                     </div>
@@ -444,11 +457,11 @@ body.ticket-page{background:#F6F8FC}
           </div>
         </div>
 
-        <aside class="col-12 col-lg-5 rg-reveal d-flex" aria-label="Registration information" th:aria-label="#{ticketpage.info.label}">
+        <aside class="col-12 col-lg-5 d-flex ticket-info-column" aria-label="Registration information" th:aria-label="#{ticketpage.info.label}">
           <div class="rg-side w-100">
             <div class="rg-info">
               <header class="rg-info-banner">
-                <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" th:alt="#{ticketpage.logoAlt}">
+                <img th:src="@{/images/tecverselogo.png}" alt="Tec-Verse logo" th:alt="#{ticketpage.logoAlt}">
                 <div><h2>Tec-<span>Verse</span> 2026</h2><p th:text="#{ticketpage.tagline}">Driving Progress Through Innovation</p></div>
               </header>
               <div id="registrationInfoCarousel" class="carousel slide rg-info-carousel" data-bs-ride="carousel" data-bs-interval="5000" data-bs-pause="hover" data-bs-touch="true" aria-label="Registration information" th:aria-label="#{ticketpage.info.label}">
@@ -505,8 +518,8 @@ body.ticket-page{background:#F6F8FC}
     <div class="tr-document-content">
       <div class="tr-document-card">
         <div class="tr-doc-header">
-          <img th:src="@{/images/tecverselogo.png}" alt="Tec-verse" class="tr-doc-logo">
-          <h1 class="tr-doc-title" th:text="#{brand.name}">Tec-verse 2026</h1>
+          <img th:src="@{/images/tecverselogo.png}" alt="Tec-Verse" class="tr-doc-logo">
+          <h1 class="tr-doc-title" th:text="#{brand.name}">Tec-Verse 2026</h1>
           <p class="tr-doc-subtitle" th:text="#{ticketpage.doc.title}">Registration Acknowledgement</p>
         </div>
         <div class="tr-doc-section">
@@ -537,7 +550,7 @@ body.ticket-page{background:#F6F8FC}
             <li th:text="#{ticketpage.doc.instr5}">For queries, contact: tec-verse@cdac.in</li>
           </ul>
         </div>
-        <div class="tr-doc-footer"><p class="mb-0"><span th:text="#{ticketpage.doc.footer}">This is a system-generated acknowledgement from the Tec-verse 2026 registration portal.</span><br><span th:text="#{ticketpage.doc.generatedOn}">Generated on:</span> <span id="docDate"></span></p></div>
+        <div class="tr-doc-footer"><p class="mb-0"><span th:text="#{ticketpage.doc.footer}">This is a system-generated acknowledgement from the Tec-Verse 2026 registration portal.</span><br><span th:text="#{ticketpage.doc.generatedOn}">Generated on:</span> <span id="docDate"></span></p></div>
       </div>
     </div>
   </div>
@@ -672,7 +685,8 @@ body.ticket-page{background:#F6F8FC}
   /* Scroll back to the top of the form whenever the step (view) changes */
   function scrollToForm() {
     var target = document.getElementById('registration') || document.body;
-    var navOffset = 90; /* adjust to your navbar height */
+    var navbar = document.querySelector('.site-navbar');
+    var navOffset = navbar ? navbar.getBoundingClientRect().height + 16 : 16;
     var y = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
     window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
   }

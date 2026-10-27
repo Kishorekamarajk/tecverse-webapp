@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 
-/// Centralized server URL configuration for TEC-VERSE.
+/// Centralized server URL configuration for Tec-Verse.
 ///
 /// This is the ONE source of truth for the server location. Every API URL,
 /// web page link (privacy policy, account deletion, registration) and QR

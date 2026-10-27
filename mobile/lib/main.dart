@@ -89,7 +89,7 @@ class TecVerseApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TEC-VERSE 2026',
+      title: 'Tec-Verse 2026',
       navigatorKey: VoiceNavigationService.navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// TEC-VERSE 2026 Premium Exhibition Color System.
+/// Tec-Verse 2026 Premium Exhibition Color System.
 /// Light lavender base, orange primary, green secondary, dark navy accent.
 class AppColors {
   AppColors._();

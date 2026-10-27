@@ -14,16 +14,16 @@ import '../../home/presentation/interest_selection_dialog.dart';
 import '../../schedule/presentation/schedule_screen.dart';
 import 'widgets/delete_account_dialog.dart';
 
-/// Redesigned Profile Screen matching the exact TEC-VERSE 2026 Mobile UI.
+/// Redesigned Profile Screen matching the exact Tec-Verse 2026 Mobile UI.
 ///
 /// Features:
 /// - Top Bar: Back button, bold "PROFILE" title, and orange Settings button
-/// - Profile Header Card: Integrated futuristic TEC-VERSE 2026 banner graphic (profile.jpeg),
+/// - Profile Header Card: Integrated futuristic Tec-Verse 2026 banner graphic (profile.jpeg),
 ///   attendee avatar circle with initials, attendee name, designation, and organisation
 /// - 2 Quick Shortcuts: "Event Pass" (QR icon) and "Schedule" (Clock icon)
 /// - "WEBSITE REGISTRATION RECORD" section with 12-Digit Reference No., Email, Mobile, Category, Schedule
 /// - "REGISTERED TECHNOLOGY DOMAINS" 2-column grid with "Edit Domains >" interactive selector
-/// - Full-width "SIGN OUT OF TEC-VERSE" primary orange action button
+/// - Full-width "SIGN OUT OF Tec-Verse" primary orange action button
 class ProfileScreen extends StatelessWidget {
   final VoidCallback? onBackPressed;
 
@@ -56,7 +56,7 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
         content: Text(
-          'Are you sure you want to sign out of TEC-VERSE? Your session and offline digital pass credentials will be safely logged out.',
+          'Are you sure you want to sign out of Tec-Verse? Your session and offline digital pass credentials will be safely logged out.',
           style: AppTypography.bodyMedium,
         ),
         actions: [
@@ -518,7 +518,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            // Right side TEC-VERSE 2026 overlay text
+            // Right side Tec-Verse 2026 overlay text
             Positioned(
               right: 14,
               top: 12,
@@ -532,7 +532,7 @@ class ProfileScreen extends StatelessWidget {
                     text: const TextSpan(
                       children: [
                         TextSpan(
-                          text: 'TEC-VERSE\n',
+                          text: 'Tec-Verse\n',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -644,7 +644,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 1),
                         Text(
-                          user.organization.isNotEmpty ? user.organization : 'TEC-VERSE Attendee',
+                          user.organization.isNotEmpty ? user.organization : 'Tec-Verse Attendee',
                           style: const TextStyle(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w500,
@@ -1127,7 +1127,7 @@ class ProfileScreen extends StatelessWidget {
       onPressed: () => _confirmLogout(context),
       icon: const Icon(Icons.exit_to_app_rounded, size: 20),
       label: const Text(
-        'SIGN OUT OF TEC-VERSE',
+        'SIGN OUT OF Tec-Verse',
         style: TextStyle(
           fontSize: 13.5,
           fontWeight: FontWeight.w800,

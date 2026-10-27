@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/widgets/animation_utils.dart';
 
-/// Pixel-perfect About Screen matching the TEC-VERSE design:
+/// Pixel-perfect About Screen matching the Tec-Verse design:
 /// 1. "ORGANISED BY" Card with top logo containers & bottom detail cards (C-DAC, SAMEER, C-MET)
 /// 2. "ABOUT" Card with Overview text & building illustration with deep-tech network nodes
 class AboutScreen extends StatelessWidget {
@@ -125,7 +125,7 @@ class AboutScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: const [
                 Text(
-                  'About TEC-VERSE',
+                  'About Tec-Verse',
                   style: TextStyle(
                     fontSize: 16.5,
                     fontWeight: FontWeight.w900,
@@ -558,9 +558,9 @@ class AboutScreen extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // Title: TEC-VERSE Overview
+          // Title: Tec-Verse Overview
           const Text(
-            'TEC-VERSE Overview',
+            'Tec-Verse Overview',
             style: TextStyle(
               fontSize: 19,
               fontWeight: FontWeight.w900,
@@ -579,7 +579,7 @@ class AboutScreen extends StatelessWidget {
               Expanded(
                 flex: 11,
                 child: Text(
-                  'Tec-verse is a technology exhibition and conclave shaped by MeitY\'s premier R&D organisations: C-DAC, SAMEER, and C-MET. Its first edition, Tec-verse 2025, was held on 27-28 June 2025 at Manekshaw Centre, New Delhi, as a unified platform to showcase and commercialise indigenous deep-tech solutions.',
+                  'Tec-Verse is a technology exhibition and conclave shaped by MeitY\'s premier R&D organisations: C-DAC, SAMEER, and C-MET. Its first edition, Tec-Verse 2025, was held on 27-28 June 2025 at Manekshaw Centre, New Delhi, as a unified platform to showcase and commercialise indigenous deep-tech solutions.',
                   style: const TextStyle(
                     fontSize: 12.2,
                     fontWeight: FontWeight.w500,

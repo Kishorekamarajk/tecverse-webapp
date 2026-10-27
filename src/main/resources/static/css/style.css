@@ -17938,11 +17938,12 @@ textarea { resize: vertical; }
 .contact-reference-sidebar .compact-contact-cards { display: grid; grid-template-columns: 1fr; gap: 10px; }
 .compact-contact-cards > div { display: flex; min-height: 38px; align-items: center; gap: 8px; padding: 3px 7px; border-radius: 9px; background: #fff; }
 .compact-contact-cards i { display: grid; flex: 0 0 30px; width: 30px; height: 30px; place-items: center; border-radius: 50%; color: #fff; font-size: .68rem; }
-.compact-icon--orange { background: #ff7620; }.compact-icon--green { background: #1dbb7b; }.compact-icon--navy { background: #092d63; }
+.compact-icon--orange { background: #ff7620; }.compact-icon--green { background: #1dbb7b; }.compact-icon--navy { background: #092d63; }.compact-icon--whatsapp { background: #25d366; }
 .compact-contact-cards p { margin: 0; color: #355281; font-size: .64rem; line-height: 1.25; }
 .compact-contact-cards strong,.compact-contact-cards span { display: block; }
 .compact-contact-cards strong { color: #102b62; font-size: .58rem; font-weight: 900; letter-spacing: .035em; text-transform: uppercase; }
 .compact-contact-cards span { color: #2c4f86; font-size: .64rem; font-weight: 500; overflow-wrap: anywhere; }
+.compact-contact-cards a { text-decoration: none; }
 .contact-reference-sidebar .compact-location { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
 .contact-reference-sidebar .compact-map { height: 92px; min-height: 92px; overflow: hidden; border: 0; border-radius: 8px; }
 .compact-map iframe { display: block; width: 100%; height: 100%; border: 0; }

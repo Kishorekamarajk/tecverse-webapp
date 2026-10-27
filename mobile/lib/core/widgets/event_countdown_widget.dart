@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
 
-/// The official TEC-VERSE 2026 event start and end datetime in IST (UTC+5:30).
+/// The official Tec-Verse 2026 event start and end datetime in IST (UTC+5:30).
 /// November 26, 2026 at 09:00 AM IST to November 27, 2026 at 06:00 PM IST.
 const _kEventStart = '2026-11-26T09:00:00+05:30';
 const _kEventEnd = '2026-11-27T18:00:00+05:30';
 
 enum EventStatus { upcoming, live, concluded }
 
-/// Reusable dynamic countdown and live status widget for TEC-VERSE 2026.
+/// Reusable dynamic countdown and live status widget for Tec-Verse 2026.
 ///
 /// Ticks every second:
 /// - When before event start: Shows active countdown ([X DAYS TO GO] + [DAYS • HRS • MIN • SEC])

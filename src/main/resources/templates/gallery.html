@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="~{fragments/analytics :: gtag}"></th:block>
-    <title th:text="#{contact.title}">Tec-verse 2026</title>
+    <title th:text="#{contact.title}">Tec-Verse 2026</title>
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
 
 
@@ -47,7 +47,7 @@
 <main class="gallery-reference" aria-labelledby="gallery-heading">
     <section class="gallery-reference__hero overflow-hidden text-center">
         <div class="container">
-            <div class="gallery-reference__year"><span th:text="#{gallery.hero.year}">TEC-VERSE</span><b>2025</b></div>
+            <div class="gallery-reference__year"><span th:text="#{gallery.hero.year}">Tec-Verse</span><b>2025</b></div>
             <p class="gallery-reference__kicker" th:text="#{gallery.hero.title.start}">Memories that</p>
             <h1 id="gallery-heading"><em th:text="#{gallery.hero.title.emphasis}">Matter</em></h1>
             <p th:text="#{gallery.hero.subtitle}">Moments from the ideas, innovations, and collaborations</p>
@@ -59,7 +59,7 @@
             <div class="gallery-reference__heading">
                 <div><h2><span th:text="#{gallery.photo.heading}">Photo</span> <em th:text="#{nav.gallery}">Gallery</em></h2></div>
             </div>
-            <div class="gallery-carousel position-relative" th:if="${!galleryImages.isEmpty()}" data-gallery-carousel aria-label="Tec-verse photo carousel" th:aria-label="#{misc.gallery.photoCarousel}">
+            <div class="gallery-carousel position-relative" th:if="${!galleryImages.isEmpty()}" data-gallery-carousel aria-label="Tec-Verse photo carousel" th:aria-label="#{misc.gallery.photoCarousel}">
                 <div class="gallery-carousel__stage position-relative overflow-hidden">
                     <a class="gallery-carousel__slide" th:each="image : ${galleryImages}" th:href="@{${image.imageUrl}}"><img th:src="@{${image.imageUrl}}" th:alt="${image.title}"></a>
                 </div>
@@ -77,7 +77,7 @@
         <div class="container">
             <div class="gallery-reference__heading gallery-reference__heading--dark"><div><h2><span th:text="#{gallery.video.heading}">Video</span> <em th:text="#{nav.gallery}">Gallery</em></h2></div><div class="gallery-reference__brand pl-[.7rem] text-[.68rem] leading-[1.5]" th:utext="#{misc.gallery.videoTagline}">Ideas in motion.<br>Progress in action.</div></div>
             <div class="gallery-carousel gallery-carousel--videos position-relative" th:if="${!galleryVideos.isEmpty()}"
-                 data-gallery-carousel aria-label="Tec-verse video carousel" th:aria-label="#{misc.gallery.videoCarousel}">
+                 data-gallery-carousel aria-label="Tec-Verse video carousel" th:aria-label="#{misc.gallery.videoCarousel}">
                 <div class="gallery-carousel__stage position-relative overflow-hidden">
                     <a class="gallery-carousel__slide" th:each="video : ${galleryVideos}"
                        th:href="${video.videoUrl}" target="_blank" rel="noopener noreferrer"
@@ -108,7 +108,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <p class="gallery-all-photos-modal__eyebrow text-[.72rem] font-[800] tracking-[.12em]">TEC-VERSE 2026</p>
+                    <p class="gallery-all-photos-modal__eyebrow text-[.72rem] font-[800] tracking-[.12em]">Tec-Verse 2026</p>
                     <h2 class="modal-title" id="allPhotosModalLabel" th:text="#{misc.gallery.allPhotos}">All Photos</h2>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" th:aria-label="#{register.modal.close}"></button>
@@ -128,7 +128,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <p class="gallery-all-photos-modal__eyebrow text-[.72rem] font-[800] tracking-[.12em]" th:text="#{misc.gallery.videoGalleryEyebrow}">TEC-VERSE VIDEO GALLERY</p>
+                    <p class="gallery-all-photos-modal__eyebrow text-[.72rem] font-[800] tracking-[.12em]" th:text="#{misc.gallery.videoGalleryEyebrow}">Tec-Verse VIDEO GALLERY</p>
                     <h2 class="modal-title" id="allVideosModalLabel" th:text="#{misc.gallery.allVideos}">All Videos</h2>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" th:aria-label="#{register.modal.close}"></button>

@@ -40,23 +40,23 @@
 </head>
 
 <body class="home-page">
-<!-- Initial Tec-verse landing animation -->
-<div id="site-intro" class="site-intro" aria-label="Tec-verse introduction" th:attr="aria-label=#{page.home.intro.aria}">
+<!-- Initial Tec-Verse landing animation -->
+<div id="site-intro" class="site-intro" aria-label="Tec-Verse introduction" th:attr="aria-label=#{page.home.intro.aria}">
     <div class="site-intro__splash d-grid">
         <div class="site-intro__splash-grid position-absolute" aria-hidden="true"></div>
         <div class="site-intro__splash-glow site-intro__splash-glow--one position-absolute max-w-[620px] rounded-[50%]" aria-hidden="true"></div>
         <div class="site-intro__splash-glow site-intro__splash-glow--two position-absolute max-w-[620px] rounded-[50%]" aria-hidden="true"></div>
 
         <div class="site-intro__splash-content position-relative d-flex flex-column align-items-center text-center">
-            <img class="site-intro__splash-logo" th:src="@{/images/tecverselogo.png}" alt="Tec-verse logo" th:alt="#{page.home.intro.logoAlt}">
-            <div class="site-intro__splash-eyebrow" th:text="#{contact.title}">Tec-verse 2026</div>
-            <div class="site-intro__splash-word mt-[20px] font-[900] leading-[.82] tracking-[-.075em]">Tec-verse</div>
+            <img class="site-intro__splash-logo" th:src="@{/images/tecverselogo.png}" alt="Tec-Verse logo" th:alt="#{page.home.intro.logoAlt}">
+            <div class="site-intro__splash-eyebrow" th:text="#{contact.title}">Tec-Verse 2026</div>
+            <div class="site-intro__splash-word mt-[20px] font-[900] leading-[.82] tracking-[-.075em]">Tec-Verse</div>
             <div class="site-intro__splash-date" th:text="#{page.home.intro.startsOn}">STARTS ON 26 NOVEMBER 2026</div>
         </div>
     </div>
 
     <div id="site-intro-countdown-panel" class="site-intro__countdown-panel text-center" aria-hidden="true">
-        <div class="site-intro__countdown-label mb-[28px]" th:text="#{page.home.intro.startsIn}">Tec-verse STARTS IN</div>
+        <div class="site-intro__countdown-label mb-[28px]" th:text="#{page.home.intro.startsIn}">Tec-Verse STARTS IN</div>
 
         <div class="site-intro__countdown-grid d-grid">
             <div class="site-intro__time-unit">
@@ -92,7 +92,7 @@
             src="https://www.youtube.com/embed/y9z789Sitrs?autoplay=1&mute=1&loop=1&playlist=y9z789Sitrs&controls=0&playsinline=1&rel=0&disablekb=1&fs=0&iv_load_policy=3&cc_load_policy=0&enablejsapi=1"
             tabindex="-1"
             aria-hidden="true"
-            title="Tec-verse 2026 hero video"
+            title="Tec-Verse 2026 hero video"
             th:title="#{page.home.hero.videoTitle}"
             referrerpolicy="strict-origin-when-cross-origin"
             credentialless
@@ -105,9 +105,9 @@
     <div class="hero-video-shade pointer-events-none absolute inset-0 z-[1]" aria-hidden="true"></div>
 
     <div class="container-custom hero-video-content relative z-10 d-flex flex-column align-items-start min-h-[100vh] text-start">
-        <span data-hero-reveal class="hero-video-badge opacity-0 scale-75 transition-all duration-700 ease-out d-inline-flex align-items-center font-[900] leading-[1] text-uppercase">
+        <span data-hero-reveal class="hero-video-badge opacity-0 scale-75 transition-all duration-700 ease-out d-inline-flex align-items-center font-[900] leading-[1]">
             <span class="hero-video-badge__dot rounded-[50%]" aria-hidden="true"></span>
-            <span th:text="#{hero.badge}">Tec-verse 26-27 NOV 2026</span>
+            <span th:text="#{hero.badge}">Tec-Verse 26-27 NOV 2026</span>
         </span>
 
         <h1 data-hero-reveal class="hero-video-title opacity-0 translate-y-8 delay-150 transition-all duration-700 ease-out m-0 font-[900] tracking-[0] leading-[0.96]">
@@ -163,7 +163,7 @@
             <span class="section-heading-rule overflow-hidden" aria-hidden="true"><span></span><span></span><span></span></span>
         </div>
 
-        <div class="institution-triangle-stage" aria-label="Tec-verse institutional thematic domains" th:attr="aria-label=#{page.home.thematic.stageAria}">
+        <div class="institution-triangle-stage" aria-label="Tec-Verse institutional thematic domains" th:attr="aria-label=#{page.home.thematic.stageAria}">
             <div class="institution-orbit-slogan institution-orbit-slogan--left position-absolute gap-[.35rem] font-[900] tracking-[.42em] leading-[1.2] text-uppercase" aria-hidden="true">
                 <span th:text="#{retreat.mantra.innovate}">Innovate</span>
                 <span th:text="#{retreat.mantra.collaborate}">Collaborate</span>

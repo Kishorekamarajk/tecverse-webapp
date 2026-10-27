@@ -129,8 +129,8 @@ class VoiceNavigationService {
       return VoiceNavResult(
         isNavigation: true,
         destination: VoiceNavDestination.about,
-        destinationName: 'About TEC-VERSE',
-        feedbackMessage: 'ℹ️ Opening About TEC-VERSE & Organisers...',
+        destinationName: 'About Tec-Verse',
+        feedbackMessage: 'ℹ️ Opening About Tec-Verse & Organisers...',
         action: (context) => navigateTo(VoiceNavDestination.about),
       );
     }

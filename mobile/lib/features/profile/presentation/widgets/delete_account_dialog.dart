@@ -98,7 +98,7 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'This permanently deletes your TEC-VERSE account, registration and digital event pass. '
+                'This permanently deletes your Tec-Verse account, registration and digital event pass. '
                 'This action cannot be undone.\n\nEnter your current password to confirm.',
                 style: AppTypography.bodyMedium,
               ),

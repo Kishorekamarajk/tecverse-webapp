@@ -574,7 +574,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         const SizedBox(height: 6),
         Text(
-          'Create a strong password for your TEC-VERSE attendee account.',
+          'Create a strong password for your Tec-Verse attendee account.',
           textAlign: TextAlign.center,
           style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
         ),

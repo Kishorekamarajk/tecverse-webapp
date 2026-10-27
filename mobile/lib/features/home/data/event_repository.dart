@@ -28,7 +28,7 @@ class EventSummary {
 
   factory EventSummary.fromJson(Map<String, dynamic> json) {
     return EventSummary(
-      title: json['title']?.toString() ?? 'TEC-VERSE 2026',
+      title: json['title']?.toString() ?? 'Tec-Verse 2026',
       headline: json['headline']?.toString() ?? 'Beacon of Rising Tech Innovation & AI',
       heroBadge: json['heroBadge']?.toString() ?? '26-27-28 Nov 2026',
       heroSubtitle: json['heroSubtitle']?.toString() ?? 'Explore. Innovate. Empower the Future.',

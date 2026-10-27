@@ -121,7 +121,7 @@ public class RegistrationController {
     @PostMapping(value="/ticket/send-otp",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> sendTicketOtp(@Valid @RequestBody TicketOtpSendRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "otp-send", request.getEmail(), 3, Duration.ofMinutes(1), 30, Duration.ofMinutes(1));
-        ticketOtpService.sendOtp(request); return ResponseEntity.ok(ApiResponse.success("OTP has been sent to your email."));
+        ticketOtpService.sendOtp(request); return ResponseEntity.ok(ApiResponse.success("OTP request accepted. Check your email shortly."));
     }
     @PostMapping(value="/ticket/verify-otp",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> verifyTicketOtp(@Valid @RequestBody TicketOtpVerifyRequest request, HttpServletRequest httpRequest){
@@ -156,7 +156,7 @@ public class RegistrationController {
     public ResponseEntity<ApiResponse<TicketRegistrationResponse>> ticketRegister(@Valid @RequestBody TicketRegistrationRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "ticket-registration", request.getEmail(), 5, Duration.ofHours(1), 20, Duration.ofHours(1));
         OtpSessionVerification.require(httpRequest, Purpose.TICKET, request.getEmail());
-        // Mobile OTP verification is disabled for now; uncomment to require it again.
+        // Temporary bypass: restore this check when mobile OTP verification is re-enabled.
         // String phone = request.getPhone() == null ? "" : com.tecverse.app.util.ValidationUtil.normalizeIndianMobile(request.getPhone().trim());
         // if (!OtpSessionVerification.isVerified(httpRequest, Purpose.TICKET_MOBILE, phone)) {
         //     throw new OtpVerificationRequiredException("Please verify your mobile number with OTP before submitting.");
@@ -197,7 +197,7 @@ public class RegistrationController {
         // Resolve the logo against the host serving this scan page. app.url may point at
         // production while the same application is being tested on localhost.
         String logoUrl="/images/tecverselogo.png";
-        String body="<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Registration verified | Tec-verse 2026</title><style>body{margin:0;padding:24px;background:#f4f6fb;font:16px/1.5 system-ui,sans-serif;color:#18233b}.card{max-width:440px;margin:6vh auto;background:white;border-radius:18px;overflow:hidden;box-shadow:0 16px 40px #13214a1a}.head{padding:24px;text-align:center;background:linear-gradient(135deg,#0b2852,#5125b9);color:white}.head img{width:58px;height:58px;object-fit:contain;background:white;border-radius:50%;padding:5px}.head h1{font-size:22px;margin:12px 0 0}.body{padding:20px 24px}.row{padding:12px 0;border-bottom:1px solid #edf0f6}.label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#68728a}.value{display:block;font-weight:650;overflow-wrap:anywhere}.foot{text-align:center;padding:0 20px 20px;color:#68728a;font-size:13px}</style></head><body><main class=\"card\"><header class=\"head\"><img src=\""+htmlEscape(logoUrl)+"\" alt=\"Tec-verse\"><h1>Registration verified</h1></header><section class=\"body\">"
+        String body="<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Registration verified | Tec-Verse 2026</title><style>body{margin:0;padding:24px;background:#f4f6fb;font:16px/1.5 system-ui,sans-serif;color:#18233b}.card{max-width:440px;margin:6vh auto;background:white;border-radius:18px;overflow:hidden;box-shadow:0 16px 40px #13214a1a}.head{padding:24px;text-align:center;background:linear-gradient(135deg,#0b2852,#5125b9);color:white}.head img{width:58px;height:58px;object-fit:contain;background:white;border-radius:50%;padding:5px}.head h1{font-size:22px;margin:12px 0 0}.body{padding:20px 24px}.row{padding:12px 0;border-bottom:1px solid #edf0f6}.label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#68728a}.value{display:block;font-weight:650;overflow-wrap:anywhere}.foot{text-align:center;padding:0 20px 20px;color:#68728a;font-size:13px}</style></head><body><main class=\"card\"><header class=\"head\"><img src=\""+htmlEscape(logoUrl)+"\" alt=\"Tec-Verse\"><h1>Registration verified</h1></header><section class=\"body\">"
                 +scanRow("Name",registration.getOfficialName())+scanRow("Email",registration.getEmail())
                 +scanRow("Reference",registration.getReferenceNumber())+scanRow("Preferred days",days)
                 +scanRow("Venue","Chennai Trade Centre, Chennai")

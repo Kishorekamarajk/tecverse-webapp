@@ -4,7 +4,7 @@ import '../domain/ai_message.dart';
 import '../domain/faq_item.dart';
 import 'faq_repository.dart';
 
-/// Dynamic AI Copilot Engine for TEC-VERSE 2026.
+/// Dynamic AI Copilot Engine for Tec-Verse 2026.
 ///
 /// Features:
 /// - Natural Language Navigation Intent Processing ("Go to...", "Open...", "Where is...")
@@ -194,7 +194,7 @@ class TecverseAiService {
     if (dbFaqs.isEmpty) {
       return AiMessage(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        text: 'I can\'t reach the TEC-VERSE server right now, so I can\'t look up answers.\n\n'
+        text: 'I can\'t reach the Tec-Verse server right now, so I can\'t look up answers.\n\n'
             'Please check your internet connection and try again. You can still say '
             '**"Go to Schedule"** or **"Go to Digital Pass"** to open a screen.',
         sender: MessageSender.assistant,
@@ -206,11 +206,11 @@ class TecverseAiService {
     // Default message when no FAQ matches the question
     return AiMessage(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      text: 'I couldn\'t find an answer to that in the TEC-VERSE FAQs.\n\n'
+      text: 'I couldn\'t find an answer to that in the Tec-Verse FAQs.\n\n'
           'Try saying or typing:\n'
           '• **"Go to Sessions"** or **"Go to Floor Plan"**\n'
           '• **"Go to Digital Pass"** or **"Go to Schedule"**\n'
-          '• **"What is Tec-verse 2026?"**\n'
+          '• **"What is Tec-Verse 2026?"**\n'
           '• **"Where is Chennai Trade Centre?"**\n'
           '• **"Will food be provided?"**',
       sender: MessageSender.assistant,
