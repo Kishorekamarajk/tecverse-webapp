@@ -1,16 +1,6 @@
 import java.util.Properties
 import java.io.FileInputStream
-
-// Release signing credentials are read from android/key.properties, which is
-// git-ignored and only present on machines that build Play Store releases.
-// Expected keys: storePassword, keyPassword, keyAlias, storeFile.
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
-val hasReleaseKeystore = keystorePropertiesFile.exists()
-
-if (hasReleaseKeystore) {
-    FileInputStream(keystorePropertiesFile).use { keystoreProperties.load(it) }
-}
+import org.gradle.api.GradleException
 
 plugins {
     id("com.android.application")
@@ -18,8 +8,20 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Load release signing credentials from android/key.properties.
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+val hasReleaseKeystore = keystorePropertiesFile.exists()
+
+if (hasReleaseKeystore) {
+    FileInputStream(keystorePropertiesFile).use {
+        keystoreProperties.load(it)
+    }
+}
+
 android {
     namespace = "in.cdac.tecverse.tec_app"
+
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -32,37 +34,57 @@ android {
         if (hasReleaseKeystore) {
             create("release") {
                 keyAlias = keystoreProperties.getProperty("keyAlias")
+                    ?: throw GradleException("keyAlias is missing in key.properties")
+
                 keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = keystoreProperties.getProperty("storeFile")?.let { file(it) }
+                    ?: throw GradleException("keyPassword is missing in key.properties")
+
                 storePassword = keystoreProperties.getProperty("storePassword")
+                    ?: throw GradleException("storePassword is missing in key.properties")
+
+                val keystorePath = keystoreProperties.getProperty("storeFile")
+                    ?: throw GradleException("storeFile is missing in key.properties")
+
+                // Resolve the keystore path relative to the Android app module.
+                storeFile = file(keystorePath)
             }
         }
     }
 
     defaultConfig {
         applicationId = "in.cdac.tecverse.tec_app"
+
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        // Uses the version code/name from pubspec.yaml.
+
+        // Version name and version code are taken from pubspec.yaml.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
     buildTypes {
+        debug {
+            // Debug builds use the standard debug signing configuration.
+            signingConfig = signingConfigs.getByName("debug")
+        }
+
         release {
-            signingConfig = if (hasReleaseKeystore) {
-                signingConfigs.getByName("release")
-            } else {
-                // No android/key.properties on this machine: fall back to the debug
-                // key so `flutter run --release` still works locally. Builds signed
-                // this way CANNOT be uploaded to Google Play.
-                signingConfigs.getByName("debug")
+            // Require a release keystore for Play Store builds.
+            if (!hasReleaseKeystore) {
+                throw GradleException(
+                    "Release keystore not found. Create android/key.properties " +
+                    "and configure your upload keystore before building a release."
+                )
             }
+
+            signingConfig = signingConfigs.getByName("release")
+
             isMinifyEnabled = true
             isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
         }
     }

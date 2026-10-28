@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -68,17 +72,20 @@ public class AdminRegistrationController {
     }
 
     @GetMapping("/admin/registrations/{type}/fragment")
-    public String fragment(@PathVariable String type, Model model) {
-        List<RecordRow> rows = new ArrayList<>();
+    public String fragment(@PathVariable String type, @RequestParam(defaultValue = "0") int page, Model model) {
+        int pageNumber = Math.max(0, page);
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "createdAt").and(Sort.by(Sort.Direction.DESC, "id")));
+        Page<RecordRow> result;
         switch (type) {
-            case "tickets" -> tickets.findAll().forEach(x -> rows.add(new RecordRow(x.getId(), x.getReferenceNumber(), x.getOfficialName(), x.getEmail(), x.getPhone(), x.getCategory(), x.getApplicantState(), x.getCreatedAt())));
-            case "exhibitors" -> exhibitors.findAll().forEach(x -> rows.add(new RecordRow(x.getId(), x.getReferenceNumber(), x.getFullName(), x.getEmail(), x.getPhone(), x.getCompanyName(), "", x.getCreatedAt())));
-            case "sponsors" -> sponsors.findAll().forEach(x -> rows.add(new RecordRow(x.getId(), x.getId().toString(), x.getName(), x.getEmail(), x.getPhone(), x.getStatus(), "", x.getCreatedAt())));
-            case "contacts" -> contacts.findAll().forEach(x -> rows.add(new RecordRow(x.getId(), x.getId().toString(), x.getFullName(), x.getEmail(), x.getPhoneNumber(), x.getCompanyName(), "", x.getCreatedAt())));
+            case "tickets" -> result = tickets.findAll(pageable).map(x -> new RecordRow(x.getId(), x.getReferenceNumber(), x.getOfficialName(), x.getEmail(), x.getPhone(), x.getCategory(), x.getApplicantState(), x.getCreatedAt()));
+            case "exhibitors" -> result = exhibitors.findAll(pageable).map(x -> new RecordRow(x.getId(), x.getReferenceNumber(), x.getFullName(), x.getEmail(), x.getPhone(), x.getCompanyName(), "", x.getCreatedAt()));
+            case "sponsors" -> result = sponsors.findAll(pageable).map(x -> new RecordRow(x.getId(), x.getId().toString(), x.getName(), x.getEmail(), x.getPhone(), x.getStatus(), "", x.getCreatedAt()));
+            case "contacts" -> result = contacts.findAll(pageable).map(x -> new RecordRow(x.getId(), x.getId().toString(), x.getFullName(), x.getEmail(), x.getPhoneNumber(), x.getCompanyName(), "", x.getCreatedAt()));
             default -> throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         model.addAttribute("type", type);
-        model.addAttribute("rows", rows);
+        model.addAttribute("rows", result.getContent());
+        model.addAttribute("page", result);
         return "admin/fragments/registration-rows :: rows";
     }
 

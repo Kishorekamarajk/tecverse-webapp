@@ -341,8 +341,7 @@ body.ticket-page{background:#F6F8FC}
               <div class="rg-note"><i class="bi bi-info-circle"></i><span> It will not be shared with external organisations.</span></div> -->
               <div class="tr-verify-grid">
                 <div class="tr-verify-field tr-verify-name"><label class="rg-f"><span th:text="#{ticket.verify.fullName}">Full Name</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="verifyName" name="verifyName" type="text" autocomplete="name" th:placeholder="#{ticket.verify.placeholder.fullName}" maxlength="150" required></label></div>
-                <div class="tr-verify-field tr-verify-mobile"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required><!-- Temporary mobile OTP bypass: remove the Thymeleaf comment markers to restore the controls. --><!--/*--><button type="button" id="sendMobileOtp" class="btn tr-primary">Send OTP</button><!--*/--></span></label>
-                  <!--/*-->
+                <div class="tr-verify-field tr-verify-mobile"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required><button type="button" id="sendMobileOtp" class="btn tr-primary">Send OTP</button></span></label>
                   <div id="mobileOtpBox" class="tr-otp" hidden>
                     <p class="tr-otp-note"><span th:text="#{ticketpage.otp.mobileNote}">Enter the OTP sent by SMS to</span> <strong id="otpMobile"></strong></p>
                     <div class="tr-otp-row">
@@ -354,7 +353,6 @@ body.ticket-page{background:#F6F8FC}
                     <button id="resendMobileOtp" class="tr-otp-resend" type="button" th:text="#{ticketpage.otp.resend}">Resend OTP</button>
                     <div id="mobileOtpMsg" class="tr-msg small fw-semibold" role="status" aria-live="polite"></div>
                   </div>
-                  <!--*/-->
                 </div>
                 <div class="tr-verify-field tr-verify-email"><label class="rg-f"><span th:text="#{ticket.verify.email}">Email Address</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="email" name="email" type="email" autocomplete="email" th:placeholder="#{ticket.verify.placeholder.email}" maxlength="150" required><button type="button" id="sendOtp" class="btn tr-primary"><span th:text="#{ticket.verify.sendOtp}">Send OTP</span></button></span></label>
                   <div id="otpBox" class="tr-otp" hidden>

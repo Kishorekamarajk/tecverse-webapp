@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../../core/constants/api_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../core/utils/external_links.dart';
 import '../../../core/widgets/animation_utils.dart';
 import '../../authentication/domain/authenticated_user.dart';
 import '../../authentication/presentation/auth_controller.dart';
@@ -12,6 +10,7 @@ import '../../digital_pass/presentation/digital_pass_controller.dart';
 import '../../digital_pass/presentation/digital_pass_screen.dart';
 import '../../home/presentation/interest_selection_dialog.dart';
 import '../../schedule/presentation/schedule_screen.dart';
+import 'privacy_policy_screen.dart';
 import 'widgets/delete_account_dialog.dart';
 
 /// Redesigned Profile Screen matching the exact Tec-Verse 2026 Mobile UI.
@@ -90,17 +89,10 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _openPrivacyPolicy(BuildContext context) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final opened = await openExternalUrl(ApiConstants.privacyPolicyUrl);
-    if (!opened) {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text('Could not open the Privacy Policy. Please try again later.'),
-          backgroundColor: AppColors.crimsonError,
-        ),
-      );
-    }
+  void _openPrivacyPolicy(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+    );
   }
 
   Future<void> _confirmDeleteAccount(BuildContext context) async {

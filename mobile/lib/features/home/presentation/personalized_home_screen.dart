@@ -136,8 +136,9 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
           return LayoutBuilder(
             builder: (context, constraints) {
               final isDesktop = constraints.maxWidth > 840;
-              final contentMaxWidth = isDesktop ? 1080.0 : 720.0;
-              final horizontalPadding = isDesktop ? 32.0 : 16.0;
+              final isWide = constraints.maxWidth >= 900;
+              final contentMaxWidth = isWide ? 1120.0 : 720.0;
+              final horizontalPadding = isWide ? 32.0 : 16.0;
 
               return CustomScrollView(
                 physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
@@ -351,70 +352,137 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
                       child: Center(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(maxWidth: contentMaxWidth),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // 2. HERO EVENT AREA
-                              FadeSlideTransition(
-                                delay: Duration.zero,
-                                child: _buildHeroBannerCard(),
-                              ),
+                          child: isWide
+                              ? Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Left Column: Hero, Pass, Quick Actions
+                                    Expanded(
+                                      flex: 7,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          FadeSlideTransition(
+                                            delay: Duration.zero,
+                                            child: _buildHeroBannerCard(),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          FadeSlideTransition(
+                                            delay: const Duration(milliseconds: 60),
+                                            child: DigitalPassBanner(
+                                              pass: pass,
+                                              user: user,
+                                              onTap: _navigateToPass,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          FadeSlideTransition(
+                                            delay: const Duration(milliseconds: 110),
+                                            child: _buildQuickActionTiles(),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 24),
+                                    // Right Column: Location Map & Latest News
+                                    Expanded(
+                                      flex: 5,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const FadeSlideTransition(
+                                            delay: Duration(milliseconds: 140),
+                                            child: LocationPreviewCard(),
+                                          ),
+                                          if (_importantDates.isNotEmpty) ...[
+                                            const SizedBox(height: 20),
+                                            FadeSlideTransition(
+                                              delay: const Duration(milliseconds: 180),
+                                              child: _buildLatestNewsHeader(),
+                                            ),
+                                            const SizedBox(height: 12),
+                                            ..._importantDates.take(3).toList().asMap().entries.map((entry) {
+                                              final index = entry.key;
+                                              final item = entry.value;
 
-                              const SizedBox(height: 16),
+                                              return FadeSlideTransition(
+                                                delay: Duration(milliseconds: 220 + (index * 40)),
+                                                child: LatestNewsCard(
+                                                  item: item,
+                                                  onTap: () => LatestNewsSheet.showItemDetail(context, item),
+                                                ),
+                                              );
+                                            }),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // 2. HERO EVENT AREA
+                                    FadeSlideTransition(
+                                      delay: Duration.zero,
+                                      child: _buildHeroBannerCard(),
+                                    ),
 
-                              // 3. DIGITAL EVENT PASS TICKET CREDENTIAL
-                              FadeSlideTransition(
-                                delay: const Duration(milliseconds: 60),
-                                child: DigitalPassBanner(
-                                  pass: pass,
-                                  user: user,
-                                  onTap: _navigateToPass,
+                                    const SizedBox(height: 16),
+
+                                    // 3. DIGITAL EVENT PASS TICKET CREDENTIAL
+                                    FadeSlideTransition(
+                                      delay: const Duration(milliseconds: 60),
+                                      child: DigitalPassBanner(
+                                        pass: pass,
+                                        user: user,
+                                        onTap: _navigateToPass,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 16),
+
+                                    // 4. QUICK ACTION TILES (4 Horizontal Cards)
+                                    FadeSlideTransition(
+                                      delay: const Duration(milliseconds: 110),
+                                      child: _buildQuickActionTiles(),
+                                    ),
+
+                                    const SizedBox(height: 20),
+
+                                    // 5. EVENT LOCATION & MAP CARD
+                                    const FadeSlideTransition(
+                                      delay: Duration(milliseconds: 140),
+                                      child: LocationPreviewCard(),
+                                    ),
+
+                                    const SizedBox(height: 22),
+
+                                    // 6. LATEST NEWS & IMPORTANT DATES (only once live data has loaded)
+                                    if (_importantDates.isNotEmpty) ...[
+                                      FadeSlideTransition(
+                                        delay: const Duration(milliseconds: 180),
+                                        child: _buildLatestNewsHeader(),
+                                      ),
+                                      const SizedBox(height: 12),
+                                    ],
+
+                                    ..._importantDates.take(3).toList().asMap().entries.map((entry) {
+                                      final index = entry.key;
+                                      final item = entry.value;
+
+                                      return FadeSlideTransition(
+                                        delay: Duration(milliseconds: 220 + (index * 40)),
+                                        child: LatestNewsCard(
+                                          item: item,
+                                          onTap: () => LatestNewsSheet.showItemDetail(context, item),
+                                        ),
+                                      );
+                                    }),
+
+                                    const SizedBox(height: 16),
+                                  ],
                                 ),
-                              ),
-
-                              const SizedBox(height: 16),
-
-                              // 4. QUICK ACTION TILES (4 Horizontal Cards)
-                              FadeSlideTransition(
-                                delay: const Duration(milliseconds: 110),
-                                child: _buildQuickActionTiles(),
-                              ),
-
-                              const SizedBox(height: 20),
-
-                              // 5. EVENT LOCATION & MAP CARD
-                              const FadeSlideTransition(
-                                delay: Duration(milliseconds: 140),
-                                child: LocationPreviewCard(),
-                              ),
-
-                              const SizedBox(height: 22),
-
-                              // 6. LATEST NEWS & IMPORTANT DATES (only once live data has loaded)
-                              if (_importantDates.isNotEmpty) ...[
-                                FadeSlideTransition(
-                                  delay: const Duration(milliseconds: 180),
-                                  child: _buildLatestNewsHeader(),
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-
-                              ..._importantDates.take(3).toList().asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final item = entry.value;
-
-                                return FadeSlideTransition(
-                                  delay: Duration(milliseconds: 220 + (index * 40)),
-                                  child: LatestNewsCard(
-                                    item: item,
-                                    onTap: () => LatestNewsSheet.showItemDetail(context, item),
-                                  ),
-                                );
-                              }),
-
-                              const SizedBox(height: 16),
-                            ],
-                          ),
                         ),
                       ),
                     ),

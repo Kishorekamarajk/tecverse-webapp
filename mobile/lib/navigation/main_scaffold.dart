@@ -53,7 +53,8 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isDesktop = constraints.maxWidth > 840;
+        final isTabletOrDesktop = constraints.maxWidth >= 600;
+        final isExpanded = constraints.maxWidth > 840;
 
         final screens = [
           PersonalizedHomeScreen(onNavigateTab: _onTabSelected),
@@ -64,8 +65,8 @@ class _MainScaffoldState extends State<MainScaffold> {
           ProfileScreen(onBackPressed: () => _onTabSelected(0)),
         ];
 
-        if (isDesktop) {
-          return _buildDesktopLayout(screens);
+        if (isTabletOrDesktop) {
+          return _buildTabletDesktopLayout(screens, isExpanded: isExpanded);
         }
 
         return _buildMobileLayout(screens);
@@ -93,157 +94,277 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
-  /// Desktop / Tablet layout with sleek navigation rail
-  Widget _buildDesktopLayout(List<Widget> screens) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Row(
-        children: [
-          // Desktop Navigation Rail
-          Container(
-            width: 220,
-            decoration: const BoxDecoration(
-              color: AppColors.surface,
-              border: Border(
-                right: BorderSide(color: AppColors.borderCard, width: 1.0),
+  /// Responsive Tablet & Desktop layout with sleek Navigation Rail
+  Widget _buildTabletDesktopLayout(List<Widget> screens, {required bool isExpanded}) {
+    final railWidth = isExpanded ? 220.0 : 72.0;
+
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _currentIndex != 0) {
+          setState(() => _currentIndex = 0);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Row(
+          children: [
+            // Responsive Navigation Rail
+            Container(
+              width: railWidth,
+              decoration: const BoxDecoration(
+                color: AppColors.surface,
+                border: Border(
+                  right: BorderSide(color: AppColors.borderCard, width: 1.0),
+                ),
               ),
-            ),
-            child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/images/tecverselogo.png',
-                          width: 32,
-                          height: 32,
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Tec-Verse',
-                              style: AppTypography.headlineMedium.copyWith(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.8,
-                              ),
-                            ),
-                            Text(
-                              '2026 EXPO',
-                              style: AppTypography.metaTag.copyWith(
-                                fontSize: 9.5,
-                                color: AppColors.cyanAccent,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Nav Rail Items
-                  _railItem(0, Icons.home_rounded, 'Home'),
-                  _railItem(1, Icons.category_rounded, 'Sessions'),
-                  _railItem(2, Icons.calendar_today_rounded, 'Schedule'),
-                  _railItem(3, Icons.qr_code_2_rounded, 'Digital Pass'),
-                  _railItem(4, Icons.info_outline_rounded, 'About'),
-                  _railItem(5, Icons.person_rounded, 'Profile'),
-
-                  // Nav Rail Floor Plan Action
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const FloorPlanScreen()),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: AppColors.cyanAccent.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppColors.cyanAccent.withValues(alpha: 0.25), width: 0.8),
-                        ),
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: isExpanded ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+                  children: [
+                    // Brand Emblem / Header
+                    if (isExpanded)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
                         child: Row(
                           children: [
-                            const Icon(Icons.map_rounded, size: 19, color: AppColors.cyanAccent),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Floor Plan',
-                                style: AppTypography.bodyMedium.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.cyanAccent,
+                            Image.asset(
+                              'assets/images/tecverselogo.png',
+                              width: 32,
+                              height: 32,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Tec-Verse',
+                                  style: AppTypography.headlineMedium.copyWith(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 0.8,
+                                  ),
                                 ),
+                                Text(
+                                  '2026 EXPO',
+                                  style: AppTypography.metaTag.copyWith(
+                                    fontSize: 9.5,
+                                    color: AppColors.cyanAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Image.asset(
+                          'assets/images/tecverselogo.png',
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+
+                    // Nav Rail Items
+                    if (isExpanded) ...[
+                      _railItem(0, Icons.home_rounded, 'Home'),
+                      _railItem(1, Icons.category_rounded, 'Sessions'),
+                      _railItem(2, Icons.calendar_today_rounded, 'Schedule'),
+                      _railItem(3, Icons.qr_code_2_rounded, 'Digital Pass'),
+                      _railItem(4, Icons.info_outline_rounded, 'About'),
+                      _railItem(5, Icons.person_rounded, 'Profile'),
+
+                      // Nav Rail Floor Plan Action
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const FloorPlanScreen()),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: AppColors.cyanAccent.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: AppColors.cyanAccent.withValues(alpha: 0.25), width: 0.8),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.map_rounded, size: 19, color: AppColors.cyanAccent),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Floor Plan',
+                                    style: AppTypography.bodyMedium.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.cyanAccent,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ] else ...[
+                      _compactRailItem(0, Icons.home_rounded, 'Home'),
+                      _compactRailItem(1, Icons.category_rounded, 'Sessions'),
+                      _compactRailItem(2, Icons.calendar_today_rounded, 'Schedule'),
+                      _compactRailItem(3, Icons.qr_code_2_rounded, 'Pass'),
+                      _compactRailItem(4, Icons.info_outline_rounded, 'About'),
+                      _compactRailItem(5, Icons.person_rounded, 'Profile'),
+
+                      // Compact Floor Plan Action
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const FloorPlanScreen()),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(10),
+                          child: Tooltip(
+                            message: 'Floor Plan',
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.cyanAccent.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: AppColors.cyanAccent.withValues(alpha: 0.25), width: 0.8),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.map_rounded, size: 20, color: AppColors.cyanAccent),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Map',
+                                    style: AppTypography.bodySmall.copyWith(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.cyanAccent,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                    ],
 
-                  const Spacer(),
+                    const Spacer(),
 
-                  // Bottom Venue Info Pill
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const FloorPlanScreen()),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceElevated,
+                    // Bottom Venue Info Pill (expanded mode only)
+                    if (isExpanded)
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const FloorPlanScreen()),
+                            );
+                          },
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.borderSubtle),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'NANDAMBAKKAM, TAMIL NADU 600089',
-                              style: AppTypography.metaTag.copyWith(fontSize: 9.5),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceElevated,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.borderSubtle),
                             ),
-                            const SizedBox(height: 3),
-                            Text(
-                              '26–27 NOV 2026',
-                              style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textSecondary),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'NANDAMBAKKAM, TAMIL NADU 600089',
+                                  style: AppTypography.metaTag.copyWith(fontSize: 9.5),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  '26–27 NOV 2026',
+                                  style: AppTypography.bodySmall.copyWith(fontSize: 11, color: AppColors.textSecondary),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
+                      )
+                    else
+                      const SizedBox(height: 16),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Main Workspace
-          Expanded(
-            child: IndexedStack(
-              index: _currentIndex,
-              children: screens,
+            // Main Workspace
+            Expanded(
+              child: IndexedStack(
+                index: _currentIndex,
+                children: screens,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _compactRailItem(int index, IconData icon, String label) {
+    final isSelected = _currentIndex == index;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: InkWell(
+        onTap: () => _onTabSelected(index),
+        borderRadius: BorderRadius.circular(10),
+        child: Tooltip(
+          message: label,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.cyanAccent.withValues(alpha: 0.14) : Colors.transparent,
+              borderRadius: BorderRadius.circular(10),
+              border: isSelected ? Border.all(color: AppColors.cyanAccent.withValues(alpha: 0.35), width: 0.8) : null,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 20,
+                  color: isSelected ? AppColors.cyanAccent : AppColors.textSecondary,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  style: AppTypography.bodySmall.copyWith(
+                    fontSize: 9.5,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

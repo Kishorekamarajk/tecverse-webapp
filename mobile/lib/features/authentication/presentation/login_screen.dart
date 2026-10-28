@@ -9,6 +9,7 @@ import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/futuristic_background.dart';
 import '../../../core/widgets/institution_logos_bar.dart';
 import '../../../core/widgets/tech_button.dart';
+import '../../profile/presentation/privacy_policy_screen.dart';
 import '../presentation/auth_controller.dart';
 import 'forgot_password_screen.dart';
 
@@ -106,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final bool isWideScreen = size.width > 700;
+    final bool isTabletOrDesktop = size.width > 520;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -115,14 +116,14 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Center(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(
-                horizontal: isWideScreen ? 32 : 20,
+                horizontal: isTabletOrDesktop ? 32 : 20,
                 vertical: 24,
               ),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: isWideScreen ? 460 : double.infinity,
+                constraints: const BoxConstraints(
+                  maxWidth: 460,
                 ),
-                child: isWideScreen
+                child: isTabletOrDesktop
                     ? Container(
                         padding: const EdgeInsets.all(36),
                         decoration: BoxDecoration(
@@ -366,11 +367,47 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 12),
+                    // In-app Privacy Policy access for unauthenticated users & Play Store reviewers
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const PrivacyPolicyScreen(),
+                          ),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(6),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.shield_outlined,
+                              size: 13,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Privacy Policy',
+                              style: AppTypography.bodySmall.copyWith(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               // Approved Institutional Logos (MeitY, C-DAC, SAMEER, C-MET)
               const InstitutionLogosBar(compact: true),

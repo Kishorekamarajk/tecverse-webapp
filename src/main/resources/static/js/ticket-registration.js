@@ -302,13 +302,12 @@ $('#registerStart').onclick=()=>{
  if(!emailVerified){
   const missing=[];
   if(!emailVerified)missing.push('email');
-  // if(!mobileVerified)missing.push('mobile'); // Temporary mobile OTP bypass.
+  if(!mobileVerified)missing.push('mobile');
   msg($('#verifyMsg'),`Please verify your ${missing.join(' and ')} OTP${missing.length>1?'s':''} before registering.`);
   return;
  }
  proceedAfterVerification();
 };
-/* Temporary mobile OTP bypass. Restore this block and the mobile controls in ticket.html to re-enable.
 $('#sendMobileOtp').onclick=async()=>{
  if(mobileVerified)return;
  const btn=$('#sendMobileOtp'),phone=$('#phone').value.trim(),m=$('#verifyMsg'),otpMessage=$('#mobileOtpBox').hidden?m:$('#mobileOtpMsg');
@@ -336,7 +335,6 @@ function setMobileVerifiedUi(on){
  $('#phone').readOnly=on;$('#mobileOtpBox').hidden=true;clearInterval(mobileTimer);
  b.disabled=on;b.innerHTML=on?'<i class="bi bi-check-circle-fill"></i> Verified':'Verify Mobile';delete b.dataset.label;
 }
-*/
 // Six single-digit boxes per OTP: auto-advance, paste-to-fill, backspace/arrow navigation, Enter submits.
 function wireOtpBoxes(container,submitButton){
 const otpInputs=$$(container+' input');
@@ -364,7 +362,7 @@ otpInputs.forEach((input,index)=>{
 });
 }
 wireOtpBoxes('#emailOtpInputs','#verifyOtp');
-// wireOtpBoxes('#mobileOtpInputs','#verifyMobileOtp'); // Disabled with mobile OTP controls above.
+wireOtpBoxes('#mobileOtpInputs','#verifyMobileOtp');
 $('#verifyOtp').onclick=async()=>{
  const btn=$('#verifyOtp'); const otp=$$('#emailOtpInputs input').map(x=>x.value).join(''),m=$('#emailOtpMsg');
  if(otp.length!==6){msg(m,'Enter the complete 6-digit OTP.');shakeOtp();return;}

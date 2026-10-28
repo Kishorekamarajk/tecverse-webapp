@@ -19,4 +19,12 @@
             </tbody>
         </table>
     </div>
+    <nav th:if="${page.totalPages > 1}" class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3" aria-label="Registration pages">
+        <span class="small text-secondary" th:text="|Showing ${page.number * page.size + 1}–${page.number * page.size + page.numberOfElements} of ${page.totalElements}|">Showing records</span>
+        <div class="btn-group" role="group" aria-label="Pagination controls">
+            <button type="button" class="btn btn-sm btn-outline-primary" data-registration-page="prev" th:disabled="${page.first}">Previous</button>
+            <span class="btn btn-sm btn-outline-secondary disabled" th:text="|Page ${page.number + 1} of ${page.totalPages}|">Page 1 of 1</span>
+            <button type="button" class="btn btn-sm btn-outline-primary" data-registration-page="next" th:disabled="${page.last}">Next</button>
+        </div>
+    </nav>
 </div>

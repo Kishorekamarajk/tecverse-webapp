@@ -57,6 +57,8 @@
                 <!-- <a th:href="@{/docs/tecverse-brochure.pdf}" download="Tec-Verse-2026-Brochure.pdf" type="application/pdf" th:text="#{footer.link.brochure}">Brochure</a> -->
                 <a th:href="@{/retreat-2026}" th:text="#{footer.link.schedule}">Programme Schedule</a>
                 <a th:href="@{/news-updates}" th:text="#{footer.link.press}">Press Release</a>
+                <a th:href="@{/privacy-policy}" th:text="#{misc.privacy.heading}">Privacy Policy</a>
+                <a th:href="@{/account-deletion}">Account Deletion</a>
                 <!-- <a th:href="@{/about}" th:text="#{footer.link.accessibility}">Accessibility</a> -->
                 <a th:href="@{/inquiry}" th:text="#{nav.contact}">Contact Us</a>
             </nav>
@@ -65,7 +67,7 @@
                 <h3 th:text="#{footer.follow}">Follow Updates</h3>
                 <p th:text="#{footer.follow.desc}">Stay connected with official Tec-Verse announcements and event highlights.</p>
                 <a class="site-footer__contact d-inline-flex align-items-center text-decoration-none" href="mailto:tec-verse@cdac.in"><i class="bi bi-envelope"></i> tec-verse@cdac.in</a>
-                <!-- <a class="site-footer__contact d-inline-flex align-items-center text-decoration-none" th:href="@{/privacy-policy}" href="/privacy-policy"><i class="bi bi-shield-lock"></i> <th:block th:text="#{misc.privacy.heading}">Privacy Policy</th:block></a> -->
+                <a class="site-footer__contact d-inline-flex align-items-center text-decoration-none" th:href="@{/privacy-policy}" href="/privacy-policy"><i class="bi bi-shield-lock me-1"></i> <th:block th:text="#{misc.privacy.heading}">Privacy Policy</th:block></a>
                 <div class="site-footer__socials flex-wrap">
                     <a class="site-footer__social site-footer__social--facebook" href="https://www.facebook.com/profile.php?id=61593166749801" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
                     <a class="site-footer__social site-footer__social--instagram" href="https://www.instagram.com/cdactecverse/" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
@@ -74,8 +76,15 @@
                 </div>
             </section>
 
-            <div class="site-footer__credit-row d-flex justify-content-center w-100 mt-3">
-                <p class="site-footer__credit text-center m-0" th:text="#{footer.credit}">Designed and developed by C-DAC</p>
+            <div class="site-footer__credit-row d-flex flex-column flex-md-row justify-content-between align-items-center w-100 mt-3 pt-3 border-top border-light-subtle gap-2">
+                <p class="site-footer__credit m-0" th:text="#{footer.credit}">Designed and developed by C-DAC</p>
+                <div class="d-flex align-items-center gap-3 flex-wrap justify-content-center">
+                    <a th:href="@{/privacy-policy}" class="site-footer__credit text-decoration-none" th:text="#{misc.privacy.heading}"><i class="bi bi-shield-check me-1"></i>Privacy Policy</a>
+                    <span class="text-muted small">&middot;</span>
+                    <a th:href="@{/account-deletion}" class="site-footer__credit text-decoration-none">Account Deletion</a>
+                    <span class="text-muted small">&middot;</span>
+                    <a th:href="@{/inquiry}" class="site-footer__credit text-decoration-none" th:text="#{nav.contact}">Contact Us</a>
+                </div>
             </div>
         </section>
 

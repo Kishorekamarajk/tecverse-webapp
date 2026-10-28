@@ -156,14 +156,13 @@ public class RegistrationController {
     public ResponseEntity<ApiResponse<TicketRegistrationResponse>> ticketRegister(@Valid @RequestBody TicketRegistrationRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "ticket-registration", request.getEmail(), 5, Duration.ofHours(1), 20, Duration.ofHours(1));
         OtpSessionVerification.require(httpRequest, Purpose.TICKET, request.getEmail());
-        // Temporary bypass: restore this check when mobile OTP verification is re-enabled.
-        // String phone = request.getPhone() == null ? "" : com.tecverse.app.util.ValidationUtil.normalizeIndianMobile(request.getPhone().trim());
-        // if (!OtpSessionVerification.isVerified(httpRequest, Purpose.TICKET_MOBILE, phone)) {
-        //     throw new OtpVerificationRequiredException("Please verify your mobile number with OTP before submitting.");
-        // }
+        String phone = request.getPhone() == null ? "" : com.tecverse.app.util.ValidationUtil.normalizeIndianMobile(request.getPhone().trim());
+        if (!OtpSessionVerification.isVerified(httpRequest, Purpose.TICKET_MOBILE, phone)) {
+            throw new OtpVerificationRequiredException("Please verify your mobile number with OTP before submitting.");
+        }
         TicketRegistrationResponse response = ticketRegistrationService.register(request);
         OtpSessionVerification.consume(httpRequest, Purpose.TICKET);
-        // OtpSessionVerification.consume(httpRequest, Purpose.TICKET_MOBILE);
+        OtpSessionVerification.consume(httpRequest, Purpose.TICKET_MOBILE);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Registration completed.",response));
     }
 

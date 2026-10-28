@@ -300,9 +300,14 @@ class _FloorPlanScreenState extends State<FloorPlanScreen> with TickerProviderSt
                       left: 16,
                       right: 16,
                       bottom: 16,
-                      child: FadeSlideTransition(
-                        delay: Duration.zero,
-                        child: _buildRouteGuidanceCard(_activeRoute!),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 620),
+                          child: FadeSlideTransition(
+                            delay: Duration.zero,
+                            child: _buildRouteGuidanceCard(_activeRoute!),
+                          ),
+                        ),
                       ),
                     )
                   else if (_focusedZone != null)
@@ -310,9 +315,14 @@ class _FloorPlanScreenState extends State<FloorPlanScreen> with TickerProviderSt
                       left: 16,
                       right: 16,
                       bottom: 16,
-                      child: FadeSlideTransition(
-                        delay: Duration.zero,
-                        child: _buildZoneFocusCard(_focusedZone!),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 620),
+                          child: FadeSlideTransition(
+                            delay: Duration.zero,
+                            child: _buildZoneFocusCard(_focusedZone!),
+                          ),
+                        ),
                       ),
                     ),
                 ],

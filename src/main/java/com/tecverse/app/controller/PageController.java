@@ -605,12 +605,12 @@ public class PageController {
         return "become-sponsor";
     }
 
-    @GetMapping({"/privacy-policy", "/privacy"})
+    @GetMapping({"/privacy-policy", "/privacy-policy/", "/privacy", "/privacy/", "/privacy-policy.html", "/privacy.html"})
     public String privacyPolicy() {
         return "privacy-policy";
     }
 
-    @GetMapping({"/account-deletion", "/delete-account"})
+    @GetMapping({"/account-deletion", "/account-deletion/", "/delete-account", "/delete-account/", "/account-deletion.html"})
     public String accountDeletion() {
         return "account-deletion";
     }

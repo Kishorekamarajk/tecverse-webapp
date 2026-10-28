@@ -314,243 +314,291 @@ class _SessionsScreenState extends State<SessionsScreen> {
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         top: false,
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            // ─── 1. Header Banner ───
-            SliverToBoxAdapter(
-              child: _buildHeaderBanner(context),
-            ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth >= 650;
+            final contentPadding = constraints.maxWidth > 1040
+                ? (constraints.maxWidth - 1000) / 2
+                : 16.0;
 
-            // ─── 2. Search Field & Filter Button + Day Filter Chips ───
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Column(
-                  children: [
-                    // Search Bar & Filter Button
-                    Row(
-                      children: [
-                        // Search Text Field
-                        Expanded(
-                          child: Container(
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: const Color(0xFFE5E7EB), width: 1.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF102A43).withValues(alpha: 0.04),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              controller: _searchController,
-                              onChanged: (val) => setState(() => _searchQuery = val.trim()),
-                              style: const TextStyle(
-                                color: Color(0xFF0F172A),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Search sessions, speakers, halls...',
-                                hintStyle: const TextStyle(
-                                  fontSize: 13,
-                                  color: Color(0xFF94A3B8),
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF64748B), size: 20),
-                                suffixIcon: _searchQuery.isNotEmpty
-                                    ? IconButton(
-                                        icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFF64748B)),
-                                        onPressed: () {
-                                          _searchController.clear();
-                                          setState(() => _searchQuery = '');
-                                        },
-                                      )
-                                    : null,
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(width: 10),
-
-                        // Filter Button
-                        InkWell(
-                          onTap: () {
-                            if (user != null) {
-                              _openInterestSelector(context, user);
-                            }
-                          },
-                          borderRadius: BorderRadius.circular(14),
-                          child: Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFF7ED),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: const Color(0xFFFED7AA), width: 1.0),
-                            ),
-                            child: const Icon(
-                              Icons.tune_rounded,
-                              color: Color(0xFFF97316),
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Day Filter Tabs (All Days, Day 1, Day 2)
-                    Row(
-                      children: [
-                        _buildDayChip('All', 'All Days'),
-                        const SizedBox(width: 8),
-                        _buildDayChip('Day 1', 'Day 1 (Nov 26)'),
-                        const SizedBox(width: 8),
-                        _buildDayChip('Day 2', 'Day 2 (Nov 27)'),
-                      ],
-                    ),
-                  ],
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                // ─── 1. Header Banner ───
+                SliverToBoxAdapter(
+                  child: _buildHeaderBanner(context, contentPadding: contentPadding),
                 ),
-              ),
-            ),
 
-            // ─── 3. Technology Domains Section ───
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 8),
-                child: _buildTechnologyDomainsFilterBar(userInterests),
-              ),
-            ),
-
-            // ─── 4. Results Count & Sort Dropdown ───
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        '${filteredSessions.length} SESSIONS FOUND',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF0F172A),
-                          letterSpacing: 0.5,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+                // ─── 2. Search Field & Filter Button + Day Filter Chips ───
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: contentPadding, vertical: 8),
+                    child: Column(
                       children: [
-                        const Text(
-                          'Sort by',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF64748B),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        PopupMenuButton<String>(
-                          initialValue: _sortBy,
-                          onSelected: (val) => setState(() => _sortBy = val),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFE5E7EB)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  _sortBy,
+                        // Search Bar & Filter Button
+                        Row(
+                          children: [
+                            // Search Text Field
+                            Expanded(
+                              child: Container(
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: const Color(0xFFE5E7EB), width: 1.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF102A43).withValues(alpha: 0.04),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: TextField(
+                                  controller: _searchController,
+                                  onChanged: (val) => setState(() => _searchQuery = val.trim()),
                                   style: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
                                     color: Color(0xFF0F172A),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  decoration: InputDecoration(
+                                    hintText: 'Search sessions, speakers, halls...',
+                                    hintStyle: const TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xFF94A3B8),
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF64748B), size: 20),
+                                    suffixIcon: _searchQuery.isNotEmpty
+                                        ? IconButton(
+                                            icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFF64748B)),
+                                            onPressed: () {
+                                              _searchController.clear();
+                                              setState(() => _searchQuery = '');
+                                            },
+                                          )
+                                        : null,
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                   ),
                                 ),
-                                const SizedBox(width: 2),
-                                const Icon(Icons.keyboard_arrow_down_rounded, size: 14, color: Color(0xFF0F172A)),
-                              ],
+                              ),
                             ),
-                          ),
-                          itemBuilder: (context) => [
-                            const PopupMenuItem(value: 'Time (Earliest)', child: Text('Time (Earliest)')),
-                            const PopupMenuItem(value: 'Time (Latest)', child: Text('Time (Latest)')),
-                            const PopupMenuItem(value: 'Title (A-Z)', child: Text('Title (A-Z)')),
+
+                            const SizedBox(width: 10),
+
+                            // Filter Button
+                            InkWell(
+                              onTap: () {
+                                if (user != null) {
+                                  _openInterestSelector(context, user);
+                                }
+                              },
+                              borderRadius: BorderRadius.circular(14),
+                              child: Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF7ED),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: const Color(0xFFFED7AA), width: 1.0),
+                                ),
+                                child: const Icon(
+                                  Icons.tune_rounded,
+                                  color: Color(0xFFF97316),
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // Day Filter Tabs (All Days, Day 1, Day 2)
+                        Row(
+                          children: [
+                            _buildDayChip('All', 'All Days'),
+                            const SizedBox(width: 8),
+                            _buildDayChip('Day 1', constraints.maxWidth < 360 ? 'Day 1' : 'Day 1 (Nov 26)'),
+                            const SizedBox(width: 8),
+                            _buildDayChip('Day 2', constraints.maxWidth < 360 ? 'Day 2' : 'Day 2 (Nov 27)'),
                           ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-
-            // ─── 5. Sessions List Content ───
-            if (filteredSessions.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: _buildEmptyState(),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final session = filteredSessions[index];
-                      final isBookmarked = _bookmarkedTitles.contains(session.title);
-
-                      return RecommendedSessionCard(
-                        session: session,
-                        isBookmarked: isBookmarked,
-                        onTap: () => _showSessionDetails(context, session),
-                        onAddToSchedule: () {
-                          setState(() {
-                            if (_bookmarkedTitles.contains(session.title)) {
-                              _bookmarkedTitles.remove(session.title);
-                            } else {
-                              _bookmarkedTitles.add(session.title);
-                            }
-                          });
-                        },
-                      );
-                    },
-                    childCount: filteredSessions.length,
                   ),
                 ),
-              ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-          ],
+                // ─── 3. Technology Domains Section ───
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: contentPadding,
+                      right: contentPadding,
+                      top: 10,
+                      bottom: 8,
+                    ),
+                    child: _buildTechnologyDomainsFilterBar(userInterests),
+                  ),
+                ),
+
+                // ─── 4. Results Count & Sort Dropdown ───
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(contentPadding, 8, contentPadding, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            '${filteredSessions.length} SESSIONS FOUND',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF0F172A),
+                              letterSpacing: 0.5,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Sort by',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF64748B),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            PopupMenuButton<String>(
+                              initialValue: _sortBy,
+                              onSelected: (val) => setState(() => _sortBy = val),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      _sortBy,
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 2),
+                                    const Icon(Icons.keyboard_arrow_down_rounded, size: 14, color: Color(0xFF0F172A)),
+                                  ],
+                                ),
+                              ),
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(value: 'Time (Earliest)', child: Text('Time (Earliest)')),
+                                const PopupMenuItem(value: 'Time (Latest)', child: Text('Time (Latest)')),
+                                const PopupMenuItem(value: 'Title (A-Z)', child: Text('Title (A-Z)')),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // ─── 5. Sessions List Content (Adaptive Grid on Tablets, Single List on Phones) ───
+                if (filteredSessions.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _buildEmptyState(),
+                  )
+                else if (isWide)
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: contentPadding),
+                    sliver: SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: constraints.maxWidth >= 1050 ? 3 : 2,
+                        mainAxisExtent: 172,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final session = filteredSessions[index];
+                          final isBookmarked = _bookmarkedTitles.contains(session.title);
+
+                          return RecommendedSessionCard(
+                            session: session,
+                            isBookmarked: isBookmarked,
+                            onTap: () => _showSessionDetails(context, session),
+                            onAddToSchedule: () {
+                              setState(() {
+                                if (_bookmarkedTitles.contains(session.title)) {
+                                  _bookmarkedTitles.remove(session.title);
+                                } else {
+                                  _bookmarkedTitles.add(session.title);
+                                }
+                              });
+                            },
+                          );
+                        },
+                        childCount: filteredSessions.length,
+                      ),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: contentPadding),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final session = filteredSessions[index];
+                          final isBookmarked = _bookmarkedTitles.contains(session.title);
+
+                          return RecommendedSessionCard(
+                            session: session,
+                            isBookmarked: isBookmarked,
+                            onTap: () => _showSessionDetails(context, session),
+                            onAddToSchedule: () {
+                              setState(() {
+                                if (_bookmarkedTitles.contains(session.title)) {
+                                  _bookmarkedTitles.remove(session.title);
+                                } else {
+                                  _bookmarkedTitles.add(session.title);
+                                }
+                              });
+                            },
+                          );
+                        },
+                        childCount: filteredSessions.length,
+                      ),
+                    ),
+                  ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
   /// Top Header Banner matching the reference screenshot
-  Widget _buildHeaderBanner(BuildContext context) {
+  Widget _buildHeaderBanner(BuildContext context, {double contentPadding = 16.0}) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -599,9 +647,9 @@ class _SessionsScreenState extends State<SessionsScreen> {
           // Content
           Padding(
             padding: EdgeInsets.fromLTRB(
-              16,
+              contentPadding,
               MediaQuery.of(context).padding.top + 12,
-              16,
+              contentPadding,
               16,
             ),
             child: Column(

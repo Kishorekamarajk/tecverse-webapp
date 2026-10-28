@@ -417,94 +417,102 @@ class _ScheduleScreenState extends State<ScheduleScreen>
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         top: false,
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            // ─── 1. Header Banner matching screenshot ───
-            SliverToBoxAdapter(
-              child: _buildHeaderBanner(context),
-            ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final contentPadding = constraints.maxWidth > 900
+                ? (constraints.maxWidth - 840) / 2
+                : 16.0;
 
-            // ─── 2. Day Selector Cards (Day 01 vs Day 02) ───
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildDayCard(
-                        dayIndex: 0,
-                        title: 'DAY 01',
-                        date: '26 November 2026',
-                        isSelected: _selectedDay == 0,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildDayCard(
-                        dayIndex: 1,
-                        title: 'DAY 02',
-                        date: '27 November 2026',
-                        isSelected: _selectedDay == 1,
-                      ),
-                    ),
-                  ],
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                // ─── 1. Header Banner matching screenshot ───
+                SliverToBoxAdapter(
+                  child: _buildHeaderBanner(context, contentPadding: contentPadding),
                 ),
-              ),
-            ),
 
-            // ─── 3. Event Category Filter Chips ───
-            SliverToBoxAdapter(
-              child: _buildCategoryFilterChips(),
-            ),
-
-            if (_isLoading)
-              const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                  child: LinearProgressIndicator(
-                    backgroundColor: Color(0xFFE2E8F0),
-                    color: Color(0xFFF97316),
-                    minHeight: 2,
+                // ─── 2. Day Selector Cards (Day 01 vs Day 02) ───
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: contentPadding, vertical: 12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _buildDayCard(
+                            dayIndex: 0,
+                            title: 'DAY 01',
+                            date: '26 November 2026',
+                            isSelected: _selectedDay == 0,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildDayCard(
+                            dayIndex: 1,
+                            title: 'DAY 02',
+                            date: '27 November 2026',
+                            isSelected: _selectedDay == 1,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-            // ─── 4. Timeline Schedule Content ───
-            if (filteredEvents.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: _buildEmptyState(),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final event = filteredEvents[index];
-                      final isLast = index == filteredEvents.length - 1;
-                      final isFirst = index == 0;
-
-                      return _buildTimelineItem(
-                        event: event,
-                        isFirst: isFirst,
-                        isLast: isLast,
-                        onTap: () => _showEventDetails(context, event),
-                      );
-                    },
-                    childCount: filteredEvents.length,
-                  ),
+                // ─── 3. Event Category Filter Chips ───
+                SliverToBoxAdapter(
+                  child: _buildCategoryFilterChips(contentPadding: contentPadding),
                 ),
-              ),
-          ],
+
+                if (_isLoading)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: contentPadding, vertical: 4),
+                      child: const LinearProgressIndicator(
+                        backgroundColor: Color(0xFFE2E8F0),
+                        color: Color(0xFFF97316),
+                        minHeight: 2,
+                      ),
+                    ),
+                  ),
+
+                // ─── 4. Timeline Schedule Content ───
+                if (filteredEvents.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _buildEmptyState(),
+                  )
+                else
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(contentPadding, 12, contentPadding, 24),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final event = filteredEvents[index];
+                          final isLast = index == filteredEvents.length - 1;
+                          final isFirst = index == 0;
+
+                          return _buildTimelineItem(
+                            event: event,
+                            isFirst: isFirst,
+                            isLast: isLast,
+                            onTap: () => _showEventDetails(context, event),
+                          );
+                        },
+                        childCount: filteredEvents.length,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
   /// 1. Top Header Banner with Panoramic Backdrop & Floating Days Pill
-  Widget _buildHeaderBanner(BuildContext context) {
+  Widget _buildHeaderBanner(BuildContext context, {double contentPadding = 16.0}) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -553,9 +561,9 @@ class _ScheduleScreenState extends State<ScheduleScreen>
           // Content
           Padding(
             padding: EdgeInsets.fromLTRB(
-              16,
+              contentPadding,
               MediaQuery.of(context).padding.top + 12,
-              16,
+              contentPadding,
               16,
             ),
             child: Column(
@@ -809,7 +817,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
   }
 
   /// 3. Horizontal Category Chips
-  Widget _buildCategoryFilterChips() {
+  Widget _buildCategoryFilterChips({double contentPadding = 16.0}) {
     final filters = [
       {'id': 'ALL', 'label': 'All Events', 'icon': Icons.grid_view_rounded},
       {'id': 'KEYNOTE', 'label': 'Keynotes & Talks', 'icon': Icons.mic_rounded},
@@ -822,7 +830,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
       height: 40,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: contentPadding),
         physics: const BouncingScrollPhysics(),
         itemCount: filters.length,
         separatorBuilder: (context, index) => const SizedBox(width: 8),

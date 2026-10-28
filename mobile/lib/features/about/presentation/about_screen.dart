@@ -22,9 +22,9 @@ class AboutScreen extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final isDesktop = constraints.maxWidth > 840;
-            final horizontalPadding = isDesktop ? 40.0 : 16.0;
-            final maxContentWidth = isDesktop ? 780.0 : double.infinity;
+            final isTabletOrDesktop = constraints.maxWidth >= 600;
+            final horizontalPadding = isTabletOrDesktop ? 32.0 : 16.0;
+            const maxContentWidth = 820.0;
 
             return CustomScrollView(
               physics: const BouncingScrollPhysics(),

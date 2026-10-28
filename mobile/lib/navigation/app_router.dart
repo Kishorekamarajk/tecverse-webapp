@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../features/authentication/presentation/login_screen.dart';
 import '../features/digital_pass/presentation/digital_pass_screen.dart';
+import '../features/profile/presentation/privacy_policy_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/schedule/presentation/schedule_screen.dart';
 import '../features/splash/presentation/splash_screen.dart';
@@ -14,6 +15,7 @@ class AppRouter {
   static const String pass = '/pass';
   static const String profile = '/profile';
   static const String schedule = '/schedule';
+  static const String privacyPolicy = '/privacy-policy';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -55,6 +57,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case schedule:
         return MaterialPageRoute(builder: (_) => const ScheduleScreen());
+      case privacyPolicy:
+        return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

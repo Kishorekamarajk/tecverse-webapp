@@ -199,31 +199,36 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       appBar: _buildAppBar(),
       body: TecVerseAmbientBackground(
         child: SafeArea(
-          child: Column(
-            children: [
-              // Message Stream
-              Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  itemCount: _messages.length + (_isTyping ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == _messages.length && _isTyping) {
-                      return _buildTypingIndicator();
-                    }
-                    final message = _messages[index];
-                    return _buildMessageItem(message);
-                  },
-                ),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 820),
+              child: Column(
+                children: [
+                  // Message Stream
+                  Expanded(
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      itemCount: _messages.length + (_isTyping ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == _messages.length && _isTyping) {
+                          return _buildTypingIndicator();
+                        }
+                        final message = _messages[index];
+                        return _buildMessageItem(message);
+                      },
+                    ),
+                  ),
+
+                  // Dynamic Horizontal FAQ Questions Bar from Database
+                  _buildHorizontalFaqBar(),
+
+                  // Bottom Input & Voice Trigger Bar
+                  _buildInputBar(),
+                ],
               ),
-
-              // Dynamic Horizontal FAQ Questions Bar from Database
-              _buildHorizontalFaqBar(),
-
-              // Bottom Input & Voice Trigger Bar
-              _buildInputBar(),
-            ],
+            ),
           ),
         ),
       ),

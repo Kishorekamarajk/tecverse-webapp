@@ -460,10 +460,13 @@ class _LocationScreenState extends State<LocationScreen> with SingleTickerProvid
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 820),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           // Destination Info Header
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -623,7 +626,7 @@ class _LocationScreenState extends State<LocationScreen> with SingleTickerProvid
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

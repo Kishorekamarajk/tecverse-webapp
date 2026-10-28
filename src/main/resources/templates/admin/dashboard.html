@@ -154,19 +154,33 @@
     document.addEventListener("DOMContentLoaded", () => {
         const recordsModal = document.getElementById("registrationRecordsModal");
         const recordsBody = document.getElementById("registrationRecordsBody");
-        document.querySelectorAll("[data-record-url]").forEach((card) => card.addEventListener("click", async (event) => {
-            event.preventDefault();
-            document.getElementById("registrationRecordsTitle").textContent = card.dataset.recordTitle;
+        let activeRecordsUrl = "";
+        const loadRegistrationPage = async (url) => {
             recordsBody.innerHTML = '<div class="text-center py-4">Loading records...</div>';
-            bootstrap.Modal.getOrCreateInstance(recordsModal).show();
             try {
-                const response = await fetch(card.dataset.recordUrl, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+                const response = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
                 if (!response.ok) throw new Error("Unable to load records.");
                 recordsBody.innerHTML = await response.text();
             } catch (error) {
                 recordsBody.innerHTML = '<div class="alert alert-danger mb-0">Could not load records. Please try again.</div>';
             }
+        };
+        document.querySelectorAll("[data-record-url]").forEach((card) => card.addEventListener("click", async (event) => {
+            event.preventDefault();
+            activeRecordsUrl = card.dataset.recordUrl;
+            document.getElementById("registrationRecordsTitle").textContent = card.dataset.recordTitle;
+            bootstrap.Modal.getOrCreateInstance(recordsModal).show();
+            await loadRegistrationPage(activeRecordsUrl);
         }));
+        recordsBody.addEventListener("click", async (event) => {
+            const button = event.target.closest("[data-registration-page]");
+            if (!button || button.disabled || !activeRecordsUrl) return;
+            const currentUrl = new URL(activeRecordsUrl, window.location.origin);
+            const currentPage = Number(currentUrl.searchParams.get("page") || 0);
+            currentUrl.searchParams.set("page", String(Math.max(0, currentPage + (button.dataset.registrationPage === "next" ? 1 : -1))));
+            activeRecordsUrl = currentUrl.pathname + currentUrl.search;
+            await loadRegistrationPage(activeRecordsUrl);
+        });
         if (typeof Chart === "undefined") {
             document.querySelectorAll(".admin-submission-chart-wrap").forEach((wrap) => {
                 wrap.innerHTML = '<div class="alert alert-warning mb-0">Charts could not load. Refresh the page or check the network connection.</div>';
