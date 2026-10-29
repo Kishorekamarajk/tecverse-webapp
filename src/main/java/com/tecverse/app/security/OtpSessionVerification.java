@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpSession;
 public final class OtpSessionVerification {
 
     /** TICKET_MOBILE records the verified mobile number (stored in place of the email). */
-    public enum Purpose { TICKET, TICKET_MOBILE, EXHIBITOR, SPONSOR }
+    public enum Purpose { TICKET, TICKET_MOBILE, EXHIBITOR, EXHIBITOR_MOBILE, SPONSOR, SPONSOR_MOBILE }
 
     private static final Duration VALIDITY = Duration.ofMinutes(30);
 

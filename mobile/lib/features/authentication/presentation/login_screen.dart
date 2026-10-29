@@ -9,7 +9,6 @@ import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/futuristic_background.dart';
 import '../../../core/widgets/institution_logos_bar.dart';
 import '../../../core/widgets/tech_button.dart';
-import '../../profile/presentation/privacy_policy_screen.dart';
 import '../presentation/auth_controller.dart';
 import 'forgot_password_screen.dart';
 
@@ -100,6 +99,15 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: _launchRegistrationUrl,
           ),
         ),
+      );
+    }
+  }
+
+  Future<void> _launchPolicyUrl(String url, String pageName) async {
+    final launched = await openExternalUrl(url);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not open $pageName. Please try again.')),
       );
     }
   }
@@ -368,15 +376,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    // In-app Privacy Policy access for unauthenticated users & Play Store reviewers
+                    // Website policy links, available before sign-in.
                     InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const PrivacyPolicyScreen(),
-                          ),
-                        );
-                      },
+                      onTap: () => _launchPolicyUrl(
+                        ApiConstants.privacyPolicyUrl,
+                        'the Privacy Policy',
+                      ),
                       borderRadius: BorderRadius.circular(6),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -391,6 +396,37 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(width: 4),
                             Text(
                               'Privacy Policy',
+                              style: AppTypography.bodySmall.copyWith(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => _launchPolicyUrl(
+                        ApiConstants.termsAndConditionsUrl,
+                        'Terms and Conditions',
+                      ),
+                      borderRadius: BorderRadius.circular(6),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.description_outlined,
+                              size: 13,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Terms and Conditions',
                               style: AppTypography.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                                 fontSize: 12,

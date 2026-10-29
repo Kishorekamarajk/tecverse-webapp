@@ -55,8 +55,8 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
   late AnimationController _rippleController;
   final TextEditingController _voiceInputController = TextEditingController();
 
-  VoiceState _state = VoiceState.listening;
-  String _transcriptText = 'Listening... Speak now or tap below';
+  VoiceState _state = VoiceState.idle;
+  String _transcriptText = 'Tap the microphone to start voice search, or type a question below.';
   String _aiResponseSnippet = '';
   double _soundLevel = 0.0;
   Timer? _silenceTimer;
@@ -81,7 +81,39 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
     )..repeat();
 
     _loadVoiceCommands();
-    _startRealVoiceListening();
+  }
+
+  /// Explain voice processing before requesting Android's microphone permission.
+  Future<void> _requestVoiceStart() async {
+    final consent = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Use microphone for voice search?'),
+        content: const Text(
+          'If you continue, Android will ask for microphone access. Your device’s speech-recognition service processes your speech and returns text. Tec-Verse sends that recognized text to its FAQ service to answer your question; Tec-Verse does not upload or store raw audio on its servers. Your device or speech provider may process audio under its own privacy policy. You can choose Not now and type instead.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Not now'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted) return;
+    if (consent == true) {
+      await _startRealVoiceListening();
+    } else {
+      setState(() {
+        _state = VoiceState.idle;
+        _transcriptText = 'Voice search was not started. Type a question or tap the microphone when you are ready.';
+      });
+    }
   }
 
   Future<void> _loadVoiceCommands() async {
@@ -318,6 +350,10 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
                         children: [
                           IconButton(
                             onPressed: () {
+                              if (!_showTextInput) {
+                                _requestVoiceStart();
+                                return;
+                              }
                               setState(() {
                                 _showTextInput = !_showTextInput;
                               });
@@ -327,7 +363,7 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
                               color: AppColors.textSecondary,
                               size: 20,
                             ),
-                            tooltip: _showTextInput ? 'Switch to Voice' : 'Type Command',
+                            tooltip: _showTextInput ? 'Show keyboard' : 'Start voice search',
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                           ),
@@ -345,7 +381,7 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
 
                   const SizedBox(height: 22),
 
-                  // Central Glowing Mic / Robot Orb with live audio reactivity
+                  // Voice orb; tapping it asks before starting microphone access.
                   _buildAcousticWaveOrb(),
 
                   const SizedBox(height: 20),
@@ -467,7 +503,7 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
                           if (val.isNotEmpty) {
                             _executeVoiceQuery(val);
                           } else {
-                            _startRealVoiceListening();
+                            _requestVoiceStart();
                           }
                         },
                         icon: Icon(
@@ -490,7 +526,7 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'OR TAP A QUICK VOICE COMMAND:',
+                        'OR CHOOSE A QUICK PROMPT:',
                         style: AppTypography.metaTag.copyWith(
                           fontSize: 9.5,
                           fontWeight: FontWeight.w700,
@@ -577,7 +613,7 @@ class _VoiceAssistantModalState extends State<VoiceAssistantModal>
             if (_voiceInputController.text.trim().isNotEmpty) {
               _executeVoiceQuery(_voiceInputController.text.trim());
             } else {
-              _startRealVoiceListening();
+              _requestVoiceStart();
             }
           },
           child: Stack(

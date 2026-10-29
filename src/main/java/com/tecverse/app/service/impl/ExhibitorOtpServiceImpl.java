@@ -2,6 +2,8 @@ package com.tecverse.app.service.impl;
 
 import com.tecverse.app.service.ExhibitorOtpService;
 import com.tecverse.app.service.MailDeliveryService;
+import com.tecverse.app.util.OtpConsoleLogger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -22,6 +24,9 @@ public class ExhibitorOtpServiceImpl implements ExhibitorOtpService {
     private final SecureRandom random = new SecureRandom();
     private final MailDeliveryService mailDeliveryService;
 
+    @Value("${tecverse.otp.log-to-console:false}")
+    private boolean logOtpsToConsole;
+
     public ExhibitorOtpServiceImpl(MailDeliveryService mailDeliveryService) {
         this.mailDeliveryService = mailDeliveryService;
     }
@@ -40,12 +45,14 @@ public class ExhibitorOtpServiceImpl implements ExhibitorOtpService {
                 + "Tec-Verse Team";
 
         try {
-            mailDeliveryService.sendSimple(
+            boolean sent = mailDeliveryService.sendSimple(
                     normalized,
                     "Tec-Verse Exhibitor Email Verification OTP",
                     body,
                     "Exhibitor OTP"
             );
+            if (!sent) throw new IllegalStateException("Unable to send exhibitor OTP email.");
+            OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "Exhibitor email verification", otp);
         } catch (IllegalStateException ex) {
             codes.remove(normalized);
             throw ex;

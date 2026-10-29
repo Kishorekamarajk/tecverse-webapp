@@ -2,6 +2,8 @@ package com.tecverse.app.fetcher;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
@@ -33,10 +35,12 @@ public class YouTubeVideoFetcher implements SocialMediaFetcher {
 
     private static final Logger log = LoggerFactory.getLogger(YouTubeVideoFetcher.class);
     private static final String YOUTUBE_API_BASE_URL = "https://www.googleapis.com/youtube/v3";
+    private static final ZoneId YOUTUBE_QUOTA_ZONE = ZoneId.of("America/Los_Angeles");
     private static final int MAX_TITLE_LENGTH = 180;
 
     private final RestClient restClient;
     private final SocialMediaProperties.YouTube config;
+    private volatile Instant quotaBlockedUntil;
 
     public YouTubeVideoFetcher(RestClient socialMediaRestClient, SocialMediaProperties socialMediaProperties) {
         this.restClient = socialMediaRestClient;
@@ -52,6 +56,13 @@ public class YouTubeVideoFetcher implements SocialMediaFetcher {
     public List<SocialPostDto> fetchLatestPosts() {
         if (!config.isEnabled() || isBlank(config.getApiKey()) || isBlank(config.getChannelId())) {
             log.debug("YouTube fetcher is disabled or not configured; skipping.");
+            return Collections.emptyList();
+        }
+
+        Instant blockedUntil = quotaBlockedUntil;
+        if (blockedUntil != null && Instant.now().isBefore(blockedUntil)) {
+            log.debug("Skipping YouTube fetch because the daily API quota is exhausted; retrying after {}.",
+                    blockedUntil);
             return Collections.emptyList();
         }
 
@@ -169,12 +180,24 @@ public class YouTubeVideoFetcher implements SocialMediaFetcher {
 
     private void logApiError(RestClientResponseException ex) {
         int statusCode = ex.getStatusCode().value();
+        String responseBody = ex.getResponseBodyAsString();
+        if (responseBody != null && responseBody.contains("quotaExceeded")) {
+            ZonedDateTime nextQuotaReset = ZonedDateTime.now(YOUTUBE_QUOTA_ZONE)
+                    .toLocalDate()
+                    .plusDays(1)
+                    .atStartOfDay(YOUTUBE_QUOTA_ZONE);
+            quotaBlockedUntil = nextQuotaReset.toInstant();
+            log.warn("YouTube daily API quota is exhausted. Using saved videos and pausing YouTube requests until {}.",
+                    nextQuotaReset);
+            return;
+        }
         if (statusCode == 429) {
-            log.warn("YouTube API rate limit exceeded: {}", ex.getMessage());
+            log.warn("YouTube API rate limit exceeded (HTTP {}).", statusCode);
         } else if (statusCode == 400 || statusCode == 401 || statusCode == 403) {
-            log.error("YouTube API authentication or configuration failed: {}", ex.getMessage());
+            log.error("YouTube API rejected the request (HTTP {}). Check API key, API enablement, and channel configuration.",
+                    statusCode);
         } else {
-            log.error("YouTube API returned an error (status {}): {}", statusCode, ex.getMessage());
+            log.error("YouTube API returned an error (HTTP {}).", statusCode);
         }
     }
 

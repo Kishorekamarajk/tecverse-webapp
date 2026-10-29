@@ -626,6 +626,8 @@ class _LocationScreenState extends State<LocationScreen> with SingleTickerProvid
               ),
             ],
           ),
+            ],
+          ),
         ),
       ),
     );

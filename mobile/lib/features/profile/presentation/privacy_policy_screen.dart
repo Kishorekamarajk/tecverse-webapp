@@ -29,13 +29,6 @@ class PrivacyPolicyScreen extends StatelessWidget {
           ),
         ),
         centerTitle: false,
-        actions: [
-          IconButton(
-            tooltip: 'Open in Browser',
-            icon: const Icon(Icons.open_in_new_rounded, color: AppColors.primaryOrange, size: 20),
-            onPressed: () => openExternalUrl(ApiConstants.privacyPolicyUrl),
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(color: AppColors.borderSubtle, height: 1),
@@ -75,14 +68,14 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 title: '2. Information We Collect',
                 content:
                     'We collect only the information necessary to provide ticketing, accreditation, and seamless event participation:\n\n'
-                    '• Registration Details: Full name, official email address, mobile phone number, login password (stored strictly as a one-way cryptographic hash), '
+                    'Registration Details: Full name, email address, mobile phone number and password (stored as a one-way hash), '
                     'registration category (e.g. Delegate, Student, Exhibitor), organization or institution name, designation, city, student ID (for student delegates), '
                     'and preferred attendance days.\n\n'
-                    '• Passport Details (Foreign Nationals only): Passport number, expiration date, and full name as printed on passport, collected strictly for required '
-                    'event security clearances and venue entry accreditation.\n\n'
-                    '• App Usage & Preferences: Technology domain interests you choose, session bookmarks, questions submitted to the event FAQ/assistant, '
+                    'Passport Details (Foreign Nationals only): Passport number, expiration date, and full name as printed on passport, collected where required for '
+                    'event entry, identity verification or security procedures.\n\n'
+                    'App Usage & Preferences: Technology domain interests you choose and text questions submitted to the event FAQ/assistant, including recognized text from voice search; '
                     'and digital pass check-in status at the venue.\n\n'
-                    '• What We DO NOT Collect: We do not access or collect your GPS location, phone contacts, photos, media gallery, or advertising identifiers. '
+                    'Data not collected through app permissions: the app does not request GPS, contacts, camera, photos or media permissions, and does not use advertising identifiers. '
                     'We do not use your personal information for advertising or commercial profiling.',
               ),
 
@@ -93,10 +86,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 icon: Icons.mic_none_rounded,
                 title: '3. Microphone Usage (Optional Voice Search)',
                 content:
-                    'The app requests microphone access (android.permission.RECORD_AUDIO) solely when you voluntarily tap the voice search / AI assistant button.\n\n'
-                    '• Speech-to-Text: Audio is processed transiently by your device\'s built-in speech-recognition service to convert your voice into text queries.\n'
-                    '• Privacy Guarantee: Tec-Verse does NOT record, transmit, or store any raw audio recordings on our servers. Audio processing is governed by your '
-                    'device operating system\'s speech recognition service. You can use text search without ever granting microphone access.',
+                    'Before Android asks for microphone access, the app explains voice search and lets you choose whether to continue. Permission is requested only after you tap the microphone; you can deny it and type instead.\n\n'
+                    'Your device\'s speech-recognition service processes speech and returns recognized text. Tec-Verse sends that text to its FAQ service to answer your question and does not upload or store raw audio on Tec-Verse servers. Your device or speech provider may process audio under its own privacy policy. You can revoke microphone access in Android Settings.',
               ),
 
               const SizedBox(height: 16),
@@ -107,10 +98,10 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 title: '4. How We Use Collected Data',
                 content:
                     'Your data is processed strictly for official event purposes:\n\n'
-                    '• Digital Pass & Venue Entry: Generating your personalized digital pass and unique encrypted QR code for on-site security verification at Chennai Trade Centre.\n\n'
-                    '• Authentication: One-time password (OTP) verification for secure login and account recovery.\n\n'
-                    '• Event Communications: Delivering important schedule updates, keynote announcements, and venue alerts.\n\n'
-                    '• Safety & Administration: Managing attendee counts, hall capacities, and overall venue safety.',
+                    'Digital Pass & Venue Entry: Generating your personalized digital pass and QR code for registration verification and event entry.\n\n'
+                    'Authentication: One-time password (OTP) verification for secure login and account recovery.\n\n'
+                    'Event Communications: Delivering registration confirmations, schedule information and operational event notices.\n\n'
+                    'Safety & Administration: Managing registration, entry and event operations.',
               ),
 
               const SizedBox(height: 16),
@@ -120,11 +111,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 icon: Icons.share_outlined,
                 title: '5. Sharing & Disclosure',
                 content:
-                    '• No Commercial Sale: We do not sell, rent, trade, or monetize personal information.\n\n'
-                    '• Authorized Personnel: Data is accessible only to authorized C-DAC event administration and technical staff.\n\n'
-                    '• Essential Infrastructure: Trusted service providers hosting our servers and delivering transactional OTP emails/SMS process data under strict confidentiality obligations.\n\n'
-                    '• Maps Navigation: When you request directions to the venue, the app opens your preferred external map application (Google Maps / Apple Maps); no continuous location data is tracked.\n\n'
-                    '• Legal Compliance: Data may only be disclosed if mandatory under Indian law or requested by government security agencies for venue safety.',
+                    'We do not sell personal data. Authorized C-DAC event personnel may access data for their work. Hosting, database, email and SMS providers process data as needed to operate services and deliver messages. Google Fonts may receive a font request and standard connection information. Your device speech-recognition provider may process audio when you choose voice search. Maps providers receive directions information when you choose to open directions. We may disclose relevant data when required by applicable law or legal process.',
               ),
 
               const SizedBox(height: 16),
@@ -134,9 +121,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 icon: Icons.lock_outline_rounded,
                 title: '6. Data Security & Retention',
                 content:
-                    '• Encryption: All data transmitted between the mobile app and our servers uses industry-standard HTTPS/TLS encryption.\n\n'
-                    '• Cryptographic Storage: Passwords are encrypted using salted one-way hashes. Authentication tokens are saved in Android Keystore / encrypted local storage.\n\n'
-                    '• Retention: Personal registration data is retained only for the duration required for Tec-Verse 2026 event operations and post-event reporting, after which it is deleted or permanently anonymized.',
+                    'We use HTTPS for supported app-to-server connections, store passwords as one-way BCrypt hashes, and store app session information using Android secure storage. Access to administrative systems is restricted to authorized personnel. These safeguards reduce risk but cannot guarantee that data will never be accessed through a compromised account, device, system or service provider. Protect your password and device.\n\n'
+                    'Registration information is retained while needed for event administration, reporting, dispute handling and legal obligations. Temporary verification codes expire. Session tokens are removed at sign-out, expiry or account deletion.',
               ),
 
               const SizedBox(height: 16),
@@ -147,11 +133,11 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 title: '7. Your Choices & Account Deletion',
                 isHighlighted: true,
                 content:
-                    'You retain full control over your personal data. You can delete your account and all associated data at any time:\n\n'
-                    '1. Inside the App: Open Profile → Delete Account and confirm deletion.\n'
+                    'You can request account deletion at any time:\n\n'
+                    '1. Inside the App: Open Profile > Delete Account and confirm using your current password.\n'
                     '2. On the Website: Visit the public account deletion portal at:\n'
                     'https://tec-verse.cdac.in/account-deletion\n\n'
-                    'Deleting your account permanently erases your attendee registration, digital entry pass, preference selections, and session bookmarks from our database.',
+                    'In-app deletion asks you to confirm using your current password, then removes your attendee registration, digital pass, app preferences, notifications and check-in records from active service records and ends account access. Information may remain for a limited period where required by law or necessary for a specific security, audit or event-administration obligation. Uninstalling the app only removes app data from your device; it does not delete your server-side account. Use the Delete Account option in Profile or the website deletion page.',
               ),
 
               const SizedBox(height: 16),
@@ -185,20 +171,6 @@ class PrivacyPolicyScreen extends StatelessWidget {
               Center(
                 child: Column(
                   children: [
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppColors.primaryOrange, width: 1.5),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      ),
-                      onPressed: () => openExternalUrl(ApiConstants.privacyPolicyUrl),
-                      icon: const Icon(Icons.open_in_new_rounded, size: 18, color: AppColors.primaryOrange),
-                      label: Text(
-                        'View on Website (tec-verse.cdac.in)',
-                        style: AppTypography.labelLarge.copyWith(color: AppColors.primaryOrange),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
                     TextButton.icon(
                       onPressed: () => openExternalUrl(ApiConstants.accountDeletionUrl),
                       icon: const Icon(Icons.delete_outline_rounded, size: 16, color: AppColors.textSecondary),
@@ -291,7 +263,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 const Icon(Icons.update_rounded, size: 14, color: AppColors.darkNavy),
                 const SizedBox(width: 6),
                 Text(
-                  'Last Updated: October 28, 2026',
+                  'Last Updated: October 29, 2026',
                   style: AppTypography.bodySmall.copyWith(
                     color: AppColors.darkNavy,
                     fontWeight: FontWeight.w600,

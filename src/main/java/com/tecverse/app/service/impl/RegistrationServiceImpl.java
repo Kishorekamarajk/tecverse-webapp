@@ -1,16 +1,15 @@
 package com.tecverse.app.service.impl;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tecverse.app.dto.RegistrationRequest;
 import com.tecverse.app.dto.RegistrationResponse;
+import com.tecverse.app.event.ExhibitorRegistrationSavedEvent;
 import com.tecverse.app.entity.Exhibitor;
 import com.tecverse.app.entity.TecverseRegistration;
 import com.tecverse.app.exception.DuplicateEmailException;
@@ -18,30 +17,31 @@ import com.tecverse.app.exception.DuplicatePhoneException;
 import com.tecverse.app.repository.ExhibitorRepository;
 import com.tecverse.app.repository.TecverseRegistrationRepository;
 import com.tecverse.app.service.ExhibitorOtpService;
-import com.tecverse.app.service.MailDeliveryService;
 import com.tecverse.app.service.RegistrationService;
+import com.tecverse.app.service.TicketRegistrationReferenceService;
 import com.tecverse.app.util.ValidationUtil;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
-    private static final Logger log = LoggerFactory.getLogger(RegistrationServiceImpl.class);
-
     private final TecverseRegistrationRepository repo;
     private final ExhibitorRepository exhibitorRepo;
     private final ExhibitorOtpService otp;
     private final ObjectMapper json;
-    private final MailDeliveryService mailDeliveryService;
+    private final TicketRegistrationReferenceService referenceService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public RegistrationServiceImpl(TecverseRegistrationRepository repo,
                                    ExhibitorRepository exhibitorRepo,
                                    ExhibitorOtpService otp,
                                    ObjectMapper json,
-                                   MailDeliveryService mailDeliveryService) {
+                                   TicketRegistrationReferenceService referenceService,
+                                   ApplicationEventPublisher eventPublisher) {
         this.repo = repo;
         this.exhibitorRepo = exhibitorRepo;
         this.otp = otp;
         this.json = json;
-        this.mailDeliveryService = mailDeliveryService;
+        this.referenceService = referenceService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -53,10 +53,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (!otp.isVerified(email)) {
             throw new IllegalArgumentException("Please verify your official email with OTP before confirmation.");
         }
-        if (repo.existsByEmail(email)) {
+        if (repo.existsByEmailIgnoreCase(email) || exhibitorRepo.existsByEmailIgnoreCase(email)) {
             throw new DuplicateEmailException("This email is already registered.");
         }
-        if (repo.existsByPhone(phone)) {
+        if (repo.existsByPhoneNormalized(phone) || exhibitorRepo.existsByPhoneNormalized(phone)) {
             throw new DuplicatePhoneException("This mobile number is already registered.");
         }
 
@@ -79,7 +79,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         registration.setProductsServices(request.getProducts());
         registration.setSpecialRequirements(request.getSpecialRequirements());
         registration.setRemarks(request.getRemarks());
-        String referenceNumber = reference();
+        String referenceNumber = referenceService.nextExhibitorReference();
         registration.setReferenceNumber(referenceNumber);
         registration.setEmailVerified(true);
         registration.setCompanyLogoUrl(request.getCompanyLogoUrl());
@@ -91,10 +91,12 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new IllegalStateException("Could not serialize registration details", ex);
         }
 
-        registration = repo.save(registration);
+        registration = repo.saveAndFlush(registration);
         saveExhibitor(request, referenceNumber);
         otp.consume(email);
-        sendConfirmation(registration);
+        eventPublisher.publishEvent(new ExhibitorRegistrationSavedEvent(
+                registration.getEmail(), registration.getFullName(), registration.getReferenceNumber(),
+                registration.getCompanyName(), registration.getStallPackage()));
         return toResponse(registration);
     }
 
@@ -115,9 +117,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         exhibitor.setProductServiceCategory(request.getProductServiceCategory());
         exhibitor.setFullName(request.getFullName());
         exhibitor.setDesignation(request.getDesignation());
-        exhibitor.setPhone(request.getPhone());
+        exhibitor.setPhone(ValidationUtil.normalizeIndianMobile(request.getPhone()));
         exhibitor.setWhatsappNumber(request.getWhatsappNumber());
-        exhibitor.setEmail(request.getEmail());
+        exhibitor.setEmail(request.getEmail().trim().toLowerCase());
         exhibitor.setAlternateContactPerson(request.getAlternateContactPerson());
         exhibitor.setAlternateMobileNumber(request.getAlternateMobileNumber());
         exhibitor.setProducts(request.getProducts());
@@ -152,31 +154,21 @@ public class RegistrationServiceImpl implements RegistrationService {
         LocalDateTime now = LocalDateTime.now();
         exhibitor.setCreatedAt(now);
         exhibitor.setUpdatedAt(now);
-        exhibitorRepo.save(exhibitor);
+        exhibitorRepo.saveAndFlush(exhibitor);
     }
 
     @Override
     public boolean checkEmailExists(String email) {
-        return email != null && !email.isBlank() && repo.existsByEmail(email.trim().toLowerCase());
+        if (email == null || email.isBlank()) return false;
+        String normalizedEmail = email.trim().toLowerCase();
+        return repo.existsByEmailIgnoreCase(normalizedEmail) || exhibitorRepo.existsByEmailIgnoreCase(normalizedEmail);
     }
 
     @Override
     public boolean checkPhoneExists(String phone) {
-        return phone != null && !phone.isBlank() && repo.existsByPhone(ValidationUtil.normalizeIndianMobile(phone));
-    }
-
-    private String reference() {
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        SecureRandom random = new SecureRandom();
-        String value;
-        do {
-            StringBuilder builder = new StringBuilder(16);
-            for (int i = 0; i < 16; i++) {
-                builder.append(chars.charAt(random.nextInt(chars.length())));
-            }
-            value = builder.toString();
-        } while (repo.existsByReferenceNumber(value) || exhibitorRepo.existsByReferenceNumber(value));
-        return value;
+        if (phone == null || phone.isBlank()) return false;
+        String normalizedPhone = ValidationUtil.normalizeIndianMobile(phone);
+        return repo.existsByPhoneNormalized(normalizedPhone) || exhibitorRepo.existsByPhoneNormalized(normalizedPhone);
     }
 
     private RegistrationResponse toResponse(TecverseRegistration registration) {
@@ -191,25 +183,4 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .build();
     }
 
-    private void sendConfirmation(TecverseRegistration registration) {
-        String body = "Hello " + registration.getFullName() + ",\n\n"
-                + "Your exhibitor application has been received successfully.\n"
-                + "Reference Number: " + registration.getReferenceNumber() + "\n"
-                + "Company: " + registration.getCompanyName() + "\n"
-                + "Stall Package: " + registration.getStallPackage() + "\n\n"
-                + "Our team will review your application and contact you regarding the next steps.\n\n"
-                + "Tec-Verse Team";
-
-        try {
-            mailDeliveryService.sendSimple(
-                    registration.getEmail(),
-                    "Tec-Verse 2026 Exhibitor Registration - " + registration.getReferenceNumber(),
-                    body,
-                    "Exhibitor confirmation"
-            );
-        } catch (IllegalStateException ex) {
-            log.warn("Exhibitor registration {} was saved, but the confirmation email could not be sent.",
-                    registration.getReferenceNumber(), ex);
-        }
-    }
 }

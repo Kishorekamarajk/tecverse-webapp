@@ -153,12 +153,12 @@ public class MailDeliveryService {
     private static String userMessage(SmtpFailure failure) {
         return switch (failure) {
             case DNS_FAILURE, CONNECT_REFUSED, CONNECT_TIMEOUT, CONNECT_FAILURE ->
-                    "Could not connect to the email server. Check SMTP server availability or network access and try again.";
-            case READ_TIMEOUT -> "The email server did not respond in time. Please try again later.";
+                    "Mail server is temporarily down. Please try again later.";
+            case READ_TIMEOUT -> "Mail server is temporarily down. Please try again later.";
             case TLS_FAILURE -> "A secure connection to the email server could not be established. Please contact support.";
             case AUTHENTICATION_FAILURE -> "The email service could not authenticate. Check the configured SMTP account credentials.";
             case SMTP_REJECTION -> "The email server rejected the message. Please contact support.";
-            case GENERAL_SMTP_FAILURE -> "Unable to send email right now. Please try again later.";
+            case GENERAL_SMTP_FAILURE -> "Mail server is temporarily down. Please try again later.";
         };
     }
 

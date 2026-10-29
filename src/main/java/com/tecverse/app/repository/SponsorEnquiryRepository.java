@@ -14,6 +14,8 @@ public interface SponsorEnquiryRepository extends JpaRepository<SponsorEnquiry, 
 
     boolean existsByEmail(String email);
 
+    boolean existsByEmailIgnoreCase(String email);
+
     boolean existsByPhone(String phone);
     @Query(value = "SELECT TO_CHAR(created_at, 'YYYY-MM') AS label, COUNT(*) AS \"totalCount\" FROM sponsor_enquiries WHERE created_at >= :start GROUP BY 1 ORDER BY 1", nativeQuery = true)
     List<AdminChartPoint> countMonthlySince(@Param("start") LocalDateTime start);

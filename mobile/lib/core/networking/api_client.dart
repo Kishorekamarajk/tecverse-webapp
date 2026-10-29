@@ -306,7 +306,11 @@ class ApiClient {
       case 503:
       case 504:
         appLog('[LOGIN] Error: HTTP $code - $message');
-        throw const ServerUnavailableException('Unable to reach the server. Please try again.');
+        throw ServerUnavailableException(
+          message.isNotEmpty && message != 'An unexpected error occurred'
+              ? message
+              : 'Unable to reach the server. Please try again.',
+        );
       default:
         appLog('[LOGIN] Error: HTTP $code - $message');
         throw ServerException('$message (HTTP $code)');

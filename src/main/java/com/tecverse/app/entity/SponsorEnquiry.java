@@ -71,6 +71,9 @@ public class SponsorEnquiry {
     @Column(name = "message", columnDefinition = "TEXT")
     private String message;
 
+    @Column(name = "logo_url", length = 500)
+    private String logoUrl;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -93,12 +96,12 @@ public class SponsorEnquiry {
     }
 
     public SponsorEnquiry(Long id, String company, String name, String designation, String city, String website, String industry, String email,
-                          String phone, String sponsorshipInterest, boolean emailVerified, String status, String paymentStatus, String message,
+                          String phone, String sponsorshipInterest, boolean emailVerified, String status, String paymentStatus, String message, String logoUrl,
                           LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id; this.company = company; this.name = name; this.designation = designation;
         this.city = city; this.website = website; this.industry = industry; this.email = email; this.phone = phone;
         this.sponsorshipInterest = sponsorshipInterest; this.emailVerified = emailVerified; this.status = status;
-        this.paymentStatus = paymentStatus; this.message = message; this.createdAt = createdAt; this.updatedAt = updatedAt;
+        this.paymentStatus = paymentStatus; this.message = message; this.logoUrl = logoUrl; this.createdAt = createdAt; this.updatedAt = updatedAt;
     }
 
     public static SponsorEnquiryBuilder builder() {
@@ -183,6 +186,9 @@ public class SponsorEnquiry {
         this.message = message;
     }
 
+    public String getLogoUrl() { return logoUrl; }
+    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -214,6 +220,7 @@ public class SponsorEnquiry {
         private String status;
         private String paymentStatus;
         private String message;
+        private String logoUrl;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
@@ -265,6 +272,8 @@ public class SponsorEnquiry {
             return this;
         }
 
+        public SponsorEnquiryBuilder logoUrl(String logoUrl) { this.logoUrl = logoUrl; return this; }
+
         public SponsorEnquiryBuilder createdAt(LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
@@ -277,7 +286,7 @@ public class SponsorEnquiry {
 
         public SponsorEnquiry build() {
             return new SponsorEnquiry(id, company, name, designation, city, website, industry, email, phone,
-                    sponsorshipInterest, emailVerified, status, paymentStatus, message, createdAt, updatedAt);
+                    sponsorshipInterest, emailVerified, status, paymentStatus, message, logoUrl, createdAt, updatedAt);
         }
     }
 }

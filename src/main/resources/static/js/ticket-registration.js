@@ -278,7 +278,7 @@ $('#sendOtp').onclick=async()=>{
  if(emailVerified)return;
  let retryAfterSeconds=0;
  setLoading(btn,true);
- try{await post(API.send,{fullName:name,email,phone,passType:'Tec-Verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;msg($('#emailOtpMsg'),'OTP request accepted. Check your email shortly.',true);m.textContent='';startTimer();$$('#emailOtpInputs input')[0]?.focus();}
+ try{await post(API.send,{fullName:name,email,phone,passType:'Tec-Verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;msg($('#emailOtpMsg'),'OTP sent. Please check your email.',true);m.textContent='';startTimer();$$('#emailOtpInputs input')[0]?.focus();}
  catch(e){msg(otpMessage,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,otpMessage);}
 };

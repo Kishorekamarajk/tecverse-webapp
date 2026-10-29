@@ -5,5 +5,6 @@ public interface TicketOtpService {
  void verifyOtp(String email,String otp);
  boolean isEmailVerified(String email);
  void sendMobileOtp(String phone);
+ void sendExhibitorMobileOtp(String phone);
  void verifyMobileOtp(String phone,String otp);
 }

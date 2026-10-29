@@ -31,7 +31,14 @@ public class TicketRegistrationReferenceService {
     }
 
     public String nextReference(TicketRegistrationRequest request) {
-        String code = referenceCode(request);
+        return nextReference(referenceCode(request));
+    }
+
+    public String nextExhibitorReference() {
+        return nextReference("EX");
+    }
+
+    private String nextReference(String code) {
         Long sequence = jdbcTemplate.queryForObject("""
                 INSERT INTO tecverse_ticket_registration_sequences (reference_code, last_value)
                 VALUES (?, 1)

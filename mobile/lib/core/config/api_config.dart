@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 /// Centralized server URL configuration for Tec-Verse.
 ///
@@ -50,6 +50,9 @@ class ApiConfig {
 
   /// Public account deletion request page.
   static String get accountDeletionUrl => '$webBaseUrl/account-deletion';
+
+  /// Public terms and conditions page.
+  static String get termsAndConditionsUrl => '$webBaseUrl/terms-and-conditions';
 
   /// Ordered candidate base URLs to attempt in sequence
   static List<String> get candidateBaseUrls {

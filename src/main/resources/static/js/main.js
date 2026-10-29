@@ -106,20 +106,6 @@
 })();
 
 (function () {
-    var participationActions = document.querySelector('.home-page .site-floating-actions');
-    if (!participationActions) return;
-
-    var SCROLL_THRESHOLD = 60;
-
-    function updateParticipationActions() {
-        participationActions.classList.toggle('is-scroll-hidden', window.scrollY > SCROLL_THRESHOLD);
-    }
-
-    updateParticipationActions();
-    window.addEventListener('scroll', updateParticipationActions, { passive: true });
-})();
-
-(function () {
     function initNavbarDropdownAutoClose() {
         var dropdowns = document.querySelectorAll('.site-navbar .nav-item.dropdown');
         if (!dropdowns.length) return;

@@ -81,6 +81,9 @@
 
   function fieldRules(element) {
     const rules = {};
+    // Sponsor registration renders phone errors in its dedicated status row;
+    // validation for that field is handled by the sponsor form script.
+    if (element.form?.id === 'sponsorForm' && element.name === 'phone') return rules;
     const $field = $(element);
     if (element.required || $field.attr('aria-required') === 'true') rules.required = true;
     if (element.type === 'email') rules.email = true;
@@ -95,7 +98,8 @@
     if (['text', 'email', 'url', 'search', 'tel', 'textarea'].includes(element.type) || element.tagName === 'TEXTAREA') {
       rules.safeText = true;
     }
-    if (['phone', 'mobile', 'whatsappNumber', 'alternateMobileNumber'].includes(element.name)) rules.indianMobile = true;
+    if (['phone', 'mobile', 'whatsappNumber', 'alternateMobileNumber'].includes(element.name)
+        && !(element.form?.id === 'exhibitorForm' && element.name === 'phone')) rules.indianMobile = true;
     if (['company', 'companyName', 'organizationName', 'collegeName', 'universityName',
       'productServiceCategory', 'productTechnologyName', 'productCategory'].includes(element.name)) rules.containsLetter = true;
     if (element.name === 'gst') rules.gstin = true;
@@ -127,8 +131,31 @@
         errorElement: 'small',
         errorClass: 'jquery-validation-error',
         errorPlacement(error, element) {
+          if (element.name === 'phone' && element.form?.id === 'exhibitorForm') {
+            const phoneError = document.getElementById('phoneFieldError');
+            if (phoneError) {
+              phoneError.textContent = error.text();
+              phoneError.hidden = false;
+              // The validator can retain a previous inline error node from an
+              // earlier placement. Keep only the dedicated mobile error row.
+              error.remove();
+              return;
+            }
+          }
+          if (element.name === 'phone' && element.form?.id === 'sponsorForm') {
+            const phoneError = document.getElementById('sponsorMobileStatus');
+            if (phoneError) {
+              phoneError.textContent = error.text();
+              phoneError.style.color = '#b42318';
+              error.remove();
+              return;
+            }
+          }
           error.css({ display: 'block', color: '#b42318', fontSize: '0.82rem', marginTop: '0.25rem' });
-          const container = element.closest('.form-check, .input-group');
+          // Keep validation text outside custom icon/action controls. Placing it
+          // after the input itself makes it a grid child inside .simple-control,
+          // which can displace the OTP button into a second row.
+          const container = element.closest('.simple-control, .form-check, .input-group');
           error.insertAfter(container.length ? container : element);
         },
         highlight(element) {
@@ -136,6 +163,15 @@
         },
         unhighlight(element) {
           $(element).removeAttr('aria-invalid').removeClass('is-invalid');
+          if (element.name === 'phone' && element.form?.id === 'exhibitorForm') {
+            const phoneError = document.getElementById('phoneFieldError');
+            if (phoneError) { phoneError.textContent = ''; phoneError.hidden = true; }
+            document.getElementById('phone-error')?.remove();
+          }
+          if (element.name === 'phone' && element.form?.id === 'sponsorForm') {
+            const phoneError = document.getElementById('sponsorMobileStatus');
+            if (phoneError?.textContent === 'Enter a valid 10-digit Indian mobile number.') phoneError.textContent = '';
+          }
         }
       });
       const validator = $(form).data('validator');

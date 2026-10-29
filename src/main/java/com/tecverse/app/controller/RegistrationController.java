@@ -22,6 +22,8 @@ import com.tecverse.app.dto.TicketRegistrationResponse;
 import com.tecverse.app.entity.TicketRegistration;
 import com.tecverse.app.repository.TicketRegistrationRepository;
 import com.tecverse.app.exception.OtpVerificationRequiredException;
+import com.tecverse.app.exception.DuplicateEmailException;
+import com.tecverse.app.exception.DuplicatePhoneException;
 import com.tecverse.app.response.ApiResponse;
 import com.tecverse.app.security.OtpSessionVerification;
 import com.tecverse.app.security.OtpSessionVerification.Purpose;
@@ -69,8 +71,13 @@ public class RegistrationController {
     public ResponseEntity<ApiResponse<RegistrationResponse>> register(@Valid @RequestBody RegistrationRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "exhibitor-registration", request.getEmail(), 5, Duration.ofHours(1), 20, Duration.ofHours(1));
         OtpSessionVerification.require(httpRequest, Purpose.EXHIBITOR, request.getEmail());
+        String verifiedPhone = requireIndianMobile(request.getPhone());
+        if (!OtpSessionVerification.isVerified(httpRequest, Purpose.EXHIBITOR_MOBILE, verifiedPhone)) {
+            throw new OtpVerificationRequiredException("Please verify your mobile number with OTP before submitting.");
+        }
         RegistrationResponse response = registrationService.register(request);
         OtpSessionVerification.consume(httpRequest, Purpose.EXHIBITOR);
+        OtpSessionVerification.consume(httpRequest, Purpose.EXHIBITOR_MOBILE);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(message("api.registration.submitted"),response));
     }
     @PostMapping(value={"/register","/register.html"},consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
@@ -95,6 +102,13 @@ public class RegistrationController {
         if (email == null || email.length() > 254 || !email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) throw new IllegalArgumentException("Enter a valid official email address.");
         if (name == null || !name.matches("^[A-Za-z][A-Za-z .'-]{1,149}$")) throw new IllegalArgumentException("Enter a valid contact name.");
         rateLimitService.check(httpRequest, "otp-send", email, 3, Duration.ofMinutes(3), 30, Duration.ofMinutes(3));
+        if (registrationService.checkEmailExists(email)) throw new DuplicateEmailException("This email is already registered.");
+        String phone = body.get("phone");
+        if (phone != null && !phone.isBlank() && registrationService.checkPhoneExists(requireIndianMobile(phone))) {
+            throw new DuplicatePhoneException("This mobile number is already registered.");
+        }
+        rateLimitService.check(httpRequest, "exhibitor-email-otp-resend-cooldown", email,
+                1, Duration.ofSeconds(60), 100, Duration.ofMinutes(1));
         exhibitorOtpService.send(email, name); return ResponseEntity.ok(ApiResponse.success("OTP sent to your official email."));
     }
     @PostMapping(value="/exhibitor/verify-otp", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -106,6 +120,26 @@ public class RegistrationController {
         exhibitorOtpService.verify(email, otp);
         OtpSessionVerification.markVerified(httpRequest, Purpose.EXHIBITOR, email);
         return ResponseEntity.ok(ApiResponse.success("Official email verified."));
+    }
+    @PostMapping(value="/exhibitor/send-mobile-otp", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<Void>> exhibitorSendMobileOtp(@RequestBody java.util.Map<String,String> body, HttpServletRequest httpRequest){
+        String phone = requireIndianMobile(body.get("phone"));
+        rateLimitService.check(httpRequest, "exhibitor-sms-otp-send", phone, 3, Duration.ofMinutes(3), 20, Duration.ofMinutes(3));
+        rateLimitService.check(httpRequest, "exhibitor-sms-otp-daily", phone, 10, Duration.ofDays(1), 100, Duration.ofDays(1));
+        if (registrationService.checkPhoneExists(phone)) throw new DuplicatePhoneException("This mobile number is already registered.");
+        rateLimitService.check(httpRequest, "exhibitor-sms-otp-resend-cooldown", phone,
+                1, Duration.ofSeconds(60), 100, Duration.ofMinutes(1));
+        ticketOtpService.sendExhibitorMobileOtp(phone);
+        return ResponseEntity.ok(ApiResponse.success("OTP sent to your mobile number."));
+    }
+    @PostMapping(value="/exhibitor/verify-mobile-otp", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<Void>> exhibitorVerifyMobileOtp(@RequestBody java.util.Map<String,String> body, HttpServletRequest httpRequest){
+        String phone = requireIndianMobile(body.get("phone")), otp = body.get("otp");
+        if (otp == null || !otp.matches("^\\d{6}$")) throw new IllegalArgumentException("Enter the 6-digit OTP.");
+        rateLimitService.check(httpRequest, "exhibitor-sms-otp-verify", phone, 5, Duration.ofMinutes(1), 60, Duration.ofMinutes(1));
+        ticketOtpService.verifyMobileOtp(phone, otp);
+        OtpSessionVerification.markVerified(httpRequest, Purpose.EXHIBITOR_MOBILE, phone);
+        return ResponseEntity.ok(ApiResponse.success("Mobile number verified successfully."));
     }
     @PostMapping(value="/exhibitor/upload", consumes=MediaType.MULTIPART_FORM_DATA_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<String>> exhibitorUpload(@RequestParam("file") org.springframework.web.multipart.MultipartFile file, @RequestParam(value="reference",defaultValue="pending") @Size(max=100) String reference, HttpServletRequest httpRequest){
@@ -121,7 +155,7 @@ public class RegistrationController {
     @PostMapping(value="/ticket/send-otp",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> sendTicketOtp(@Valid @RequestBody TicketOtpSendRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "otp-send", request.getEmail(), 3, Duration.ofMinutes(1), 30, Duration.ofMinutes(1));
-        ticketOtpService.sendOtp(request); return ResponseEntity.ok(ApiResponse.success("OTP request accepted. Check your email shortly."));
+        ticketOtpService.sendOtp(request); return ResponseEntity.ok(ApiResponse.success("OTP sent. Please check your email."));
     }
     @PostMapping(value="/ticket/verify-otp",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> verifyTicketOtp(@Valid @RequestBody TicketOtpVerifyRequest request, HttpServletRequest httpRequest){

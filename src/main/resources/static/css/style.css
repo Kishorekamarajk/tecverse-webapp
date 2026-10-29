@@ -537,7 +537,7 @@ nav.site-navbar .container {
     display: none;
 }
 
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions {
     position: fixed;
     left: 50%;
     bottom: 22px;
@@ -556,7 +556,7 @@ body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .n
     -webkit-backdrop-filter: blur(18px);
     backdrop-filter: blur(18px);
 }
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link {
     position: relative;
     display: inline-flex;
     flex-direction: row;
@@ -579,15 +579,15 @@ body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .n
     transition: background-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
 }
 
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link:not(:last-child) {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link:not(:last-child) {
     border-right: 1px solid rgba(255, 255, 255, 0.16);
 }
 
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link:only-child {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link:only-child {
     width: 190px;
 }
 
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link::before {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -596,7 +596,7 @@ body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .n
     transition: opacity 0.22s ease;
 }
 
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link i {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link i {
     position: relative;
     color: #FFFFFF;
     flex: 0 0 auto;
@@ -604,24 +604,24 @@ body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .n
     line-height: 1;
 }
 
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link span {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link span {
     position: relative;
 }
 
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link:hover,
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link:focus {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link:hover,
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link:focus {
     color: #FFFFFF;
     background: transparent;
     box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.82);
     transform: none;
 }
 
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link:hover::before,
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link:focus::before {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link:hover::before,
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link:focus::before {
     opacity: 1;
 }
 
-body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link:focus-visible {
+body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link:focus-visible {
     outline: 3px solid rgba(255, 255, 255, 0.82);
     outline-offset: -5px;
 }
@@ -646,12 +646,12 @@ body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .n
 }
 
 @media (max-width: 767.98px) {
-    body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions {
+    body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions {
         bottom: 12px;
         width: auto;
     }
 
-    body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link {
+    body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link {
         flex: 0 0 auto;
         justify-content: center;
         width: 176px;
@@ -660,7 +660,7 @@ body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .n
         font-size: 0.7rem;
     }
 
-    body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .news-page, .news-detail-page, .sponsor-page) .site-floating-actions__link i {
+    body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions__link i {
         font-size: 1.32rem;
     }
 
@@ -678,8 +678,8 @@ body:is(.home-page, .retreat-page, .about-page, .inquiry-page, .gallery-page, .n
     }
 }
 
-/* The sponsor/exhibitor pill belongs to the home hero and disappears once visitors scroll. */
-body:not(.home-page) .site-floating-actions { display: none !important; }
+/* Keep the participation bar available site-wide, except on its destination pages. */
+body:is(.sponsor-page, .exhibitor-registration-page) .site-floating-actions { display: none !important; }
 .home-page .site-floating-actions { transition: opacity .22s ease, visibility .22s ease, transform .22s ease; }
 .home-page .site-floating-actions.is-scroll-hidden { visibility: hidden; opacity: 0; pointer-events: none; transform: translate(-50%, 18px); }
 

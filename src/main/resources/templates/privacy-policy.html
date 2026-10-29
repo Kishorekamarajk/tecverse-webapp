@@ -3,13 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{misc.privacy.pageTitle}">Privacy Policy | Tec-Verse 2026</title>
-    <meta name="description" content="How Tec-Verse 2026 (C-DAC) collects, uses and protects personal data on the website and mobile app.">
+    <title>Privacy Policy | Tec-Verse 2026</title>
+    <meta name="description" content="Learn how Tec-Verse 2026 (C-DAC) collects, uses, shares, retains and protects personal data through its website and mobile application.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://tec-verse.cdac.in/privacy-policy">
     <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
     <link rel="stylesheet" th:href="@{/css/fonts.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .privacy-content { max-width: 900px; }
+        .privacy-content h2 { scroll-margin-top: 6rem; }
+        .privacy-content h3 { font-size: 1.1rem; font-weight: 700; margin-top: 1.25rem; }
+        .privacy-content p, .privacy-content li { line-height: 1.75; }
+        .privacy-content .policy-meta { color: #5c636a; font-size: .95rem; }
+        .privacy-content .policy-note { border-left: 4px solid #0d6efd; background: #f8f9fa; padding: 1rem 1.25rem; border-radius: .25rem; }
+        .privacy-content .table { --bs-table-bg: transparent; }
+        .privacy-content a { overflow-wrap: anywhere; }
+    </style>
 </head>
 <body class="no-hero">
 
@@ -17,70 +29,339 @@
 
 <header class="page-header">
     <div class="container">
-        <h1 class="fw-bold"><i class="bi bi-shield-lock me-2" aria-hidden="true"></i><span th:text="#{misc.privacy.heading}">Privacy Policy</span></h1>
-        <p class="lead mb-0" th:text="#{misc.privacy.lead}">Tec-Verse 2026 website and mobile app &middot; Last updated: 28 October 2026</p>
+        <h1 class="fw-bold"><i class="bi bi-shield-lock me-2" aria-hidden="true"></i>Privacy Policy</h1>
+        <p class="lead mb-0">Tec-Verse 2026 website and mobile application</p>
+        <p class="mb-0 mt-2">Last updated: 29 October 2026</p>
     </div>
 </header>
 
 <section class="content-section">
-    <div class="container" style="max-width: 860px">
-        <p th:text="#{misc.privacy.intro}">Tec-Verse 2026 (Android package: in.cdac.tecverse.tec_app) is organised by the Centre for Development of Advanced Computing (C-DAC). This policy explains what
-            personal data we collect through the Tec-Verse website (https://tec-verse.cdac.in) and the Tec-Verse 2026 Android app, why we collect it,
-            and the choices you have.</p>
+    <div class="container privacy-content">
 
-        <h2 class="h4 fw-bold mt-4"><i class="bi bi-database-lock me-2" aria-hidden="true"></i><span th:text="#{misc.privacy.s1.heading}">1. Data we collect</span></h2>
+        <p>
+            Tec-Verse 2026 is organised by the Centre for Development of Advanced Computing (C-DAC).
+            This Privacy Policy explains how personal data may be collected, used, stored, shared and
+            otherwise processed when you visit
+            <a href="https://tec-verse.cdac.in">https://tec-verse.cdac.in</a> or use the Tec-Verse 2026
+            Android mobile application (package name: <code>in.cdac.tecverse.tec_app</code>).
+        </p>
+        <p>
+            This policy applies specifically to the Tec-Verse 2026 Android application and the
+            Tec-Verse event website. It identifies the information processed by the app, why it is
+            processed, who receives it, how it is protected and retained, and how you can request
+            deletion. C-DAC is responsible for the app and its event services.
+        </p>
+        <div class="policy-note mb-4">
+            <strong>Important:</strong> Please do not submit information that is not requested or needed
+            for your registration or enquiry. Where consent is required by applicable law, it will be
+            requested through an appropriate mechanism.
+        </div>
+
+        <h2 class="h4 fw-bold mt-4" id="data-collected"><i class="bi bi-database-lock me-2" aria-hidden="true"></i>1. Personal Data We Collect</h2>
+        <p>The app uses information submitted during Tec-Verse registration and information created when you use app features. Information is sent to Tec-Verse servers over HTTPS to provide account and event services.</p>
+
+        <h3>1.1 Registration and account information</h3>
+        <p>Registration and account information may include:</p>
         <ul>
-            <li th:utext="#{misc.privacy.s1.registration}"><strong>Registration details:</strong> name, email address, mobile number, password (stored only as a one-way
-                hash), registration category, organisation / institution, designation, city, student ID (students only)
-                and preferred attendance days.</li>
-            <li th:utext="#{misc.privacy.s1.passport}"><strong>Passport details (foreign nationals only):</strong> passport number, expiry date and name as shown on
-                the passport, used for event security and entry.</li>
-            <li th:utext="#{misc.privacy.s1.enquiries}"><strong>Exhibitor and sponsor enquiries:</strong> company and contact details, and documents you upload.</li>
-            <li th:utext="#{misc.privacy.s1.appUsage}"><strong>App usage:</strong> technology interests you select in the app, notifications sent to you, and your
-                event check-in status.</li>
-            <li th:utext="#{misc.privacy.s1.microphone}"><strong>Microphone (optional):</strong> if you use voice search in the app, your speech is converted to text by
-                your device's speech-recognition service. We do not record or store audio.</li>
+            <li>Full name;</li>
+            <li>Email address and mobile number;</li>
+            <li>Password, stored as a one-way hash rather than as plain text;</li>
+            <li>Registration category;</li>
+            <li>Organisation, company or educational institution;</li>
+            <li>Designation and city;</li>
+            <li>Student identification number, where applicable; and</li>
+            <li>Preferred attendance days.</li>
         </ul>
-        <p th:text="#{misc.privacy.s1.note}">We do not collect location data, contacts, photos or advertising identifiers, and we do not use your data for
-            advertising.</p>
+        <p>The app uses these details to identify your registration, sign you in, display your profile and digital pass, support account recovery, and send event-related communications. Passwords are stored by the service as one-way hashes; the app does not store your password in plain text.</p>
 
-        <h2 class="h4 fw-bold mt-4"><i class="bi bi-gear me-2" aria-hidden="true"></i><span th:text="#{misc.privacy.s2.heading}">2. How we use it</span></h2>
+        <h3>1.2 Passport information</h3>
+        <p>
+            Foreign nationals may be asked to provide passport details, such as passport number,
+            expiry date and name as shown on the passport, where these details are required for event
+            entry, identity verification or security procedures. Passport information should be
+            accessible only to authorised personnel who need it for the relevant purpose.
+        </p>
+
+        <h3>1.3 Exhibitor and sponsor enquiries</h3>
+        <p>
+            If you contact us about exhibiting or sponsoring, we may collect the contact and company
+            information you submit, together with documents or other supporting information you choose
+            to upload. We use this information to respond to your enquiry and coordinate potential or
+            confirmed participation.
+        </p>
+
+        <h3>1.4 Mobile application and feature usage</h3>
+        <p>When you use app features, we may process information such as:</p>
         <ul>
-            <li th:text="#{misc.privacy.s2.item1}">To register you for the event, issue your digital pass and QR code, and verify entry at the venue.</li>
-            <li th:text="#{misc.privacy.s2.item2}">To verify your email with a one-time password (OTP) and to let you reset your password.</li>
-            <li th:text="#{misc.privacy.s2.item3}">To send event updates, confirmations and notifications related to Tec-Verse 2026.</li>
-            <li th:text="#{misc.privacy.s2.item4}">To plan and secure the event (attendance numbers, venue access).</li>
+            <li>Technology interests that you select;</li>
+            <li>Text questions submitted to the in-app event FAQ search, including text recognised from voice input;</li>
+            <li>Event-related notifications delivered or displayed through the app; and</li>
+            <li>Registration and event check-in status.</li>
         </ul>
+        <p>This information is used to provide the requested app features and support event operations.</p>
 
-        <h2 class="h4 fw-bold mt-4"><i class="bi bi-share me-2" aria-hidden="true"></i><span th:text="#{misc.privacy.s3.heading}">3. Sharing</span></h2>
-        <p th:text="#{misc.privacy.s3.body}">We do not sell your personal data. It is accessible only to authorised C-DAC event staff and the service providers
-            that host our servers and send our emails, who process it on our behalf. We may disclose data where required by
-            law or by government security authorities for event security.</p>
+        <h3>1.5 Microphone and voice search</h3>
+        <p>
+            Voice search is optional. Before Android's microphone permission prompt appears, the app
+            displays an explanation and lets you choose whether to continue. Android asks for
+            microphone access only after you tap the microphone and agree to continue; the app does
+            not turn on microphone access automatically at installation. The speech-recognition
+            service available on your device processes your speech and returns recognized text. The
+            app sends that text to the Tec-Verse FAQ service to answer your query; Tec-Verse does
+            not upload or store raw audio on its servers. Your device or speech provider may process
+            audio under its own privacy policy. You can deny or later revoke microphone permission
+            and type your question instead.
+        </p>
 
-        <h2 class="h4 fw-bold mt-4"><i class="bi bi-shield-check me-2" aria-hidden="true"></i><span th:text="#{misc.privacy.s4.heading}">4. Security and retention</span></h2>
-        <p th:text="#{misc.privacy.s4.body}">Data is sent over encrypted HTTPS connections. Passwords are stored as hashes, app sessions are stored in the
-            device's secure storage, and access to the admin system is restricted. We keep registration data only as long as
-            needed for Tec-Verse 2026 and related reporting, after which it is deleted or anonymised.</p>
+        <h3>1.6 Device permissions, location and maps</h3>
+        <p>
+            The app requests internet access to connect to Tec-Verse services. It requests microphone
+            access only for voice search. It does not request GPS, contacts, camera, photos or media
+            permissions. If you enter a starting point and tap directions, that location is included
+            in the directions link opened in Google Maps or Apple Maps; the selected maps provider
+            then processes it under its own privacy policy. The app does not track your location in
+            the background. The app does not contain advertising or use personal data for targeted
+            advertising.
+        </p>
 
-        <h2 class="h4 fw-bold mt-4"><i class="bi bi-person-x me-2" aria-hidden="true"></i><span th:text="#{misc.privacy.s5.heading}">5. Your choices and account deletion</span></h2>
-        <p><th:block th:utext="#{misc.privacy.s5.bodyStart}">You can view your details in the app, and you can delete your account at any time from
-            <strong>Profile &rarr; Delete Account</strong> in the app, or by following the steps on our</th:block>
-            <a th:href="@{/account-deletion}" href="/account-deletion" th:text="#{misc.privacy.s5.link}">account deletion page</a><th:block th:text="#{misc.privacy.s5.bodyEnd}">. Deleting your account
-            permanently removes your registration, digital pass, preferences and notifications.</th:block></p>
+        <h3>1.7 Technical and security information</h3>
+        <p>
+            When the app connects to the service, the server and network infrastructure process
+            connection data such as IP address, request time and requested endpoint to deliver the
+            response, maintain security and diagnose service problems. Authentication tokens are
+            stored on the device using the operating system's secure storage. The app does not
+            integrate advertising or analytics SDKs.
+        </p>
 
-        <h2 class="h4 fw-bold mt-4"><i class="bi bi-people me-2" aria-hidden="true"></i><span th:text="#{misc.privacy.s6.heading}">6. Children</span></h2>
-        <p th:text="#{misc.privacy.s6.body}">The event and app are intended for professionals, students and visitors aged 13 and above. We do not knowingly
-            collect data from children under 13.</p>
+        <h3>1.8 App fonts</h3>
+        <p>
+            The app uses the Google Fonts package for typography. If the required font files are not
+            already available on the device, the package may request them from Google Fonts. Google
+            may receive standard connection information, such as your IP address and the requested
+            font. Font delivery and any related processing are governed by Google's terms and privacy
+            information.
+        </p>
 
-        <h2 class="h4 fw-bold mt-4"><i class="bi bi-envelope me-2" aria-hidden="true"></i><span th:text="#{misc.privacy.s7.heading}">7. Changes and contact</span></h2>
-        <p th:utext="#{misc.privacy.s7.body}">We may update this policy; the date above shows the latest version. For any privacy question or request, contact
-            us at <a href="mailto:tec-verse@cdac.in">tec-verse@cdac.in</a>.</p>
+        <h2 class="h4 fw-bold mt-4" id="use"><i class="bi bi-gear me-2" aria-hidden="true"></i>2. How We Use Personal Data</h2>
+        <p>Subject to applicable law, personal data may be used for the following purposes:</p>
+        <ul>
+            <li><strong>Registration and account management:</strong> to create, maintain and administer your event registration and account.</li>
+            <li><strong>Authentication and recovery:</strong> to verify email addresses using one-time passwords (OTPs), authenticate accounts and facilitate password resets.</li>
+            <li><strong>Digital passes:</strong> to issue and manage digital event passes and associated QR codes.</li>
+            <li><strong>Entry and attendance:</strong> to verify registration, facilitate entry at the venue and record check-in where applicable.</li>
+            <li><strong>Event communications:</strong> to send registration confirmations, schedule information, operational notices and other messages related to Tec-Verse 2026.</li>
+            <li><strong>Event planning:</strong> to understand attendance requirements, coordinate event activities and support venue operations.</li>
+            <li><strong>Enquiry management:</strong> to respond to exhibitor and sponsor enquiries and coordinate participation.</li>
+            <li><strong>Application features:</strong> to provide event FAQ search, voice search and other features you choose to use.</li>
+            <li><strong>Security and compliance:</strong> to protect the website, application, participants and event operations, and to comply with applicable legal requirements.</li>
+        </ul>
+        <p>We do not use personal data for targeted advertising.</p>
+
+        <h2 class="h4 fw-bold mt-4" id="qr"><i class="bi bi-qr-code-scan me-2" aria-hidden="true"></i>3. Digital Passes, QR Codes and Event Check-In</h2>
+        <p>
+            Registered participants may receive a digital pass with a QR code to support registration
+            verification and event entry. When an authorised event staff member scans a QR code, the
+            system may retrieve the registration information needed to verify the registration and
+            facilitate check-in. The system may record check-in status for event administration and
+            attendance reporting.
+        </p>
+        <p>
+            Access to registration and check-in information should be limited to personnel authorised
+            for event operations or security. QR codes are intended for event-related purposes, not
+            advertising. Please avoid sharing your digital pass or QR code publicly because another
+            person could attempt to use it without your permission.
+        </p>
+
+        <h2 class="h4 fw-bold mt-4" id="sharing"><i class="bi bi-share me-2" aria-hidden="true"></i>4. How We Share Personal Data</h2>
+        <p><strong>We do not sell your personal data.</strong> We may allow access to or disclose relevant information where necessary to operate the event services, respond to your requests, protect event operations or meet applicable legal requirements.</p>
+
+        <h3>4.1 Authorised C-DAC personnel</h3>
+        <p>Authorised C-DAC personnel and event staff may access information relevant to their responsibilities, such as registration administration, participant communication, attendee verification and event security.</p>
+
+        <h3>4.2 Service providers</h3>
+        <p>The following service providers receive information when you use the related feature:</p>
+        <ul>
+            <li>Website hosting, infrastructure and database providers;</li>
+            <li>Email and SMS providers used to deliver OTPs, confirmations and event communications;</li>
+            <li>Google Fonts, which may receive connection information and font requests when the app retrieves font files;</li>
+            <li>Your device's speech-recognition provider, which processes audio when you choose voice search; and</li>
+            <li>Google Maps or Apple Maps, which receives the destination and any starting point you enter when you choose to open directions.</li>
+        </ul>
+        <p>
+            Hosting, database, email and SMS providers process registration and account information
+            as needed to operate the Tec-Verse service and deliver one-time passwords, confirmations
+            and event communications. These providers process information to provide services to
+            C-DAC and are subject to their applicable privacy terms and service arrangements. We do
+            not sell personal data.
+        </p>
+
+        <h3>4.3 Legal, regulatory and security disclosures</h3>
+        <p>
+            We may disclose relevant information where required by applicable law, a valid legal
+            process, or a lawful request from an authorised government or security authority. We will
+            handle such disclosures in accordance with applicable requirements.
+        </p>
+
+        <h3>4.4 No sale or targeted advertising</h3>
+        <p>We do not sell personal data or disclose it for third-party targeted advertising.</p>
+
+        <h2 class="h4 fw-bold mt-4" id="cookies"><i class="bi bi-window me-2" aria-hidden="true"></i>5. Cookies and Similar Technologies</h2>
+        <p>
+            The website may use cookies or similar technologies where needed to support functions such
+            as session management, security, navigation or service reliability. The cookies and
+            technologies actually used depend on the website's configuration.
+        </p>
+        <p>
+            If analytics or other non-essential tracking technologies are used, their purposes and
+            applicable choices should be explained through the relevant website notice or settings.
+            We do not use personal data for targeted advertising.
+        </p>
+
+        <h2 class="h4 fw-bold mt-4" id="security"><i class="bi bi-shield-check me-2" aria-hidden="true"></i>6. Data Security and Retention</h2>
+
+        <h3>6.1 Security measures</h3>
+        <p>
+            We use appropriate technical and organisational safeguards intended to protect personal
+            data against unauthorised access, disclosure, alteration, loss or destruction. Measures
+            used by the relevant systems may include:
+        </p>
+        <ul>
+            <li>HTTPS encryption for data transmitted between supported clients and services;</li>
+            <li>One-way password hashing rather than storing passwords in plain text;</li>
+            <li>Secure storage of application session information on the device; and</li>
+            <li>Access restrictions for administrative systems and authorised personnel.</li>
+        </ul>
+        <p>
+            These measures reduce risk but cannot guarantee complete security. A person's data could
+            still be exposed through vulnerabilities, compromised accounts or devices, or a service
+            provider incident. Apps normally run within Android's application sandbox, but this does
+            not make data immune to malware, device compromise, vulnerabilities or account misuse.
+            Users should protect account credentials and avoid sharing passwords or digital passes
+            with unauthorised persons.
+        </p>
+
+        <h3>6.2 Retention of personal data</h3>
+        <p>
+            We keep registration and account data while it is needed to administer the event,
+            provide account features, meet reporting requirements, resolve disputes and comply with
+            law. Temporary verification codes expire and are removed after use or expiry. Device
+            session tokens are removed when you sign out, your session expires, or you delete your
+            account.
+        </p>
+        <p>
+            When you delete your account in the app after confirming with your current password, the service removes the registration and the
+            linked app preferences, notifications and check-in records from active service records.
+            Deleting or uninstalling the app alone does not delete your server-side account. If you
+            cannot sign in, you can request deletion through the public account deletion page. We
+            retain information only where required by law or for a specific legitimate security,
+            audit or event-administration obligation,
+            and limit that information to the relevant purpose.
+        </p>
+
+        <h2 class="h4 fw-bold mt-4" id="rights"><i class="bi bi-person-check me-2" aria-hidden="true"></i>7. Your Choices, Requests and Account Deletion</h2>
+
+        <h3>7.1 Access and correction</h3>
+        <p>
+            You can view the registration details made available through your account in the app.
+            If information is inaccurate or you need help with your personal data, contact us using
+            the details in Section 12. Requests will be handled under applicable law and the
+            procedures available for Tec-Verse 2026.
+        </p>
+
+        <h3>7.2 Account deletion</h3>
+        <p>You can submit an account deletion request through either of the following methods:</p>
+        <ul>
+            <li><strong>In the app:</strong> open <strong>Profile &rarr; Delete Account</strong> and follow the instructions.</li>
+            <li><strong>On the website:</strong> visit the <a th:href="@{/account-deletion}" href="/account-deletion">Tec-Verse account deletion page</a> and follow the instructions provided there.</li>
+        </ul>
+        <p>
+            Account deletion removes the registration and associated digital pass, app preferences,
+            notifications and check-in data from active service records. The in-app deletion flow asks
+            you to confirm with your current password. Deletion also ends access to
+            the account and its app features.
+        </p>
+        <p>
+            Certain records may need to be retained for a limited period where required by law or
+            necessary for legitimate security, audit or event-administration purposes. Any such
+            retention should be limited to the relevant purpose and period.
+        </p>
+
+        <h3>7.3 Other privacy requests and identity verification</h3>
+        <p>
+            You may contact us with questions about how your personal data is handled or to submit
+            requests available to you under applicable law. We may need to verify your identity
+            before responding to a request. Requests will be handled through the applicable C-DAC
+            procedures and within legally prescribed timelines.
+        </p>
+
+        <h2 class="h4 fw-bold mt-4" id="children"><i class="bi bi-people me-2" aria-hidden="true"></i>8. Children's Privacy</h2>
+        <p>
+            The event and app are intended for professionals, students and visitors aged 13 and above.
+            We do not knowingly collect personal data from children under 13.
+        </p>
+        <p>
+            Where individuals under 18 may register or use the services, applicable legal requirements
+            concerning children's personal data must be followed. Where parental or guardian consent
+            or additional safeguards are required by law, the appropriate procedures should be used.
+            If you believe a child's personal data has been collected inappropriately, contact us so
+            that the matter can be reviewed.
+        </p>
+
+        <h2 class="h4 fw-bold mt-4" id="third-party"><i class="bi bi-box-arrow-up-right me-2" aria-hidden="true"></i>9. Third-Party Services and Links</h2>
+        <p>
+            Some features may rely on third-party services, such as a device's speech-recognition
+            service or a maps provider that you choose to open. When you use those features, the
+            relevant information may be processed by the third party under its own privacy policy and
+            terms. We do not control the privacy practices of independent third-party services.
+        </p>
+        <p>
+            If the website or app links to an external website or service, review that provider's
+            privacy information before submitting information to it.
+        </p>
+
+        <h2 class="h4 fw-bold mt-4" id="transfers"><i class="bi bi-globe2 me-2" aria-hidden="true"></i>10. Processing and Storage Locations</h2>
+        <p>
+            Personal data may be processed or stored in the locations used by C-DAC and its relevant
+            service providers. Where processing involves a transfer of personal data across borders,
+            the transfer should be conducted in accordance with applicable legal requirements and
+            relevant safeguards.
+        </p>
+
+        <h2 class="h4 fw-bold mt-4" id="changes"><i class="bi bi-arrow-repeat me-2" aria-hidden="true"></i>11. Changes to This Privacy Policy</h2>
+        <p>
+            We may update this policy to reflect changes to the Tec-Verse website, mobile application,
+            event operations, data-processing practices or applicable legal requirements. The date at
+            the top of this page indicates when the policy was most recently updated. Where required,
+            we will provide appropriate notice of material changes. We encourage you to review this
+            page periodically.
+        </p>
+
+        <h2 class="h4 fw-bold mt-4" id="contact"><i class="bi bi-envelope me-2" aria-hidden="true"></i>12. Contact and Privacy Complaints</h2>
+        <p>If you have questions about this policy, wish to raise a privacy concern or want to submit a request concerning your personal data, contact:</p>
+        <address>
+            <strong>Centre for Development of Advanced Computing (C-DAC)</strong><br>
+            <strong>Event:</strong> Tec-Verse 2026<br>
+            <strong>Email:</strong> <a href="mailto:tec-verse@cdac.in">tec-verse@cdac.in</a><br>
+            <strong>Website:</strong> <a href="https://tec-verse.cdac.in">https://tec-verse.cdac.in</a>
+        </address>
+        <p>
+            Please provide sufficient information for us to understand your request. We may ask for
+            information necessary to verify your identity. Privacy requests and complaints will be
+            handled through applicable C-DAC procedures and within the timelines prescribed by law.
+            If your concern remains unresolved, you may request escalation through the applicable
+            C-DAC grievance-handling process.
+        </p>
+
+        <hr class="my-4">
+        <p class="text-muted small mb-0">
+            &copy; Tec-Verse 2026 | Centre for Development of Advanced Computing (C-DAC)
+        </p>
     </div>
 </section>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tYl3HB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>

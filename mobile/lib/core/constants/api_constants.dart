@@ -18,6 +18,7 @@ class ApiConstants {
   /// Public web pages opened in the external browser.
   static String get privacyPolicyUrl => ApiConfig.privacyPolicyUrl;
   static String get accountDeletionUrl => ApiConfig.accountDeletionUrl;
+  static String get termsAndConditionsUrl => ApiConfig.termsAndConditionsUrl;
 
   /// Health Check Endpoint
   static const String healthEndpoint = '/mobile/health';

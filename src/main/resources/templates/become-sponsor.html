@@ -80,6 +80,20 @@
         </style>
     </section>
 
+    <section class="sponsor-short-banner" aria-labelledby="sponsor-short-title">
+        <div class="container">
+            <div class="ticket-hero">
+                <div class="ticket-hero__copy">
+                    <p class="ticket-hero__eyebrow">Become a</p>
+                    <h1 id="sponsor-short-title">Sponsor</h1>
+                </div>
+                <div class="ticket-hero__visual">
+                    <img th:src="@{/images/sponsor-expo-banner.png}" src="/images/sponsor-expo-banner.png" alt="Technology expo sponsor pavilion">
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="sponsor-contact" class="sp-section sp-contact overflow-hidden" aria-labelledby="sponsor-contact-title" style="background: linear-gradient(135deg, #FFFFFF 0%, #F8F9FB 100%);">
         <style>
             .sp-form {
@@ -155,6 +169,92 @@
             .sp-submit:active {
                 transform: translateY(-1px);
             }
+            .sponsor-page .sp-hero { min-height: 0 !important; padding: 84px 0 10px !important; }
+            .sponsor-page .sp-hero { display: none !important; }
+            .sponsor-page .sponsor-short-banner { position: relative; left: 50%; width: 100vw; margin: 0 0 0 -50vw; padding: 84px 0 10px; }
+            .sponsor-page .sponsor-short-banner > .container { position: relative; left: 50%; width: 100vw !important; max-width: none !important; margin: 0 0 0 -50vw !important; padding: 0 !important; }
+            .sponsor-page .sponsor-short-banner .ticket-hero { position: relative; display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,.95fr); width: 100%; min-height: clamp(112px,10vw,175px); max-height: 175px; margin: 0; overflow: hidden; background: linear-gradient(105deg,#fff 0%,#f8fbff 39%,#dceeff 62%,#fff 100%); box-shadow: 0 16px 36px rgba(22,58,96,.13); }
+            .sponsor-page .sponsor-short-banner .ticket-hero::before { position:absolute; z-index:1; content:''; inset:0 auto 0 39%; width:34%; background:linear-gradient(128deg,transparent 0 46%,rgba(255,104,14,.96) 46.2% 57%,#176ec2 57.2% 74%,transparent 74.2%); pointer-events:none; }
+            .sponsor-page .sponsor-short-banner .ticket-hero__copy { position:relative; z-index:2; display:flex; flex-direction:column; justify-content:center; padding:clamp(14px,2.2vw,32px) clamp(24px,6vw,130px); }
+            .sponsor-page .sponsor-short-banner .ticket-hero__eyebrow { margin:0 0 .45rem; color:#ff6a16; font-size:clamp(.95rem,1.75vw,2rem); font-weight:850; letter-spacing:.17em; line-height:1; text-transform:uppercase; }
+            .sponsor-page .sponsor-short-banner h1 { margin:0; color:#0d3158; font:850 clamp(2.4rem,6vw,7rem)/.98 'Space Grotesk',sans-serif; letter-spacing:-.055em; text-transform:uppercase; }
+            .sponsor-page .sponsor-short-banner .ticket-hero__visual { position:relative; z-index:2; display:grid; min-width:0; min-height:100%; place-items:center; overflow:hidden; background:radial-gradient(ellipse at 55% 50%,rgba(22,85,159,.45),rgba(8,40,89,.13) 55%,transparent 73%); }
+            .sponsor-page .sponsor-short-banner .ticket-hero__visual::before { position:absolute; z-index:-1; content:''; inset:0; background:linear-gradient(115deg,transparent 0 57%,#ff7418 57.2% 80%,#ff5c12 80.2%); clip-path:polygon(45% 0,100% 0,100% 100%,0 100%); }
+            .sponsor-page .sponsor-short-banner .ticket-hero__visual img { display:block; width:100%; height:100%; max-height:175px; object-fit:contain; filter:drop-shadow(0 8px 10px rgba(0,22,53,.3)); }
+            @media (max-width: 767.98px) { .sponsor-page .sponsor-short-banner { padding:70px 0 8px; } .sponsor-page .sponsor-short-banner .ticket-hero { grid-template-columns:minmax(0,1fr) minmax(0,.85fr); min-height:125px; max-height:125px; } .sponsor-page .sponsor-short-banner .ticket-hero__copy { padding:14px clamp(16px,4vw,36px); } .sponsor-page .sponsor-short-banner .ticket-hero__visual img { max-height:125px; } .sponsor-page .sponsor-short-banner h1 { font-size:clamp(2rem,7vw,3.4rem); } }
+            @media (max-width: 480px) { .sponsor-page .sponsor-short-banner { padding-top:64px; } .sponsor-page .sponsor-short-banner .ticket-hero { grid-template-columns:minmax(0,1fr) 38%; min-height:105px; max-height:105px; } .sponsor-page .sponsor-short-banner .ticket-hero__copy { padding:12px; } .sponsor-page .sponsor-short-banner .ticket-hero__eyebrow { font-size:.78rem; letter-spacing:.12em; } .sponsor-page .sponsor-short-banner h1 { font-size:clamp(1.7rem,8vw,2.35rem); } .sponsor-page .sponsor-short-banner .ticket-hero__visual img { max-height:105px; } }
+            .sponsor-page .sp-hero__inner { display: block !important; width: 100% !important; max-width: none !important; padding: 0 clamp(16px,5vw,72px) !important; }
+            .sponsor-page .sp-hero__copy h1 { max-width: 18ch; margin: 0 !important; font-size: clamp(2rem,5vw,4rem) !important; line-height: 1.02 !important; }
+            .sponsor-page .sp-hero__copy p, .sponsor-page .sp-hero__copy .sp-actions, .sponsor-page .sp-hero-panel, .sponsor-page .sp-deco { display: none !important; }
+            .sponsor-page .sp-contact { padding: 20px 0 48px !important; }
+            .sponsor-page .sp-contact .sp-section-head { margin: 0 auto 18px !important; text-align: center; }
+            .sponsor-page .sp-contact .sp-section-head h2 { margin: 4px 0 0 !important; font-size: clamp(1.25rem,2.2vw,1.7rem) !important; }
+            .sponsor-page .sp-contact .sp-section-head p { display: none; }
+            .sponsor-page .sp-contact-grid { display: grid !important; grid-template-columns: minmax(0,1fr) 290px !important; align-items: stretch; gap: 16px; max-width: 1180px; overflow: visible !important; border: 0; background: transparent !important; box-shadow: none !important; }
+            .sponsor-page .sp-form--simple { order: 1; display: flex !important; min-width: 0; flex-direction: column; gap: 14px; padding: clamp(18px,2.5vw,30px) !important; overflow: visible !important; border: 1px solid rgba(7,24,47,.1); border-radius: 20px !important; background: rgba(255,255,255,.92) !important; box-shadow: 0 20px 55px rgba(7,24,47,.1) !important; }
+            .sponsor-page .sponsor-step-track { position: relative; display: flex; min-height: 58px; align-items: flex-start; justify-content: space-between; gap: 16px; margin: 0 4px 4px; padding: 0; }
+            .sponsor-page .sponsor-step-track::before { position: absolute; top: 10px; right: 11px; left: 11px; height: 3px; border-radius: 99px; background: #e1e8ef; content: ''; }
+            .sponsor-page .sponsor-step-track > span { position: absolute; z-index: 1; top: 10px; left: 11px; width: 0; height: 3px; border-radius: 99px; background: linear-gradient(90deg,#102b49,#ff650d); transition: width .2s ease; }
+            .sponsor-page .sponsor-step-dot { position: relative; z-index: 2; display: flex; flex: 0 1 180px; align-items: center; flex-direction: column; gap: 4px; color: #75859a; font-size: .75rem; font-weight: 750; text-align: center; }
+            .sponsor-page .sponsor-step-dot span { padding: 0 4px; background: #fff; }
+            .sponsor-page .sponsor-step-dot i { display: grid; width: 22px; height: 22px; place-items: center; border: 2px solid #cbd5df; border-radius: 50%; background: #fff; font-size: .62rem; font-style: normal; }
+            .sponsor-page .sponsor-step-dot.active { color: #102b49; }
+            .sponsor-page .sponsor-step-dot.active i, .sponsor-page .sponsor-step-dot.done i { border-color: #ff650d; background: #ff650d; color: #fff; }
+            .sponsor-page .sponsor-step[hidden] { display: none !important; }
+            .sponsor-page .sponsor-step-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px 14px; align-content: start; align-items: start; }
+            .sponsor-page .sponsor-step-heading { grid-column: 1/-1; margin: 0 0 2px; color: #102b49; font-size: 1rem; font-weight: 800; }
+            .sponsor-page .sp-form--simple .sp-field { min-width: 0; margin: 0; padding: 0; opacity: 1 !important; animation: none !important; border: 0; background: transparent !important; box-shadow: none !important; }
+            .sponsor-page .sp-form--simple .sp-field:focus-within { transform: none !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
+            .sponsor-page .sp-form--simple .sp-field--full { grid-column: 1/-1; }
+            .sponsor-page .sp-form--simple .sp-field label { margin-bottom: 5px; color: #34475b; font-size: .78rem; font-weight: 700; }
+            .sponsor-page .sponsor-control { display: flex; width: 100%; min-width: 0; height: 44px; min-height: 44px; align-self: start; align-items: stretch; overflow: hidden; border: 1px solid rgba(80,105,132,.23); border-radius: .78rem; background: rgba(255,255,255,.9); transition: border-color .18s,box-shadow .18s; }
+            .sponsor-page .sponsor-control.sponsor-control--textarea { height: auto; min-height: 76px; }
+            .sponsor-page .sponsor-control:focus-within { border-color: #ff6b1a; box-shadow: 0 0 0 3px rgba(255,95,5,.12); }
+            .sponsor-page .sponsor-control > i { display: grid; flex: 0 0 44px; width: 44px; place-items: center; border-right: 1px solid rgba(80,105,132,.12); background: rgba(236,242,248,.68); color: #29435e; font-size: .95rem; }
+            .sponsor-page .sponsor-control input:not([type=checkbox]), .sponsor-page .sponsor-control select, .sponsor-page .sponsor-control textarea { display: block; flex: 1 1 auto; width: 100%; min-width: 0; min-height: 42px; margin: 0; padding: .55rem .8rem !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; color: #10243a; font-size: .85rem; box-shadow: none !important; outline: 0; }
+            .sponsor-page .sponsor-control textarea { min-height: 76px; resize: vertical; }
+            .sponsor-page .sponsor-control select { cursor: pointer; }
+            .sponsor-page .sp-form--simple .sp-field textarea { min-height: 76px; }
+            .sponsor-page .sponsor-control-action button { display: inline-flex; flex: 0 0 auto; min-height: 0 !important; height: auto; align-self: stretch; align-items: center; justify-content: center; margin: 0; padding: 0 .75rem !important; border: 0; border-left: 1px solid rgba(255,255,255,.12); border-radius: 0; background: #102b49; color: #fff; font-size: .76rem; font-weight: 750; line-height: 1.15; white-space: nowrap; box-shadow: none !important; }
+            .sponsor-page .sponsor-control-action button:hover { background: #173b60; }
+            .sponsor-page .sponsor-control-action button.is-verified { background: #16834f; }
+            .sponsor-page .sponsor-control-action button:disabled { cursor: wait; opacity: .78; }
+            .sponsor-page .sponsor-email-row button, .sponsor-page .sponsor-otp-row button { flex: 0 0 auto; min-width: 100px; }
+            .sponsor-page .sponsor-mobile-row button { min-width: 100px; }
+            .sponsor-page .sponsor-otp-row { display: flex; min-width: 0; }
+            .sponsor-page .sponsor-otp-status { display:block; min-height:1.1em; margin-top:5px; color:#52677d; font-size:.74rem; line-height:1.35; }
+            .sponsor-page #sponsorPhoneField .sp-client-error,
+            .sponsor-page #sponsorPhoneField .sp-field-error,
+            .sponsor-page #sponsorMobileStatus { position:static !important; grid-column:1/-1; display:block; width:100%; min-width:0; margin:4px 0 0; overflow-wrap:anywhere; line-height:1.35; }
+            .sponsor-page #sponsorPhoneField .sponsor-control .jquery-validation-error { display:none !important; }
+            .sponsor-page #sponsorMobileOtpBlock { grid-column:2; grid-row:4; }
+            .sponsor-page #sponsorEmailField { grid-column:1; grid-row:4; }
+            .sponsor-page #otpBlock { grid-column:2; grid-row:4; align-self:end; }
+            .sponsor-page #sponsorLogoFile { width:100%; min-height:44px; padding:.55rem .7rem !important; border:1px solid rgba(80,105,132,.23) !important; border-radius:.78rem !important; background:#fff !important; }
+            .sponsor-page #sponsorLogoFile::file-selector-button { margin:-.3rem .7rem -.3rem -.45rem; padding:.45rem .8rem; border:0; border-radius:.5rem; background:#edf3f8; color:#102b49; font-weight:700; }
+            .sponsor-page .sponsor-logo-preview { margin:0 0 14px; padding:10px; border:1px solid rgba(80,105,132,.16); border-radius:14px; background:#fff; text-align:center; }
+            .sponsor-page .sponsor-logo-preview[hidden] { display:none; }
+            .sponsor-page .sponsor-logo-preview img { display:block; width:100%; height:100px; object-fit:contain; }
+            .sponsor-page .sponsor-logo-preview figcaption { margin-top:6px; color:#52677d; font-size:.75rem; }
+            .sponsor-page .sponsor-step-footer { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 2px; padding-top: 12px; border-top: 1px solid rgba(7,24,47,.09); }
+            .sponsor-page .sponsor-step-footer .sponsor-consent-inline { flex: 1 1 auto; min-width: 0; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+            .sponsor-page .sponsor-consent-inline label { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: #52677d; font-size: .72rem; font-weight: 600; line-height: 1.35; text-transform: none; }
+            .sponsor-page .sponsor-consent-inline input[type=checkbox] { flex: 0 0 17px; width: 17px; height: 17px; margin: 1px 0 0; accent-color: #ff650d; }
+            .sponsor-page .sponsor-step-footer button { min-height: 42px; padding: 0 18px; border: 0; border-radius: 10px; font-weight: 750; }
+            .sponsor-page .sponsor-step-footer [data-sponsor-next] { display: inline-flex; flex: 0 0 auto; min-width: 190px; align-items: center; justify-content: center; gap: .45rem; white-space: nowrap; }
+            .sponsor-page .sponsor-back { border: 1px solid rgba(80,105,132,.22) !important; background: #fff; color: #31465c; }
+            .sponsor-page .sponsor-next { background: #102b49; color: #fff; }
+            .sponsor-page .sp-submit:disabled { cursor: wait; opacity: .72; }
+            .sponsor-page #sendSponsorOtp.is-verified { background: #16834f !important; }
+            .sponsor-page .sponsor-loading-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.45); border-top-color: #fff; border-radius: 50%; animation: sponsor-spin .7s linear infinite; }
+            @keyframes sponsor-spin { to { transform: rotate(360deg); } }
+            .sponsor-page .sp-contact-card { order: 2; align-self: stretch; border: 1px solid rgba(7,24,47,.1); border-radius: 20px !important; padding: 18px !important; background: linear-gradient(150deg,#fff,#f3f8fc) !important; box-shadow: 0 20px 55px rgba(7,24,47,.09); color: #102b49; }
+            .sponsor-page .sp-contact-card .sp-kicker { color: #e95d12; background: #fff1e8; }
+            .sponsor-page .sp-contact-card h3 { color: #102b49; }
+            .sponsor-page .sp-contact-card p { color: #52677d; }
+            .sponsor-page .sp-contact-list a { color: #17639a; }
+            @media (max-width: 850px) { .sponsor-page .sp-contact-grid { grid-template-columns: minmax(0,1fr) !important; } .sponsor-page .sp-contact-card { display: grid; grid-template-columns: minmax(130px,.65fr) minmax(0,1fr); gap: 14px; align-items: center; } .sponsor-page .sp-sponsor-process-visual { grid-row: span 2; margin: 0; } }
+            @media (max-width: 575.98px) { .sponsor-page .sp-contact-grid { gap: 12px; } .sponsor-page .sponsor-step-grid { gap: 10px; } .sponsor-page .sp-form--simple { padding: 16px !important; } .sponsor-page .sponsor-step-dot { gap: 5px; font-size: .65rem; } .sponsor-page .sp-contact-card { display: block; } .sponsor-page .sp-sponsor-process-visual { margin-bottom: 12px; } .sponsor-page .sponsor-control > i { flex-basis: 38px; width: 38px; } .sponsor-page .sponsor-email-row button, .sponsor-page .sponsor-otp-row button { min-width: 82px; padding: 0 8px !important; font-size: .7rem; } .sponsor-page .sponsor-step-footer { align-items: stretch; flex-direction: column; } .sponsor-page .sponsor-step-footer .sponsor-consent-inline { width: 100%; } .sponsor-page .sponsor-step-footer [data-sponsor-next] { align-self: flex-end; min-width: 174px; } .sponsor-page #sponsorMobileOtpBlock,.sponsor-page #sponsorEmailField,.sponsor-page #otpBlock { grid-column:1/-1; grid-row:auto; } }
         </style>
         <div class="container">
             <div class="sp-section-head" data-reveal="fade-up">
@@ -167,6 +267,10 @@
                     <figure class="sp-sponsor-process-visual">
                         <img th:src="@{/images/tieup.png}" alt="Tec-Verse sponsorship partnership" th:alt="#{sponsor.process.imageAlt}" loading="lazy">
                     </figure>
+                    <figure class="sponsor-logo-preview" id="sponsorLogoPreviewWrap" hidden aria-label="Selected organization logo preview">
+                        <img id="sponsorLogoPreview" alt="Selected organization logo preview">
+                        <figcaption>Organization logo preview</figcaption>
+                    </figure>
                     <div class="sp-sponsor-process-content">
                         <span class="sp-kicker d-inline-flex align-items-center gap-[0.55rem] font-[800] text-uppercase"><i class="bi bi-envelope-paper"></i> <th:block th:text="#{sponsor.process.kicker}">Sponsor Process</th:block></span>
                         <h3 th:text="#{sponsor.process.title}">What Happens Next?</h3>
@@ -178,8 +282,9 @@
                     </div>
                 </aside>
 
-                <form action="/become-sponsor" th:action="@{/become-sponsor}" th:object="${inquiry}" method="post" class="sp-form sp-form--simple d-grid overflow-hidden" data-reveal="fade-up" data-reveal-delay="100" id="sponsorForm"
+                <form action="/become-sponsor" th:action="@{/become-sponsor}" th:object="${inquiry}" method="post" enctype="multipart/form-data" class="sp-form sp-form--simple d-grid overflow-hidden" data-reveal="fade-up" data-reveal-delay="100" id="sponsorForm"
                       th:data-send-otp-url="@{/sponsor/send-otp}" th:data-verify-otp-url="@{/sponsor/verify-otp}"
+                      th:data-send-mobile-otp-url="@{/sponsor/send-mobile-otp}" th:data-verify-mobile-otp-url="@{/sponsor/verify-mobile-otp}"
                       th:data-submitted="${sponsorInquirySubmitted}" th:data-failed="${sponsorInquiryFailed}"
                       th:data-error="${sponsorEnquiryError}"
                       th:data-alert-submitted="#{alert.formSubmitted}" th:data-alert-not-submitted="#{alert.formNotSubmitted}"
@@ -190,13 +295,15 @@
                     <div class="sp-field"><label for="sponsorCompany" th:text="#{sponsor.field.company}">Organization / Company Name*</label><input id="sponsorCompany" name="company" type="text" required maxlength="200" placeholder="Organization / Company Name" th:placeholder="#{sponsor.placeholder.company}" th:value="${inquiry != null ? inquiry.company : ''}"><small class="sp-field-error" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></small></div>
                     <div class="sp-field"><label for="sponsorName" th:text="#{sponsor.field.contactName}">Contact Person Name*</label><input id="sponsorName" name="name" type="text" required maxlength="150" placeholder="Full Name" th:placeholder="#{register.field.fullName}" th:value="${inquiry != null ? inquiry.name : ''}"><small class="sp-field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small></div>
                     <div class="sp-field"><label for="sponsorDesignation" th:text="#{register.field.designation}">Designation</label><input id="sponsorDesignation" name="jobTitle" type="text" placeholder="Designation" th:placeholder="#{register.field.designation}" th:value="${inquiry != null ? inquiry.jobTitle : ''}" maxlength="100"></div>
-                    <div class="sp-field"><label for="sponsorPhone" th:text="#{sponsor.field.phone}">Mobile Number*</label><input id="sponsorPhone" name="phone" type="tel" inputmode="tel" required maxlength="15" placeholder="Mobile Number" th:placeholder="#{ticket.verify.mobile}" th:value="${inquiry != null ? inquiry.phone : ''}"><small class="sp-field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small></div>
-                    <div class="sp-field sp-field--full"><label for="sponsorEmail" th:text="#{sponsor.field.email}">Official Email ID*</label><div style="display:flex;gap:8px"><input id="sponsorEmail" name="email" type="email" required maxlength="254" placeholder="Official Email ID" th:placeholder="#{sponsor.placeholder.email}" style="flex:1" th:value="${inquiry != null ? inquiry.email : ''}"><button type="button" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="sendSponsorOtp" style="width:auto;padding:0 18px" th:text="#{sponsor.otp.send}">Verify Email</button></div><small class="sp-field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small><small id="otpStatus" style="display:block;margin-top:6px"></small></div>
+                    <div class="sp-field" id="sponsorPhoneField"><label for="sponsorPhone" th:text="#{sponsor.field.phone}">Mobile Number*</label><div style="display:flex;gap:8px"><input id="sponsorPhone" name="phone" type="tel" inputmode="tel" required maxlength="15" placeholder="Mobile Number" th:placeholder="#{ticket.verify.mobile}" th:value="${inquiry != null ? inquiry.phone : ''}"><button type="button" class="sp-submit" id="sendSponsorMobileOtp">Send OTP</button></div><small class="sp-field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small><small id="sponsorMobileStatus" class="sponsor-otp-status"></small></div>
+                    <div class="sp-field" id="sponsorEmailField"><label for="sponsorEmail" th:text="#{sponsor.field.email}">Official Email ID*</label><div style="display:flex;gap:8px"><input id="sponsorEmail" name="email" type="email" required maxlength="254" placeholder="Official Email ID" th:placeholder="#{sponsor.placeholder.email}" style="flex:1" th:value="${inquiry != null ? inquiry.email : ''}"><button type="button" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="sendSponsorOtp" style="width:auto;padding:0 18px">Send OTP</button></div><small class="sp-field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small><small id="otpStatus" style="display:block;margin-top:6px"></small></div>
                     <div class="sp-field sp-field--full" id="otpBlock" style="display:none"><label for="sponsorOtp" th:text="#{sponsor.field.otp}">Enter Email OTP*</label><div style="display:flex;gap:8px"><input id="sponsorOtp" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit OTP" th:placeholder="#{sponsor.placeholder.otp}" style="flex:1"><button type="button" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="verifySponsorOtp" style="width:auto;padding:0 18px" th:text="#{sponsor.otp.confirm}">Confirm OTP</button></div></div>
+                    <div class="sp-field sp-field--full sponsor-mobile-otp-field" id="sponsorMobileOtpBlock" style="display:none"><label for="sponsorMobileOtp">Enter mobile OTP</label><div class="sponsor-control sponsor-control-action sponsor-otp-row"><i class="bi bi-lock" aria-hidden="true"></i><input id="sponsorMobileOtp" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit OTP"><button type="button" class="sp-submit" id="verifySponsorMobileOtp">Verify</button></div><small id="sponsorMobileOtpStatus" class="sponsor-otp-status"></small></div>
                     <div class="sp-field"><label for="sponsorInterest" th:text="#{sponsor.field.package}">Sponsorship Package*</label><select id="sponsorInterest" name="sponsorshipInterest" required><option value="" disabled th:text="#{sponsor.option.select}">Select Sponsorship Package</option><option value="Platinum" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Platinum'}" th:text="#{sponsor.option.platinum}">Platinum — ₹15,00,000</option><option value="Gold" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Gold'}" th:text="#{sponsor.option.gold}">Gold — ₹10,00,000</option><option value="Silver" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Silver'}" th:text="#{sponsor.option.silver}">Silver — ₹5,00,000</option><option value="Copper" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Copper'}" th:text="#{sponsor.option.copper}">Copper — ₹2,50,000</option><option value="Bronze" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Bronze'}" th:text="#{sponsor.option.bronze}">Bronze — ₹1,00,000</option></select><small class="sp-field-error" th:if="${#fields.hasErrors('sponsorshipInterest')}" th:errors="*{sponsorshipInterest}"></small></div>
-                    <div class="sp-field"><label for="sponsorCity" th:text="#{sponsor.field.city}">City / Location</label><input id="sponsorCity" name="city" type="text" placeholder="City / Location" th:placeholder="#{sponsor.placeholder.city}" th:value="${inquiry != null ? inquiry.city : ''}" maxlength="100"></div>
+                    <div class="sp-field"><label for="sponsorCity" th:text="#{sponsor.field.city}">City / Location</label><select id="sponsorCity" name="city" th:attr="data-selected-city=${inquiry != null ? inquiry.city : ''}"><option value="">Select a city</option></select></div>
                     <div class="sp-field"><label for="sponsorWebsite" th:text="#{sponsor.field.website}">Company Website</label><input id="sponsorWebsite" name="website" type="url" placeholder="https://example.com" th:value="${inquiry != null ? inquiry.website : ''}" maxlength="255"></div>
                     <div class="sp-field"><label for="sponsorIndustry" th:text="#{sponsor.field.industry}">Industry / Category</label><input id="sponsorIndustry" name="industry" type="text" placeholder="Industry / Category" th:placeholder="#{sponsor.placeholder.industry}" th:value="${inquiry != null ? inquiry.industry : ''}" maxlength="100"></div>
+                    <div class="sp-field sp-field--full"><label for="sponsorLogoFile">Organization logo (optional)</label><input id="sponsorLogoFile" name="logoFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><small class="sponsor-otp-status">PNG, JPG, WEBP or GIF. Maximum file size: 1 MB.</small><small id="sponsorLogoError" class="sp-client-error" role="alert"></small></div>
                     <div class="sp-field sp-field--full"><label for="sponsorMessage" th:text="#{sponsor.field.message}">Message / Requirements</label><textarea id="sponsorMessage" name="message" rows="4" placeholder="Any message or sponsorship requirements" th:placeholder="#{sponsor.placeholder.requirements}" th:text="${inquiry != null ? inquiry.message : ''}" maxlength="5000"></textarea></div>
                     <div class="sp-field sp-field--full"><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" required style="margin-top:4px"> <span th:text="#{sponsor.consent}">I confirm that the above information is correct and agree to be contacted by the Tec-Verse organizing team regarding sponsorship, package confirmation, invoice and payment.</span></label></div>
                     <button type="submit" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="sponsorSubmit" th:text="#{sponsor.form.submitInterest}">Submit Sponsorship Interest</button>
@@ -394,11 +501,150 @@
 <script th:src="@{/js/main.js}"></script>
 <script th:nonce="${cspNonce}">
     const sponsorForm = document.getElementById("sponsorForm");
+    const sponsorFormHeading = document.querySelector("#sponsor-contact .sp-section-head");
+    if (sponsorForm && sponsorFormHeading) sponsorForm.prepend(sponsorFormHeading);
+    const sponsorFieldIcons = {
+        sponsorCompany: "bi-building", sponsorName: "bi-person", sponsorDesignation: "bi-person-vcard",
+        sponsorPhone: "bi-telephone", sponsorEmail: "bi-envelope", sponsorOtp: "bi-lock",
+        sponsorInterest: "bi-gem", sponsorCity: "bi-geo-alt", sponsorWebsite: "bi-globe",
+        sponsorIndustry: "bi-briefcase", sponsorMessage: "bi-chat-left-text"
+    };
+    Object.entries(sponsorFieldIcons).forEach(([id, iconClass]) => {
+        const field = document.getElementById(id);
+        if (!field) return;
+        const icon = document.createElement("i");
+        icon.className = `bi ${iconClass}`;
+        icon.setAttribute("aria-hidden", "true");
+        const control = document.createElement("span");
+        const isActionField = id === "sponsorEmail" || id === "sponsorOtp" || id === "sponsorPhone";
+        const actionClass = id === "sponsorEmail" ? "sponsor-email-row" : id === "sponsorPhone" ? "sponsor-mobile-row" : "sponsor-otp-row";
+        control.className = `sponsor-control${field.tagName === "TEXTAREA" ? " sponsor-control--textarea" : ""}${isActionField ? ` sponsor-control-action ${actionClass}` : ""}`;
+        if (isActionField) {
+            const row = field.parentElement;
+            const actionButton = row.querySelector("button");
+            row.replaceWith(control);
+            control.append(icon, field, actionButton);
+        } else {
+            field.replaceWith(control);
+            control.append(icon, field);
+        }
+    });
+    const sponsorCitySelect = document.getElementById("sponsorCity");
+    const sponsorCities = [
+        "Agartala", "Agra", "Ahmedabad", "Aizawl", "Ajmer", "Aligarh", "Alappuzha", "Amaravati", "Amritsar", "Anand", "Anantapur", "Asansol", "Ayodhya",
+        "Bareilly", "Bathinda", "Begusarai", "Belagavi", "Bengaluru", "Berhampur", "Bharatpur", "Bhagalpur", "Bhavnagar", "Bhilai", "Bhopal", "Bhubaneswar", "Bikaner", "Bilaspur", "Bokaro",
+        "Chandigarh", "Chennai", "Coimbatore", "Cuttack", "Daman", "Darjeeling", "Dehradun", "Delhi", "Dhanbad", "Dibrugarh", "Durg", "Durgapur",
+        "Erode", "Faridabad", "Gandhinagar", "Gangtok", "Gaya", "Ghaziabad", "Gorakhpur", "Guntur", "Gurugram", "Guwahati", "Gwalior", "Haridwar", "Hisar", "Hosur", "Howrah", "Hubballi-Dharwad", "Hyderabad",
+        "Imphal", "Indore", "Itanagar", "Jabalpur", "Jaipur", "Jalandhar", "Jammu", "Jamnagar", "Jamshedpur", "Jhansi", "Jodhpur", "Jorhat", "Kakinada", "Kalaburagi", "Kannur", "Kanpur", "Kochi", "Kohima", "Kolhapur", "Kolkata", "Kollam", "Kota", "Kottayam", "Kozhikode", "Kurnool",
+        "Leh", "Lucknow", "Ludhiana", "Madurai", "Malappuram", "Mangaluru", "Manali", "Margao", "Mathura", "Meerut", "Mirzapur", "Mohali", "Moradabad", "Mumbai", "Muzaffarpur", "Mysuru",
+        "Nagercoil", "Nagpur", "Nanded", "Nashik", "Navi Mumbai", "Nellore", "Nizamabad", "Noida", "Panaji", "Panipat", "Pathankot", "Patiala", "Patna", "Puducherry", "Pune", "Puri", "Prayagraj",
+        "Raipur", "Rajahmundry", "Rajkot", "Ranchi", "Rishikesh", "Rohtak", "Roorkee", "Rourkela", "Salem", "Sambalpur", "Shillong", "Shimla", "Shivamogga", "Siliguri", "Silchar", "Sikar", "Solapur", "Srinagar", "Surat",
+        "Thanjavur", "Thane", "Thiruvananthapuram", "Thoothukudi", "Thrissur", "Tiruchirappalli", "Tirunelveli", "Tiruppur", "Tirupati", "Udaipur", "Ujjain", "Vadodara", "Varanasi", "Vasco da Gama", "Vellore", "Vijayawada", "Visakhapatnam", "Warangal", "Other"
+    ];
+    const currentSponsorCity = sponsorCitySelect.dataset.selectedCity || "";
+    if (currentSponsorCity && !sponsorCities.includes(currentSponsorCity)) sponsorCities.push(currentSponsorCity);
+    sponsorCities.sort((a, b) => a.localeCompare(b));
+    sponsorCities.forEach(city => sponsorCitySelect.add(new Option(city, city)));
+    sponsorCitySelect.value = currentSponsorCity;
     const sponsorSendOtpUrl = sponsorForm.dataset.sendOtpUrl;
     const sponsorVerifyOtpUrl = sponsorForm.dataset.verifyOtpUrl;
+    const sponsorSendMobileOtpUrl = sponsorForm.dataset.sendMobileOtpUrl;
+    const sponsorVerifyMobileOtpUrl = sponsorForm.dataset.verifyMobileOtpUrl;
     const sponsorSubmitted = sponsorForm.dataset.submitted === "true";
     const sponsorFailed = sponsorForm.dataset.failed === "true";
     const sponsorError = sponsorForm.dataset.error;
+    const sponsorFieldIdsByStep = [
+        ["sponsorCompany", "sponsorName", "sponsorDesignation", "sponsorPhone", "sponsorEmail", "sponsorOtp", "sponsorMobileOtp"],
+        ["sponsorInterest", "sponsorCity", "sponsorWebsite", "sponsorIndustry", "sponsorMessage", "sponsorLogoFile"]
+    ];
+    const sponsorSteps = [];
+    const sponsorDots = [];
+    let sponsorCurrentStep = 1;
+
+    if (sponsorForm) {
+        const firstField = sponsorForm.querySelector(".sp-field");
+        const progress = document.createElement("div");
+        progress.className = "sponsor-step-track";
+        progress.setAttribute("role", "group");
+        progress.setAttribute("aria-label", "Sponsor registration steps");
+        const progressFill = document.createElement("span");
+        progressFill.id = "sponsorProgressFill";
+        progress.append(progressFill);
+
+        for (let index = 0; index < 2; index += 1) {
+            const step = document.createElement("section");
+            step.className = "sponsor-step";
+            step.dataset.sponsorStep = String(index + 1);
+            step.setAttribute("aria-labelledby", `sponsorStep${index + 1}Title`);
+            const grid = document.createElement("div");
+            grid.className = "sponsor-step-grid";
+            const heading = document.createElement("h3");
+            heading.className = "sponsor-step-heading";
+            heading.id = `sponsorStep${index + 1}Title`;
+            heading.textContent = index === 0 ? "Contact and organization" : "Sponsorship details";
+            grid.append(heading);
+            step.append(grid);
+            const dot = document.createElement("div");
+            dot.className = `sponsor-step-dot${index === 0 ? " active" : ""}`;
+            dot.dataset.sponsorDot = String(index + 1);
+            dot.innerHTML = `<i>${index + 1}</i><span>${index === 0 ? "Contact details" : "Sponsorship details"}</span>`;
+            progress.append(dot);
+            sponsorSteps.push({ section: step, grid });
+            sponsorDots.push(dot);
+        }
+
+        if (firstField) {
+            sponsorForm.insertBefore(progress, firstField);
+            sponsorForm.insertBefore(sponsorSteps[0].section, firstField);
+            sponsorForm.insertBefore(sponsorSteps[1].section, firstField);
+            sponsorFieldIdsByStep.forEach((ids, stepIndex) => ids.forEach(id => {
+                const field = document.getElementById(id)?.closest(".sp-field");
+                if (field) {
+                    field.classList.remove("sp-field--full");
+                    sponsorSteps[stepIndex].grid.append(field);
+                }
+            }));
+            sponsorSteps[1].section.hidden = true;
+            const next = document.createElement("button");
+            next.type = "button";
+            next.className = "sponsor-next";
+            next.dataset.sponsorNext = "";
+            next.textContent = "Save & Next";
+            const nextIcon = document.createElement("i");
+            nextIcon.className = "bi bi-arrow-right";
+            nextIcon.setAttribute("aria-hidden", "true");
+            next.append(" ", nextIcon);
+            const firstFooter = document.createElement("div");
+            firstFooter.className = "sponsor-step-footer";
+            const consentField = sponsorForm.querySelector('input[type="checkbox"]')?.closest(".sp-field");
+            if (consentField) consentField.classList.add("sponsor-consent-inline");
+            firstFooter.append(consentField || document.createElement("span"), next);
+            sponsorSteps[0].section.append(firstFooter);
+
+            const back = document.createElement("button");
+            back.type = "button";
+            back.className = "sponsor-back";
+            back.dataset.sponsorBack = "";
+            back.innerHTML = '<i class="bi bi-arrow-left" aria-hidden="true"></i> Back';
+            const secondFooter = document.createElement("div");
+            secondFooter.className = "sponsor-step-footer";
+            secondFooter.append(back, document.getElementById("sponsorSubmit"));
+            sponsorSteps[1].section.append(secondFooter);
+
+            const showSponsorStep = (number, focus = false) => {
+                sponsorCurrentStep = number;
+                sponsorSteps.forEach((step, index) => { step.section.hidden = index + 1 !== number; });
+                sponsorDots.forEach((dot, index) => {
+                    dot.classList.toggle("active", index + 1 === number);
+                    dot.classList.toggle("done", index + 1 < number);
+                });
+                progressFill.style.width = number === 1 ? "0" : "calc(100% - 22px)";
+                if (focus) sponsorSteps[number - 1].grid.querySelector("input:not([type=checkbox]),select,textarea")?.focus({ preventScroll: true });
+            };
+            sponsorForm.dataset.showSponsorStepReady = "true";
+            window.showSponsorRegistrationStep = showSponsorStep;
+        }
+    }
 
     if (sponsorSubmitted) {
         alert(sponsorForm.dataset.alertSubmitted);
@@ -411,36 +657,219 @@
     let sponsorEmailVerified = false;
     const otpStatus = document.getElementById("otpStatus");
     const sponsorEmail = document.getElementById("sponsorEmail");
+    const sponsorOtpButton = document.getElementById("sendSponsorOtp");
+    const sponsorOtpBlock = document.getElementById("otpBlock");
+    let sponsorResendTimer;
+
+    function startSponsorOtpCooldown(seconds = 60) {
+        window.clearInterval(sponsorResendTimer);
+        let remaining = seconds;
+        sponsorOtpButton.disabled = true;
+        sponsorOtpButton.textContent = `Resend in ${remaining}s`;
+        sponsorResendTimer = window.setInterval(() => {
+            remaining -= 1;
+            if (remaining <= 0) {
+                window.clearInterval(sponsorResendTimer);
+                sponsorResendTimer = null;
+                sponsorOtpButton.disabled = false;
+                sponsorOtpButton.textContent = "Resend OTP";
+                return;
+            }
+            sponsorOtpButton.textContent = `Resend in ${remaining}s`;
+        }, 1000);
+    }
+
+    function setSponsorOtpLoading(loading) {
+        if (loading) {
+            sponsorOtpButton.disabled = true;
+            sponsorOtpButton.innerHTML = '<span class="sponsor-loading-spinner" aria-hidden="true"></span><span class="visually-hidden">Please wait</span>';
+            otpStatus.textContent = "Sending OTP… Please wait.";
+        } else if (!sponsorEmailVerified && !sponsorResendTimer) {
+            sponsorOtpButton.disabled = false;
+            sponsorOtpButton.textContent = "Send OTP";
+        }
+    }
 
     async function sponsorOtpRequest(url, body) {
         const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.message || data.error || "Request failed. Please try again.");
+        if (!response.ok) {
+            const error = new Error(data.message || data.error || "Request failed. Please try again.");
+            error.retryAfter = Number(response.headers.get("Retry-After")) || 0;
+            throw error;
+        }
         return data;
     }
 
-    document.getElementById("sendSponsorOtp")?.addEventListener("click", async () => {
+    sponsorOtpButton?.addEventListener("click", async () => {
         const email = sponsorEmail.value.trim();
-        if (!email) { otpStatus.textContent = "Please enter your official email first."; return; }
+        if (!sponsorEmail.checkValidity()) { sponsorEmail.reportValidity(); return; }
+        const contactName = document.getElementById("sponsorName").value.trim();
+        if (!/^[A-Za-z][A-Za-z .'-]{1,149}$/.test(contactName)) { otpStatus.textContent = "Enter a valid contact name before verifying your email."; otpStatus.style.color = "#b42318"; document.getElementById("sponsorName").focus(); return; }
         try {
-            otpStatus.textContent = "Sending OTP...";
-            await sponsorOtpRequest(sponsorSendOtpUrl, { email, name: document.getElementById("sponsorName").value.trim() });
-            document.getElementById("otpBlock").style.display = "block";
+            setSponsorOtpLoading(true);
+            await sponsorOtpRequest(sponsorSendOtpUrl, { email, name: contactName, phone: document.getElementById("sponsorPhone").value.trim() });
+            sponsorOtpBlock.style.display = "block";
             otpStatus.textContent = "OTP sent. Please check your email.";
-        } catch (error) { otpStatus.textContent = error.message; }
+            otpStatus.style.color = "#52677d";
+            startSponsorOtpCooldown();
+        } catch (error) {
+            otpStatus.textContent = error.message;
+            otpStatus.style.color = "#b42318";
+            sponsorOtpButton.disabled = false;
+            sponsorOtpButton.textContent = "Send OTP";
+            if (error.retryAfter > 0) startSponsorOtpCooldown(error.retryAfter);
+        }
     });
 
     document.getElementById("verifySponsorOtp")?.addEventListener("click", async () => {
         try {
+            if (!/^\d{6}$/.test(document.getElementById("sponsorOtp").value.trim())) throw new Error("Enter the 6-digit email OTP.");
             await sponsorOtpRequest(sponsorVerifyOtpUrl, { email: sponsorEmail.value.trim(), otp: document.getElementById("sponsorOtp").value.trim() });
             sponsorEmailVerified = true;
             sponsorEmail.readOnly = true;
+            window.clearInterval(sponsorResendTimer);
+            sponsorResendTimer = null;
+            sponsorOtpButton.disabled = true;
+            sponsorOtpButton.textContent = "Verified";
+            sponsorOtpButton.classList.add("is-verified");
+            sponsorOtpButton.setAttribute("aria-label", "Email address verified");
+            otpStatus.style.color = "#16834f";
             otpStatus.textContent = "✓ Email verified successfully.";
             document.getElementById("otpBlock").style.display = "none";
-        } catch (error) { otpStatus.textContent = error.message; }
+        } catch (error) { otpStatus.textContent = error.message; otpStatus.style.color = "#b42318"; }
     });
 
-    sponsorEmail?.addEventListener("input", () => { sponsorEmailVerified = false; sponsorEmail.readOnly = false; });
+    sponsorEmail?.addEventListener("input", () => {
+        sponsorEmailVerified = false;
+        sponsorEmail.readOnly = false;
+        window.clearInterval(sponsorResendTimer);
+        sponsorResendTimer = null;
+        sponsorOtpButton.disabled = false;
+        sponsorOtpButton.textContent = "Send OTP";
+        sponsorOtpButton.classList.remove("is-verified");
+        sponsorOtpButton.removeAttribute("aria-label");
+        sponsorOtpBlock.style.display = "none";
+        otpStatus.textContent = "";
+    });
+
+    const sponsorPhone = document.getElementById("sponsorPhone");
+    const sponsorMobileOtpButton = document.getElementById("sendSponsorMobileOtp");
+    const sponsorMobileOtpBlock = document.getElementById("sponsorMobileOtpBlock");
+    const sponsorMobileStatus = document.getElementById("sponsorMobileStatus");
+    const sponsorMobileOtpStatus = document.getElementById("sponsorMobileOtpStatus");
+    let sponsorMobileVerified = false;
+    let sponsorVerifiedPhone = "";
+    let sponsorMobileResendTimer;
+
+    function startSponsorMobileCooldown(seconds = 60) {
+        window.clearInterval(sponsorMobileResendTimer);
+        let remaining = seconds;
+        sponsorMobileOtpButton.disabled = true;
+        sponsorMobileOtpButton.textContent = `Resend in ${remaining}s`;
+        sponsorMobileResendTimer = window.setInterval(() => {
+            remaining -= 1;
+            if (remaining <= 0) {
+                window.clearInterval(sponsorMobileResendTimer);
+                sponsorMobileResendTimer = null;
+                sponsorMobileOtpButton.disabled = false;
+                sponsorMobileOtpButton.textContent = "Resend OTP";
+                return;
+            }
+            sponsorMobileOtpButton.textContent = `Resend in ${remaining}s`;
+        }, 1000);
+    }
+
+    sponsorMobileOtpButton?.addEventListener("click", async () => {
+        const phone = sponsorPhone.value.trim();
+        if (!/^(?:\+91[-\s]?)?[6-9]\d{9}$/.test(phone)) {
+            sponsorMobileStatus.textContent = "Enter a valid 10-digit Indian mobile number.";
+            sponsorMobileStatus.style.color = "#b42318";
+            sponsorPhone.focus();
+            return;
+        }
+        try {
+            sponsorMobileOtpButton.disabled = true;
+            sponsorMobileOtpButton.innerHTML = '<span class="sponsor-loading-spinner" aria-hidden="true"></span><span class="visually-hidden">Please wait</span>';
+            sponsorMobileStatus.textContent = "Sending OTP… Please wait.";
+            await sponsorOtpRequest(sponsorSendMobileOtpUrl, { phone });
+            sponsorMobileOtpBlock.style.display = "block";
+            sponsorMobileStatus.textContent = "OTP sent. Please check your mobile.";
+            sponsorMobileStatus.style.color = "#52677d";
+            sponsorMobileOtpStatus.textContent = "";
+            startSponsorMobileCooldown();
+        } catch (error) {
+            sponsorMobileStatus.textContent = error.message;
+            sponsorMobileStatus.style.color = "#b42318";
+            sponsorMobileOtpButton.disabled = false;
+            sponsorMobileOtpButton.textContent = "Send OTP";
+            if (error.retryAfter > 0) startSponsorMobileCooldown(error.retryAfter);
+        }
+    });
+
+    document.getElementById("verifySponsorMobileOtp")?.addEventListener("click", async () => {
+        const phone = sponsorPhone.value.trim();
+        const otp = document.getElementById("sponsorMobileOtp").value.trim();
+        try {
+            if (!/^\d{6}$/.test(otp)) throw new Error("Enter the 6-digit mobile OTP.");
+            await sponsorOtpRequest(sponsorVerifyMobileOtpUrl, { phone, otp });
+            sponsorMobileVerified = true;
+            sponsorVerifiedPhone = phone;
+            sponsorPhone.readOnly = true;
+            window.clearInterval(sponsorMobileResendTimer);
+            sponsorMobileResendTimer = null;
+            sponsorMobileOtpButton.disabled = true;
+            sponsorMobileOtpButton.textContent = "Verified";
+            sponsorMobileOtpButton.classList.add("is-verified");
+            sponsorMobileStatus.textContent = "✓ Mobile number verified.";
+            sponsorMobileStatus.style.color = "#16834f";
+            sponsorMobileOtpBlock.style.display = "none";
+        } catch (error) {
+            sponsorMobileOtpStatus.textContent = error.message;
+            sponsorMobileOtpStatus.style.color = "#b42318";
+        }
+    });
+
+    sponsorPhone?.addEventListener("input", () => {
+        sponsorMobileVerified = false;
+        sponsorVerifiedPhone = "";
+        sponsorPhone.readOnly = false;
+        window.clearInterval(sponsorMobileResendTimer);
+        sponsorMobileResendTimer = null;
+        sponsorMobileOtpButton.disabled = false;
+        sponsorMobileOtpButton.textContent = "Send OTP";
+        sponsorMobileOtpButton.classList.remove("is-verified");
+        sponsorMobileOtpBlock.style.display = "none";
+        sponsorMobileStatus.textContent = "";
+    });
+
+    const sponsorLogoInput = document.getElementById("sponsorLogoFile");
+    const sponsorLogoError = document.getElementById("sponsorLogoError");
+    const sponsorLogoPreviewWrap = document.getElementById("sponsorLogoPreviewWrap");
+    const sponsorLogoPreview = document.getElementById("sponsorLogoPreview");
+    let sponsorLogoPreviewUrl = null;
+    sponsorLogoInput?.addEventListener("change", () => {
+        const file = sponsorLogoInput.files?.[0];
+        sponsorLogoError.textContent = "";
+        if (sponsorLogoPreviewUrl) URL.revokeObjectURL(sponsorLogoPreviewUrl);
+        sponsorLogoPreviewUrl = null;
+        sponsorLogoPreviewWrap.hidden = true;
+        if (!file) return;
+        const allowedTypes = ["image/png", "image/jpeg", "image/webp", "image/gif"];
+        if (file.size > 1024 * 1024) {
+            sponsorLogoError.textContent = "Logo must be 1 MB or smaller.";
+            sponsorLogoInput.value = "";
+            return;
+        }
+        if (!allowedTypes.includes(file.type)) {
+            sponsorLogoError.textContent = "Choose a PNG, JPG, WEBP or GIF image.";
+            sponsorLogoInput.value = "";
+            return;
+        }
+        sponsorLogoPreviewUrl = URL.createObjectURL(file);
+        sponsorLogoPreview.src = sponsorLogoPreviewUrl;
+        sponsorLogoPreviewWrap.hidden = false;
+    });
     const sponsorFieldMessage = (field) => {
         const value = field.value.trim();
         if (field.required && !value) return "This field is required.";
@@ -454,27 +883,85 @@
         return "";
     };
     const showSponsorFieldError = (field, message) => {
-        let error = field.closest(".sp-field")?.querySelector(".sp-client-error");
-        if (!error && field.closest(".sp-field")) {
+        const fieldContainer = field.closest(".sp-field");
+        // Mobile validation already has a dedicated status line; don't create a
+        // second copy that can collide with the input and Send OTP button.
+        if (field.id === "sponsorPhone") {
+            fieldContainer?.querySelectorAll(".sponsor-control .jquery-validation-error").forEach(error => error.remove());
+            sponsorMobileStatus.textContent = message;
+            sponsorMobileStatus.style.color = message ? "#b42318" : "";
+            field.setAttribute("aria-invalid", String(Boolean(message)));
+            return !message;
+        }
+        let error = fieldContainer?.querySelector(".sp-client-error");
+        if (!error && fieldContainer) {
             error = document.createElement("small"); error.className = "sp-client-error";
             error.style.cssText = "display:block;color:#b42318;margin-top:5px";
-            field.closest(".sp-field").append(error);
+            fieldContainer.append(error);
         }
         if (error) error.textContent = message;
         field.setAttribute("aria-invalid", String(Boolean(message)));
         return !message;
     };
+    sponsorForm?.querySelector("[data-sponsor-next]")?.addEventListener("click", () => {
+        const page = sponsorSteps[0]?.section;
+        let firstInvalid = null;
+        page?.querySelectorAll("input,select,textarea").forEach(field => {
+            const message = sponsorFieldMessage(field) || (!field.checkValidity() ? "Please check this field." : "");
+            if (!showSponsorFieldError(field, message)) firstInvalid ||= field;
+        });
+        if (firstInvalid) { firstInvalid.focus(); return; }
+        if (!sponsorEmailVerified) {
+            otpStatus.textContent = "Verify your official email with OTP to continue.";
+            otpStatus.style.color = "#b42318";
+            sponsorEmail.focus();
+            return;
+        }
+        if (!sponsorMobileVerified || sponsorVerifiedPhone !== sponsorPhone.value.trim()) {
+            sponsorMobileStatus.textContent = "Verify your mobile number with OTP to continue.";
+            sponsorMobileStatus.style.color = "#b42318";
+            sponsorPhone.focus();
+            return;
+        }
+        window.showSponsorRegistrationStep?.(2, true);
+    });
+    const sponsorBackButton = sponsorForm?.querySelector("[data-sponsor-back]");
+    sponsorBackButton?.addEventListener("click", () => window.showSponsorRegistrationStep?.(1, true));
+
+    const serverErrorStep = sponsorSteps.findIndex(step => step.grid.querySelector(".sp-field-error"));
+    if (serverErrorStep > 0) window.showSponsorRegistrationStep?.(serverErrorStep + 1);
+
     sponsorForm?.querySelectorAll("input[name],select[name],textarea[name]").forEach((field) => {
         field.addEventListener("input", () => showSponsorFieldError(field, sponsorFieldMessage(field)));
         field.addEventListener("change", () => showSponsorFieldError(field, sponsorFieldMessage(field)));
     });
     sponsorForm?.addEventListener("submit", (event) => {
+        const selectedLogo = sponsorLogoInput?.files?.[0];
+        if (selectedLogo && (selectedLogo.size > 1024 * 1024 || !["image/png", "image/jpeg", "image/webp", "image/gif"].includes(selectedLogo.type))) {
+            event.preventDefault();
+            sponsorLogoError.textContent = selectedLogo.size > 1024 * 1024 ? "Logo must be 1 MB or smaller." : "Choose a PNG, JPG, WEBP or GIF image.";
+            window.showSponsorRegistrationStep?.(2);
+            sponsorLogoInput.focus();
+            return;
+        }
         let valid = true;
+        let firstInvalid = null;
         sponsorForm.querySelectorAll("input[name],select[name],textarea[name]").forEach((field) => {
-            if (!showSponsorFieldError(field, sponsorFieldMessage(field))) valid = false;
+            const message = sponsorFieldMessage(field) || (!field.checkValidity() ? "Please check this field." : "");
+            if (!showSponsorFieldError(field, message)) { valid = false; firstInvalid ||= field; }
         });
-        if (!valid) { event.preventDefault(); sponsorForm.querySelector('[aria-invalid="true"]')?.focus(); return; }
-        if (!sponsorEmailVerified) { event.preventDefault(); alert("Please verify your official email with OTP before submitting."); }
+        if (!valid) {
+            event.preventDefault();
+            const owner = firstInvalid?.closest(".sponsor-step");
+            if (owner) window.showSponsorRegistrationStep?.(Number(owner.dataset.sponsorStep));
+            firstInvalid?.focus();
+            return;
+        }
+        if (!sponsorEmailVerified || !sponsorMobileVerified || sponsorVerifiedPhone !== sponsorPhone.value.trim()) {
+            event.preventDefault();
+            window.showSponsorRegistrationStep?.(1);
+            alert("Please verify both your email address and mobile number with OTP before submitting.");
+        }
     });
 
     document.querySelectorAll("[data-select-sponsor]").forEach((button) => {

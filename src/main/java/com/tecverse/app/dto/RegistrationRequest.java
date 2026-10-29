@@ -42,7 +42,7 @@ public class RegistrationRequest {
     @Size(max=100) @Pattern(regexp=Constants.MEASURE_REGEX, message="Weight may contain letters, numbers, spaces, and . , / ( ) -.") private String equipmentWeight;
     @Size(max=1000) @Pattern(regexp=Constants.FREE_TEXT_REGEX, message="Utility requirements contain characters that are not allowed.") private String utilityRequirements;
     @Size(max=1000) @Pattern(regexp=Constants.FREE_TEXT_REGEX, message="Equipment impact details contain characters that are not allowed.") private String equipmentImpact;
-    @NotBlank(message="Select a stall package.") @Pattern(regexp="^(3 × 3 Mtr\\.|3 × 6 Mtr\\.|6 × 6 Mtr\\.)$", message="Select a valid stall package.") private String stallPackage;
+    @NotBlank(message="Select a stall package.") @Pattern(regexp="^(Signature - 6 x 3 Mtr\\.|Standard - 3 x 3 Mtr\\.|Compact - 3 x 2 Mtr\\.|Showcase - 2 x 2 Mtr\\.)$", message="Select a valid stall package.") private String stallPackage;
     @Size(max=200) private String powerRequirement;
     @Size(max=150) private String technologyArea;
     @Size(max=100) private String companySize;

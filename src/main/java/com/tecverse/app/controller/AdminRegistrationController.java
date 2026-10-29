@@ -28,6 +28,7 @@ import com.tecverse.app.repository.ContactUsRepository;
 import com.tecverse.app.repository.ExhibitorRepository;
 import com.tecverse.app.repository.SponsorEnquiryRepository;
 import com.tecverse.app.repository.TicketRegistrationRepository;
+import com.tecverse.app.repository.TecverseRegistrationRepository;
 import com.tecverse.app.repository.MobileAttendeePreferenceRepository;
 import com.tecverse.app.repository.MobileNotificationRepository;
 import com.tecverse.app.repository.MobilePassCheckInRepository;
@@ -41,11 +42,13 @@ public class AdminRegistrationController {
     private final MobileAttendeePreferenceRepository attendeePreferences;
     private final MobileNotificationRepository mobileNotifications;
     private final MobilePassCheckInRepository passCheckIns;
+    private final TecverseRegistrationRepository exhibitorRegistrationMirrors;
 
     public AdminRegistrationController(TicketRegistrationRepository tickets, ExhibitorRepository exhibitors,
             SponsorEnquiryRepository sponsors, ContactUsRepository contacts,
             MobileAttendeePreferenceRepository attendeePreferences,
-            MobileNotificationRepository mobileNotifications, MobilePassCheckInRepository passCheckIns) {
+            MobileNotificationRepository mobileNotifications, MobilePassCheckInRepository passCheckIns,
+            TecverseRegistrationRepository exhibitorRegistrationMirrors) {
         this.tickets = tickets;
         this.exhibitors = exhibitors;
         this.sponsors = sponsors;
@@ -53,6 +56,7 @@ public class AdminRegistrationController {
         this.attendeePreferences = attendeePreferences;
         this.mobileNotifications = mobileNotifications;
         this.passCheckIns = passCheckIns;
+        this.exhibitorRegistrationMirrors = exhibitorRegistrationMirrors;
     }
 
     @GetMapping("/admin/registrations/{type}")
@@ -130,7 +134,12 @@ public class AdminRegistrationController {
                 tickets.deleteById(id);
             }
             case "exhibitors" -> {
-                if (!exhibitors.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                Exhibitor exhibitor = exhibitors.findById(id)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                // Exhibitor submissions are mirrored in tecverse_registrations.
+                // Delete both records in one transaction so the phone/email is freed.
+                exhibitorRegistrationMirrors.findByReferenceNumber(exhibitor.getReferenceNumber())
+                        .ifPresent(exhibitorRegistrationMirrors::delete);
                 exhibitors.deleteById(id);
             }
             case "sponsors" -> {

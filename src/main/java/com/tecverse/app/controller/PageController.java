@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.MessageSource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -25,6 +26,7 @@ import com.tecverse.app.entity.ConferenceScheduleItem;
 import com.tecverse.app.entity.ContactUs;
 import com.tecverse.app.entity.NewsUpdate;
 import com.tecverse.app.entity.SponsorEnquiry;
+import com.tecverse.app.event.SponsorEnquirySavedEvent;
 import com.tecverse.app.entity.ThematicDomainCard;
 import com.tecverse.app.repository.ChiefGuestRepository;
 import com.tecverse.app.repository.ConferenceScheduleItemRepository;
@@ -40,6 +42,7 @@ import com.tecverse.app.service.FaqService;
 import com.tecverse.app.service.MediaCoverageService;
 import com.tecverse.app.security.OtpSessionVerification;
 import com.tecverse.app.service.SponsorOtpService;
+import com.tecverse.app.service.GalleryStorageService;
 import com.tecverse.app.service.RateLimitService;
 import com.tecverse.app.exception.RateLimitExceededException;
 import com.tecverse.app.util.Constants;
@@ -59,6 +62,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class PageController {
@@ -83,6 +87,8 @@ public class PageController {
     private final SponsorOtpService sponsorOtpService;
     private final RateLimitService rateLimitService;
     private final MessageSource messageSource;
+    private final GalleryStorageService galleryStorageService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public PageController(com.tecverse.app.repository.GalleryImageRepository galleryImageRepository,
                           GalleryVideoRepository galleryVideoRepository,
@@ -99,7 +105,9 @@ public class PageController {
                           MediaCoverageService mediaCoverageService,
                           SponsorOtpService sponsorOtpService,
                           MessageSource messageSource,
-                          RateLimitService rateLimitService) {
+                          RateLimitService rateLimitService,
+                          GalleryStorageService galleryStorageService,
+                          ApplicationEventPublisher eventPublisher) {
         this.galleryImageRepository = galleryImageRepository;
         this.galleryVideoRepository = galleryVideoRepository;
         this.contactUsRepository = contactUsRepository;
@@ -116,6 +124,8 @@ public class PageController {
         this.sponsorOtpService = sponsorOtpService;
         this.messageSource = messageSource;
         this.rateLimitService = rateLimitService;
+        this.galleryStorageService = galleryStorageService;
+        this.eventPublisher = eventPublisher;
     }
 
     public record ThematicDomainItem(String institution, String title, String icon, String description) {
@@ -227,6 +237,8 @@ public class PageController {
         @Pattern(regexp = Constants.FREE_TEXT_REGEX, message = "Message contains characters that are not allowed.")
         private String message;
 
+        private MultipartFile logoFile;
+
         public String getCity() { return city; }
         public void setCity(String city) { this.city = city; }
         public String getWebsite() { return website; }
@@ -289,6 +301,9 @@ public class PageController {
         public void setMessage(String message) {
             this.message = message;
         }
+
+        public MultipartFile getLogoFile() { return logoFile; }
+        public void setLogoFile(MultipartFile logoFile) { this.logoFile = logoFile; }
     }
 
     private static final List<NewsItem> NEWS_ITEMS = List.of(
@@ -570,6 +585,13 @@ public class PageController {
             return "become-sponsor";
         }
 
+        if (!OtpSessionVerification.isVerified(httpRequest, OtpSessionVerification.Purpose.SPONSOR_MOBILE, normalizedPhone)) {
+            response.setStatus(org.springframework.http.HttpStatus.FORBIDDEN.value());
+            model.addAttribute("sponsorEnquiryError", "Please verify your mobile number with OTP before submitting.");
+            model.addAttribute("sponsorInquiryFailed", true);
+            return "become-sponsor";
+        }
+
         if (sponsorEnquiryRepository.existsByEmail(normalizedEmail)) {
             model.addAttribute("sponsorEnquiryError", message("api.email.registered"));
             model.addAttribute("sponsorInquiryFailed", true);
@@ -579,6 +601,17 @@ public class PageController {
             model.addAttribute("sponsorEnquiryError", message("api.phone.registered"));
             model.addAttribute("sponsorInquiryFailed", true);
             return "become-sponsor";
+        }
+
+        String logoUrl = null;
+        if (inquiry.getLogoFile() != null && !inquiry.getLogoFile().isEmpty()) {
+            try {
+                logoUrl = galleryStorageService.uploadImage(inquiry.getLogoFile(), "sponsors");
+            } catch (RuntimeException ex) {
+                model.addAttribute("sponsorEnquiryError", ex.getMessage());
+                model.addAttribute("sponsorInquiryFailed", true);
+                return "become-sponsor";
+            }
         }
 
         SponsorEnquiry sponsorEnquiry = SponsorEnquiry.builder()
@@ -595,10 +628,17 @@ public class PageController {
                 .status("NEW")
                 .paymentStatus("PENDING_CONTACT")
                 .message(blankToNull(inquiry.getMessage()))
+                .logoUrl(logoUrl)
                 .build();
         sponsorEnquiryRepository.save(sponsorEnquiry);
+        eventPublisher.publishEvent(new SponsorEnquirySavedEvent(
+                normalizedEmail,
+                sponsorEnquiry.getName(),
+                sponsorEnquiry.getCompany(),
+                sponsorEnquiry.getSponsorshipInterest()));
         sponsorOtpService.consume(normalizedEmail);
         OtpSessionVerification.consume(httpRequest, OtpSessionVerification.Purpose.SPONSOR);
+        OtpSessionVerification.consume(httpRequest, OtpSessionVerification.Purpose.SPONSOR_MOBILE);
 
         model.addAttribute("sponsorInquirySubmitted", true);
         model.addAttribute("inquiry", new SponsorEnquiryForm());
@@ -610,13 +650,21 @@ public class PageController {
         return "privacy-policy";
     }
 
+    @GetMapping({"/terms-and-conditions", "/terms-and-conditions/", "/terms", "/terms/"})
+    public String termsAndConditions() {
+        return "terms-and-conditions";
+    }
+
     @GetMapping({"/account-deletion", "/account-deletion/", "/delete-account", "/delete-account/", "/account-deletion.html"})
     public String accountDeletion() {
         return "account-deletion";
     }
 
     @GetMapping("/exhibitor-registration")
-    public String exhibitorRegistration() {
+    public String exhibitorRegistration(HttpServletRequest request) {
+        // A page reload starts a fresh exhibitor application and requires fresh OTP checks.
+        OtpSessionVerification.consume(request, OtpSessionVerification.Purpose.EXHIBITOR);
+        OtpSessionVerification.consume(request, OtpSessionVerification.Purpose.EXHIBITOR_MOBILE);
         return "exhibitor-registration";
     }
 

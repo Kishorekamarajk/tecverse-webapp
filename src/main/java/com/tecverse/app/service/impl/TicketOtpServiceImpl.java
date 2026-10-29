@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +23,16 @@ import com.tecverse.app.repository.TicketRegistrationRepository;
 import com.tecverse.app.service.MailDeliveryService;
 import com.tecverse.app.service.TicketOtpService;
 import com.tecverse.app.util.SMSServices;
+import com.tecverse.app.util.OtpConsoleLogger;
 import com.tecverse.app.util.ValidationUtil;
 
 @Service
 public class TicketOtpServiceImpl implements TicketOtpService {
 
     private static final Logger log = LoggerFactory.getLogger(TicketOtpServiceImpl.class);
+
+    @Value("${tecverse.otp.log-to-console:false}")
+    private boolean logOtpsToConsole;
 
     private static final Duration OTP_VALIDITY = Duration.ofMinutes(5);
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -73,6 +76,16 @@ public class TicketOtpServiceImpl implements TicketOtpService {
     public void sendMobileOtp(String phone) {
         String mobile = ValidationUtil.normalizeIndianMobile(phone);
         if (registrationRepository.existsByPhone(mobile)) throw new IllegalArgumentException("This phone number is already registered.");
+        sendMobileOtpForFlow(mobile);
+    }
+
+    @Override
+    public void sendExhibitorMobileOtp(String phone) {
+        // Exhibitor registration is independent from attendee ticket registration.
+        sendMobileOtpForFlow(ValidationUtil.normalizeIndianMobile(phone));
+    }
+
+    private void sendMobileOtpForFlow(String mobile) {
         String otp = String.format("%06d", RANDOM.nextInt(1_000_000));
         // Must match the licensed DLT template word for word, or the gateway rejects the SMS.
         String msg = "Dear Patron, Use OTP " + otp + " to verify your mobile number and complete your registration on the Tec-Verse Portal. Please do not share this OTP with anyone. Team Tec-Verse";
@@ -81,6 +94,7 @@ public class TicketOtpServiceImpl implements TicketOtpService {
             log.error("OTP SMS sending FAILED for mobile ending {}: {}", mobile.substring(Math.max(0, mobile.length() - 4)), output);
             throw new IllegalStateException("SMS Gateway error. Please try again later.");
         }
+        OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "Mobile number verification", otp);
         // Saving with the same mobile replaces any earlier OTP for that number (and resets attempts).
         mobileOtpRepository.save(new TicketMobileOtp(mobile, hashMobileOtp(mobile, otp), Instant.now().plus(OTP_VALIDITY)));
     }
@@ -134,23 +148,22 @@ public class TicketOtpServiceImpl implements TicketOtpService {
         OtpEntry entry = new OtpEntry(otp, LocalDateTime.now().plus(OTP_VALIDITY));
         otpStore.put(email, entry);
 
-        // Do not hold the ticket form request open while the SMTP server completes delivery.
-        // The OTP is available to verification as soon as the email arrives; on a delivery
-        // failure remove only this request's OTP so a newer resend is not affected.
-        CompletableFuture.runAsync(() -> {
-            try {
-                boolean sent = mailDeliveryService.sendSimple(
-                        email,
-                        "Tec-Verse ticket verification OTP",
-                        buildMessage(request, otp),
-                        "Ticket OTP"
-                );
-                if (!sent) throw new IllegalStateException("SMTP did not accept the ticket OTP email.");
-            } catch (RuntimeException ex) {
-                otpStore.remove(email, entry);
-                log.warn("Ticket email OTP delivery failed; the affected OTP was invalidated.", ex);
-            }
-        });
+        // Wait for SMTP so the form can show an actionable error when the mail server is down.
+        // On failure, invalidate this OTP before returning the delivery error to the caller.
+        try {
+            boolean sent = mailDeliveryService.sendSimple(
+                    email,
+                    "Tec-Verse ticket verification OTP",
+                    buildMessage(request, otp),
+                    "Ticket OTP"
+            );
+            if (!sent) throw new IllegalStateException("Mail server is temporarily unavailable. Please try again later.");
+            OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "Ticket email verification", otp);
+        } catch (RuntimeException ex) {
+            otpStore.remove(email, entry);
+            log.warn("Ticket email OTP delivery failed; the affected OTP was invalidated.", ex);
+            throw ex;
+        }
     }
 
     @Override
@@ -202,6 +215,7 @@ public class TicketOtpServiceImpl implements TicketOtpService {
             passwordResetOtpAttempts.remove(normalizedEmail);
             throw new IllegalStateException("Unable to send email right now. Please try again later.");
         }
+        OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "App password reset", otp);
     }
 
     public synchronized String verifyPasswordResetOtp(String email, String otp) {
