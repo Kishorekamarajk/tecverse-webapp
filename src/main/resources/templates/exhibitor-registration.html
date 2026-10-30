@@ -232,60 +232,6 @@
         }
         .ticket-page .site-navbar .navbar-toggler { transition: background-color .12s linear, border-color .12s linear; }
 
-        /* The signed-in navbar needs more room than the shared desktop row at
-           laptop widths. Collapse it before its links and actions can collide. */
-        @media (min-width: 1200px) and (max-width: 1920px) {
-            .exhibitor-registration-page .site-navbar .container-custom {
-                display: flex !important;
-                justify-content: space-between;
-                gap: 1rem;
-            }
-            .exhibitor-registration-page .site-navbar .navbar-brand { min-width: 0; }
-            .exhibitor-registration-page .site-navbar .navbar-brand-text { display: inline-block; }
-            .exhibitor-registration-page .site-navbar .navbar-toggler { display: block; margin-left: auto; }
-            .exhibitor-registration-page .site-navbar .offcanvas {
-                position: fixed;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: auto;
-                width: min(88vw, 360px);
-                height: 100vh;
-                visibility: hidden;
-                transform: translateX(100%);
-                background: #fff;
-            }
-            .exhibitor-registration-page .site-navbar .offcanvas.show:not(.hiding) {
-                visibility: visible;
-                transform: none;
-            }
-            .exhibitor-registration-page .site-navbar .offcanvas-body {
-                display: flex !important;
-                flex-direction: column;
-                align-items: stretch;
-                justify-content: flex-start;
-                padding: 1rem;
-            }
-            .exhibitor-registration-page .site-navbar .navbar-nav {
-                align-items: stretch;
-                flex-direction: column;
-                gap: 0;
-                margin: 0;
-                transform: none;
-            }
-            .exhibitor-registration-page .site-navbar .navbar-actions {
-                align-items: stretch;
-                flex-direction: column;
-                gap: .75rem;
-                width: 100%;
-                margin: 1rem 0 0 !important;
-            }
-            .exhibitor-registration-page .site-navbar .navbar-actions > * { width: 100%; }
-            .exhibitor-registration-page .site-navbar .navbar-language-switcher { justify-content: flex-start; }
-            .exhibitor-registration-page .site-navbar .attendee-nav-welcome { max-width: none; }
-            .exhibitor-registration-page .site-navbar .navbar-action-btn-ticket { margin: 0; }
-        }
-
         /* Glass finish for the exhibitor application, coordinated with the booth cards. */
         .ticket-page .flow-section > div {
             position: relative;
