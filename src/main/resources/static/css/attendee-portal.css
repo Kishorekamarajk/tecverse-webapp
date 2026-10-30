@@ -1,0 +1,50 @@
+/* Public attendee pages use the same navy, violet and saffron palette as Tec-Verse. */
+body:has(.auth-wrap), body:has(.login-card), body:has(.shell) {
+    font-family: Inter, "Segoe UI", sans-serif;
+    background: #f4f7fb;
+}
+body:has(.auth-wrap) { background: linear-gradient(145deg, #eef3fb 0%, #f8f5ff 58%, #fff8f1 100%); }
+.auth-wrap { width: min(920px, 92vw); color: #102b62; }
+.auth-brand { margin-bottom: 2.4rem; }
+.auth-brand img { width: 84px; height: 84px; object-fit: contain; }
+.auth-brand h1 { margin: .9rem 0 .25rem; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.04em; }
+.auth-brand p { color: #637795; }
+.auth-grid { gap: 1.4rem; }
+.auth-card { padding: clamp(1.5rem, 4vw, 2.5rem); border: 1px solid #e4eaf2; border-radius: 18px; box-shadow: 0 18px 45px rgba(16,43,98,.09); }
+.auth-card h2 { color: #102b62; font-weight: 750; }
+.auth-card p { color: #64748b; }
+.auth-card a { min-width: 150px; text-align: center; background: #f47a20; border-radius: 8px; transition: background .18s ease, transform .18s ease; }
+.auth-card a:hover { background: #dc6414; transform: translateY(-1px); }
+.login-card { border: 1px solid #e4eaf2; border-radius: 18px; box-shadow: 0 20px 56px rgba(16,43,98,.14); }
+.login-card h1 { color: #102b62; font-weight: 800; letter-spacing: -.035em; }
+.login-card input { box-sizing: border-box; min-height: 48px; font: inherit; }
+.login-card button { background: #f47a20; cursor: pointer; transition: background .18s ease, transform .18s ease; }
+.login-card button:hover { background: #dc6414; transform: translateY(-1px); }
+.login-card a { color: #5127b8; }
+.login-card .error { border-left: 4px solid #bd3434; }
+.top { background: linear-gradient(110deg, #102b62, #392184); }
+.shell { width: min(1120px, 92vw); }
+.welcome { padding: clamp(1.5rem, 4vw, 2.5rem); color: #fff; background: linear-gradient(120deg, #102b62, #392184); border-radius: 18px; }
+.welcome h1 { font-size: clamp(1.6rem, 4vw, 2.35rem); font-weight: 800; letter-spacing: -.035em; }
+.welcome p { margin-bottom: 0; color: rgba(255,255,255,.78); }
+.panel { padding: clamp(1.2rem, 3vw, 1.8rem); border: 1px solid #e5eaf1; border-radius: 15px; box-shadow: 0 9px 28px rgba(16,43,98,.055); }
+.panel h2 { margin-bottom: 1.1rem; color: #102b62; font-size: 1.25rem; font-weight: 750; }
+.nav a { border: 1px solid #e6e0f8; background: #fff; color: #392184; }
+.nav a:hover, .nav a:focus-visible { border-color: #f47a20; color: #b44c0b; }
+.grid > div { padding: 1rem; border: 1px solid #edf0f5; border-radius: 12px; background: #fbfcfe; }
+.grid > div strong { color: #637795; font-size: .85rem; }
+.grid > div p { margin: .35rem 0 0; color: #102b62; font-size: 1.08rem; font-weight: 700; }
+.kv { padding: .8rem .65rem; }
+.kv strong { color: #637795; }
+.kv span { color: #172b4d; overflow-wrap: anywhere; }
+.session { border: 1px solid #e5eaf1; border-radius: 12px; }
+.session h3 { color: #102b62; font-size: 1.08rem; font-weight: 700; }
+.session button, .top button { background: #f47a20; cursor: pointer; }
+.session button:hover, .top button:hover { background: #dc6414; }
+.flash { margin-bottom: 1rem; }
+.qr { display: block; width: min(220px, 70vw); padding: .65rem; border: 1px solid #e5eaf1; border-radius: 12px; }
+@media (max-width: 640px) {
+    .auth-grid { grid-template-columns: 1fr; }
+    .auth-card p { min-height: unset; }
+    .kv { gap: .15rem; }
+}

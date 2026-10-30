@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -67,6 +68,7 @@ public class MobileApiController {
     private final TicketOtpServiceImpl otpService;
     private final MobileNotificationRepository notifications;
     private final RateLimitService rateLimitService;
+    private final com.tecverse.app.service.ThematicReservationService thematicReservations;
 
     public MobileApiController(
             MobileSessionService sessions,
@@ -85,7 +87,8 @@ public class MobileApiController {
             MobilePassCheckInRepository checkIns,
             TicketOtpServiceImpl otpService,
             MobileNotificationRepository notifications,
-            RateLimitService rateLimitService) {
+            RateLimitService rateLimitService,
+            com.tecverse.app.service.ThematicReservationService thematicReservations) {
 
         this.sessions = sessions;
         this.passwordEncoder = passwordEncoder;
@@ -104,6 +107,7 @@ public class MobileApiController {
         this.otpService = otpService;
         this.notifications = notifications;
         this.rateLimitService = rateLimitService;
+        this.thematicReservations = thematicReservations;
     }
 
     @GetMapping("/health")
@@ -281,6 +285,21 @@ public class MobileApiController {
                                                 .contains(key))))
                 .map(this::scheduleItem)
                 .toList();
+    }
+
+    @GetMapping("/my/thematic-sessions")
+    public List<Map<String,Object>> attendeeThematicSessions(@RequestHeader("Authorization") String authorization) {
+        return thematicReservations.publicSessions(sessions.requireAttendee(authorization).getId());
+    }
+
+    @PostMapping("/my/thematic-sessions/{id}")
+    public Map<String,Object> reserveThematicSession(@RequestHeader("Authorization") String authorization,@PathVariable Long id) {
+        thematicReservations.reserve(sessions.requireAttendee(authorization).getId(),id); return Map.of("success",true);
+    }
+
+    @DeleteMapping("/my/thematic-sessions/reservations/{id}")
+    public Map<String,Object> cancelThematicReservation(@RequestHeader("Authorization") String authorization,@PathVariable Long id) {
+        thematicReservations.cancel(sessions.requireAttendee(authorization).getId(),id); return Map.of("success",true);
     }
 
     @GetMapping("/exhibitors")

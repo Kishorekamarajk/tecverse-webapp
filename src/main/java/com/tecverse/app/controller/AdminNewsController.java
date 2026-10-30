@@ -46,19 +46,22 @@ public class AdminNewsController {
     private final GalleryStorageService galleryStorageService;
     private final AdminDashboardService adminDashboardService;
     private final AdminCaptchaService adminCaptchaService;
+    private final com.tecverse.app.service.ThematicReservationService thematicReservations;
 
     public AdminNewsController(ConferenceScheduleItemRepository conferenceScheduleItemRepository,
                                NewsUpdateRepository newsUpdateRepository,
                                ThematicDomainCardRepository thematicDomainCardRepository,
                                GalleryStorageService galleryStorageService,
                                AdminDashboardService adminDashboardService,
-                               AdminCaptchaService adminCaptchaService) {
+                               AdminCaptchaService adminCaptchaService,
+                               com.tecverse.app.service.ThematicReservationService thematicReservations) {
         this.conferenceScheduleItemRepository = conferenceScheduleItemRepository;
         this.newsUpdateRepository = newsUpdateRepository;
         this.thematicDomainCardRepository = thematicDomainCardRepository;
         this.galleryStorageService = galleryStorageService;
         this.adminDashboardService = adminDashboardService;
         this.adminCaptchaService = adminCaptchaService;
+        this.thematicReservations = thematicReservations;
     }
 
     @GetMapping("/adminportal")
@@ -90,6 +93,30 @@ public class AdminNewsController {
     public String conferenceSchedule(Model model) {
         model.addAttribute("scheduleItems", conferenceScheduleItemRepository.findAllByOrderByDayNumberAscDisplayOrderAscIdAsc());
         return "admin/conference-schedule";
+    }
+
+    @GetMapping("/admin/thematic-sessions")
+    public String thematicSessions(Model model) { model.addAttribute("sessions", thematicReservations.adminSessions()); return "admin/thematic-sessions"; }
+
+    @PostMapping("/admin/thematic-sessions")
+    public String saveThematicSession(@RequestParam java.util.Map<String,Object> form, RedirectAttributes flash) {
+        try { thematicReservations.save(null, form); flash.addFlashAttribute("successMessage", "Thematic session created."); }
+        catch (RuntimeException ex) { flash.addFlashAttribute("errorMessage", ex.getMessage()); }
+        return "redirect:/admin/thematic-sessions";
+    }
+
+    @PostMapping("/admin/thematic-sessions/{id}")
+    public String updateThematicSession(@PathVariable Long id, @RequestParam java.util.Map<String,Object> form, RedirectAttributes flash) {
+        try { thematicReservations.save(id, form); flash.addFlashAttribute("successMessage", "Thematic session updated."); }
+        catch (RuntimeException ex) { flash.addFlashAttribute("errorMessage", ex.getMessage()); }
+        return "redirect:/admin/thematic-sessions";
+    }
+
+    @PostMapping("/admin/thematic-sessions/{id}/delete")
+    public String deleteThematicSession(@PathVariable Long id, RedirectAttributes flash) {
+        try { thematicReservations.delete(id); flash.addFlashAttribute("successMessage", "Thematic session deleted."); }
+        catch (RuntimeException ex) { flash.addFlashAttribute("errorMessage", ex.getMessage()); }
+        return "redirect:/admin/thematic-sessions";
     }
 
     @GetMapping("/admin/conference-schedule/new")

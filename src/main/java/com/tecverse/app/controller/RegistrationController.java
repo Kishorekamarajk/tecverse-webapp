@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,13 +58,15 @@ public class RegistrationController {
     private final QRCodeGeneratorService qrCodeGeneratorService;
     private final TicketRegistrationRepository ticketRegistrationRepository;
     private final String appUrl;
+    private final com.tecverse.app.service.MobileSessionService mobileSessionService;
 
     public RegistrationController(RegistrationService registrationService, TicketOtpService ticketOtpService,
-                                  TicketRegistrationService ticketRegistrationService, MessageSource messageSource, ExhibitorOtpService exhibitorOtpService, ExhibitorStorageService exhibitorStorageService, RateLimitService rateLimitService, QRCodeGeneratorService qrCodeGeneratorService, TicketRegistrationRepository ticketRegistrationRepository, @Value("${app.url:http://localhost:8080}") String appUrl) {
+                                  TicketRegistrationService ticketRegistrationService, MessageSource messageSource, ExhibitorOtpService exhibitorOtpService, ExhibitorStorageService exhibitorStorageService, RateLimitService rateLimitService, QRCodeGeneratorService qrCodeGeneratorService, TicketRegistrationRepository ticketRegistrationRepository, com.tecverse.app.service.MobileSessionService mobileSessionService, @Value("${app.url:http://localhost:8080}") String appUrl) {
         this.registrationService=registrationService; this.ticketOtpService=ticketOtpService;
         this.ticketRegistrationService=ticketRegistrationService; this.messageSource=messageSource; this.exhibitorOtpService=exhibitorOtpService; this.exhibitorStorageService=exhibitorStorageService; this.rateLimitService=rateLimitService;
         this.qrCodeGeneratorService=qrCodeGeneratorService;
         this.ticketRegistrationRepository=ticketRegistrationRepository;
+        this.mobileSessionService=mobileSessionService;
         this.appUrl=appUrl;
     }
 
@@ -212,6 +215,16 @@ public class RegistrationController {
                 .contentType(MediaType.IMAGE_PNG)
                 .cacheControl(org.springframework.http.CacheControl.noStore())
                 .body(png);
+    }
+
+    @GetMapping(value="/dashboard/qr",produces=MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> attendeeDashboardQr(
+            @CookieValue(value="TECVERSE_ATTENDEE", required=false) String token,
+            HttpServletRequest request) throws java.io.IOException {
+        com.tecverse.app.entity.TicketRegistration attendee = mobileSessionService.requireToken(token);
+        String scanUrl=appUrl.replaceAll("/+$", "")+"/ticket/scan/"+attendee.getScanToken();
+        byte[] png=qrCodeGeneratorService.generateQRCodeImageBytes(scanUrl,250,250);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).cacheControl(org.springframework.http.CacheControl.noStore()).body(png);
     }
 
     @GetMapping(value="/ticket/scan/{token}",produces=MediaType.TEXT_HTML_VALUE)

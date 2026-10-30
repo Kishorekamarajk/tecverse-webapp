@@ -20,6 +20,7 @@ public class FaqServiceImpl implements FaqService {
         LABELS.put(HOME, "Home FAQ");
         LABELS.put(TICKET, "Ticket FAQ");
         LABELS.put(RETREAT, "At a Glance FAQ");
+        LABELS.put(PARTICIPANT, "Participant FAQ");
     }
 
     private final FaqItemRepository faqItemRepository;

@@ -120,6 +120,11 @@ public class MobileSessionService {
         return attendee;
     }
 
+    /** Validate a bearer session from an HTTP-only web cookie using the same mobile identity. */
+    public TicketRegistration requireToken(String token) {
+        return requireAttendee(token == null ? null : "Bearer " + token);
+    }
+
     public void logout(String authorization) {
         if (authorization != null && authorization.startsWith("Bearer ")) {
             String token = authorization.substring(7).trim();
@@ -137,6 +142,8 @@ public class MobileSessionService {
             }
         }
     }
+
+    public void logoutToken(String token) { logout(token == null ? null : "Bearer " + token); }
 
     public static Map<String, Object> profile(TicketRegistration attendee) {
         String organization = firstNonBlank(attendee.getCollegeName(), attendee.getUniversityName(),

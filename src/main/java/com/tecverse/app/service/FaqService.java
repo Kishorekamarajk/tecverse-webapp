@@ -10,6 +10,7 @@ public interface FaqService {
     String HOME = "home";
     String TICKET = "ticket";
     String RETREAT = "retreat";
+    String PARTICIPANT = "participant";
 
     Map<String, String> labels();
 

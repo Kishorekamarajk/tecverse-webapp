@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Thematic Sessions Admin | Tec-Verse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .session-management-table { min-width: 1320px; }
+        .session-management-table th { white-space: nowrap; }
+        .session-management-table td { vertical-align: middle; }
+        .session-management-table .session-title-cell { width: 24%; }
+        .session-management-table .session-date-cell { width: 17%; }
+        .session-management-table .session-count-cell { width: 8%; text-align: center; }
+        .session-management-table .session-number-cell { width: 8%; }
+        .session-management-table .session-status-cell { width: 14%; }
+        .session-management-table .session-actions-cell { width: 13%; }
+        .session-management-table .session-description { min-height: 68px; resize: vertical; }
+        .session-management-table .session-status-cell label { display: block; margin: 2px 0; white-space: nowrap; }
+        .session-management-table .session-status-cell input { margin-right: 5px; }
+        .session-management-table .session-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+        .session-management-table .session-actions form { margin: 0; }
+        @media(max-width:767.98px) { .session-management-table { min-width: 1180px; } }
+    </style>
+</head>
+<body class="admin-dashboard-page">
+<div class="admin-app-shell min-vh-100">
+    <div th:replace="~{admin/fragments/admin-layout :: sidebar('thematic-sessions')}"></div>
+    <div class="admin-main-panel">
+        <div th:replace="~{admin/fragments/admin-layout :: topbar('Thematic Sessions')}"></div>
+        <main class="admin-shell container-fluid">
+            <h1 class="h3 mb-3">Thematic Sessions</h1>
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+            <section class="card p-3 mb-4">
+                <h2 class="h5">Create session</h2>
+                <form method="post" th:action="@{/admin/thematic-sessions}" class="row g-2">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <div class="col-md-4"><label class="form-label">Title</label><input class="form-control" name="title" maxlength="180" required></div>
+                    <div class="col-md-2"><label class="form-label">Date</label><input class="form-control" type="date" name="date"></div>
+                    <div class="col-md-2"><label class="form-label">Time</label><input class="form-control" type="time" name="time"></div>
+                    <div class="col-md-2"><label class="form-label">Total capacity</label><input class="form-control" type="number" name="totalCapacity" min="1" value="300" required></div>
+                    <div class="col-md-2"><label class="form-label">Reserved seats</label><input class="form-control" type="number" name="reservedSeats" min="0" value="10" required></div>
+                    <div class="col-12"><label class="form-label">Description</label><textarea class="form-control" name="description" maxlength="3000"></textarea></div>
+                    <div class="col-auto form-check ms-2"><input class="form-check-input" type="checkbox" name="published" value="true" id="pub"><label class="form-check-label" for="pub">Published</label></div>
+                    <div class="col-auto form-check ms-2"><input class="form-check-input" type="checkbox" name="active" value="true" id="active" checked><label class="form-check-label" for="active">Active</label></div>
+                    <div class="col-12"><button class="btn btn-primary">Create session</button></div>
+                </form>
+            </section>
+
+            <section class="card p-3">
+                <h2 class="h5">Session capacity and management</h2>
+                <div class="table-responsive">
+                    <table class="table align-middle session-management-table">
+                        <thead><tr><th>Session</th><th>Date / time</th><th>Confirmed</th><th>Total</th><th>Reserved</th><th>General</th><th>Remaining</th><th>Status</th><th>Update</th></tr></thead>
+                        <tbody>
+                        <tr th:each="s : ${sessions}">
+                            <td class="session-title-cell">
+                                <form method="post" th:action="@{/admin/thematic-sessions/{id}(id=${s.id})}" th:id="|session-update-${s.id}|"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"></form>
+                                <input class="form-control" name="title" th:value="${s.title}" maxlength="180" required th:attr="form=|session-update-${s.id}|">
+                                <textarea class="form-control mt-1 session-description" name="description" maxlength="3000" th:text="${s.description}" th:attr="form=|session-update-${s.id}|"></textarea>
+                            </td>
+                            <td class="session-date-cell"><input class="form-control" type="date" name="date" th:value="${s.date}" th:attr="form=|session-update-${s.id}|"><input class="form-control mt-1" type="time" name="time" th:value="${s.time}" th:attr="form=|session-update-${s.id}|"></td>
+                            <td class="session-count-cell"><strong th:text="${s.confirmed}">0</strong><small class="d-block text-muted">confirmed</small></td>
+                            <td class="session-number-cell"><input class="form-control" name="totalCapacity" type="number" min="1" th:value="${s.totalCapacity}" th:attr="form=|session-update-${s.id}|"></td>
+                            <td class="session-number-cell"><input class="form-control" name="reservedSeats" type="number" min="0" th:value="${s.reservedSeats}" th:attr="form=|session-update-${s.id}|"></td>
+                            <td class="session-count-cell"><span th:text="${s.generalCapacity}">0</span></td>
+                            <td class="session-count-cell"><span th:text="${s.remaining}">0</span></td>
+                            <td class="session-status-cell"><label><input type="checkbox" name="published" value="true" th:checked="${s.published}" th:attr="form=|session-update-${s.id}|">Published</label><label><input type="checkbox" name="active" value="true" th:checked="${s.active}" th:attr="form=|session-update-${s.id}|">Active</label></td>
+                            <td class="session-actions-cell"><div class="session-actions"><button class="btn btn-sm btn-primary" type="submit" th:attr="form=|session-update-${s.id}|">Save</button><form method="post" th:action="@{/admin/thematic-sessions/{id}/delete(id=${s.id})}" onsubmit="return confirm('Delete this session?')"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button class="btn btn-sm btn-outline-danger">Delete</button></form></div></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(sessions)}"><td colspan="9" class="text-center text-muted py-4">No sessions created yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

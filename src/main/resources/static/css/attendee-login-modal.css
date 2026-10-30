@@ -1,0 +1,52 @@
+.attendee-login-open { cursor: pointer; font-family: inherit; }
+.attendee-login-dialog { --portal-primary: #061933; --portal-primary-soft: #102b62; --portal-secondary: #f47a20; --portal-secondary-light: #ff9a3d; }
+.site-footer-login-button { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.site-footer-login-button:hover, .site-footer-login-button:focus-visible { color: #f47a20; }
+.attendee-login-dialog {
+    position: fixed; width: min(440px, calc(100vw - 30px)); max-width: none;
+    margin: auto; padding: 22px clamp(20px, 4vw, 32px) 20px; overflow: visible; border: 1px solid #d9e0e8; border-radius: 10px;
+    background: #fff;
+    color: #172b45; box-shadow: 0 12px 32px rgba(15,35,60,.18);
+    font-family: Inter, "Segoe UI", sans-serif;
+}
+.attendee-login-dialog::backdrop { background: rgba(16,27,42,.48); }
+.attendee-login-close { position: absolute; top: 10px; right: 11px; display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 5px; background: transparent; color: #66758a; font-size: 1.55rem; line-height: 1; cursor: pointer; }
+.attendee-login-brand { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; color: #172b45; font-size: 1rem; font-weight: 700; letter-spacing: 0; }
+.attendee-login-brand img { width: 30px; height: 30px; object-fit: contain; }
+.attendee-login-brand em { color: var(--portal-secondary-light); font-style: normal; }
+.attendee-login-brand i { display:none; }
+.attendee-login-dialog h2 { display: block; margin: 0 auto 4px; color: #172b45; font-size: 1.4rem; font-weight: 700; letter-spacing: 0; text-align: center; }
+.attendee-login-dialog h2::before, .attendee-login-dialog h2::after { content: none; }
+.attendee-login-dialog h2::after { transform: rotate(180deg); }
+.attendee-login-subtitle { margin: 0 0 12px; color: #65748a; font-size: .85rem; text-align: center; }
+.attendee-login-dialog form > label, .attendee-captcha-line label { display: block; margin: 10px 0 4px; color: #293c55; font-size: .83rem; font-weight: 600; }
+.attendee-input-wrap { display: flex; align-items: center; min-height: 40px; padding: 0 9px; border: 1px solid #cbd4df; border-radius: 5px; background: #fff; transition: border-color .15s ease,box-shadow .15s ease; }
+.attendee-input-wrap:focus-within { border-color: #f47a20; box-shadow: 0 0 0 2px rgba(244,122,32,.13); }
+.attendee-login-dialog .attendee-input-wrap input,
+.attendee-login-dialog .attendee-input-wrap input:hover,
+.attendee-login-dialog .attendee-input-wrap input:focus,
+.attendee-login-dialog .attendee-input-wrap input:focus-visible { box-sizing: border-box; flex: 1; width: 0; min-width: 0; min-height: 36px; margin: 0; padding: 6px 9px; border: 0 !important; outline: 0 !important; border-radius: 0; background: transparent; color: #172b45; font: inherit; font-size: .84rem; box-shadow: none !important; }
+.attendee-input-wrap input::placeholder { color: #8996a7; opacity: 1; }
+.attendee-input-icon { flex: 0 0 20px; width: 18px; height: 18px; fill: none; stroke: #738198; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.attendee-field-icon { display:inline-block; width:18px; height:18px; margin-right:6px; vertical-align:-2px; color:#e87527; font-size:.9rem; }
+.attendee-login-dialog form > label b, .attendee-captcha-line label b { color: #ff5b72; }
+.attendee-password-toggle { display: grid; flex: 0 0 34px; place-items: center; width: 34px; height: 38px; padding: 5px; border: 0; background: transparent; color: #fff; cursor: pointer; }
+.attendee-password-toggle svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.attendee-login-dialog input:focus-visible, .attendee-login-dialog button:focus-visible, .site-footer-login-button:focus-visible { outline: 2px solid rgba(244,122,32,.45); outline-offset: 2px; }
+.attendee-captcha-line { display: flex; align-items: center; justify-content: space-between; }
+.attendee-captcha-line button { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border: 1px solid #d5dce5; border-radius: 5px; background: #fff; color: #465970; font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer; }
+.attendee-captcha-line button svg { width: 16px; height: 16px; fill: none; stroke: #e87527; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.attendee-captcha-question { margin: 0 0 5px; color: #44566e; font-size: .9rem; font-weight: 700; letter-spacing: .02em; }
+.attendee-login-submit { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 40px; margin-top: 12px; border: 1px solid #e96819; border-radius: 5px; background: #f47a20; color: #fff; font: inherit; font-size: .93rem; font-weight: 700; cursor: pointer; }
+.attendee-login-submit span { position: absolute; right: 20px; font-size: 1.65rem; }
+.attendee-login-submit:hover { filter: brightness(1.08); }
+.attendee-login-submit:disabled { opacity: .7; cursor: wait; }
+.attendee-login-error { margin: 0 0 12px; padding: 10px 12px; border-left: 4px solid #ff647d; border-radius: 7px; background: rgba(93,17,63,.5); color: #fff; font-size: .9rem; }
+.attendee-login-register { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 12px 0 0; color: #65748a; text-align: center; font-size: .82rem; }
+.attendee-login-register::before, .attendee-login-register::after { content: none; }
+.attendee-login-register a { color: #d95f12; font-weight: 700; text-decoration: none; }
+.attendee-login-register a:hover { text-decoration: underline; }
+@media (max-width: 520px) { .attendee-login-dialog { width: calc(100vw - 28px); padding: 13px 17px 12px; border-radius: 20px; } .attendee-login-brand img { width: 34px; height: 32px; } .attendee-login-dialog h2 { gap: 9px; } .attendee-login-dialog h2::before, .attendee-login-dialog h2::after { width: 22px; } }
+@media (max-height: 720px) { .attendee-login-dialog { zoom: .88; } }
+@media (max-height: 580px) { .attendee-login-dialog { zoom: .72; } }
+@media (max-height: 460px) { .attendee-login-dialog { zoom: .58; } }
