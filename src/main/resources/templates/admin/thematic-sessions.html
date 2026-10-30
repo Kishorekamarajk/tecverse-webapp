@@ -40,7 +40,8 @@
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <div class="col-md-4"><label class="form-label">Title</label><input class="form-control" name="title" maxlength="180" required></div>
                     <div class="col-md-2"><label class="form-label">Date</label><input class="form-control" type="date" name="date"></div>
-                    <div class="col-md-2"><label class="form-label">Time</label><input class="form-control" type="time" name="time"></div>
+                    <div class="col-md-2"><label class="form-label">From time</label><input class="form-control" type="time" name="time"></div>
+                    <div class="col-md-2"><label class="form-label">To time</label><input class="form-control" type="time" name="toTime"></div>
                     <div class="col-md-2"><label class="form-label">Total capacity</label><input class="form-control" type="number" name="totalCapacity" min="1" value="300" required></div>
                     <div class="col-md-2"><label class="form-label">Reserved seats</label><input class="form-control" type="number" name="reservedSeats" min="0" value="10" required></div>
                     <div class="col-12"><label class="form-label">Description</label><textarea class="form-control" name="description" maxlength="3000"></textarea></div>
@@ -62,7 +63,7 @@
                                 <input class="form-control" name="title" th:value="${s.title}" maxlength="180" required th:attr="form=|session-update-${s.id}|">
                                 <textarea class="form-control mt-1 session-description" name="description" maxlength="3000" th:text="${s.description}" th:attr="form=|session-update-${s.id}|"></textarea>
                             </td>
-                            <td class="session-date-cell"><input class="form-control" type="date" name="date" th:value="${s.date}" th:attr="form=|session-update-${s.id}|"><input class="form-control mt-1" type="time" name="time" th:value="${s.time}" th:attr="form=|session-update-${s.id}|"></td>
+                            <td class="session-date-cell"><input class="form-control" type="date" name="date" th:value="${s.date}" th:attr="form=|session-update-${s.id}|"><label class="form-label mt-1 mb-0 small">From</label><input class="form-control" type="time" name="time" th:value="${s.time}" th:attr="form=|session-update-${s.id}|"><label class="form-label mt-1 mb-0 small">To</label><input class="form-control" type="time" name="toTime" th:value="${s.toTime}" th:attr="form=|session-update-${s.id}|"></td>
                             <td class="session-count-cell"><strong th:text="${s.confirmed}">0</strong><small class="d-block text-muted">confirmed</small></td>
                             <td class="session-number-cell"><input class="form-control" name="totalCapacity" type="number" min="1" th:value="${s.totalCapacity}" th:attr="form=|session-update-${s.id}|"></td>
                             <td class="session-number-cell"><input class="form-control" name="reservedSeats" type="number" min="0" th:value="${s.reservedSeats}" th:attr="form=|session-update-${s.id}|"></td>

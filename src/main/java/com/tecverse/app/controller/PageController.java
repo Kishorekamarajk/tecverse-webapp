@@ -668,7 +668,7 @@ public class PageController {
         return "exhibitor-registration";
     }
 
-    @GetMapping({"/ticket", "/ticket.html", "/book-your-ticket"})
+    @GetMapping({"/registration", "/ticket", "/ticket.html", "/book-your-ticket"})
     public String ticket(Model model) {
         model.addAttribute("ticketFaqs", faqService.activeFaqs(FaqService.TICKET));
         return "ticket";

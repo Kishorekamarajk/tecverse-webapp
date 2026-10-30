@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stall Management Login | Tec-Verse</title>
+    <link rel="icon" type="image/png" th:href="@{/images/tecverselogo.png}">
+    <link rel="stylesheet" th:href="@{/css/fonts.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/stall-management.css}">
+</head>
+<body class="stall-login-page">
+<main class="stall-login-card">
+    <img th:src="@{/images/tecverselogo.png}" alt="Tec-Verse">
+    <span class="stall-kicker">TEC-VERSE 2026</span>
+    <h1>Stall management</h1>
+    <p>Sign in to review and reply to exhibitor and sponsor messages.</p>
+    <div class="stall-login-error" th:if="${loginError}" th:text="${loginError}" role="alert"></div>
+    <div class="stall-login-success" th:if="${param.logout}" role="status">You have been signed out.</div>
+    <form method="post" th:action="@{/stall-managementlogin}" autocomplete="on">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <label for="staffEmail">Work email</label>
+        <input id="staffEmail" name="username" type="email" autocomplete="username" maxlength="254" required>
+        <label for="staffPassword">Password</label>
+        <input id="staffPassword" name="password" type="password" autocomplete="current-password" required>
+        <button type="submit">Sign in <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+    </form>
+</main>
+</body>
+</html>

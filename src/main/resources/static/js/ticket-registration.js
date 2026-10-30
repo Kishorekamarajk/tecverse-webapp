@@ -2,7 +2,7 @@
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 const contextPath=((document.body&&document.body.dataset.contextPath)||'').replace(/\/$/,'');
 const apiPath=path=>(contextPath==='/'?'':contextPath)+path;
-const API={sendMobile:apiPath('/ticket/send-mobile-otp'),verifyMobile:apiPath('/ticket/verify-mobile-otp'),send:apiPath('/ticket/send-otp'),verify:apiPath('/ticket/verify-otp'),detailsStep:apiPath('/ticket/details-step'),register:apiPath('/ticket/register')};
+const API={sendMobile:apiPath('/ticket/send-mobile-otp'),verifyMobile:apiPath('/ticket/verify-mobile-otp'),send:apiPath('/ticket/send-otp'),sendStatus:apiPath('/ticket/send-otp/status'),verify:apiPath('/ticket/verify-otp'),detailsStep:apiPath('/ticket/details-step'),register:apiPath('/ticket/register')};
 $$('.password-toggle').forEach(button=>button.addEventListener('click',()=>{
  const input=$('#'+button.dataset.passwordTarget);
  const showing=input.type==='password';
@@ -28,9 +28,11 @@ const ministries=[
 const states=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 function populateApplicantStateSelect(){const select=$('#applicantState');if(select)select.innerHTML='<option value="">Select your state or union territory</option>'+states.map(state=>`<option value="${esc(state)}">${esc(state)}</option>`).join('');}
 const departments=["General Administration","Finance","Home","Education","Higher Education","School Education","Health and Family Welfare","Industries and Commerce","Information Technology / Electronics","Science and Technology","Agriculture","Animal Husbandry and Fisheries","Co-operation","Rural Development","Urban Development / Municipal Administration","Revenue","Transport","Public Works","Water Resources","Energy","Environment and Forests","Labour and Employment","Skill Development","Tourism and Culture","Social Welfare","Women and Child Development","Tribal Welfare","Food and Civil Supplies","Information and Public Relations","Planning","Law","Personnel","Other"];
-let verified=false, emailVerified=false, mobileVerified=false, timer=null, mobileTimer=null, rateLimitTimer=null;
+let verified=false, emailVerified=false, mobileVerified=false, timer=null, mobileTimer=null, rateLimitTimer=null, emailOtpDeliveryTimer=null;
 
 function msg(el,text,ok=false){el.textContent=text;el.className='tr-msg small fw-semibold mt-3 '+(ok?'text-success':'text-danger');}
+function openOtpDialog(id){const dialog=$(id);if(dialog&&!dialog.open)dialog.showModal();}
+$$('[data-otp-dialog-close]').forEach(button=>button.addEventListener('click',()=>button.closest('dialog')?.close()));
 
 function setLoading(btn,on,loadingLabel){
   if(!btn)return;
@@ -278,11 +280,33 @@ $('#sendOtp').onclick=async()=>{
  if(emailVerified)return;
  let retryAfterSeconds=0;
  setLoading(btn,true);
- try{await post(API.send,{fullName:name,email,phone,passType:'Tec-Verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;msg($('#emailOtpMsg'),'OTP sent. Please check your email.',true);m.textContent='';startTimer();$$('#emailOtpInputs input')[0]?.focus();}
+ try{const result=await post(API.send,{fullName:name,email,phone,passType:'Tec-Verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;$('#verifyOtp').disabled=true;openOtpDialog('#emailOtpDialog');msg($('#emailOtpMsg'),'Sending OTP to your email…',true);m.textContent='';startTimer();$$('#emailOtpInputs input').forEach(input=>{input.value='';});$$('#emailOtpInputs input')[0]?.focus();pollEmailOtpDelivery(result.data?.requestId);}
  catch(e){msg(otpMessage,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,otpMessage);}
 };
 function startTimer(){let n=60;$('#resendOtp').disabled=true;clearInterval(timer);timer=setInterval(()=>{n--;$('#resendOtp').textContent=n>0?`Resend OTP (${n}s)`:'Resend OTP';if(n<=0){clearInterval(timer);$('#resendOtp').disabled=false;}},1000);$('#resendOtp').textContent='Resend OTP (60s)';}
+function pollEmailOtpDelivery(requestId){
+ clearTimeout(emailOtpDeliveryTimer);
+ const startedAt=Date.now();
+ const poll=async()=>{
+  if(!requestId)return;
+  try{
+   const response=await fetch(`${API.sendStatus}?requestId=${encodeURIComponent(requestId)}`,{headers:{Accept:'application/json'},cache:'no-store'});
+   const result=await response.json().catch(()=>({}));
+   if(response.ok&&result.success){
+    const status=result.data?.status;
+    if(status==='sent'){$('#verifyOtp').disabled=false;msg($('#emailOtpMsg'),'OTP sent. Please check your email.',true);return;}
+    if(status==='failed'||status==='expired'){
+     $('#verifyOtp').disabled=true;clearInterval(timer);$('#resendOtp').disabled=false;$('#resendOtp').textContent='Resend OTP';
+     msg($('#emailOtpMsg'),status==='failed'?'Unable to deliver the OTP email. Please try again.':'OTP delivery status expired. Please resend the OTP.');return;
+    }
+   }
+  }catch(_){/* Keep checking while the queued email is being delivered. */}
+  if(Date.now()-startedAt>90000){$('#verifyOtp').disabled=true;msg($('#emailOtpMsg'),'Email delivery is taking longer than expected. Please wait or resend the OTP.');return;}
+  emailOtpDeliveryTimer=setTimeout(poll,2500);
+ };
+ emailOtpDeliveryTimer=setTimeout(poll,900);
+}
 function startRateLimitCountdown(button,seconds,message=$('#verifyMsg')){
  let remaining=Math.max(1,seconds);
  clearInterval(rateLimitTimer);
@@ -314,7 +338,7 @@ $('#sendMobileOtp').onclick=async()=>{
  if(!/^(?:\+91[-\s]?)?[6-9]\d{9}$/.test(phone)){msg(m,'Enter a valid 10-digit Indian mobile number.');return;}
  let retryAfterSeconds=0;
  setLoading(btn,true,'Sending…');
- try{await post(API.sendMobile,{phone});$('#otpMobile').textContent=phone;$('#mobileOtpBox').hidden=false;$$('#mobileOtpInputs input').forEach(i=>{i.value='';});msg($('#mobileOtpMsg'),'OTP sent to your mobile number by SMS.',true);m.textContent='';startMobileTimer();$$('#mobileOtpInputs input')[0]?.focus();}
+ try{await post(API.sendMobile,{phone});$('#otpMobile').textContent=phone;$('#mobileOtpBox').hidden=false;openOtpDialog('#mobileOtpDialog');$$('#mobileOtpInputs input').forEach(i=>{i.value='';});msg($('#mobileOtpMsg'),'OTP sent to your mobile number by SMS.',true);m.textContent='';startMobileTimer();$$('#mobileOtpInputs input')[0]?.focus();}
  catch(e){msg(otpMessage,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,otpMessage);}
 };
@@ -332,6 +356,7 @@ $('#verifyMobileOtp').onclick=async()=>{
 };
 function setMobileVerifiedUi(on){
  const b=$('#sendMobileOtp');
+ if(on&&$('#mobileOtpDialog').open)$('#mobileOtpDialog').close();
  $('#phone').readOnly=on;$('#mobileOtpBox').hidden=true;clearInterval(mobileTimer);
  b.disabled=on;b.innerHTML=on?'<i class="bi bi-check-circle-fill"></i> Verified':'Verify Mobile';delete b.dataset.label;
 }
@@ -380,6 +405,7 @@ $('#verifyOtp').onclick=async()=>{
 const sendOtpLabel=$('#sendOtp').innerHTML;
 function setEmailVerifiedUi(on){
  const b=$('#sendOtp');
+ if(on&&$('#emailOtpDialog').open)$('#emailOtpDialog').close();
  $('#email').readOnly=on;$('#otpBox').hidden=true;clearInterval(timer);
  b.disabled=on;b.innerHTML=on?'<i class="bi bi-check-circle-fill"></i> Verified':sendOtpLabel;delete b.dataset.label;
 }

@@ -56,7 +56,7 @@
                     </li>
                 </ul>
 
-                <div class="navbar-actions ms-lg-auto d-flex justify-content-end" th:classappend="${attendeeSignedIn} ? ' attendee-navbar-actions'">
+                <div class="navbar-actions ms-lg-auto d-flex justify-content-end" th:classappend="${attendeeSignedIn == true or businessSignedIn == true} ? ' attendee-navbar-actions'">
                     <div class="mob-clr d-flex justify-content-center navbar-language-switcher notranslate" translate="no" aria-label="Language selector" th:aria-label="#{misc.navbar.languageAria}">
                         <button type="button" class="navbar-language-btn mob-clr notranslate d-inline-flex align-items-center justify-content-center" translate="no" data-language-button="en" lang="en">English</button>
                         <!-- <span class="navbar-language-separator align-items-center justify-content-center" aria-hidden="true">|</span>
@@ -64,9 +64,9 @@
                         <span class="navbar-language-separator align-items-center justify-content-center" aria-hidden="true">|</span>
                         <button type="button" class="navbar-language-btn mob-clr notranslate d-inline-flex align-items-center justify-content-center" translate="no" data-language-button="hi" lang="hi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;</button>
                     </div>
-                    <th:block th:unless="${attendeeSignedIn}">
-                        <button class="navbar-action-btn navbar-action-btn-outline attendee-login-open" type="button" data-attendee-login-open>Login</button>
-                        <a class="navbar-action-btn navbar-action-btn-ticket d-inline-flex align-items-center justify-content-center overflow-hidden" th:href="@{/ticket}">Register</a>
+                    <th:block th:unless="${attendeeSignedIn == true or businessSignedIn == true}">
+                        <button class="navbar-action-btn navbar-action-btn-outline attendee-login-open" type="button" data-role-login-open>Login</button>
+                        <button class="navbar-action-btn navbar-action-btn-ticket d-inline-flex align-items-center justify-content-center overflow-hidden" type="button" data-role-register-open>Register</button>
                     </th:block>
                     <th:block th:if="${attendeeSignedIn}">
                         <a class="attendee-nav-profile" th:href="@{/dashboard}" aria-label="Attendee profile">
@@ -78,11 +78,66 @@
                             <button class="navbar-action-btn navbar-action-btn-ticket" type="submit">Logout</button>
                         </form>
                     </th:block>
+                    <th:block th:if="${businessSignedIn}">
+                        <a class="attendee-nav-profile" th:href="@{/{role}/dashboard(role=${businessRole})}" aria-label="Business profile">
+                            <i class="bi bi-person-circle" aria-hidden="true"></i>
+                            <span th:text="${businessContactName}">Business contact</span>
+                        </a>
+                        <form method="post" th:action="@{/business-portal/logout}" class="attendee-nav-logout">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button class="navbar-action-btn navbar-action-btn-ticket" type="submit">Logout</button>
+                        </form>
+                    </th:block>
                 </div>
             </div>
         </div>
     </div>
 </nav>
+
+<link rel="stylesheet" th:href="@{/css/business-login.css}">
+<dialog class="business-login-dialog" data-role-login-dialog aria-labelledby="businessLoginHeading">
+    <button class="business-login-close" type="button" data-role-login-close aria-label="Close login">&times;</button>
+    <span class="business-login-kicker">TEC-VERSE 2026</span>
+    <h2 id="businessLoginHeading">Choose your login</h2>
+    <label for="businessLoginRole">Login as</label>
+    <select id="businessLoginRole">
+        <option value="participant">Participant</option>
+        <option value="exhibitor">Exhibitor</option>
+        <option value="sponsor">Sponsor</option>
+    </select>
+    <button type="button" class="business-login-continue" data-role-login-continue>Continue</button>
+</dialog>
+<dialog class="business-login-dialog" data-role-register-dialog aria-labelledby="businessRegisterHeading">
+    <button class="business-login-close" type="button" data-role-register-close aria-label="Close registration chooser">&times;</button>
+    <span class="business-login-kicker">TEC-VERSE 2026</span>
+    <h2 id="businessRegisterHeading">Choose how to register</h2>
+    <label for="businessRegisterRole">Register as</label>
+    <select id="businessRegisterRole">
+        <option value="participant">Participant</option>
+        <option value="exhibitor">Exhibitor</option>
+        <option value="sponsor">Sponsor</option>
+    </select>
+    <button type="button" class="business-login-continue" data-role-register-continue>Continue</button>
+</dialog>
+<dialog class="business-login-dialog" data-business-otp-dialog aria-labelledby="businessOtpHeading">
+    <button class="business-login-close" type="button" data-business-otp-close aria-label="Close login">&times;</button>
+    <span class="business-login-kicker" data-business-role-label>PORTAL LOGIN</span>
+    <h2 id="businessOtpHeading">Sign in with your mobile number</h2>
+    <div data-business-phone-step>
+        <label for="businessLoginPhone">Registered mobile number</label>
+        <input id="businessLoginPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="15" placeholder="10-digit mobile number">
+        <button type="button" class="business-login-continue" data-business-send-otp>Send OTP</button>
+    </div>
+    <div data-business-otp-step hidden>
+        <p class="business-login-note">Enter the 6-digit code sent to your registered mobile.</p>
+        <label for="businessLoginOtp">Verification code</label>
+        <input id="businessLoginOtp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit OTP">
+        <button type="button" class="business-login-continue" data-business-verify-otp>Verify and continue</button>
+        <button type="button" class="business-login-resend" data-business-resend-otp disabled>Resend OTP</button>
+    </div>
+    <p class="business-login-message" data-business-login-message role="status" aria-live="polite"></p>
+    <a class="business-login-register" data-business-register-link hidden>Register now</a>
+</dialog>
 
 <dialog class="attendee-login-dialog" data-attendee-login-dialog aria-labelledby="attendeeLoginTitle">
     <button class="attendee-login-close" type="button" data-attendee-login-close aria-label="Close login">&times;</button>
@@ -102,9 +157,11 @@
         <div class="attendee-input-wrap"><svg class="attendee-input-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2m4 0h2M8 15h2m4 0h2M8 18h2m4 0h2"/></svg><input id="attendeeCaptchaAnswer" name="captchaAnswer" inputmode="numeric" autocomplete="off" placeholder="Enter the answer" required></div>
         <button class="attendee-login-submit" type="submit">Login <span aria-hidden="true">→</span></button>
     </form>
-    <p class="attendee-login-register">New to Tec-Verse? <a th:href="@{/ticket}">Register</a></p>
+    <p class="attendee-login-register">New to Tec-Verse? <a th:href="@{/registration}">Register</a></p>
 </dialog>
 <script th:src="@{/js/attendee-login-modal.js}" defer></script>
+<script th:src="@{/js/business-login.js}" defer></script>
+<script th:src="@{/js/business-register.js}" defer></script>
 
 </div>
 

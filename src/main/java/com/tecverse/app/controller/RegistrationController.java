@@ -156,9 +156,15 @@ public class RegistrationController {
     }
 
     @PostMapping(value="/ticket/send-otp",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<Void>> sendTicketOtp(@Valid @RequestBody TicketOtpSendRequest request, HttpServletRequest httpRequest){
+    public ResponseEntity<ApiResponse<java.util.Map<String, String>>> sendTicketOtp(@Valid @RequestBody TicketOtpSendRequest request, HttpServletRequest httpRequest){
         rateLimitService.check(httpRequest, "otp-send", request.getEmail(), 3, Duration.ofMinutes(1), 30, Duration.ofMinutes(1));
-        ticketOtpService.sendOtp(request); return ResponseEntity.ok(ApiResponse.success("OTP sent. Please check your email."));
+        String requestId = ticketOtpService.sendOtp(request);
+        return ResponseEntity.ok(ApiResponse.success("OTP email is being sent.", java.util.Map.of("requestId", requestId)));
+    }
+    @GetMapping(value="/ticket/send-otp/status",produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<java.util.Map<String, String>>> ticketOtpDeliveryStatus(@RequestParam String requestId, HttpServletRequest httpRequest){
+        rateLimitService.check(httpRequest, "otp-send-status", requestId, 30, Duration.ofMinutes(1), 120, Duration.ofMinutes(1));
+        return ResponseEntity.ok(ApiResponse.success("OTP email delivery status.", java.util.Map.of("status", ticketOtpService.emailOtpDeliveryStatus(requestId))));
     }
     @PostMapping(value="/ticket/verify-otp",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> verifyTicketOtp(@Valid @RequestBody TicketOtpVerifyRequest request, HttpServletRequest httpRequest){

@@ -113,6 +113,15 @@ public class Exhibitor {
     public String getEmail() { return email; }
     public String getPhone() { return phone; }
     public String getDesignation() { return designation; }
+    public String getIndustry() { return industry; }
+    public String getWebsite() { return website; }
+    public String getCompanyAddress() { return companyAddress; }
+    public String getCity() { return city; }
+    public String getState() { return state; }
+    public String getCountry() { return country; }
+    public String getProducts() { return products; }
+    public String getProductCategory() { return productCategory; }
+    public String getProductDescription() { return productDescription; }
     public String getStallPackage() { return stallPackage; }
     public String getRemarks() { return remarks; }
     public LocalDateTime getCreatedAt() { return createdAt; }

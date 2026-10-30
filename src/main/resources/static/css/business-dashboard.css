@@ -1,0 +1,62 @@
+.business-dashboard{max-width:1360px;padding-top:clamp(88px,10vw,126px);padding-bottom:64px;color:#102b49}.business-dashboard-heading{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px;padding:26px 30px;border:1px solid #dce6f0;border-radius:18px;background:linear-gradient(115deg,#fff 0%,#fff 68%,#fff7f0 100%);box-shadow:0 10px 28px rgba(17,45,74,.05)}.business-kicker{color:#f26718;font-size:.78rem;font-weight:800;letter-spacing:.13em}.business-dashboard-heading h1{margin:.45rem 0;color:#102b49;font-size:clamp(1.8rem,4vw,2.7rem);font-weight:800;line-height:1.15;overflow-wrap:anywhere}.business-dashboard-heading p,.business-query-card>p{color:#60758d}.business-dashboard-heading p{margin:0;line-height:1.6}.business-dashboard-heading p a{color:#125a92;font-weight:750;text-decoration:none}.business-dashboard-heading p a:hover{text-decoration:underline}.business-logout,.business-submit{min-height:46px;padding:0 22px;border:0;border-radius:9px;background:#f47721;color:white;font-weight:750;white-space:nowrap;transition:background .18s ease,transform .18s ease}.business-logout:hover,.business-submit:hover{transform:translateY(-1px);background:#df6415}.business-dashboard-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(320px,.85fr);gap:24px;align-items:start}.business-card{min-width:0;padding:clamp(22px,2.5vw,32px);border:1px solid #dce5ed;border-radius:18px;background:white;box-shadow:0 10px 28px rgba(17,45,74,.06)}.business-card h2{margin:0 0 20px;color:#102b49;font-size:1.4rem;font-weight:800;line-height:1.25}.business-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 26px;margin:0}.business-details>div{min-width:0;padding:15px 0;border-top:1px solid #e8eef3}.business-details dt{margin-bottom:5px;color:#6c8096;font-size:.86rem;font-weight:600}.business-details dd{margin:0;color:#132f51;font-size:.98rem;font-weight:700;line-height:1.5;overflow-wrap:anywhere;word-break:normal}.business-detail-wide{grid-column:1/-1}.business-query-card{width:100%;position:sticky;top:110px}.business-query-card h2{margin-bottom:12px;font-size:clamp(1.2rem,1.5vw,1.45rem)}.business-query-card>p{margin:0 0 18px;font-size:.95rem;line-height:1.5}.business-query-card form label{display:block;margin-bottom:7px;color:#334c67;font-size:.93rem;font-weight:700}.business-query-card textarea{display:block;width:100%;min-height:155px;padding:12px 13px;border:1px solid #cad6e2;border-radius:9px;background:#fff;color:#132f51;font:inherit;font-size:.95rem;line-height:1.5;resize:vertical}.business-query-card textarea:focus{border-color:#f47721;outline:3px solid #f4772126}.business-submit{display:block;min-height:44px;margin-top:12px;padding-inline:18px;font-size:.94rem}.business-support-note{margin:14px 0 0;color:#60758d;font-size:.85rem;line-height:1.5}.business-support-note a{color:#125a92;font-weight:750;overflow-wrap:anywhere}.business-feedback{margin:12px 0;padding:12px 14px;border-radius:8px;font-weight:650;line-height:1.5}.business-feedback-success{background:#eaf8f1;color:#16714a}.business-feedback-error{background:#fff0ee;color:#a52f24}@media(max-width:950px){.business-dashboard-grid{grid-template-columns:minmax(0,1fr) minmax(280px,.8fr);gap:18px}.business-details{grid-template-columns:1fr}}@media(max-width:760px){.business-dashboard-grid{grid-template-columns:1fr}.business-query-card{position:static;grid-row:auto}.business-details{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}}@media(max-width:560px){.business-dashboard{padding-top:78px;padding-bottom:38px}.business-dashboard-heading{align-items:flex-start;flex-direction:column;gap:16px;margin-bottom:18px;padding:21px;border-radius:14px}.business-dashboard-heading h1{font-size:1.8rem}.business-card{padding:20px;border-radius:14px}.business-card h2{font-size:1.2rem}.business-details{grid-template-columns:1fr}.business-detail-wide{grid-column:auto}}
+.business-chat{display:flex;max-height:390px;flex-direction:column;gap:10px;overflow:auto;margin:0 0 16px;padding:14px;border:1px solid #e4ebf2;border-radius:12px;background:#f6f8fb}.business-chat-empty{margin:0;color:#708198;font-size:.9rem;text-align:center}.business-chat-message{max-width:90%;align-self:flex-start;padding:10px 12px;border:1px solid #e1e8ef;border-radius:12px 12px 12px 3px;background:#fff}.business-chat-message.is-own{align-self:flex-end;border-color:#f6d8c3;border-radius:12px 12px 3px 12px;background:#fff5ed}.business-chat-message strong{color:#17385d;font-size:.78rem}.business-chat-message p{margin:4px 0;color:#29425d;font-size:.92rem;line-height:1.45;overflow-wrap:anywhere;white-space:pre-wrap}.business-chat-message time{display:block;color:#8291a3;font-size:.7rem;text-align:right}.business-query-card form textarea{min-height:92px}
+.business-query-card{padding:clamp(22px,2.2vw,30px)}
+.business-chat{height:340px;max-height:340px;min-height:340px;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.business-query-card form textarea{height:120px;min-height:120px;resize:none}
+.business-dashboard{padding-top:68px;padding-bottom:36px}
+.business-dashboard-heading{margin-bottom:16px;padding:16px 22px;border-radius:14px}
+.business-dashboard-heading h1{margin:.2rem 0;font-size:clamp(1.45rem,2.5vw,2rem)}
+.business-dashboard-heading p{font-size:.88rem;line-height:1.35}
+.business-dashboard-grid{gap:16px}
+.business-card{padding:20px}
+@media(max-width:560px){.business-dashboard{padding-top:62px;padding-bottom:28px}.business-dashboard-heading{padding:14px 17px}.business-card{padding:17px}}
+@media(max-width:560px){.business-query-card{padding:30px 32px}.business-chat{height:340px;max-height:340px;min-height:340px;padding:11px}}
+.business-dashboard-grid{grid-template-columns:minmax(0,1.7fr) minmax(290px,.8fr);align-items:start}
+.business-query-card{grid-column:1;grid-row:1;position:static}
+.business-registration-card{grid-column:2;grid-row:1;padding:18px 20px}
+.business-registration-card h2{margin-bottom:12px;font-size:1.15rem}
+.business-registration-card .business-details{grid-template-columns:minmax(0,1fr);gap:0}
+.business-registration-card .business-details>div{padding:8px 0}
+.business-registration-card .business-details dt{margin-bottom:2px;font-size:.78rem}
+.business-registration-card .business-details dd{font-size:.88rem;line-height:1.35}
+@media(max-width:950px){.business-dashboard-grid{grid-template-columns:minmax(0,1fr)}.business-query-card{grid-column:1;grid-row:1}.business-registration-card{grid-column:1;grid-row:2}.business-registration-card .business-details{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}}
+@media(max-width:560px){.business-registration-card .business-details{grid-template-columns:1fr}}
+body.business-dashboard-page{background:#f4f7fb}
+.business-dashboard{width:min(1420px,calc(100% - 40px));max-width:none;margin-inline:auto;padding-top:78px;padding-bottom:50px}
+.business-dashboard-heading{position:relative;min-height:112px;overflow:hidden;align-items:center;margin-bottom:20px;padding:20px 26px;border:1px solid #dce6f0;border-radius:18px;background:radial-gradient(ellipse at 100% 0%,rgba(244,119,33,.12),transparent 38%),linear-gradient(110deg,#fff,#fbfdff);box-shadow:0 10px 28px rgba(16,43,73,.055)}
+.business-heading-copy{min-width:0}
+.business-kicker{display:inline-flex;align-items:center;gap:7px;color:#ed6b1c;font-size:.7rem;letter-spacing:.14em}
+.business-dashboard-heading h1{margin:6px 0 4px;font-size:clamp(1.55rem,2.5vw,2.1rem);letter-spacing:-.035em}
+.business-dashboard-heading p{color:#61768d;font-size:.9rem}
+.business-dashboard-grid{grid-template-columns:minmax(0,1.7fr) minmax(315px,.78fr);gap:22px;align-items:stretch}
+.business-card{padding:24px;border-color:#e0e8f0;border-radius:17px;box-shadow:0 9px 26px rgba(16,43,73,.055)}
+.business-card h2{display:flex;align-items:center;gap:11px;margin-bottom:14px;font-size:1.16rem;letter-spacing:-.015em}
+.business-card-icon{display:grid;flex:none;width:36px;height:36px;place-items:center;border-radius:11px;background:#fff1e7;color:#e96819;font-size:1rem}
+.business-query-card{display:flex;min-height:550px;flex-direction:column;padding:23px;position:static}
+.business-query-card>p{margin:0 0 14px;font-size:.87rem}
+.business-chat{display:flex;flex:1;height:310px;min-height:310px;max-height:310px;gap:9px;margin-bottom:13px;padding:13px;border-color:#e5ebf2;border-radius:13px;background:#f5f8fb}
+.business-chat-message{max-width:84%;padding:9px 11px;border-radius:11px 11px 11px 3px;box-shadow:0 2px 5px rgba(18,45,72,.035)}
+.business-chat-message.is-own{border-radius:11px 11px 3px 11px}
+.business-chat-message p{font-size:.87rem}
+.business-query-card form textarea{height:78px;min-height:78px;padding:10px 12px;border-color:#ccd8e4;border-radius:9px;font-size:.9rem}
+.business-query-card form label{margin-bottom:6px;font-size:.86rem}
+.business-submit{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;margin-top:9px;padding-inline:16px;border-radius:9px;font-size:.87rem}
+.business-registration-card{align-self:start;padding:21px}
+.business-registration-card h2{align-items:flex-start;font-size:1.08rem}
+.business-registration-card .business-details{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px}
+.business-registration-card .business-details>div{padding:10px 0}
+.business-registration-card .business-details dt{color:#78899c;font-size:.75rem}
+.business-registration-card .business-details dd{color:#173452;font-size:.84rem;font-weight:720;line-height:1.4}
+.business-registration-card .business-detail-wide{grid-column:1/-1}
+@media(max-width:950px){.business-dashboard{width:min(760px,calc(100% - 32px));padding-top:76px}.business-dashboard-grid{grid-template-columns:1fr;gap:16px}.business-query-card{min-height:0}.business-chat{flex:none;height:300px;min-height:300px;max-height:300px}.business-registration-card .business-details{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.business-dashboard{width:calc(100% - 22px);padding-top:68px;padding-bottom:30px}.business-dashboard-heading{min-height:0;margin-bottom:14px;padding:16px;border-radius:14px}.business-dashboard-heading h1{font-size:1.5rem}.business-dashboard-heading p{font-size:.83rem}.business-card{padding:17px;border-radius:14px}.business-query-card{padding:17px}.business-chat{height:290px;min-height:290px;max-height:290px;padding:10px}.business-query-card form textarea{height:84px;min-height:84px}.business-registration-card{padding:17px}.business-registration-card .business-details{grid-template-columns:1fr}.business-registration-card .business-detail-wide{grid-column:auto}}
+.business-dashboard{padding-top:100px;padding-bottom:32px}
+.business-dashboard-heading{min-height:96px;margin-bottom:16px;padding:16px 22px;border-radius:15px}
+.business-dashboard-heading h1{font-size:clamp(1.5rem,2.3vw,1.9rem)}
+.business-dashboard-grid{gap:16px}
+.business-query-card{min-height:0;padding:20px}
+.business-chat{height:300px;min-height:300px;max-height:300px}
+.business-registration-card{padding:17px}
+.business-registration-card .business-details>div{padding:8px 0}
+@media(max-width:950px){.business-dashboard{padding-top:82px}}
+@media(max-width:560px){.business-dashboard{padding-top:78px;padding-bottom:24px}.business-dashboard-heading{min-height:0;margin-bottom:12px;padding:14px 16px}.business-query-card{padding:16px}.business-chat{height:280px;min-height:280px;max-height:280px}.business-registration-card{padding:15px}}

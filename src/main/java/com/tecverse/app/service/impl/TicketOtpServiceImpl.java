@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,7 @@ import com.tecverse.app.entity.TicketMobileOtp;
 import com.tecverse.app.repository.TicketMobileOtpRepository;
 import com.tecverse.app.repository.TicketRegistrationRepository;
 import com.tecverse.app.service.MailDeliveryService;
+import com.tecverse.app.service.TicketOtpEmailDeliveryService;
 import com.tecverse.app.service.TicketOtpService;
 import com.tecverse.app.util.SMSServices;
 import com.tecverse.app.util.OtpConsoleLogger;
@@ -38,9 +41,12 @@ public class TicketOtpServiceImpl implements TicketOtpService {
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final int MAX_OTP_ATTEMPTS = 5;
 
+    private final TicketOtpEmailDeliveryService emailDeliveryService;
     private final MailDeliveryService mailDeliveryService;
     private final TicketRegistrationRepository registrationRepository;
     private final Map<String, OtpEntry> otpStore = new ConcurrentHashMap<>();
+    private final Map<String, DeliveryEntry> emailOtpDeliveries = new ConcurrentHashMap<>();
+    private final Map<String, String> pendingEmailDeliveries = new ConcurrentHashMap<>();
     private final Map<String, LocalDateTime> verifiedEmails = new ConcurrentHashMap<>();
     private final Map<String, OtpEntry> passwordResetOtps = new ConcurrentHashMap<>();
     private final Map<String, Integer> passwordResetOtpAttempts = new ConcurrentHashMap<>();
@@ -53,7 +59,8 @@ public class TicketOtpServiceImpl implements TicketOtpService {
     private final String smsSecureKey;
     private final String smsTemplateId;
 
-    public TicketOtpServiceImpl(MailDeliveryService mailDeliveryService, TicketRegistrationRepository registrationRepository,
+    public TicketOtpServiceImpl(TicketOtpEmailDeliveryService emailDeliveryService, MailDeliveryService mailDeliveryService,
+                                TicketRegistrationRepository registrationRepository,
                                 TicketMobileOtpRepository mobileOtpRepository,
                                 @Value("${tecverse.sms.url}") String smsUrl,
                                 @Value("${tecverse.sms.username}") String smsUsername,
@@ -61,6 +68,7 @@ public class TicketOtpServiceImpl implements TicketOtpService {
                                 @Value("${tecverse.sms.sender-id}") String smsSenderId,
                                 @Value("${tecverse.sms.secure-key}") String smsSecureKey,
                                 @Value("${tecverse.sms.template-id}") String smsTemplateId) {
+        this.emailDeliveryService = emailDeliveryService;
         this.mailDeliveryService = mailDeliveryService;
         this.registrationRepository = registrationRepository;
         this.mobileOtpRepository = mobileOtpRepository;
@@ -139,31 +147,67 @@ public class TicketOtpServiceImpl implements TicketOtpService {
     }
 
     @Override
-    public void sendOtp(TicketOtpSendRequest request) {
+    public String sendOtp(TicketOtpSendRequest request) {
         String email = normalizeEmail(request.getEmail());
         if (registrationRepository.existsByEmail(email)) throw new IllegalArgumentException("This email is already registered.");
         String normalizedPhone = ValidationUtil.normalizeIndianMobile(request.getPhone());
         if (registrationRepository.existsByPhone(normalizedPhone)) throw new IllegalArgumentException("This phone number is already registered.");
+        String requestId = UUID.randomUUID().toString();
+        while (true) {
+            String pendingId = pendingEmailDeliveries.get(email);
+            if (pendingId == null) {
+                if (pendingEmailDeliveries.putIfAbsent(email, requestId) == null) break;
+                continue;
+            }
+            if ("pending".equals(emailOtpDeliveryStatus(pendingId))) {
+                throw new IllegalArgumentException("Your previous OTP email is still being sent. Please wait a moment.");
+            }
+            pendingEmailDeliveries.remove(email, pendingId);
+        }
         String otp = String.format("%06d", RANDOM.nextInt(1_000_000));
         OtpEntry entry = new OtpEntry(otp, LocalDateTime.now().plus(OTP_VALIDITY));
         otpStore.put(email, entry);
-
-        // Wait for SMTP so the form can show an actionable error when the mail server is down.
-        // On failure, invalidate this OTP before returning the delivery error to the caller.
+        DeliveryEntry delivery = new DeliveryEntry(Instant.now().plus(Duration.ofMinutes(10)));
+        emailOtpDeliveries.put(requestId, delivery);
         try {
-            boolean sent = mailDeliveryService.sendSimple(
+            emailDeliveryService.send(
                     email,
                     "Tec-Verse ticket verification OTP",
-                    buildMessage(request, otp),
-                    "Ticket OTP"
-            );
-            if (!sent) throw new IllegalStateException("Mail server is temporarily unavailable. Please try again later.");
-            OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "Ticket email verification", otp);
+                    buildMessage(request, otp)
+            ).whenComplete((ignored, failure) -> {
+                if (failure == null) {
+                    delivery.status().set("sent");
+                    OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "Ticket email verification", otp);
+                } else {
+                    delivery.status().set("failed");
+                    otpStore.remove(email, entry);
+                    log.warn("Ticket email OTP delivery failed for request {}.", requestId, failure);
+                }
+                pendingEmailDeliveries.remove(email, requestId);
+            });
         } catch (RuntimeException ex) {
             otpStore.remove(email, entry);
-            log.warn("Ticket email OTP delivery failed; the affected OTP was invalidated.", ex);
+            emailOtpDeliveries.remove(requestId, delivery);
+            pendingEmailDeliveries.remove(email, requestId);
             throw ex;
         }
+        return requestId;
+    }
+
+    @Override
+    public String emailOtpDeliveryStatus(String requestId) {
+        DeliveryEntry entry = emailOtpDeliveries.get(requestId);
+        if (entry == null || Instant.now().isAfter(entry.expiresAt())) {
+            if (entry != null) emailOtpDeliveries.remove(requestId, entry);
+            return "expired";
+        }
+        return entry.status().get();
+    }
+
+    @Scheduled(fixedRate = 600_000)
+    public void purgeExpiredEmailOtpDeliveryStatuses() {
+        Instant now = Instant.now();
+        emailOtpDeliveries.entrySet().removeIf(entry -> now.isAfter(entry.getValue().expiresAt()));
     }
 
     @Override
@@ -293,6 +337,12 @@ public class TicketOtpServiceImpl implements TicketOtpService {
     private record OtpEntry(String otp, LocalDateTime expiresAt, AtomicInteger failedAttempts) {
         OtpEntry(String otp, LocalDateTime expiresAt) {
             this(otp, expiresAt, new AtomicInteger());
+        }
+    }
+
+    private record DeliveryEntry(Instant expiresAt, AtomicReference<String> status) {
+        DeliveryEntry(Instant expiresAt) {
+            this(expiresAt, new AtomicReference<>("pending"));
         }
     }
 }

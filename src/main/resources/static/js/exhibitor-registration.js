@@ -73,6 +73,25 @@
   const resendMobileButton = document.getElementById('resendMobileOtp');
   const verifyButton = document.getElementById('verifyOtp');
   const verifyPhoneButton = document.getElementById('verifyPhoneOtp');
+  function makeOtpDialog(wrap, title) {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'simple-otp-dialog';
+    dialog.setAttribute('aria-label', title);
+    const heading = document.createElement('div');
+    heading.className = 'simple-otp-dialog-heading';
+    const label = document.createElement('strong');
+    label.textContent = title;
+    const close = document.createElement('button');
+    close.type = 'button'; close.className = 'simple-otp-dialog-close'; close.setAttribute('aria-label', 'Close'); close.textContent = '×';
+    close.addEventListener('click', () => dialog.close());
+    heading.append(label, close);
+    wrap.parentElement.insertBefore(dialog, wrap);
+    dialog.append(heading, wrap);
+    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+    return dialog;
+  }
+  const emailOtpDialog = makeOtpDialog(otpWrap, 'Email verification');
+  const phoneOtpDialog = makeOtpDialog(phoneOtpWrap, 'Mobile verification');
   const submitButton = document.getElementById('submitExhibitor');
   let currentPage = 1;
   let verifiedEmail = '';
@@ -396,6 +415,7 @@
       if (input === email) emailRegistrationStatus.textContent = '';
       if (input === phone) mobileRegistrationStatus.textContent = '';
       if (input === email && email.value.trim() !== verifiedEmail) {
+        if (emailOtpDialog.open) emailOtpDialog.close();
         verifiedEmail = '';
         clearOtpCooldown(sendButton);
         sendButton.disabled = false;
@@ -406,6 +426,7 @@
         otpStatus.textContent = '';
       }
       if (input === phone && normalizedPhone(phone.value) !== verifiedPhone) {
+        if (phoneOtpDialog.open) phoneOtpDialog.close();
         verifiedPhone = '';
         clearOtpCooldown(sendMobileButton);
         sendMobileButton.disabled = false;
@@ -454,6 +475,7 @@
       clearOtpDigits(emailOtpDigits, otp);
       document.getElementById('otpEmailDestination').textContent = email.value.trim();
       otpWrap.classList.remove('hidden');
+      emailOtpDialog.showModal();
       otpStatus.textContent = result.message || 'OTP sent to your official email.';
       emailOtpDigits[0]?.focus();
       startOtpCooldown(sendButton);
@@ -494,6 +516,7 @@
       clearOtpDigits(phoneOtpDigits, phoneOtp);
       document.getElementById('otpMobileDestination').textContent = phone.value.trim();
       phoneOtpWrap.classList.remove('hidden');
+      phoneOtpDialog.showModal();
       phoneOtpStatus.textContent = result.message || 'OTP sent to your mobile number.';
       phoneOtpStatus.style.color = '#52677d';
       phoneOtpDigits[0]?.focus();
@@ -529,6 +552,7 @@
       if (!response.ok || !result.success) throw Error(result.message || 'Mobile OTP verification failed.');
       verifiedPhone = normalizedPhone(phone.value);
       phoneOtpWrap.classList.add('hidden');
+      phoneOtpDialog.close();
       clearOtpCooldown(sendMobileButton);
       sendMobileButton.disabled = true;
       sendMobileButton.textContent = 'Verified';
@@ -561,6 +585,7 @@
       if (!response.ok || !result.success) throw Error(result.message || 'OTP verification failed.');
       verifiedEmail = email.value.trim();
       otpWrap.classList.add('hidden');
+      emailOtpDialog.close();
       clearOtpCooldown(sendButton);
       sendButton.disabled = true;
       sendButton.textContent = 'Verified';

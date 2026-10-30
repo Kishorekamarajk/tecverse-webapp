@@ -678,10 +678,55 @@ body:not(.sponsor-page):not(.exhibitor-registration-page) .site-floating-actions
     }
 }
 
-/* Keep the participation bar available site-wide, except on its destination pages. */
-body:is(.sponsor-page, .exhibitor-registration-page) .site-floating-actions { display: none !important; }
-.home-page .site-floating-actions { transition: opacity .22s ease, visibility .22s ease, transform .22s ease; }
+/* Participation links are shown on the home page only. */
+body:not(.home-page) .site-floating-actions { display: none !important; }
+.home-page .site-floating-actions { display: inline-flex !important; transition: opacity .22s ease, visibility .22s ease, transform .22s ease; }
 .home-page .site-floating-actions.is-scroll-hidden { visibility: hidden; opacity: 0; pointer-events: none; transform: translate(-50%, 18px); }
+
+.home-app-promo { position: relative; z-index: 1; padding: clamp(34px, 6vw, 76px) 0; background: linear-gradient(180deg, #f3f7fc 0%, #fff 100%); }
+.home-app-promo__inner { position: relative; display: grid; grid-template-columns: 112px minmax(0, 1fr) auto; align-items: center; gap: clamp(24px, 4vw, 54px); min-height: 270px; overflow: hidden; padding: clamp(34px, 5vw, 66px); border: 1px solid #dce6f1; border-radius: 30px; background: radial-gradient(ellipse at 94% 8%, rgba(255, 119, 31, .19), transparent 34%), radial-gradient(ellipse at 0% 100%, rgba(34, 115, 190, .12), transparent 42%), linear-gradient(120deg, #fff 0%, #fff 56%, #fff8f2 100%); box-shadow: 0 24px 70px rgba(10, 36, 67, .12); }
+.home-app-promo__inner::after { position: absolute; right: 19%; bottom: -115px; width: 340px; height: 220px; border: 1px solid rgba(240, 112, 37, .18); border-radius: 50%; content: ""; transform: rotate(-18deg); pointer-events: none; }
+.home-app-promo__icon { position: relative; z-index: 1; display: grid; width: 112px; height: 112px; place-items: center; border: 1px solid #f8d4bd; border-radius: 30px; background: linear-gradient(145deg, #fff0e5, #fff); color: #ef6819; font-size: 3.25rem; box-shadow: 0 12px 28px rgba(239, 104, 25, .12); }
+.home-app-promo__copy { min-width: 0; }
+.home-app-promo__eyebrow { color: #e96717; font-size: .82rem; font-weight: 850; letter-spacing: .17em; }
+.home-app-promo__copy h2 { margin: 10px 0 12px; color: #102b49; font-size: clamp(2rem, 4.2vw, 3.5rem); font-weight: 900; letter-spacing: -.035em; line-height: 1.04; }
+.home-app-promo__copy p { max-width: 690px; margin: 0; color: #62768c; font-size: clamp(1.05rem, 1.5vw, 1.22rem); line-height: 1.6; }
+.home-app-promo__button { position: relative; z-index: 1; display: inline-flex; min-height: 78px; align-items: center; justify-content: center; gap: 15px; padding: 16px 24px; border: 1px solid #183452; border-radius: 16px; background: #102b49; color: #fff; text-decoration: none; box-shadow: 0 12px 26px rgba(16, 43, 73, .2); transition: transform .18s ease, background .18s ease, box-shadow .18s ease; }
+.home-app-promo__button:hover, .home-app-promo__button:focus-visible { transform: translateY(-2px); background: #173e65; color: #fff; box-shadow: 0 12px 24px rgba(16, 43, 73, .22); }
+.home-app-promo__button > i:first-child { color: #9be4b1; font-size: 2rem; }
+.home-app-promo__button > i:last-child { margin-left: 4px; color: #d6e1ec; }
+.home-app-promo__button span { display: flex; flex-direction: column; line-height: 1.1; }
+.home-app-promo__button small { color: #c7d3df; font-size: .62rem; font-weight: 700; letter-spacing: .12em; }
+.home-app-promo__button strong { margin-top: 4px; font-size: 1.2rem; font-weight: 800; white-space: nowrap; }
+@media (max-width: 900px) { .home-app-promo__inner { grid-template-columns: 88px minmax(0,1fr); gap: 22px; min-height: 0; padding: clamp(24px, 5vw, 42px); } .home-app-promo__icon { width: 88px; height: 88px; border-radius: 24px; font-size: 2.6rem; } .home-app-promo__button { grid-column: 2; justify-self: start; min-height: 68px; } }
+@media (max-width: 600px) { .home-app-promo { padding: 28px 0; } .home-app-promo__inner { grid-template-columns: 58px minmax(0,1fr); gap: 14px; padding: 21px; border-radius: 20px; } .home-app-promo__icon { width: 58px; height: 58px; border-radius: 16px; font-size: 1.65rem; } .home-app-promo__eyebrow { font-size: .62rem; letter-spacing: .1em; } .home-app-promo__copy h2 { margin: 7px 0; font-size: clamp(1.55rem, 7vw, 2rem); } .home-app-promo__copy p { font-size: .94rem; } .home-app-promo__button { grid-column: 1 / -1; justify-self: stretch; min-height: 62px; } }
+.home-app-promo{padding:clamp(38px,6vw,86px) 0;background:linear-gradient(180deg,#f4f8fd 0%,#edf4fb 100%)}
+.home-app-promo .home-app-promo__inner{display:grid;width:calc(100% - 56px);max-width:1840px;min-height:450px;grid-template-columns:minmax(0,1.05fr) minmax(290px,.72fr) auto;align-items:center;gap:clamp(20px,3vw,54px);padding:clamp(36px,5vw,72px);overflow:hidden;border:1px solid #e1e9f2;border-radius:36px;background:radial-gradient(circle at 56% 48%,rgba(77,146,245,.14) 0 16%,transparent 16.2%),radial-gradient(circle at 78% 68%,rgba(255,120,39,.92) 0 18%,transparent 18.2%),radial-gradient(circle at 100% 0%,rgba(255,139,56,.15),transparent 27%),linear-gradient(112deg,#fff 0%,#fff 52%,#fffaf6 100%);box-shadow:0 26px 70px rgba(29,69,117,.1)}
+.home-app-promo .home-app-promo__inner::before{position:absolute;top:-120px;left:47%;width:320px;height:320px;border-radius:50%;background:rgba(106,165,255,.12);content:"";pointer-events:none}
+.home-app-promo .home-app-promo__inner::after{right:13%;bottom:-150px;width:390px;height:260px;border-color:rgba(240,112,37,.24)}
+.home-app-promo__copy{position:relative;z-index:1;max-width:720px}
+.home-app-promo__eyebrow{display:inline-flex;align-items:center;gap:8px;color:#f47721;font-size:clamp(.72rem,.9vw,.95rem);letter-spacing:.16em}
+.home-app-promo__eyebrow i{font-size:1rem}
+.home-app-promo__copy h2{max-width:770px;margin:16px 0 18px;color:#123d70;font-size:clamp(2.6rem,5.4vw,5.5rem);font-weight:900;letter-spacing:-.055em;line-height:.99}
+.home-app-promo__copy h2 span{color:#f47721}
+.home-app-promo__copy p{max-width:680px;color:#637b98;font-size:clamp(1rem,1.45vw,1.35rem);line-height:1.65}
+.home-app-promo__visual{position:relative;z-index:1;display:grid;min-height:330px;place-items:center;align-self:stretch}
+.home-app-promo__orbit{position:absolute;width:min(30vw,430px);aspect-ratio:1;border:2px solid rgba(255,255,255,.68);border-radius:50%;box-shadow:0 0 0 24px rgba(255,255,255,.16),0 0 0 52px rgba(255,255,255,.1)}
+.home-app-promo__phone{position:relative;width:clamp(172px,15vw,250px);height:clamp(320px,27vw,420px);padding:9px;border:4px solid #10151d;border-radius:38px;background:#080d15;box-shadow:0 24px 46px rgba(8,22,43,.34);transform:rotate(-5deg) translateY(8px)}
+.home-app-promo__phone::before{position:absolute;z-index:2;top:8px;left:50%;width:32%;height:18px;border-radius:0 0 13px 13px;background:#080d15;content:"";transform:translateX(-50%)}
+.home-app-promo__phone-screen{height:100%;overflow:hidden;padding:38px 12px 14px;border-radius:28px;background:linear-gradient(155deg,#09294e 0 34%,#f7f9fc 34% 100%)}
+.home-app-promo__phone-top{display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:.72rem;font-weight:900;letter-spacing:.03em}
+.home-app-promo__phone-top b{color:#ff8129}.home-app-promo__phone-top i{font-size:.75rem}
+.home-app-promo__phone-welcome{display:flex;flex-direction:column;gap:4px;margin:34px 2px 15px;color:#fff;font-size:.72rem}
+.home-app-promo__phone-welcome strong{font-size:.88rem}.home-app-promo__phone-welcome small{color:#d7e2f2;font-size:.62rem}
+.home-app-promo__phone-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.home-app-promo__phone-grid span{display:flex;min-height:79px;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px;padding:10px;border:1px solid #e6edf5;border-radius:12px;background:#fff;box-shadow:0 5px 13px rgba(30,61,94,.08)}
+.home-app-promo__phone-grid i{color:#f47721;font-size:1.2rem}.home-app-promo__phone-grid span:nth-child(even) i{color:#3988df}.home-app-promo__phone-grid small{color:#314967;font-size:.59rem;font-weight:800}
+.home-app-promo__button{min-width:230px;min-height:82px;gap:14px;padding:15px 19px;border:1px solid #092746;border-radius:17px;background:#08294b;box-shadow:0 17px 34px rgba(8,41,75,.24)}
+.home-app-promo__button>i:first-child{color:#35d49b;font-size:2.25rem}.home-app-promo__button>i:last-child{font-size:1.25rem}
+.home-app-promo__button small{font-size:.68rem}.home-app-promo__button strong{font-size:1.3rem}
+@media(max-width:1100px){.home-app-promo .home-app-promo__inner{grid-template-columns:minmax(0,1fr) minmax(230px,.65fr);min-height:410px}.home-app-promo__visual{grid-column:2;grid-row:1/3}.home-app-promo__button{grid-column:1;grid-row:2;justify-self:start}.home-app-promo__copy h2{font-size:clamp(2.4rem,5.6vw,4.5rem)}}
+@media(max-width:700px){.home-app-promo{padding:28px 0}.home-app-promo .home-app-promo__inner{width:calc(100% - 28px);grid-template-columns:minmax(0,1fr) 120px;gap:12px;min-height:0;padding:24px 20px;border-radius:22px}.home-app-promo__copy{grid-column:1/-1}.home-app-promo__copy h2{margin:10px 0;font-size:clamp(2rem,9vw,3rem);line-height:1}.home-app-promo__copy p{font-size:.94rem;line-height:1.5}.home-app-promo__visual{grid-column:1;grid-row:2;min-height:210px;place-items:center start}.home-app-promo__orbit{left:5px;width:180px}.home-app-promo__phone{width:112px;height:208px;padding:6px;border-width:3px;border-radius:25px}.home-app-promo__phone::before{top:5px;height:12px}.home-app-promo__phone-screen{padding:24px 7px 8px;border-radius:18px}.home-app-promo__phone-welcome{gap:2px;margin:17px 1px 8px;font-size:.47rem}.home-app-promo__phone-welcome strong{font-size:.53rem}.home-app-promo__phone-welcome small{font-size:.42rem}.home-app-promo__phone-top{font-size:.44rem}.home-app-promo__phone-grid{gap:5px}.home-app-promo__phone-grid span{min-height:44px;gap:3px;padding:5px;border-radius:7px}.home-app-promo__phone-grid i{font-size:.76rem}.home-app-promo__phone-grid small{font-size:.39rem}.home-app-promo__button{grid-column:2;grid-row:2;align-self:center;justify-self:stretch;min-width:0;min-height:60px;gap:8px;padding:10px;border-radius:12px}.home-app-promo__button>i:first-child{font-size:1.5rem}.home-app-promo__button>i:last-child{display:none}.home-app-promo__button small{font-size:.48rem}.home-app-promo__button strong{font-size:.88rem}}
 
 .gallery-carousel--videos .gallery-carousel__slide {
     width: min(68vw, 600px);

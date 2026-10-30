@@ -33,6 +33,7 @@
     }
 
     document.querySelectorAll('[data-attendee-login-open]').forEach(button => button.addEventListener('click', openDialog));
+    document.addEventListener('open-attendee-login', openDialog);
     dialog.querySelector('[data-attendee-login-close]').addEventListener('click', () => dialog.close());
     dialog.querySelector('[data-attendee-captcha-refresh]').addEventListener('click', refreshCaptcha);
     dialog.querySelector('[data-attendee-password-toggle]').addEventListener('click', event => {

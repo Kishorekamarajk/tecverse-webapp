@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -122,6 +123,12 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/adminportal").permitAll()
+                        .requestMatchers("/stall-managementlogin").permitAll()
+                        .requestMatchers("/stall-management", "/stall-management/**").access((authentication, context) -> {
+                            jakarta.servlet.http.HttpSession session = context.getRequest().getSession(false);
+                            return new AuthorizationDecision(session != null
+                                    && Boolean.TRUE.equals(session.getAttribute("TECVERSE_STALL_MANAGEMENT_AUTH")));
+                        })
                         .requestMatchers(HttpMethod.POST, "/admin/logout").hasAnyRole("ADMIN", "ADMIN_VIEWER")
                         .requestMatchers(HttpMethod.GET, "/admin", "/admin/**").hasAnyRole("ADMIN", "ADMIN_VIEWER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")

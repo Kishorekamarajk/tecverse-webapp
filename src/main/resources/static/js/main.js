@@ -106,6 +106,20 @@
 })();
 
 (function () {
+    if (!document.body.classList.contains('home-page')) return;
+    var actions = document.querySelector('.site-floating-actions');
+    if (!actions) return;
+
+    var SCROLL_THRESHOLD = 80;
+    function updateFloatingActions() {
+        actions.classList.toggle('is-scroll-hidden', window.scrollY > SCROLL_THRESHOLD);
+    }
+
+    updateFloatingActions();
+    window.addEventListener('scroll', updateFloatingActions, { passive: true });
+})();
+
+(function () {
     function initNavbarDropdownAutoClose() {
         var dropdowns = document.querySelectorAll('.site-navbar .nav-item.dropdown');
         if (!dropdowns.length) return;

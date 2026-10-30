@@ -1,7 +1,8 @@
 package com.tecverse.app.service;
 import com.tecverse.app.dto.TicketOtpSendRequest;
 public interface TicketOtpService {
- void sendOtp(TicketOtpSendRequest request);
+ String sendOtp(TicketOtpSendRequest request);
+ String emailOtpDeliveryStatus(String requestId);
  void verifyOtp(String email,String otp);
  boolean isEmailVerified(String email);
  void sendMobileOtp(String phone);

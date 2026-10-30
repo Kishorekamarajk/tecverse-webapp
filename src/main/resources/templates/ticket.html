@@ -115,6 +115,22 @@ body.ticket-page{background:#F6F8FC}
 .rg .tr-otp-btn:hover{background:var(--pri-d);color:#fff}
 .tr-otp-resend{display:inline-block;margin-top:6px;padding:0;border:0;background:none;font-size:.76rem;font-weight:600;color:var(--pri);text-decoration:underline}
 .tr-otp-resend:disabled{color:#94A3B8;text-decoration:none;cursor:default}
+.tr-otp-dialog{width:min(440px,calc(100vw - 28px));max-width:none;max-height:min(90vh,560px);margin:auto;padding:22px;border:1px solid #d9e0e8;border-radius:10px;background:#fff;color:#172b45;box-shadow:0 18px 50px rgba(15,35,60,.24)}
+.tr-otp-dialog::backdrop{background:rgba(16,27,42,.48)}
+.tr-otp-dialog .tr-otp[hidden]{display:none}
+.tr-otp-dialog .tr-otp{margin:0;padding:0;border:0;border-radius:0;background:#fff}
+.tr-otp-dialog-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+.tr-otp-dialog-heading h2{margin:2px 0 0;color:#172b45;font-size:1.3rem;font-weight:700}
+.tr-otp-dialog-kicker{color:#e87527;font-size:.68rem;font-weight:800;letter-spacing:.1em}
+.tr-otp-dialog-close{display:grid;place-items:center;flex:none;width:30px;height:30px;border:0;border-radius:5px;background:#f2f4f7;color:#58677b;font-size:1.35rem;line-height:1}
+.tr-otp-dialog .tr-otp-note{margin-bottom:14px;color:#65748a;font-size:.84rem}
+.tr-otp-dialog .tr-otp-note strong{display:block;margin-top:3px;color:#172b45;font-size:.92rem;overflow-wrap:anywhere}
+.tr-otp-dialog .tr-otp-inputs{grid-template-columns:repeat(6,minmax(0,1fr));max-width:100%;gap:8px}
+.tr-otp-dialog .tr-otp-inputs .form-control{height:46px;border:1px solid #cbd4df;border-radius:5px;background:#fff;color:#172b45;font-size:1rem;box-shadow:none}
+.tr-otp-dialog .tr-otp-inputs .form-control:focus{border-color:#f47a20;outline:2px solid rgba(244,122,32,.15);outline-offset:1px}
+.tr-otp-dialog .tr-otp-btn{min-width:96px;height:40px;border:1px solid #e96819;border-radius:5px;background:#f47a20;color:#fff;font-size:.88rem;font-weight:700}
+.tr-otp-dialog .tr-otp-resend{margin-top:12px;color:#d95f12}
+.tr-otp-dialog .tr-msg{margin-top:10px}
 @media(max-width:360px){.rg-card{padding:16px}.tr-otp-inputs{gap:4px}.tr-otp-inputs .form-control{width:32px;height:36px}}
 /* Keep the email and mobile verification controls aligned as each OTP panel opens. */
 .tr-verify-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px;row-gap:16px;align-items:start}
@@ -342,6 +358,8 @@ body.ticket-page{background:#F6F8FC}
               <div class="tr-verify-grid">
                 <div class="tr-verify-field tr-verify-name"><label class="rg-f"><span th:text="#{ticket.verify.fullName}">Full Name</span><span class="tr-required-star" aria-hidden="true">*</span><input class="form-control" id="verifyName" name="verifyName" type="text" autocomplete="name" th:placeholder="#{ticket.verify.placeholder.fullName}" maxlength="150" required></label></div>
                 <div class="tr-verify-field tr-verify-mobile"><label class="rg-f"><span th:text="#{ticket.verify.mobile}">Mobile Number</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" th:placeholder="#{ticket.verify.placeholder.mobile}" maxlength="15" required><button type="button" id="sendMobileOtp" class="btn tr-primary">Send OTP</button></span></label>
+                  <dialog id="mobileOtpDialog" class="tr-otp-dialog" aria-labelledby="mobileOtpHeading">
+                    <div class="tr-otp-dialog-heading"><div><span class="tr-otp-dialog-kicker">MOBILE VERIFICATION</span><h2 id="mobileOtpHeading">Enter verification code</h2></div><button class="tr-otp-dialog-close" type="button" data-otp-dialog-close aria-label="Close">&times;</button></div>
                   <div id="mobileOtpBox" class="tr-otp" hidden>
                     <p class="tr-otp-note"><span th:text="#{ticketpage.otp.mobileNote}">Enter the OTP sent by SMS to</span> <strong id="otpMobile"></strong></p>
                     <div class="tr-otp-row">
@@ -353,8 +371,11 @@ body.ticket-page{background:#F6F8FC}
                     <button id="resendMobileOtp" class="tr-otp-resend" type="button" th:text="#{ticketpage.otp.resend}">Resend OTP</button>
                     <div id="mobileOtpMsg" class="tr-msg small fw-semibold" role="status" aria-live="polite"></div>
                   </div>
+                  </dialog>
                 </div>
                 <div class="tr-verify-field tr-verify-email"><label class="rg-f"><span th:text="#{ticket.verify.email}">Email Address</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="email" name="email" type="email" autocomplete="email" th:placeholder="#{ticket.verify.placeholder.email}" maxlength="150" required><button type="button" id="sendOtp" class="btn tr-primary"><span th:text="#{ticket.verify.sendOtp}">Send OTP</span></button></span></label>
+                  <dialog id="emailOtpDialog" class="tr-otp-dialog" aria-labelledby="emailOtpHeading">
+                    <div class="tr-otp-dialog-heading"><div><span class="tr-otp-dialog-kicker">EMAIL VERIFICATION</span><h2 id="emailOtpHeading">Enter verification code</h2></div><button class="tr-otp-dialog-close" type="button" data-otp-dialog-close aria-label="Close">&times;</button></div>
                   <div id="otpBox" class="tr-otp" hidden>
                     <p class="tr-otp-note"><span th:text="#{ticketpage.otp.emailNote}">Enter the OTP sent to</span> <strong id="otpEmail"></strong></p>
                     <div class="tr-otp-row">
@@ -366,6 +387,7 @@ body.ticket-page{background:#F6F8FC}
                     <button id="resendOtp" class="tr-otp-resend" type="button" th:text="#{ticketpage.otp.resend}">Resend OTP</button>
                     <div id="emailOtpMsg" class="tr-msg small fw-semibold" role="status" aria-live="polite"></div>
                   </div>
+                  </dialog>
                 </div>
                 <div class="tr-verify-field tr-verify-password"><label class="rg-f"><span th:text="#{ticket.verify.createPassword}">Create Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="8+ characters" th:placeholder="#{ticket.verify.placeholder.password}" required><button class="btn password-toggle" type="button" data-password-target="password" aria-label="Show password" th:aria-label="#{ticketpage.password.show}" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span><small class="tr-password-hint fw-normal d-block mt-1"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i><span th:text="#{ticketpage.password.hint}">Use 8+ characters with an uppercase letter, a number, and a symbol.</span></small></label></div>
 
@@ -634,7 +656,7 @@ body.ticket-page{background:#F6F8FC}
         ['Nationality / Residency Status', selText('citizenship') || '-']
       ]],
       ['Attendance & Event', [
-        ['Preferred Days', dayText() || '-'],
+        ['Selected event days', dayText() || '-'],
         ['Event Dates', '26 & 27 November 2026'],
         ['Venue', 'Chennai Trade Centre, Chennai, Tamil Nadu']
       ]]

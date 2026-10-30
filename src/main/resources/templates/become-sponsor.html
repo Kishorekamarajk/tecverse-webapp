@@ -222,6 +222,11 @@
             .sponsor-page .sponsor-email-row button, .sponsor-page .sponsor-otp-row button { flex: 0 0 auto; min-width: 100px; }
             .sponsor-page .sponsor-mobile-row button { min-width: 100px; }
             .sponsor-page .sponsor-otp-row { display: flex; min-width: 0; }
+            .sponsor-page .sponsor-otp-dialog { width:min(440px,calc(100vw - 28px)); max-width:none; max-height:90vh; margin:auto; padding:22px; border:1px solid #d9e0e8; border-radius:12px; background:#fff; color:#102b49; box-shadow:0 18px 50px rgba(15,35,60,.24); }
+            .sponsor-page .sponsor-otp-dialog::backdrop { background:rgba(16,27,42,.5); }
+            .sponsor-page .sponsor-otp-dialog-heading { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; }
+            .sponsor-page .sponsor-otp-dialog-close { width:32px; height:32px; border:0; border-radius:6px; background:#f2f4f7; color:#58677b; font-size:1.4rem; line-height:1; }
+            .sponsor-page .sponsor-otp-dialog .sp-field { display:block; width:100%; margin:0; }
             .sponsor-page .sponsor-otp-status { display:block; min-height:1.1em; margin-top:5px; color:#52677d; font-size:.74rem; line-height:1.35; }
             .sponsor-page #sponsorPhoneField .sp-client-error,
             .sponsor-page #sponsorPhoneField .sp-field-error,
@@ -410,7 +415,7 @@
             <div class="sp-section-head" data-reveal="fade-up"><span th:text="#{sponsor.packages.kicker}">Official Packages</span><h2 id="sponsor-packages-title" th:text="#{sponsor.packages.title}">Tec-Verse 2026 Sponsorship Packages</h2><p th:text="#{sponsor.packages.desc}">Select a package to pre-fill the sponsorship registration form.</p></div>
             <div class="sp-package-grid d-grid">
                 <article class="sp-package sp-package--featured" data-tier="platinum" data-reveal="zoom" data-reveal-delay="100"><div class="sp-package__medal"><i class="bi bi-gem"></i></div><h3 th:text="#{sponsor.tier.platinum}">Platinum</h3><div class="sp-package__label" th:text="#{sponsor.tier.platinum.label}">Premium Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;15,00,000</div><ul><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.platinum.vipSeating}">VIP seating: Yes (inauguration &amp; valedictory)</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.passes10}">10 technical session passes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.platinum.sessions}">4 panel discussions + 4 parallel technical sessions</th:block></li><li><i class="bi bi-star-fill"></i><th:block th:text="#{sponsor.benefit.mainStageLogo}">Main stage logo branding</th:block></li><li><i class="bi bi-cup-hot-fill"></i><th:block th:text="#{sponsor.benefit.platinum.lounge}">VIP lounge: 7 people for both days</th:block></li><li><i class="bi bi-tools"></i><th:block th:text="#{sponsor.benefit.platinum.dining}">VIP dining: 4 people for both days</th:block></li><li><i class="bi bi-shop"></i><th:block th:text="#{sponsor.benefit.platinum.stall}">Premium category stall</th:block></li><li><i class="bi bi-megaphone-fill"></i><th:block th:text="#{sponsor.benefit.logoMaterialsKits}">Logo in marketing materials, sign boards and kits</th:block></li><li><i class="bi bi-file-earmark-text-fill"></i><th:block th:text="#{sponsor.benefit.platinum.cscWriteup}">CSC participation + technical write-up in event report</th:block></li></ul><button type="button" data-select-sponsor="Platinum"><th:block th:text="#{sponsor.tier.platinum.choose}">Choose Platinum</th:block> <i class="bi bi-arrow-right"></i></button></article>
-                <!-- <article class="sp-package sp-package--gold" data-tier="gold" data-reveal="zoom" data-reveal-delay="120"><div class="sp-package__popular"><i class="bi bi-stars"></i> <th:block th:text="#{sponsor.tier.mostPopular}">Most Popular</th:block></div><div class="sp-package__medal"><i class="bi bi-trophy-fill"></i></div><h3 th:text="#{sponsor.tier.gold}">Gold</h3><div class="sp-package__label" th:text="#{sponsor.tier.gold.label}">Strategic Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;10,00,000</div><ul><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.gold.vipSeating}">VIP seating: Yes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.passes10}">10 technical session passes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.gold.sessions}">3 panel discussions + 3 parallel sessions</th:block></li><li><i class="bi bi-star-fill"></i><th:block th:text="#{sponsor.benefit.mainStageLogo}">Main stage logo branding</th:block></li><li><i class="bi bi-cup-hot-fill"></i><th:block th:text="#{sponsor.benefit.gold.lounge}">VIP lounge: 5 people</th:block></li><li><i class="bi bi-tools"></i><th:block th:text="#{sponsor.benefit.gold.dining}">VIP dining: 2 people</th:block></li><li><i class="bi bi-shop"></i><th:block th:text="#{sponsor.benefit.gold.stall}">Large stall</th:block></li><li><i class="bi bi-megaphone-fill"></i><th:block th:text="#{sponsor.benefit.logoMaterialsKits}">Logo in marketing materials, sign boards and kits</th:block></li><li><i class="bi bi-file-earmark-text-fill"></i><th:block th:text="#{sponsor.benefit.gold.cscWriteup}">CSC participation + technical write-up</th:block></li></ul><button type="button" data-select-sponsor="Gold"><th:block th:text="#{sponsor.tier.gold.choose}">Choose Gold</th:block> <i class="bi bi-arrow-right"></i></button></article> -->
+                <article class="sp-package" data-tier="gold" data-reveal="zoom" data-reveal-delay="120"><div class="sp-package__medal"><i class="bi bi-trophy-fill"></i></div><h3 th:text="#{sponsor.tier.gold}">Gold</h3><div class="sp-package__label" th:text="#{sponsor.tier.gold.label}">Strategic Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;10,00,000</div><ul><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.gold.vipSeating}">VIP seating: Yes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.passes10}">10 technical session passes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.gold.sessions}">3 panel discussions + 3 parallel sessions</th:block></li><li><i class="bi bi-star-fill"></i><th:block th:text="#{sponsor.benefit.mainStageLogo}">Main stage logo branding</th:block></li><li><i class="bi bi-cup-hot-fill"></i><th:block th:text="#{sponsor.benefit.gold.lounge}">VIP lounge: 5 people</th:block></li><li><i class="bi bi-tools"></i><th:block th:text="#{sponsor.benefit.gold.dining}">VIP dining: 2 people</th:block></li><li><i class="bi bi-shop"></i><th:block th:text="#{sponsor.benefit.gold.stall}">Large stall</th:block></li><li><i class="bi bi-megaphone-fill"></i><th:block th:text="#{sponsor.benefit.logoMaterialsKits}">Logo in marketing materials, sign boards and kits</th:block></li><li><i class="bi bi-file-earmark-text-fill"></i><th:block th:text="#{sponsor.benefit.gold.cscWriteup}">CSC participation + technical write-up</th:block></li></ul><button type="button" data-select-sponsor="Gold"><th:block th:text="#{sponsor.tier.gold.choose}">Choose Gold</th:block> <i class="bi bi-arrow-right"></i></button></article>
                 <article class="sp-package sp-package--silver" data-tier="silver" data-reveal="zoom" data-reveal-delay="140"><div class="sp-package__medal"><i class="bi bi-star-fill"></i></div><h3 th:text="#{sponsor.tier.silver}">Silver</h3><div class="sp-package__label" th:text="#{sponsor.tier.silver.label}">Associate Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;5,00,000</div><ul><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.passes10}">10 technical session passes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.silver.sessions}">2 panel discussions + 2 parallel sessions</th:block></li><li><i class="bi bi-cup-hot-fill"></i><th:block th:text="#{sponsor.benefit.silver.lounge}">VIP lounge: 3 people</th:block></li><li><i class="bi bi-shop"></i><th:block th:text="#{sponsor.benefit.silver.stall}">Medium stall</th:block></li><li><i class="bi bi-megaphone-fill"></i><th:block th:text="#{sponsor.benefit.logoMaterialsBoards}">Logo in marketing materials and sign boards</th:block></li><li><i class="bi bi-people-fill"></i><th:block th:text="#{sponsor.benefit.csc}">CSC participation</th:block></li><li><i class="bi bi-file-earmark-text-fill"></i><th:block th:text="#{sponsor.benefit.writeup}">Technical write-up in event report</th:block></li></ul><button type="button" data-select-sponsor="Silver"><th:block th:text="#{sponsor.tier.silver.choose}">Choose Silver</th:block> <i class="bi bi-arrow-right"></i></button></article>
                 <article class="sp-package" data-tier="copper" data-reveal="zoom" data-reveal-delay="160"><div class="sp-package__medal"><i class="bi bi-shield-fill"></i></div><h3 th:text="#{sponsor.tier.copper}">Copper</h3><div class="sp-package__label" th:text="#{sponsor.tier.copper.label}">Supporting Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;2,50,000</div><ul><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.passes10}">10 technical session passes</th:block></li><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.copper.sessions}">1 panel discussion + 1 parallel session</th:block></li><li><i class="bi bi-cup-hot-fill"></i><th:block th:text="#{sponsor.benefit.copper.lounge}">VIP lounge: 2 people</th:block></li><li><i class="bi bi-shop"></i><th:block th:text="#{sponsor.benefit.copper.stall}">Small stall</th:block></li><li><i class="bi bi-megaphone-fill"></i><th:block th:text="#{sponsor.benefit.limitedLogo}">Limited logo placement in marketing materials</th:block></li><li><i class="bi bi-people-fill"></i><th:block th:text="#{sponsor.benefit.csc}">CSC participation</th:block></li><li><i class="bi bi-file-earmark-text-fill"></i><th:block th:text="#{sponsor.benefit.writeup}">Technical write-up in event report</th:block></li></ul><button type="button" data-select-sponsor="Copper"><th:block th:text="#{sponsor.tier.copper.choose}">Choose Copper</th:block> <i class="bi bi-arrow-right"></i></button></article>
                 <article class="sp-package" data-tier="bronze" data-reveal="zoom" data-reveal-delay="180"><div class="sp-package__medal"><i class="bi bi-award-fill"></i></div><h3 th:text="#{sponsor.tier.bronze}">Bronze</h3><div class="sp-package__label" th:text="#{sponsor.tier.bronze.label}">Foundation Partnership</div><div class="sp-package__tag text-uppercase tracking-[0]">&#8377;1,00,000</div><ul><li><i class="bi bi-check2"></i><th:block th:text="#{sponsor.benefit.passes10}">10 technical session passes</th:block></li><li><i class="bi bi-cup-hot-fill"></i><th:block th:text="#{sponsor.benefit.bronze.lounge}">VIP lounge: 1 person</th:block></li><li><i class="bi bi-megaphone-fill"></i><th:block th:text="#{sponsor.benefit.limitedLogo}">Limited logo placement in marketing materials</th:block></li><li><i class="bi bi-people-fill"></i><th:block th:text="#{sponsor.benefit.csc}">CSC participation</th:block></li><li><i class="bi bi-file-earmark-text-fill"></i><th:block th:text="#{sponsor.benefit.writeup}">Technical write-up in event report</th:block></li></ul><button type="button" data-select-sponsor="Bronze"><th:block th:text="#{sponsor.tier.bronze.choose}">Choose Bronze</th:block> <i class="bi bi-arrow-right"></i></button></article>
@@ -659,6 +664,20 @@
     const sponsorEmail = document.getElementById("sponsorEmail");
     const sponsorOtpButton = document.getElementById("sendSponsorOtp");
     const sponsorOtpBlock = document.getElementById("otpBlock");
+    const sponsorMobileOtpBlock = document.getElementById("sponsorMobileOtpBlock");
+    const sponsorOtpDialog = document.createElement("dialog");
+    sponsorOtpDialog.className = "sponsor-otp-dialog";
+    const sponsorOtpHeading = document.createElement("div");
+    sponsorOtpHeading.className = "sponsor-otp-dialog-heading";
+    const sponsorOtpTitle = document.createElement("strong");
+    sponsorOtpTitle.textContent = "Verify your contact details";
+    const sponsorOtpClose = document.createElement("button");
+    sponsorOtpClose.type = "button"; sponsorOtpClose.className = "sponsor-otp-dialog-close"; sponsorOtpClose.setAttribute("aria-label", "Close"); sponsorOtpClose.textContent = "×";
+    sponsorOtpClose.addEventListener("click", () => sponsorOtpDialog.close());
+    sponsorOtpHeading.append(sponsorOtpTitle, sponsorOtpClose);
+    sponsorOtpBlock.parentElement.insertBefore(sponsorOtpDialog, sponsorOtpBlock);
+    sponsorOtpDialog.append(sponsorOtpHeading, sponsorOtpBlock, sponsorMobileOtpBlock);
+    sponsorOtpDialog.addEventListener("click", event => { if (event.target === sponsorOtpDialog) sponsorOtpDialog.close(); });
     let sponsorResendTimer;
 
     function startSponsorOtpCooldown(seconds = 60) {
@@ -710,6 +729,7 @@
             setSponsorOtpLoading(true);
             await sponsorOtpRequest(sponsorSendOtpUrl, { email, name: contactName, phone: document.getElementById("sponsorPhone").value.trim() });
             sponsorOtpBlock.style.display = "block";
+            sponsorOtpDialog.showModal();
             otpStatus.textContent = "OTP sent. Please check your email.";
             otpStatus.style.color = "#52677d";
             startSponsorOtpCooldown();
@@ -737,10 +757,12 @@
             otpStatus.style.color = "#16834f";
             otpStatus.textContent = "✓ Email verified successfully.";
             document.getElementById("otpBlock").style.display = "none";
+            if (!sponsorMobileOtpBlock || sponsorMobileOtpBlock.style.display === "none") sponsorOtpDialog.close();
         } catch (error) { otpStatus.textContent = error.message; otpStatus.style.color = "#b42318"; }
     });
 
     sponsorEmail?.addEventListener("input", () => {
+        if (sponsorOtpDialog.open) sponsorOtpDialog.close();
         sponsorEmailVerified = false;
         sponsorEmail.readOnly = false;
         window.clearInterval(sponsorResendTimer);
@@ -755,7 +777,6 @@
 
     const sponsorPhone = document.getElementById("sponsorPhone");
     const sponsorMobileOtpButton = document.getElementById("sendSponsorMobileOtp");
-    const sponsorMobileOtpBlock = document.getElementById("sponsorMobileOtpBlock");
     const sponsorMobileStatus = document.getElementById("sponsorMobileStatus");
     const sponsorMobileOtpStatus = document.getElementById("sponsorMobileOtpStatus");
     let sponsorMobileVerified = false;
@@ -794,6 +815,7 @@
             sponsorMobileStatus.textContent = "Sending OTP… Please wait.";
             await sponsorOtpRequest(sponsorSendMobileOtpUrl, { phone });
             sponsorMobileOtpBlock.style.display = "block";
+            sponsorOtpDialog.showModal();
             sponsorMobileStatus.textContent = "OTP sent. Please check your mobile.";
             sponsorMobileStatus.style.color = "#52677d";
             sponsorMobileOtpStatus.textContent = "";
@@ -824,6 +846,7 @@
             sponsorMobileStatus.textContent = "✓ Mobile number verified.";
             sponsorMobileStatus.style.color = "#16834f";
             sponsorMobileOtpBlock.style.display = "none";
+            if (sponsorOtpBlock.style.display === "none") sponsorOtpDialog.close();
         } catch (error) {
             sponsorMobileOtpStatus.textContent = error.message;
             sponsorMobileOtpStatus.style.color = "#b42318";
@@ -831,6 +854,7 @@
     });
 
     sponsorPhone?.addEventListener("input", () => {
+        if (sponsorOtpDialog.open) sponsorOtpDialog.close();
         sponsorMobileVerified = false;
         sponsorVerifiedPhone = "";
         sponsorPhone.readOnly = false;
