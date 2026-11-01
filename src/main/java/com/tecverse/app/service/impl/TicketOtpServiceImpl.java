@@ -93,6 +93,15 @@ public class TicketOtpServiceImpl implements TicketOtpService {
         sendMobileOtpForFlow(ValidationUtil.normalizeIndianMobile(phone));
     }
 
+    @Override
+    public void sendContactMobileOtp(String phone) {
+        String normalized = ValidationUtil.normalizeIndianMobile(phone);
+        if (normalized == null || !normalized.matches("^[6-9]\\d{9}$")) {
+            throw new IllegalArgumentException("Enter a valid 10-digit Indian mobile number.");
+        }
+        sendMobileOtpForFlow(normalized);
+    }
+
     private void sendMobileOtpForFlow(String mobile) {
         String otp = String.format("%06d", RANDOM.nextInt(1_000_000));
         // Must match the licensed DLT template word for word, or the gateway rejects the SMS.
@@ -112,6 +121,20 @@ public class TicketOtpServiceImpl implements TicketOtpService {
     @Transactional(noRollbackFor = IllegalArgumentException.class)
     public void verifyMobileOtp(String phone, String otp) {
         String mobile = ValidationUtil.normalizeIndianMobile(phone);
+        verifyMobileOtpForNumber(mobile, otp);
+    }
+
+    @Override
+    @Transactional(noRollbackFor = IllegalArgumentException.class)
+    public void verifyContactMobileOtp(String phone, String otp) {
+        String mobile = ValidationUtil.normalizeIndianMobile(phone);
+        if (mobile == null || !mobile.matches("^[6-9]\\d{9}$")) {
+            throw new IllegalArgumentException("Enter a valid 10-digit Indian mobile number.");
+        }
+        verifyMobileOtpForNumber(mobile, otp);
+    }
+
+    private void verifyMobileOtpForNumber(String mobile, String otp) {
         TicketMobileOtp entry = mobileOtpRepository.findByMobileForUpdate(mobile)
                 .orElseThrow(() -> new IllegalArgumentException("Please request a new OTP."));
         if (Instant.now().isAfter(entry.getExpiresAt())) {

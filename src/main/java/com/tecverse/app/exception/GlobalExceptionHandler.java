@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.tecverse.app.controller.RegistrationController;
 import com.tecverse.app.controller.SponsorVerificationController;
+import com.tecverse.app.controller.ContactOtpController;
 import com.tecverse.app.response.ApiResponse;
 
 import jakarta.validation.ConstraintViolationException;
@@ -28,7 +29,7 @@ import jakarta.validation.ConstraintViolationException;
  * Translates every exception raised by the registration API into a consistent
  * {@link ApiResponse} JSON body with an appropriate HTTP status code.
  */
-@RestControllerAdvice(assignableTypes = {RegistrationController.class, SponsorVerificationController.class})
+@RestControllerAdvice(assignableTypes = {RegistrationController.class, SponsorVerificationController.class, ContactOtpController.class})
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);

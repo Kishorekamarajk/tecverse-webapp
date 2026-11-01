@@ -436,6 +436,8 @@ public class PageController {
     @GetMapping({"/inquiry", "/inquiry.html"})
     public String inquiry(Model model, HttpSession session) {
         model.addAttribute("inquiry", new InquiryForm());
+        model.addAttribute("contactMobileVerified", false);
+        model.addAttribute("contactEmailVerified", false);
         prepareCaptcha(model, session);
         return "fragments/inquiry";
     }
@@ -455,6 +457,21 @@ public class PageController {
             session.removeAttribute(CONTACT_CAPTCHA_QUESTION);
         }
 
+        boolean regularContact = !"exhibitor".equalsIgnoreCase(type);
+        String normalizedEmail = inquiry.getEmail() == null ? "" : inquiry.getEmail().trim().toLowerCase(java.util.Locale.ROOT);
+        String normalizedPhone = null;
+        if (regularContact && inquiry.getPhone() != null && inquiry.getCountry() != null) {
+            try {
+                normalizedPhone = ContactPhoneNumbers.normalize(inquiry.getPhone(), inquiry.getCountry());
+            } catch (IllegalArgumentException ignored) {
+                // The regular form validation below reports malformed phone values.
+            }
+        }
+        model.addAttribute("contactMobileVerified", regularContact && normalizedPhone != null
+                && OtpSessionVerification.isVerified(httpRequest, OtpSessionVerification.Purpose.CONTACT_MOBILE, normalizedPhone));
+        model.addAttribute("contactEmailVerified", regularContact && !normalizedEmail.isBlank()
+                && OtpSessionVerification.isVerified(httpRequest, OtpSessionVerification.Purpose.CONTACT_EMAIL, normalizedEmail));
+
         if (bindingResult.hasErrors()) {
             prepareCaptcha(model, session);
             model.addAttribute("inquirySubmitFailed", true);
@@ -471,8 +488,26 @@ public class PageController {
             return "fragments/inquiry";
         }
 
-        String normalizedEmail = inquiry.getEmail().trim().toLowerCase();
-        String normalizedPhone = ContactPhoneNumbers.normalize(inquiry.getPhone(), inquiry.getCountry());
+        boolean contactEmailVerified = regularContact && !normalizedEmail.isBlank()
+                && OtpSessionVerification.isVerified(httpRequest, OtpSessionVerification.Purpose.CONTACT_EMAIL, normalizedEmail);
+        model.addAttribute("contactEmailVerified", contactEmailVerified);
+        if (regularContact && !contactEmailVerified) {
+            bindingResult.rejectValue("email", "inquiry.email.otpRequired",
+                    "Please verify your email address before sending your enquiry.");
+            prepareCaptcha(model, session);
+            model.addAttribute("inquirySubmitFailed", true);
+            return "fragments/inquiry";
+        }
+        boolean contactPhoneVerified = regularContact && normalizedPhone != null
+                && OtpSessionVerification.isVerified(httpRequest, OtpSessionVerification.Purpose.CONTACT_MOBILE, normalizedPhone);
+        model.addAttribute("contactMobileVerified", contactPhoneVerified);
+        if (regularContact && !contactPhoneVerified) {
+            bindingResult.rejectValue("phone", "inquiry.phone.otpRequired",
+                    "Please verify your mobile number with OTP before sending your enquiry.");
+            prepareCaptcha(model, session);
+            model.addAttribute("inquirySubmitFailed", true);
+            return "fragments/inquiry";
+        }
 
         boolean duplicateEmail = contactUsRepository.existsByEmailIgnoreCase(normalizedEmail);
         boolean duplicatePhone = normalizedPhone != null
@@ -512,6 +547,12 @@ public class PageController {
         }
 
         model.addAttribute("successMessage", message("contact.form.success"));
+        if (regularContact) {
+            OtpSessionVerification.consume(httpRequest, OtpSessionVerification.Purpose.CONTACT_MOBILE);
+            OtpSessionVerification.consume(httpRequest, OtpSessionVerification.Purpose.CONTACT_EMAIL);
+        }
+        model.addAttribute("contactMobileVerified", false);
+        model.addAttribute("contactEmailVerified", false);
         model.addAttribute("inquiry", new InquiryForm());
         session.removeAttribute(CONTACT_CAPTCHA_ANSWER);
         session.removeAttribute(CONTACT_CAPTCHA_QUESTION);

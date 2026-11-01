@@ -337,14 +337,15 @@
     <div class="container contact-reference-layout">
         <section class="compact-contact-message">
             <form th:action="@{/inquiry}" th:object="${inquiry}" method="post" class="compact-contact-form" data-inquiry-form>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <header class="compact-help-heading">
                     <span aria-hidden="true"><i class="bi bi-chat-dots-fill"></i></span>
                     <div><h2><span th:text="#{contact.compact.form.title.start}">Send us a</span> <em th:text="#{contact.compact.form.title.emphasis}">Message</em></h2></div>
                 </header>
                 <div class="compact-form-grid d-grid">
                     <label><span th:text="#{contact.compact.field.name}">Name *</span><input type="text" th:field="*{name}" th:placeholder="#{contact.compact.placeholder.name}" required maxlength="150"><small class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small></label>
-                    <label><span th:text="#{contact.compact.field.email}">Email *</span><input type="email" th:field="*{email}" th:placeholder="#{contact.compact.placeholder.email}" required maxlength="255"><small class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small></label>
-                    <label><span th:text="#{contact.compact.field.phone}">Mobile Number *</span><span class="compact-phone-input"><input type="tel" th:field="*{phone}" th:placeholder="#{contact.compact.placeholder.phone}" required maxlength="32" data-indian-mobile></span><small class="phone-hint" th:text="#{contact.compact.phoneHint}">Enter a valid 10-digit Indian mobile number.</small><small class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small></label>
+                    <label><span th:text="#{contact.compact.field.email}">Email *</span><span class="compact-phone-input"><input type="email" th:field="*{email}" th:placeholder="#{contact.compact.placeholder.email}" required maxlength="255" data-contact-email aria-describedby="contact-email-error"><button type="button" class="contact-otp-send" data-contact-email-otp-send>Send OTP</button></span><small id="contact-email-error" class="error" role="status" aria-live="polite" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small><small class="contact-otp-status" data-contact-email-otp-status role="status" aria-live="polite"></small></label>
+                    <label><span th:text="#{contact.compact.field.phone}">Mobile Number *</span><span class="compact-phone-input"><input type="tel" th:field="*{phone}" th:placeholder="#{contact.compact.placeholder.phone}" required maxlength="32" data-indian-mobile aria-describedby="contact-phone-hint contact-phone-error"><button type="button" class="contact-otp-send" data-contact-otp-send>Send OTP</button></span><small id="contact-phone-hint" class="phone-hint" th:text="#{contact.compact.phoneHint}">Enter a valid 10-digit Indian mobile number.</small><small id="contact-phone-error" class="error" role="status" aria-live="polite" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small><small class="contact-otp-status" data-contact-otp-status role="status" aria-live="polite"></small></label>
                     <label><span th:text="#{contact.compact.field.institution}">Institution Name *</span><input type="text" th:field="*{company}" th:placeholder="#{contact.compact.placeholder.institution}" required maxlength="200"><small class="error" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></small></label>
                     <label><span th:text="#{contact.compact.field.jobTitle}">Job Title</span><input type="text" th:field="*{jobTitle}" th:placeholder="#{contact.compact.placeholder.jobTitle}" maxlength="150"><small class="error" th:if="${#fields.hasErrors('jobTitle')}" th:errors="*{jobTitle}"></small></label>
                     <label><span th:text="#{contact.compact.field.country}">Country</span><select th:field="*{country}" class="form-select" autocomplete="country" data-phone-country><option th:each="country : ${contactCountries}" th:value="${country.code()}" th:attr="data-dial-code=${country.dialCode()}" th:text="${country.name()}"></option></select><small class="error" th:if="${#fields.hasErrors('country')}" th:errors="*{country}"></small></label>
@@ -352,8 +353,16 @@
                 </div>
                 <div class="compact-captcha-row">
                     <label class="compact-captcha"><span th:text="#{contact.compact.field.security}">Security Check *</span><span><strong th:text="${captchaQuestion}">3 + 7 = ?</strong><input name="captchaAnswer" type="number" inputmode="numeric" min="0" max="100" th:placeholder="#{contact.compact.placeholder.captcha}" required></span><small class="error" th:if="${#fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}" th:text="${error}"></small></label>
-                    <button type="submit"><i class="bi bi-send-fill"></i> <span th:text="#{contact.compact.send}">Send Message</span></button>
+                    <button type="submit" data-contact-submit th:attr="data-contact-verified=${contactMobileVerified},data-contact-email-verified=${contactEmailVerified}" th:disabled="${contactMobileVerified != true or contactEmailVerified != true}"><i class="bi bi-send-fill"></i> <span th:text="#{contact.compact.send}">Send Message</span></button>
                 </div>
+                <dialog class="contact-otp-dialog" data-contact-otp-dialog aria-labelledby="contact-otp-title">
+                    <div class="contact-otp-dialog-heading"><div><span class="contact-otp-dialog-kicker" data-contact-otp-kicker>EMAIL VERIFICATION</span><h2 id="contact-otp-title">Verify your email</h2></div><button type="button" class="contact-otp-dialog-close" data-contact-otp-close aria-label="Close">&times;</button></div>
+                    <p class="contact-otp-dialog-note">Enter the verification code sent to <strong data-contact-otp-recipient></strong>.</p>
+                    <label class="contact-otp-dialog-label" for="contactOtpCode">6-digit verification code</label>
+                    <input id="contactOtpCode" class="contact-otp-dialog-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" data-contact-dialog-code>
+                    <div class="contact-otp-dialog-actions"><button type="button" data-contact-dialog-verify>Verify</button><button type="button" data-contact-dialog-resend>Resend code</button></div>
+                    <small class="contact-otp-dialog-status" data-contact-dialog-status role="status" aria-live="polite"></small>
+                </dialog>
                 <p class="success" th:if="${successMessage}" th:text="${successMessage}"></p>
             </form>
         </section>
