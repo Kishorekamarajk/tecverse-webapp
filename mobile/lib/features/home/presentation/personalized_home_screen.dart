@@ -15,6 +15,7 @@ import 'widgets/digital_pass_banner.dart';
 import 'widgets/latest_news_card.dart';
 import 'widgets/latest_news_sheet.dart';
 import '../../notifications/presentation/widgets/notifications_sheet.dart';
+import '../../notifications/data/notification_repository.dart';
 import '../data/event_repository.dart';
 import '../domain/important_date_item.dart';
 
@@ -30,7 +31,9 @@ class PersonalizedHomeScreen extends StatefulWidget {
 
 class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
   final EventRepository _eventRepository = EventRepository();
+  final NotificationRepository _notificationRepository = NotificationRepository();
   List<ImportantDateItem> _importantDates = const [];
+  int _unreadNotificationCount = 0;
 
   @override
   void initState() {
@@ -38,6 +41,7 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initUserData();
       _fetchLiveEventData();
+      _loadUnreadNotificationCount();
     });
   }
 
@@ -60,6 +64,19 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
     if (auth.currentUser != null && session.accessToken != null) {
       passCtrl.loadPass(token: session.accessToken!, user: auth.currentUser!);
     }
+  }
+
+  Future<void> _loadUnreadNotificationCount() async {
+    final auth = context.read<AuthController>();
+    final session = context.read<SessionManager>();
+    final notifications = await _notificationRepository.fetchNotifications(
+      userRef: auth.currentUser?.referenceNumber,
+      token: session.accessToken,
+    );
+    if (!mounted) return;
+    setState(() {
+      _unreadNotificationCount = notifications.where((item) => !item.isRead).length;
+    });
   }
 
   void _navigateToSessions() {
@@ -250,11 +267,12 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: ScaleOnPress(
-                          onTap: () {
-                            NotificationsSheet.show(
+                          onTap: () async {
+                            await NotificationsSheet.show(
                               context,
                               userRef: user?.referenceNumber,
                             );
+                            await _loadUnreadNotificationCount();
                           },
                           child: Container(
                             width: 38,
@@ -282,18 +300,20 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
                                   color: Color(0xFF102A43),
                                   size: 20,
                                 ),
-                                Positioned(
-                                  top: 8,
-                                  right: 9,
-                                  child: Container(
-                                    width: 6,
-                                    height: 6,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFEA580C),
-                                      shape: BoxShape.circle,
+                                if (_unreadNotificationCount > 0)
+                                  Positioned(
+                                    top: 7,
+                                    right: 7,
+                                    child: Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFEF4444),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.white, width: 1.2),
+                                      ),
                                     ),
                                   ),
-                                ),
                               ],
                             ),
                           ),
@@ -592,11 +612,11 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
 
                   // Tagline
                   const Text(
-                    'Connect. Collaborate.Innovate',
+                    'Connect. Collaborate. Innovate.',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF334155),
+                      color: Color(0xFF123D70),
                       height: 1.35,
                     ),
                   ),
@@ -678,7 +698,7 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
       children: [
         Expanded(
           child: _quickTile(
-            icon: Icons.hub_rounded,
+            icon: Icons.co_present_rounded,
             label: 'Sessions',
             onTap: _navigateToSessions,
           ),

@@ -237,7 +237,7 @@
                 if (stateChart) {
                     stateChart.data.labels = labels;
                     stateChart.data.datasets[0].data = values;
-                    stateChart.options.scales.x.max = Math.max(1, ...values) * 1.22;
+                    stateChart.options.scales.y.max = Math.max(1, ...values) * 1.22;
                     stateChart.update();
                 } else {
                     stateChart = new Chart(stateCanvas, {
@@ -246,16 +246,27 @@
                             const chart = context.chart;
                             const area = chart.chartArea;
                             if (!area) return "#159b8b";
-                            const gradient = chart.ctx.createLinearGradient(area.left, 0, area.right, 0);
+                            const gradient = chart.ctx.createLinearGradient(0, area.bottom, 0, area.top);
                             gradient.addColorStop(0, "#168f84");
                             gradient.addColorStop(1, "#40c4ad");
                             return gradient;
-                        }, borderRadius: 7, maxBarThickness: 24, categoryPercentage: .78, barPercentage: .82 }] },
-                        options: { responsive: true, maintainAspectRatio: false, indexAxis: "y", layout: { padding: { right: 22 } },
+                        }, borderRadius: 7, maxBarThickness: 34, categoryPercentage: .72, barPercentage: .82 }] },
+                        options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 16, right: 12, bottom: 4 } },
                             plugins: { legend: { display: false }, tooltip: { displayColors: false, callbacks: { label: (item) => ` ${item.raw} registration${item.raw === 1 ? "" : "s"}` } } },
                             scales: {
-                                x: { beginAtZero: true, max: Math.max(1, ...values) * 1.22, ticks: { precision: 0, color: "#8490a5", padding: 8 }, grid: { color: "#edf1f7", drawTicks: false }, border: { display: false } },
-                                y: { ticks: { color: "#34435f", autoSkip: false, padding: 10, font: { size: 12, weight: "600" } }, grid: { display: false }, border: { display: false } }
+                                x: { ticks: { color: "#34435f", autoSkip: false, maxRotation: 45, minRotation: 0, padding: 8, font: { size: 11, weight: "600" }, callback: function(value) {
+                                    const label = String(this.getLabelForValue(value));
+                                    const words = label.split(/\s+/);
+                                    const lines = [];
+                                    let line = "";
+                                    words.forEach(word => {
+                                        if (line && `${line} ${word}`.length > 15) { lines.push(line); line = word; }
+                                        else line = line ? `${line} ${word}` : word;
+                                    });
+                                    if (line) lines.push(line);
+                                    return lines;
+                                } }, grid: { display: false }, border: { display: false } },
+                                y: { beginAtZero: true, max: Math.max(1, ...values) * 1.22, ticks: { precision: 0, color: "#8490a5", padding: 8 }, grid: { color: "#edf1f7", drawTicks: false }, border: { display: false } }
                             }
                         },
                         plugins: [{ id: "stateCountLabels", afterDatasetsDraw(chart) {
@@ -263,8 +274,9 @@
                             ctx.save();
                             ctx.fillStyle = "#34435f";
                             ctx.font = "600 12px system-ui, sans-serif";
-                            ctx.textBaseline = "middle";
-                            chart.getDatasetMeta(0).data.forEach((bar, index) => ctx.fillText(String(chart.data.datasets[0].data[index]), bar.x + 8, bar.y));
+                            ctx.textAlign = "center";
+                            ctx.textBaseline = "bottom";
+                            chart.getDatasetMeta(0).data.forEach((bar, index) => ctx.fillText(String(chart.data.datasets[0].data[index]), bar.x, bar.y - 7));
                             ctx.restore();
                         } }]
                     });

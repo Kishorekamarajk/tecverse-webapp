@@ -192,7 +192,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
         ),
       ),
     ),
-  );
+  ),
+);
 }
 
   Widget _buildHeaderCard() {

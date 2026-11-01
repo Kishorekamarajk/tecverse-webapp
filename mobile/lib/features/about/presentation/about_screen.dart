@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/widgets/animation_utils.dart';
+import '../../../core/utils/external_links.dart';
 
 /// Pixel-perfect About Screen matching the Tec-Verse design:
 /// 1. "ORGANISED BY" Card with top logo containers & bottom detail cards (C-DAC, SAMEER, C-MET)
@@ -297,6 +298,7 @@ class AboutScreen extends StatelessWidget {
                       mandate:
                           'India’s premier R&D organization under MeitY for Supercomputing (PARAM series), Artificial Intelligence, Quantum Computing, Cyber Security, and Multilingual Computing.',
                       color: const Color(0xFF0284C7),
+                      websiteUrl: 'https://www.cdac.in/',
                     ),
                   ),
                 ),
@@ -324,6 +326,7 @@ class AboutScreen extends StatelessWidget {
                       mandate:
                           'Pioneering institution specializing in RF & Microwave Systems, Radar Technologies, Atmospheric Radar, EMI/EMC Testing, and Medical Linear Accelerators (LINAC).',
                       color: const Color(0xFFEA580C),
+                      websiteUrl: 'https://sameer.gov.in/',
                     ),
                   ),
                 ),
@@ -351,6 +354,7 @@ class AboutScreen extends StatelessWidget {
                       mandate:
                           'Dedicated to the development of indigenous electronic materials, semiconductor substrates, aerogels, piezoelectrics, and Li-ion battery recycling technologies.',
                       color: const Color(0xFF9333EA),
+                      websiteUrl: 'https://cmet.gov.in/',
                     ),
                   ),
                 ),
@@ -629,6 +633,7 @@ class AboutScreen extends StatelessWidget {
     required String title,
     required String mandate,
     required Color color,
+    required String websiteUrl,
   }) {
     showModalBottomSheet(
       context: context,
@@ -710,10 +715,19 @@ class AboutScreen extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text(
-                  'Close',
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                onPressed: () async {
+                  await openExternalUrl(websiteUrl);
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'More details',
+                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(Icons.open_in_new_rounded, size: 16),
+                  ],
                 ),
               ),
             ),

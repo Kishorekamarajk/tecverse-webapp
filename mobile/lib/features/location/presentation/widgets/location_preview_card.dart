@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import '../../../../core/utils/external_links.dart';
 import '../../data/venue_location_data.dart';
 import '../location_screen.dart';
 
-/// Attractive, modern mobile app Event Location Card featuring an authentic
-/// Google Maps viewport with a tagged Chennai Trade Centre location pin.
+/// Attractive, modern mobile app Event Location Card featuring a live map
+/// centered on Chennai Trade Centre.
 class LocationPreviewCard extends StatelessWidget {
   const LocationPreviewCard({super.key});
 
@@ -149,192 +152,96 @@ class LocationPreviewCard extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // 3. Google Maps Viewport with Tagged Location Pin
-          GestureDetector(
-            onTap: () {
-              VenueLocationData.openGoogleMapsDirections();
-            },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Container(
-                height: 160,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE2E8F0), width: 1.0),
+          // 3. Live OpenStreetMap view centered on the venue.
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              height: 160,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0), width: 1.0),
+              ),
+              child: FlutterMap(
+                options: MapOptions(
+                  initialCenter: LatLng(
+                    VenueLocationData.venueLatitude,
+                    VenueLocationData.venueLongitude,
+                  ),
+                  initialZoom: 15,
+                  maxZoom: 19,
                 ),
-                child: Stack(
-                  children: [
-                    // Custom Google Maps Canvas Renderer
-                    Positioned.fill(
-                      child: CustomPaint(
-                        painter: _GoogleMapCanvasPainter(),
-                      ),
-                    ),
-
-                    // Top Right Google Map Controls (+ / - / Layers)
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.12),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                children: [
+                  TileLayer(
+                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'in.cdac.tecverse.tec_app',
+                    maxNativeZoom: 19,
+                    panBuffer: 0,
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: LatLng(
+                          VenueLocationData.venueLatitude,
+                          VenueLocationData.venueLongitude,
                         ),
+                        width: 160,
+                        height: 58,
+                        alignment: Alignment.bottomCenter,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(5),
-                              child: const Icon(Icons.layers_outlined, size: 16, color: Color(0xFF475569)),
-                            ),
-                            Container(width: 20, height: 1, color: const Color(0xFFE2E8F0)),
-                            Container(
-                              padding: const EdgeInsets.all(5),
-                              child: const Icon(Icons.my_location_rounded, size: 16, color: Color(0xFF0284C7)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // Center: Red Google Maps Pin & Tag Bubble
-                    Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Tag Bubble above Pin
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.18),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.business_rounded, color: Color(0xFFEA580C), size: 13),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'Chennai Trade Centre',
-                                      style: TextStyle(
-                                        fontSize: 11.5,
-                                        fontWeight: FontWeight.w800,
-                                        color: Color(0xFF0F172A),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 1),
-                                Text(
-                                  'Convention & Exhibition Centre',
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF64748B),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.16),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const SizedBox(height: 2),
-
-                          // Google Maps Red Pin
-                          Container(
-                            width: 32,
-                            height: 38,
-                            alignment: Alignment.topCenter,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.location_on,
-                                  size: 36,
-                                  color: Color(0xFFDC2626), // Google Maps Red
-                                ),
-                                Positioned(
-                                  top: 8,
-                                  child: Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Bottom Left "Google" Maps Watermark & Road Label
-                    Positioned(
-                      left: 10,
-                      bottom: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.network(
-                              'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png',
-                              height: 12,
-                              errorBuilder: (context, error, stackTrace) => const Text(
-                                'Google',
+                                ],
+                              ),
+                              child: const Text(
+                                'Chennai Trade Centre',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w800,
-                                  color: Color(0xFF4285F4),
+                                  color: Color(0xFF102A43),
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            const Text(
-                              '• Mount Poonamallee Rd',
-                              style: TextStyle(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF475569),
-                              ),
+                            const Icon(
+                              Icons.location_pin,
+                              size: 34,
+                              color: Color(0xFFEA580C),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  RichAttributionWidget(
+                    attributions: [
+                      TextSourceAttribution(
+                        '© OpenStreetMap contributors',
+                        onTap: () => openExternalUrl(
+                          'https://www.openstreetmap.org/copyright',
+                        ),
+                      ),
+                      const TextSourceAttribution('Map powered by flutter_map'),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
 
           const SizedBox(height: 14),
-
           // 4. Primary Action Button: Get Directions on Google Maps
           ElevatedButton.icon(
             onPressed: () {
@@ -388,123 +295,4 @@ class LocationPreviewCard extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Custom painter for rendering authentic Google Maps vector terrain,
-/// arterial roads, river waterways, and parks.
-class _GoogleMapCanvasPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    // 1. Base Terrain (Google Maps light beige)
-    final bgPaint = Paint()..color = const Color(0xFFF3EFE9);
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
-
-    // 2. Green Parks / Natural Areas (Guindy & St. Thomas Mount)
-    final parkPaint = Paint()..color = const Color(0xFFCEE6C3);
-    // Park 1 (Top Left)
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.05, 10, size.width * 0.28, size.height * 0.4),
-        const Radius.circular(16),
-      ),
-      parkPaint,
-    );
-    // Park 2 (Bottom Right)
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.65, size.height * 0.55, size.width * 0.3, size.height * 0.4),
-        const Radius.circular(16),
-      ),
-      parkPaint,
-    );
-
-    // 3. Adyar River Waterway (Light cyan-blue curve)
-    final riverPaint = Paint()
-      ..color = const Color(0xFFA5C9EB)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 14
-      ..strokeCap = StrokeCap.round;
-
-    final riverPath = Path();
-    riverPath.moveTo(0, size.height * 0.25);
-    riverPath.cubicTo(
-      size.width * 0.35,
-      size.height * 0.1,
-      size.width * 0.6,
-      size.height * 0.4,
-      size.width,
-      size.height * 0.2,
-    );
-    canvas.drawPath(riverPath, riverPaint);
-
-    // 4. Secondary Residential Roads (White roads)
-    final secRoadPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.5;
-
-    // Horizontal secondary grid
-    for (int i = 1; i <= 3; i++) {
-      canvas.drawLine(
-        Offset(0, size.height * (i * 0.25)),
-        Offset(size.width, size.height * (i * 0.25)),
-        secRoadPaint,
-      );
-    }
-    // Vertical secondary grid
-    for (int i = 1; i <= 4; i++) {
-      canvas.drawLine(
-        Offset(size.width * (i * 0.2), 0),
-        Offset(size.width * (i * 0.2), size.height),
-        secRoadPaint,
-      );
-    }
-
-    // 5. Primary Arterial Highways (Mount Poonamallee Rd & GST Rd - Golden Yellow / Orange)
-    final highwayPaint = Paint()
-      ..color = const Color(0xFFFFD54F)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6.5
-      ..strokeCap = StrokeCap.round;
-
-    final highwayOutline = Paint()
-      ..color = const Color(0xFFD6A820)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 8.5
-      ..strokeCap = StrokeCap.round;
-
-    // Mount Poonamallee Road Diagonal
-    final mountRd = Path();
-    mountRd.moveTo(0, size.height * 0.85);
-    mountRd.quadraticBezierTo(
-      size.width * 0.45,
-      size.height * 0.55,
-      size.width,
-      size.height * 0.45,
-    );
-    canvas.drawPath(mountRd, highwayOutline);
-    canvas.drawPath(mountRd, highwayPaint);
-
-    // Inner Ring Road
-    final innerRing = Path();
-    innerRing.moveTo(size.width * 0.55, 0);
-    innerRing.lineTo(size.width * 0.55, size.height);
-    canvas.drawPath(innerRing, highwayOutline);
-    canvas.drawPath(innerRing, highwayPaint);
-
-    // 6. Metro Line (Blue dashed track)
-    final metroPaint = Paint()
-      ..color = const Color(0xFF0284C7)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-
-    canvas.drawLine(
-      Offset(size.width * 0.72, 0),
-      Offset(size.width * 0.72, size.height),
-      metroPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -4,6 +4,10 @@
   if (!roleDialog || !otpDialog) return;
 
   const roleSelect = document.getElementById('businessLoginRole');
+  const rolePicker = roleDialog.querySelector('[data-login-role-picker]');
+  const rolePickerTrigger = rolePicker?.querySelector('[data-login-role-trigger]');
+  const rolePickerOptions = rolePicker?.querySelector('[data-login-role-options]');
+  const rolePickerCurrent = rolePicker?.querySelector('[data-login-role-current]');
   const phone = document.getElementById('businessLoginPhone');
   const otp = document.getElementById('businessLoginOtp');
   const message = otpDialog.querySelector('[data-business-login-message]');
@@ -57,6 +61,46 @@
 
   function openRoleDialog() {
     if (!roleDialog.open) roleDialog.showModal();
+  }
+
+  if (rolePicker && rolePickerTrigger && rolePickerOptions && rolePickerCurrent) {
+    const roleLabels = {
+      participant: '<i class="bi bi-person-badge" aria-hidden="true"></i> Participant',
+      exhibitor: '<i class="bi bi-shop-window" aria-hidden="true"></i> Exhibitor',
+      sponsor: '<i class="bi bi-award" aria-hidden="true"></i> Sponsor'
+    };
+    rolePickerTrigger.addEventListener('click', () => {
+      const expanded = rolePickerTrigger.getAttribute('aria-expanded') === 'true';
+      rolePickerOptions.hidden = expanded;
+      rolePickerTrigger.setAttribute('aria-expanded', String(!expanded));
+    });
+    rolePickerOptions.querySelectorAll('[data-login-role]').forEach(option => {
+      option.addEventListener('click', () => {
+        const value = option.dataset.loginRole;
+        roleSelect.value = value;
+        rolePickerCurrent.innerHTML = roleLabels[value];
+        rolePickerOptions.querySelectorAll('[data-login-role]').forEach(item => {
+          item.setAttribute('aria-selected', String(item === option));
+        });
+        rolePickerOptions.hidden = true;
+        rolePickerTrigger.setAttribute('aria-expanded', 'false');
+        rolePickerTrigger.focus();
+      });
+    });
+    rolePicker.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !rolePickerOptions.hidden) {
+        event.preventDefault();
+        rolePickerOptions.hidden = true;
+        rolePickerTrigger.setAttribute('aria-expanded', 'false');
+        rolePickerTrigger.focus();
+      }
+    });
+    document.addEventListener('click', event => {
+      if (!rolePicker.contains(event.target)) {
+        rolePickerOptions.hidden = true;
+        rolePickerTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
   }
 
   document.querySelectorAll('[data-role-login-open]').forEach(button => button.addEventListener('click', openRoleDialog));

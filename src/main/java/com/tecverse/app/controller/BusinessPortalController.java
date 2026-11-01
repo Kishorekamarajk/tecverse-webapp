@@ -174,7 +174,7 @@ public class BusinessPortalController {
             catch (org.springframework.core.task.TaskRejectedException queueFull) {
                 log.warn("Could not queue staff email notification for saved business portal message", queueFull);
             }
-            flash.addFlashAttribute("portalSuccess", "Your query has been added to your conversation. Our team will reply here shortly.");
+            flash.addFlashAttribute("portalSuccess", "Our team will review your query and get back to you shortly.");
         } catch (RateLimitExceededException limited) {
             flash.addFlashAttribute("portalError", limited.getMessage());
         } catch (RuntimeException failure) {

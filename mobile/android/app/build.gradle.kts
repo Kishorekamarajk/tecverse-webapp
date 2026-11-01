@@ -69,15 +69,18 @@ android {
         }
 
         release {
-            // Require a release keystore for Play Store builds.
-            if (!hasReleaseKeystore) {
-                throw GradleException(
-                    "Release keystore not found. Create android/key.properties " +
-                    "and configure your upload keystore before building a release."
+            // Use the upload key when configured. The debug key fallback keeps local
+            // release builds usable, but artifacts signed this way cannot be published
+            // to Google Play and must not be used as production releases.
+            if (hasReleaseKeystore) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                logger.warn(
+                    "Release keystore not found; signing this local release with the " +
+                    "debug key. Configure android/key.properties for a Play Store build."
                 )
+                signingConfig = signingConfigs.getByName("debug")
             }
-
-            signingConfig = signingConfigs.getByName("release")
 
             isMinifyEnabled = true
             isShrinkResources = true

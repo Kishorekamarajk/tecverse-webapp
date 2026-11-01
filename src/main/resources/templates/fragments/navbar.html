@@ -66,27 +66,43 @@
                     </div>
                     <th:block th:unless="${attendeeSignedIn == true or businessSignedIn == true}">
                         <button class="navbar-action-btn navbar-action-btn-outline attendee-login-open" type="button" data-role-login-open>Login</button>
-                        <button class="navbar-action-btn navbar-action-btn-ticket d-inline-flex align-items-center justify-content-center overflow-hidden" type="button" data-role-register-open>Register</button>
+                        <button class="navbar-action-btn navbar-action-btn-ticket navbar-register-trigger" type="button" data-role-register-open>Register</button>
                     </th:block>
                     <th:block th:if="${attendeeSignedIn}">
-                        <a class="attendee-nav-profile" th:href="@{/dashboard}" aria-label="Attendee profile">
-                            <i class="bi bi-person-circle" aria-hidden="true"></i>
-                            <span th:text="${attendee.officialName}">Attendee</span>
-                        </a>
-                        <form method="post" th:action="@{/logout}" class="attendee-nav-logout">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                            <button class="navbar-action-btn navbar-action-btn-ticket" type="submit">Logout</button>
-                        </form>
+                        <div class="dropdown attendee-account-menu">
+                            <button class="attendee-nav-profile" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open attendee profile menu">
+                                <i class="bi bi-person-circle" aria-hidden="true"></i>
+                                <span th:text="${attendee.officialName}">Attendee</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end attendee-account-menu__dropdown">
+                                <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person-lines-fill" aria-hidden="true"></i><span>Profile</span></a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" th:action="@{/logout}">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="dropdown-item attendee-account-menu__logout" type="submit"><i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Logout</span></button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </th:block>
                     <th:block th:if="${businessSignedIn}">
-                        <a class="attendee-nav-profile" th:href="@{/{role}/dashboard(role=${businessRole})}" aria-label="Business profile">
-                            <i class="bi bi-person-circle" aria-hidden="true"></i>
-                            <span th:text="${businessContactName}">Business contact</span>
-                        </a>
-                        <form method="post" th:action="@{/business-portal/logout}" class="attendee-nav-logout">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                            <button class="navbar-action-btn navbar-action-btn-ticket" type="submit">Logout</button>
-                        </form>
+                        <div class="dropdown attendee-account-menu">
+                            <button class="attendee-nav-profile" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open business profile menu">
+                                <i class="bi bi-person-circle" aria-hidden="true"></i>
+                                <span th:text="${businessContactName}">Business contact</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end attendee-account-menu__dropdown">
+                                <li><a class="dropdown-item" th:href="@{/{role}/dashboard(role=${businessRole})}"><i class="bi bi-person-lines-fill" aria-hidden="true"></i><span>Profile</span></a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" th:action="@{/business-portal/logout}">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="dropdown-item attendee-account-menu__logout" type="submit"><i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Logout</span></button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </th:block>
                 </div>
             </div>
@@ -97,7 +113,7 @@
 <link rel="stylesheet" th:href="@{/css/business-login.css}">
 <dialog class="business-login-dialog" data-role-login-dialog aria-labelledby="businessLoginHeading">
     <button class="business-login-close" type="button" data-role-login-close aria-label="Close login">&times;</button>
-    <span class="business-login-kicker">TEC-VERSE 2026</span>
+    <span class="business-login-kicker">Tec-Verse 2026</span>
     <h2 id="businessLoginHeading">Choose your login</h2>
     <label for="businessLoginRole">Login as</label>
     <select id="businessLoginRole">
@@ -108,8 +124,8 @@
     <button type="button" class="business-login-continue" data-role-login-continue>Continue</button>
 </dialog>
 <dialog class="business-login-dialog" data-role-register-dialog aria-labelledby="businessRegisterHeading">
-    <button class="business-login-close" type="button" data-role-register-close aria-label="Close registration chooser">&times;</button>
-    <span class="business-login-kicker">TEC-VERSE 2026</span>
+    <button class="business-login-close" type="button" data-role-register-close aria-label="Close registration options">&times;</button>
+    <span class="business-login-kicker">Tec-Verse 2026</span>
     <h2 id="businessRegisterHeading">Choose how to register</h2>
     <label for="businessRegisterRole">Register as</label>
     <select id="businessRegisterRole">

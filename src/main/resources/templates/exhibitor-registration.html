@@ -503,6 +503,8 @@
         .ticket-page .simple-ad-label { color: #74859a; font-size: .6rem; font-weight: 800; letter-spacing: .15em; }
         .ticket-page .simple-ad-copy h2 { margin: .25rem 0 0; color: #0c294a; font: 750 1.35rem/1.15 'Space Grotesk',sans-serif; }
         .ticket-page .simple-ad-size { margin: .3rem 0 0; color: #31516f; font-size: .9rem; font-weight: 700; }
+        .ticket-page .simple-ad-disclaimer { display: flex; align-items: flex-start; gap: .4rem; margin: .45rem 0 .25rem; padding: .5rem .65rem; border: 1px solid rgba(255,111,36,.14); border-radius: .7rem; background: rgba(255,247,240,.82); color: #657991; font-size: .68rem; line-height: 1.4; }
+        .ticket-page .simple-ad-disclaimer i { flex: 0 0 auto; margin-top: .08rem; color: #f05b12; }
         .ticket-page .simple-ad-price { margin: .15rem 0 0; color: #f05b12; font-size: 1.08rem; font-weight: 800; }
         .ticket-page .simple-ad-passes { display: flex; align-items: center; gap: .4rem; margin: .55rem 0 0; color: #61758a; font-size: .7rem; }
         .ticket-page .simple-ad-passes i { color: #f05b12; }
@@ -549,11 +551,11 @@
         .ticket-page .simple-field-grid > label { display: flex; min-width: 0; flex-direction: column; gap: .38rem; color: #34475b; font-size: .78rem; font-weight: 700; line-height: 1.3; }
         .ticket-page .simple-field-grid > label.hidden { display: none !important; }
         .ticket-page .simple-field-grid > .simple-wide { grid-column: 1 / -1; }
-        .ticket-page .simple-mobile-label { grid-column: 1; grid-row: 4; }
-        .ticket-page .simple-email-label { grid-column: 1; grid-row: 5; }
+        .ticket-page .simple-mobile-label { grid-column: 1; grid-row: 3; }
+        .ticket-page .simple-email-label { grid-column: 2; grid-row: 3; }
         .ticket-page .simple-otp-label { grid-column: 2; }
-        .ticket-page #phoneOtpWrap { grid-column: 2; grid-row: 4; }
-        .ticket-page #otpWrap { grid-column: 2; grid-row: 5; }
+        .ticket-page #phoneOtpWrap { grid-column: 1; grid-row: 4; }
+        .ticket-page #otpWrap { grid-column: 2; grid-row: 4; }
         .ticket-page .simple-otp-label { align-self: start; gap: .62rem; min-width: 0; padding: 1rem 1.05rem; border: 1px solid #dcd9ff; border-radius: 1.15rem; background: linear-gradient(145deg,#f2f1ff,#fbfbff); box-shadow: 0 10px 24px rgba(49,46,129,.07),inset 0 1px 0 #fff; }
         .ticket-page .simple-otp-dialog { width:min(440px,calc(100vw - 28px)); max-width:none; max-height:90vh; margin:auto; padding:22px; border:1px solid #d9e0e8; border-radius:12px; background:#fff; color:#10243a; box-shadow:0 18px 50px rgba(15,35,60,.24); }
         .ticket-page .simple-otp-dialog::backdrop { background:rgba(16,27,42,.5); }
@@ -615,6 +617,7 @@
         .ticket-page .simple-control-action button:disabled { cursor: wait; opacity: .65; }
         .ticket-page .simple-secondary-button { background: rgba(255,255,255,.85); color: #124c83; border: 1px solid rgba(18,76,131,.2) !important; }
         .ticket-page .simple-status { min-height: .9rem; color: #52677d; font-size: .72rem; font-weight: 600; }
+        .ticket-page #mobileRegistrationStatus:empty { display: none; }
         .ticket-page .simple-otp-meta .simple-status { min-width: 0; margin: 0; }
         .ticket-page .simple-form-footer { display: flex; min-height: 44px; align-items: center; justify-content: flex-end; gap: .75rem; margin-top: 1rem; padding-top: .75rem; border-top: 1px solid rgba(7,24,47,.08); }
         .ticket-page .simple-form-footer-split { justify-content: space-between; }
@@ -725,16 +728,16 @@
                                 <small id="mobileRegistrationStatus" class="simple-status" aria-live="polite"></small>
                                 <small id="phoneFieldError" class="mobile-phone-error" role="alert" hidden></small>
                             </label>
+                            <label class="simple-email-label"><th:block th:text="#{exhibitor.field.officialEmail}">Official email ID*</th:block>
+                                <span class="simple-control simple-control-action"><i class="bi bi-envelope" aria-hidden="true"></i><input id="email" name="email" type="email" required maxlength="254" autocomplete="email" placeholder="Enter official email"><button type="button" id="sendOtp" class="simple-verify-email">Send OTP</button></span>
+                                <small id="emailRegistrationStatus" class="simple-status" aria-live="polite"></small>
+                            </label>
                             <label id="phoneOtpWrap" class="simple-otp-label hidden">
                                 <span class="simple-otp-copy">Enter the OTP sent to<strong id="otpMobileDestination"></strong></span>
                                 <input id="phoneOtp" type="hidden">
                                 <span id="phoneOtpInputs" class="simple-otp-digits" role="group" aria-label="Mobile one-time password"><input inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Mobile OTP digit 1"><input inputmode="numeric" maxlength="1" aria-label="Mobile OTP digit 2"><input inputmode="numeric" maxlength="1" aria-label="Mobile OTP digit 3"><input inputmode="numeric" maxlength="1" aria-label="Mobile OTP digit 4"><input inputmode="numeric" maxlength="1" aria-label="Mobile OTP digit 5"><input inputmode="numeric" maxlength="1" aria-label="Mobile OTP digit 6"></span>
                                 <button type="button" id="verifyPhoneOtp" class="simple-otp-verify">Verify</button>
                                 <span class="simple-otp-meta"><button type="button" id="resendMobileOtp" class="simple-resend-otp" disabled>Resend OTP</button><small id="phoneOtpStatus" class="simple-status" aria-live="polite"></small></span>
-                            </label>
-                            <label class="simple-email-label"><th:block th:text="#{exhibitor.field.officialEmail}">Official email ID*</th:block>
-                                <span class="simple-control simple-control-action"><i class="bi bi-envelope" aria-hidden="true"></i><input id="email" name="email" type="email" required maxlength="254" autocomplete="email" placeholder="Enter official email"><button type="button" id="sendOtp" class="simple-verify-email">Send OTP</button></span>
-                                <small id="emailRegistrationStatus" class="simple-status" aria-live="polite"></small>
                             </label>
                             <label id="otpWrap" class="simple-otp-label hidden">
                                 <span class="simple-otp-copy">Enter the OTP sent to<strong id="otpEmailDestination"></strong></span>
@@ -785,10 +788,11 @@
                 </form>
             </div>
             <aside class="simple-stall-ad glass-strong" aria-label="Tec-Verse exhibitor stall options">
-                <div class="simple-ad-kicker"><span>TEC-VERSE 2026</span><i class="bi bi-stars" aria-hidden="true"></i></div>
+                <div class="simple-ad-kicker"><span>Tec-Verse 2026</span><i class="bi bi-stars" aria-hidden="true"></i></div>
                 <div class="simple-ad-image-wrap">
                     <img id="simpleAdImage" src="/images/exhibitor-stall-signature-footprint.png" th:src="@{/images/exhibitor-stall-signature-footprint.png}" alt="Signature stall showing 6 metre width and 3 metre depth">
                 </div>
+                <p class="simple-ad-disclaimer" role="note"><i class="bi bi-info-circle-fill" aria-hidden="true"></i><span>Illustrative layout only. Dimensions show the stall size; this is not the actual stall allocation.</span></p>
                 <div class="simple-ad-copy">
                     <span class="simple-ad-label">EXHIBITOR STALL</span>
                     <h2 id="simpleAdName">Signature</h2>
@@ -806,16 +810,16 @@
                 <div class="text-center max-w-3xl mx-auto mb-8">
                     <span class="text-xs font-bold tracking-widest text-blue-main uppercase">Why exhibit?</span>
                     <h2 class="font-display font-bold text-3xl sm:text-4xl text-ink mt-3">Connect. Collaborate. Innovate.</h2>
-                    <p class="text-ink/70 mt-3">Be part of a technology showcase connecting government, industry, startups, researchers and academia.</p>
+                    <p class="text-ink/70 mt-3">Explore collaborative products from C-DAC, SAMEER and C-MET, and build professional connections at Tec-Verse 2026, a technology exhibition and conclave.</p>
                 </div>
                 <div class="exhibitor-benefit-grid grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <article class="exhibitor-benefit-card"><span class="exhibitor-benefit-icon"><i class="bi bi-cpu" aria-hidden="true"></i></span><h3>Discover cutting-edge solutions</h3><p>Explore emerging technologies, indigenous products and practical solutions.</p></article>
-                    <article class="exhibitor-benefit-card"><span class="exhibitor-benefit-icon"><i class="bi bi-play-circle" aria-hidden="true"></i></span><h3>Experience live demos</h3><p>Present innovations in action and demonstrate real-world applications.</p></article>
-                    <article class="exhibitor-benefit-card"><span class="exhibitor-benefit-icon"><i class="bi bi-globe2" aria-hidden="true"></i></span><h3>Build collaborations</h3><p>Meet government, industry leaders, research institutions and international partners.</p></article>
-                    <article class="exhibitor-benefit-card"><span class="exhibitor-benefit-icon"><i class="bi bi-people" aria-hidden="true"></i></span><h3>Reach a diverse community</h3><p>Connect with innovators, entrepreneurs, experts, academia and investors.</p></article>
+                    <article class="exhibitor-benefit-card"><span class="exhibitor-benefit-icon"><i class="bi bi-cpu" aria-hidden="true"></i></span><h3>Discover collaborative technology</h3><p>Explore products developed through collaboration between C-DAC, SAMEER and C-MET.</p></article>
+                    <article class="exhibitor-benefit-card"><span class="exhibitor-benefit-icon"><i class="bi bi-play-circle" aria-hidden="true"></i></span><h3>See innovation in action</h3><p>Experience demonstrations of collaborative products and technologies at the event.</p></article>
+                    <article class="exhibitor-benefit-card"><span class="exhibitor-benefit-icon"><i class="bi bi-globe2" aria-hidden="true"></i></span><h3>Connect with professionals</h3><p>Meet people from the technology, research, industry and institutional communities.</p></article>
+                    <article class="exhibitor-benefit-card"><span class="exhibitor-benefit-icon"><i class="bi bi-people" aria-hidden="true"></i></span><h3>Grow your professional network</h3><p>Build new connections and exchange ideas with attendees at Tec-Verse 2026.</p></article>
                 </div>
                 <div class="exhibitor-benefit-points" aria-label="Exhibitor opportunities">
-                    <span class="exhibitor-benefit-point"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Showcase your solutions</span><span class="exhibitor-benefit-point"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Build strategic partnerships</span><span class="exhibitor-benefit-point"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Reach decision-makers</span><span class="exhibitor-benefit-point"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Explore adoption opportunities</span>
+                    <span class="exhibitor-benefit-point"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Collaborative products</span><span class="exhibitor-benefit-point"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Technology demonstrations</span><span class="exhibitor-benefit-point"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Professional connections</span><span class="exhibitor-benefit-point"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Network growth</span>
                 </div>
             </div>
         </section>

@@ -432,7 +432,7 @@
             </div>
 
             <div class="sp-sponsor-faq-grid" data-reveal="fade-up" data-reveal-delay="120">
-                <details class="sp-sponsor-faq-card" open>
+                <details class="sp-sponsor-faq-card">
                     <summary>
                         <span class="sp-sponsor-faq-question"><i class="bi bi-gem"></i> <th:block th:text="#{sponsor.faq.q1}">Which sponsor packages are available?</th:block></span>
                         <span class="sp-sponsor-faq-toggle" aria-hidden="true">+</span>
@@ -586,7 +586,7 @@
             const heading = document.createElement("h3");
             heading.className = "sponsor-step-heading";
             heading.id = `sponsorStep${index + 1}Title`;
-            heading.textContent = index === 0 ? "Contact and organization" : "Sponsorship details";
+            heading.textContent = index === 0 ? "Contact form" : "Sponsorship details";
             grid.append(heading);
             step.append(grid);
             const dot = document.createElement("div");
