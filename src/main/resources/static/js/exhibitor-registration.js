@@ -73,7 +73,9 @@
   const resendMobileButton = document.getElementById('resendMobileOtp');
   const verifyButton = document.getElementById('verifyOtp');
   const verifyPhoneButton = document.getElementById('verifyPhoneOtp');
-  function makeOtpDialog(wrap, title) {
+  const phoneOtpDigits = [...document.querySelectorAll('#phoneOtpInputs input')];
+  const emailOtpDigits = [...document.querySelectorAll('#emailOtpInputs input')];
+  function makeOtpDialog(wrap, title, trigger, status, otpInputs) {
     const dialog = document.createElement('dialog');
     dialog.className = 'simple-otp-dialog';
     dialog.setAttribute('aria-label', title);
@@ -83,15 +85,33 @@
     label.textContent = title;
     const close = document.createElement('button');
     close.type = 'button'; close.className = 'simple-otp-dialog-close'; close.setAttribute('aria-label', 'Close'); close.textContent = '×';
-    close.addEventListener('click', () => dialog.close());
+    close.addEventListener('click', event => { event.preventDefault(); dialog.close(); });
     heading.append(label, close);
     wrap.parentElement.insertBefore(dialog, wrap);
     dialog.append(heading, wrap);
     dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
-    return dialog;
+    const reopen = document.createElement('button');
+    reopen.type = 'button';
+    reopen.className = 'simple-otp-reopen';
+    reopen.textContent = 'Continue verification';
+    reopen.hidden = true;
+    status.insertAdjacentElement('afterend', reopen);
+    reopen.addEventListener('click', () => {
+      if (!dialog.open) dialog.showModal();
+      (otpInputs.find(input => !input.value) || otpInputs[otpInputs.length - 1])?.focus();
+    });
+    dialog.addEventListener('close', () => {
+      if (!reopen.hidden) reopen.focus({ preventScroll: true });
+      else trigger.focus({ preventScroll: true });
+    });
+    return { dialog, reopen };
   }
-  const emailOtpDialog = makeOtpDialog(otpWrap, 'Email verification');
-  const phoneOtpDialog = makeOtpDialog(phoneOtpWrap, 'Mobile verification');
+  const emailOtpDialogState = makeOtpDialog(otpWrap, 'Email verification', sendButton, emailRegistrationStatus, emailOtpDigits);
+  const phoneOtpDialogState = makeOtpDialog(phoneOtpWrap, 'Mobile verification', sendMobileButton, mobileRegistrationStatus, phoneOtpDigits);
+  const emailOtpDialog = emailOtpDialogState.dialog;
+  const phoneOtpDialog = phoneOtpDialogState.dialog;
+  const emailOtpReopen = emailOtpDialogState.reopen;
+  const phoneOtpReopen = phoneOtpDialogState.reopen;
   const submitButton = document.getElementById('submitExhibitor');
   let currentPage = 1;
   let verifiedEmail = '';
@@ -99,11 +119,6 @@
   let savedDraft = {};
   let submitting = false;
   const otpCooldownTimers = new WeakMap();
-  const phoneOtpDigits = [...document.querySelectorAll('#phoneOtpInputs input')];
-  const emailOtpDigits = [...document.querySelectorAll('#emailOtpInputs input')];
-  const citySelect = document.getElementById('exhibitorCity');
-  const cityOther = document.getElementById('exhibitorCityOther');
-
   const exhibitorStates = [
     'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana',
     'Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur',
@@ -213,17 +228,6 @@
     document.querySelectorAll('.location-picker').forEach(picker => {
       if (!picker.contains(event.target)) closeLocationPicker(picker);
     });
-  });
-
-  populateLocationSelect(citySelect, exhibitorCities, 'Select a city', true);
-  populateLocationSelect(document.getElementById('exhibitorState'), exhibitorStates, 'Select a state or union territory');
-  citySelect.addEventListener('change', () => {
-    const isOther = citySelect.value === '__OTHER__';
-    cityOther.disabled = !isOther;
-    cityOther.required = isOther;
-    cityOther.classList.toggle('hidden', !isOther);
-    if (!isOther) cityOther.value = '';
-    else cityOther.focus();
   });
 
   const normalizedPhone = value => value.trim().replace(/^\+91[-\s]?/, '').replace(/\D/g, '');
@@ -372,7 +376,6 @@
   function validatePage(page) {
     let firstInvalid = null;
     page.querySelectorAll('input, select').forEach(input => {
-      if (input.id === 'exhibitorCity' || input.id === 'exhibitorState') return;
       if (input.id === 'otp') return;
       clearError(input);
       if (!input.checkValidity() && !firstInvalid) firstInvalid = input;
@@ -381,17 +384,6 @@
       firstInvalid.reportValidity();
       firstInvalid.focus();
       return false;
-    }
-    if (page.dataset.page === '2') {
-      const missingPicker = !citySelect.value || (citySelect.value === '__OTHER__' && !cityOther.value.trim())
-        ? citySelect
-        : !document.getElementById('exhibitorState').value ? document.getElementById('exhibitorState') : null;
-      if (missingPicker) {
-        const trigger = document.querySelector(`[data-location-picker="${missingPicker.id}"] .location-picker-trigger`);
-        trigger.setAttribute('aria-invalid', 'true');
-        trigger.focus();
-        return false;
-      }
     }
     if (page.dataset.page === '1') {
       if (!/^[A-Za-z][A-Za-z .'-]{1,149}$/.test(fullName.value.trim())) {
@@ -423,6 +415,7 @@
         sendButton.classList.remove('is-verified');
         sendButton.removeAttribute('aria-label');
         otpWrap.classList.add('hidden');
+        emailOtpReopen.hidden = true;
         otpStatus.textContent = '';
       }
       if (input === phone && normalizedPhone(phone.value) !== verifiedPhone) {
@@ -434,6 +427,7 @@
         sendMobileButton.classList.remove('is-verified');
         sendMobileButton.removeAttribute('aria-label');
         phoneOtpWrap.classList.add('hidden');
+        phoneOtpReopen.hidden = true;
         phoneOtpStatus.textContent = '';
       }
     });
@@ -475,8 +469,9 @@
       clearOtpDigits(emailOtpDigits, otp);
       document.getElementById('otpEmailDestination').textContent = email.value.trim();
       otpWrap.classList.remove('hidden');
+      emailOtpReopen.hidden = false;
       emailOtpDialog.showModal();
-      otpStatus.textContent = result.message || 'OTP sent to your official email.';
+      otpStatus.textContent = (result.message || 'OTP sent to your official email.') + ' Use the latest code received; it expires in 5 minutes.';
       emailOtpDigits[0]?.focus();
       startOtpCooldown(sendButton);
       startOtpCooldown(resendEmailButton);
@@ -516,6 +511,7 @@
       clearOtpDigits(phoneOtpDigits, phoneOtp);
       document.getElementById('otpMobileDestination').textContent = phone.value.trim();
       phoneOtpWrap.classList.remove('hidden');
+      phoneOtpReopen.hidden = false;
       phoneOtpDialog.showModal();
       phoneOtpStatus.textContent = result.message || 'OTP sent to your mobile number.';
       phoneOtpStatus.style.color = '#52677d';
@@ -552,6 +548,7 @@
       if (!response.ok || !result.success) throw Error(result.message || 'Mobile OTP verification failed.');
       verifiedPhone = normalizedPhone(phone.value);
       phoneOtpWrap.classList.add('hidden');
+      phoneOtpReopen.hidden = true;
       phoneOtpDialog.close();
       clearOtpCooldown(sendMobileButton);
       sendMobileButton.disabled = true;
@@ -585,6 +582,7 @@
       if (!response.ok || !result.success) throw Error(result.message || 'OTP verification failed.');
       verifiedEmail = email.value.trim();
       otpWrap.classList.add('hidden');
+      emailOtpReopen.hidden = true;
       emailOtpDialog.close();
       clearOtpCooldown(sendButton);
       sendButton.disabled = true;
@@ -596,6 +594,10 @@
     } catch (error) {
       otpStatus.textContent = error.message || 'OTP verification failed.';
       otpStatus.style.color = '#b42318';
+      if (/incorrect otp/i.test(otpStatus.textContent)) {
+        clearOtpDigits(emailOtpDigits, otp);
+        emailOtpDigits[0]?.focus();
+      }
     } finally {
       verifyButton.disabled = false;
     }
@@ -670,10 +672,6 @@
     formStatus.textContent = '';
     try {
       const payload = Object.fromEntries(new FormData(form).entries());
-      if (payload.city === '__OTHER__') {
-        payload.city = (payload.cityOther || '').trim();
-        delete payload.cityOther;
-      }
       const response = await fetch(apiPath('/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -719,7 +717,11 @@
   });
 
   document.querySelectorAll('.close-modal').forEach(button => {
-    button.addEventListener('click', () => button.closest('.exv-modal')?.classList.add('hidden'));
+    button.addEventListener('click', () => {
+      const modal = button.closest('.exv-modal');
+      modal?.classList.add('hidden');
+      if (modal?.id === 'successModal') window.location.reload();
+    });
   });
 
   showPage(1);

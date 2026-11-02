@@ -86,6 +86,8 @@ public class TicketRegistrationServiceImpl implements TicketRegistrationService 
             e.setDesignation(clean(r.getDesignation())); e.setIndustryOrStartup(clean(r.getIndustryOrStartup()));
             e.setCitizenshipStatus(clean(r.getCitizenshipStatus())); e.setPassportNumber(clean(r.getPassportNumber()));
             e.setApplicantState(clean(r.getApplicantState()));
+            e.setCountryName(clean(r.getCountryName()));
+            e.setVisaInformationAcknowledged(Boolean.TRUE.equals(r.getVisaInformationAcknowledged()));
             e.setPassportValidUntil(clean(r.getPassportValidUntil())); e.setPassportName(clean(r.getPassportName()));
             e.setAttendanceDays(r.getAttendanceDays()==null?"":r.getAttendanceDays().stream().map(this::clean).collect(Collectors.joining(",")));
             e.setConfirmationEmailSent(false);
@@ -110,23 +112,30 @@ public class TicketRegistrationServiceImpl implements TicketRegistrationService 
     }
 
     private void validateCategoryDetails(TicketRegistrationRequest r) {
-        switch (r.getCategory()) {
-            case "ACADEMIA" -> {
-                require(r.getAcademiaRole(), "Select an applicant role.", r.getCollegeName(), "College / institution name is required.", r.getCollegeDistrict(), "College district is required.", r.getCollegeState(), "College state is required.", r.getUniversityName(), "University is required.");
-                switch (r.getAcademiaRole().trim().toUpperCase(java.util.Locale.ROOT)) {
-                    case "STUDENT" -> require(r.getRegisterNumber(), "Student ID number is required.");
-                    case "FACULTY", "PROFESSOR / FACULTY", "PROFESSOR/FACULTY", "RESEARCH SCHOLAR" -> { }
-                    default -> throw new IllegalArgumentException("Choose a valid Academia applicant role.");
+        boolean foreignNational = "FOREIGNER".equals(r.getCitizenshipStatus());
+        if (!foreignNational) {
+            switch (r.getCategory()) {
+                case "ACADEMIA" -> {
+                    require(r.getAcademiaRole(), "Select an applicant role.", r.getCollegeName(), "College / institution name is required.", r.getUniversityName(), "University is required.",
+                            r.getCollegeDistrict(), "College district is required.", r.getCollegeState(), "College state is required.");
+                    switch (r.getAcademiaRole().trim().toUpperCase(java.util.Locale.ROOT)) {
+                        case "STUDENT" -> require(r.getRegisterNumber(), "Student ID number is required.");
+                        case "FACULTY", "PROFESSOR / FACULTY", "PROFESSOR/FACULTY", "RESEARCH SCHOLAR" -> { }
+                        default -> throw new IllegalArgumentException("Choose a valid Academia applicant role.");
+                    }
                 }
+                case "CENTRAL_GOVERNMENT" -> require(r.getCentralMinistry(), "Select a central ministry.", r.getOrganizationName(), "Organization name is required.", r.getDesignation(), "Designation is required.", r.getOrganizationLocation(), "Organization location is required.");
+                case "STATE_GOVERNMENT" -> require(r.getStateDepartment(), "Select a state department.", r.getOrganizationName(), "Organization name is required.", r.getDesignation(), "Designation is required.", r.getStateName(), "Select a state.", r.getOrganizationLocation(), "Organization location is required.");
+                case "INDUSTRY_STARTUP" -> require(r.getIndustryOrStartup(), "Select Industry or Startup.", r.getOrganizationName(), "Company name is required.", r.getDesignation(), "Designation is required.", r.getOrganizationLocation(), "Company location is required.");
+                case "VIP_SPECIAL_INVITEE", "SPEAKER", "ORGANIZER" -> { }
+                default -> throw new IllegalArgumentException("Choose a valid registration category.");
             }
-            case "CENTRAL_GOVERNMENT" -> require(r.getCentralMinistry(), "Select a central ministry.", r.getOrganizationName(), "Organization name is required.", r.getDesignation(), "Designation is required.", r.getOrganizationLocation(), "Organization location is required.");
-            case "STATE_GOVERNMENT" -> require(r.getStateName(), "Select a state.", r.getStateDepartment(), "Select a state department.", r.getOrganizationName(), "Organization name is required.", r.getDesignation(), "Designation is required.", r.getOrganizationLocation(), "Organization location is required.");
-            case "INDUSTRY_STARTUP" -> require(r.getIndustryOrStartup(), "Select Industry or Startup.", r.getOrganizationName(), "Company name is required.", r.getOrganizationLocation(), "Company location is required.", r.getDesignation(), "Designation is required.");
-            case "VIP_SPECIAL_INVITEE", "SPEAKER", "ORGANIZER" -> { }
-            default -> throw new IllegalArgumentException("Choose a valid registration category.");
         }
-        if ("FOREIGNER".equals(r.getCitizenshipStatus())) {
-            require(r.getPassportNumber(), "Passport number is required.", r.getPassportValidUntil(), "Passport validity date is required.", r.getPassportName(), "Name as shown on passport is required.");
+        if (foreignNational) {
+            require(r.getCountryName(), "Select your country.");
+            if (!Boolean.TRUE.equals(r.getVisaInformationAcknowledged())) {
+                throw new IllegalArgumentException("Acknowledge the visa information before continuing.");
+            }
         }
         if (r.getAttendanceDays() == null || r.getAttendanceDays().isEmpty()) throw new IllegalArgumentException("Select at least one attendance day.");
         if (r.getAttendanceDays().size() > 1 && r.getAttendanceDays().contains("BOTH")) throw new IllegalArgumentException("Choose Both days or individual days, not both.");

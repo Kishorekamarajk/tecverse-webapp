@@ -49,6 +49,7 @@ import com.tecverse.app.util.Constants;
 import com.tecverse.app.util.ValidationUtil;
 import com.tecverse.app.dto.InquiryForm;
 import com.tecverse.app.util.ContactPhoneNumbers;
+import com.tecverse.app.util.CountryNames;
 import com.tecverse.app.validator.InquiryFormValidator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -387,7 +388,8 @@ public class PageController {
     );
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(@RequestParam(required = false) Long sessionId, Model model) {
+        model.addAttribute("sessionId", sessionId != null && sessionId > 0 ? sessionId : null);
         model.addAttribute("thematicDomainItems", thematicDomainsForDisplay());
         model.addAttribute("chiefGuests", chiefGuestRepository.findByActiveTrueOrderByDisplayOrderAscIdAsc());
         model.addAttribute("importantDates", importantDateRepository.findByActiveTrueOrderByDisplayOrderAscIdAsc());
@@ -710,8 +712,12 @@ public class PageController {
     }
 
     @GetMapping({"/registration", "/ticket", "/ticket.html", "/book-your-ticket"})
-    public String ticket(Model model) {
+    public String ticket(@RequestParam(name = "sessionReservation", required = false) String sessionReservation,
+                         @RequestParam(name = "sessionId", required = false) Long sessionId,
+                         Model model) {
         model.addAttribute("ticketFaqs", faqService.activeFaqs(FaqService.TICKET));
+        model.addAttribute("sessionReservationLoginRequired", "login-required".equals(sessionReservation));
+        model.addAttribute("sessionId", sessionId != null && sessionId > 0 ? sessionId : null);
         return "ticket";
     }
 
@@ -720,11 +726,12 @@ public class PageController {
      * continue: the form is returned only to a session that completed OTP verification server-side.
      */
     @GetMapping("/ticket/details-step")
-    public String ticketDetailsStep(HttpServletRequest request, HttpServletResponse response) {
+    public String ticketDetailsStep(HttpServletRequest request, HttpServletResponse response, Model model) {
         response.setHeader("Cache-Control", "no-store");
         if (!OtpSessionVerification.hasVerification(request, OtpSessionVerification.Purpose.TICKET)) {
             throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Email verification is required.");
         }
+        model.addAttribute("countries", CountryNames.englishNames());
         // Temporary mobile OTP bypass; restore this check to require mobile verification.
         // if (!OtpSessionVerification.hasVerification(request, OtpSessionVerification.Purpose.TICKET_MOBILE)) {
         //     throw new ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Mobile number verification is required.");
@@ -776,7 +783,9 @@ public class PageController {
                                 SchedulePresentation presentation = schedulePresentation(item.getSessionTitle(), entry.getKey());
                                 return new ConferenceScheduleSession(
                                         item.getSessionTitle(), item.getTimeLabel(), item.getTimeValue(), item.isHighlighted(),
-                                        item.getImageUrl(), presentation.icon(), presentation.description());
+                                        item.getImageUrl(), presentation.icon(),
+                                        item.getDescription() == null || item.getDescription().isBlank()
+                                                ? presentation.description() : item.getDescription());
                             })
                             .toList();
                     return new ConferenceScheduleDay(

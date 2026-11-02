@@ -182,11 +182,16 @@ const CITIES=[
  'Salem','Sambalpur','Sangli','Satna','Shillong','Shimla','Shivamogga','Siliguri','Silchar','Sikar','Solapur','Srinagar','Surat',
  'Thanjavur','Thane','Thiruvananthapuram','Thoothukudi','Thrissur','Tiruchirappalli','Tirunelveli','Tiruppur','Tirupati','Udaipur','Ujjain','Vadodara','Varanasi','Vasco da Gama','Vellore','Vijayawada','Visakhapatnam','Warangal'
 ].sort((a,b)=>a.localeCompare(b));
-function field(label,name,type='text',extra=''){const maxLength=FIELD_MAX_LENGTH[name],placeholder=FIELD_PLACEHOLDERS[name];return `<label class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]">${label}${requiredMark(extra)}<input class="form-control mt-2 rounded-3 border-secondary-subtle py-3" name="${name}" type="${type}" ${maxLength?`maxlength="${maxLength}"`:''} ${placeholder?`placeholder="${placeholder}"`:''} ${extra}></label>`}
-function select(label,name,opts,extra=''){return `<label class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]">${label}${requiredMark(extra)}<select class="form-select mt-2 rounded-3 border-secondary-subtle" name="${name}" ${extra}><option value="">${SELECT_PROMPTS[name]||'Select an option'}</option>${opts.map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')}</select></label>`}
-function cityField(){return `<div class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]"><label for="organizationLocationChoice">City / office location${requiredMark('required')}</label><select id="organizationLocationChoice" class="form-select mt-2 rounded-3 border-secondary-subtle" name="organizationLocationChoice" required><option value="">Select a city</option>${CITIES.map(city=>`<option value="${esc(city)}">${esc(city)}</option>`).join('')}<option value="__OTHER__">Other</option></select><div id="organizationLocationOtherWrap" class="mt-3" hidden><label for="organizationLocationOther">Enter city / office location</label><input id="organizationLocationOther" class="form-control mt-2 rounded-3 border-secondary-subtle py-3" name="organizationLocationOther" type="text" maxlength="255" placeholder="Enter your city or office location" disabled></div></div>`}
+function field(label,name,type='text',extra=''){const maxLength=FIELD_MAX_LENGTH[name],placeholder=FIELD_PLACEHOLDERS[name],locationField=['collegeDistrict','collegeState','organizationLocation'].includes(name);return `<label class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]" ${locationField?'data-ticket-location-field':''}>${label}${requiredMark(extra)}<input class="form-control mt-2 rounded-3 border-secondary-subtle py-3" name="${name}" type="${type}" ${maxLength?`maxlength="${maxLength}"`:''} ${placeholder?`placeholder="${placeholder}"`:''} ${extra}></label>`}
+function select(label,name,opts,extra=''){return `<label class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]" ${name==='stateName'?'data-ticket-location-field':''}>${label}${requiredMark(extra)}<select class="form-select mt-2 rounded-3 border-secondary-subtle" name="${name}" ${extra}><option value="">${SELECT_PROMPTS[name]||'Select an option'}</option>${opts.map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')}</select></label>`}
+function cityField(){return `<div class="col-12 col-md-6 mb-3 fw-semibold text-[#07182F]" data-ticket-location-field><label for="organizationLocationChoice">City / office location${requiredMark('required')}</label><select id="organizationLocationChoice" class="form-select mt-2 rounded-3 border-secondary-subtle" name="organizationLocationChoice" required><option value="">Select a city</option>${CITIES.map(city=>`<option value="${esc(city)}">${esc(city)}</option>`).join('')}<option value="__OTHER__">Other</option></select><div id="organizationLocationOtherWrap" class="mt-3" hidden><label for="organizationLocationOther">Enter city / office location</label><input id="organizationLocationOther" class="form-control mt-2 rounded-3 border-secondary-subtle py-3" name="organizationLocationOther" type="text" maxlength="255" placeholder="Enter your city or office location" disabled></div></div>`}
 function renderConditional(){
  const cat=$('#category').value, box=$('#conditional'); let h='';
+ if($('#citizenship').value==='FOREIGNER'){
+  box.innerHTML='';
+  renderForeignNationalFields();
+  return;
+ }
  if(cat==='ACADEMIA'){
   h='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">Academia</div><div class="tr-grid row">';
   h+=select('Participant role','academiaRole',['Student','Professor / Faculty','Research Scholar'],'required');
@@ -213,6 +218,7 @@ function renderConditional(){
   h=`<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">${labels[cat]}</div>`;
  }
  box.innerHTML=h;
+ renderForeignNationalFields();
 }
 function updateAcademiaRoleFields(){
  const role=$('#conditional [name="academiaRole"]')?.value;
@@ -226,15 +232,41 @@ function updateAcademiaRoleFields(){
  }
 }
 function renderPassport(){
- const c=$('#citizenship').value, box=document.querySelector('#conditional .tr-passport');
- if(c==='FOREIGNER'){
-  if(!box){const d=document.createElement('div');d.className='tr-passport';d.innerHTML='<div class="small fw-bold text-primary text-uppercase border-bottom pb-2 mb-3">Passport details</div><div class="tr-grid row">'+field('Passport number','passportNumber','text','required')+field('Passport expiry date','passportValidUntil','date','required')+field('Full name as shown on passport','passportName','text','required')+'</div>';$('#conditional').appendChild(d);}
- } else if(box) box.remove();
+ renderForeignNationalFields();
+}
+function renderForeignNationalFields(){
+ const foreign=$('#citizenship')?.value==='FOREIGNER';
+ const stateField=$('#applicantStateField'),stateSelect=$('#applicantState');
+ const countryField=$('#foreignCountryField'),countrySelect=$('#countryName');
+ const visaField=$('#visaInformationField'),visaCheckbox=$('#visaInformationAcknowledged');
+ if(stateField){stateField.hidden=foreign;stateField.style.display=foreign?'none':'';}
+ if(stateSelect){stateSelect.disabled=foreign;stateSelect.required=!foreign;}
+ if(countryField){countryField.hidden=!foreign;countryField.style.display=foreign?'':'none';}
+ if(countrySelect){countrySelect.disabled=!foreign;countrySelect.required=foreign;if(!foreign)countrySelect.value='';}
+ if(visaField){visaField.hidden=!foreign;visaField.style.display=foreign?'':'none';}
+ if(visaCheckbox){visaCheckbox.disabled=!foreign;visaCheckbox.required=foreign;if(!foreign)visaCheckbox.checked=false;}
+ document.querySelectorAll('#conditional [data-ticket-location-field]').forEach(fieldWrap=>{
+  fieldWrap.hidden=foreign;
+  fieldWrap.style.display=foreign?'none':'';
+  const citySelect=fieldWrap.querySelector('[name="organizationLocationChoice"]');
+  fieldWrap.querySelectorAll('input,select,textarea').forEach(control=>{
+   if(control.name==='organizationLocationOther'){
+    const showOther=!foreign&&citySelect?.value==='__OTHER__';
+    control.disabled=!showOther;
+    control.required=showOther;
+    const otherWrap=$('#organizationLocationOtherWrap');
+    if(otherWrap){otherWrap.hidden=!showOther;otherWrap.style.display=showOther?'':'none';}
+   }else{
+    control.disabled=foreign;
+    control.required=!foreign;
+   }
+  });
+ });
 }
 function collect(){
  const fd=new FormData($('#detailsForm')); const o=Object.fromEntries(fd.entries());if(o.organizationLocationChoice){o.organizationLocation=o.organizationLocationChoice==='__OTHER__'?(o.organizationLocationOther||'').trim():o.organizationLocationChoice;delete o.organizationLocationChoice;delete o.organizationLocationOther;}o.email=$('#email').value.trim().toLowerCase();o.phone=$('#phone').value.trim();o.officialName=$('#verifyName').value.trim();
-  if(o.category==='STATE_GOVERNMENT')o.stateName=o.applicantState;
-  if(o.category==='ACADEMIA')o.collegeState=o.applicantState;
+  if(o.category==='STATE_GOVERNMENT'&&o.citizenshipStatus!=='FOREIGNER')o.stateName=o.applicantState;
+  if(o.category==='ACADEMIA'&&o.citizenshipStatus!=='FOREIGNER')o.collegeState=o.applicantState;
  o.password=$('#password').value; o.confirmPassword=$('#confirmPassword').value;
  o.attendanceDays=fd.getAll('attendanceDays'); return o;
 }
@@ -259,8 +291,8 @@ function validateTicketFields(form){
  return valid;
 }
 function preview(){
- const o=collect(); const labels={category:'Registration category',officialName:'Full name',email:'Email address',phone:'Mobile number',citizenshipStatus:'Citizenship / residency status',applicantState:'State / Union Territory',academiaType:'Academia type',collegeName:'Institution',collegeDistrict:'District',universityName:'University',academiaRole:'Participant role',registerNumber:'Student / staff ID number',centralMinistry:'Ministry / department',stateName:'Government state / union territory',stateDepartment:'Department',organizationName:'Organization / office',organizationLocation:'City / office location',designation:'Designation / job title',industryOrStartup:'Organization type',passportNumber:'Passport number',passportValidUntil:'Passport expiry date',passportName:'Name as shown on passport'};
- $('#preview').innerHTML=Object.entries(labels).filter(([k])=>o[k]).map(([k,l])=>`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">${esc(l)}</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o[k])}</strong></div>`).join('')+`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">Participation Preference</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o.attendanceDays.join(', '))}</strong></div>`;
+ const o=collect(); const labels={category:'Registration category',officialName:'Full name',email:'Email address',phone:'Mobile number',citizenshipStatus:'Citizenship / residency status',applicantState:'State / Union Territory',countryName:'Country',visaInformationAcknowledged:'Visa information acknowledgement',academiaType:'Academia type',collegeName:'Institution',collegeDistrict:'District',universityName:'University',academiaRole:'Participant role',registerNumber:'Student / staff ID number',centralMinistry:'Ministry / department',stateName:'Government state / union territory',stateDepartment:'Department',organizationName:'Organization / office',organizationLocation:'City / office location',designation:'Designation / job title',industryOrStartup:'Organization type',passportNumber:'Passport number',passportValidUntil:'Passport expiry date',passportName:'Name as shown on passport'};
+ $('#preview').innerHTML=Object.entries(labels).filter(([k])=>o[k]).map(([k,l])=>`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">${esc(l)}</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(k==='visaInformationAcknowledged'?'Yes':o[k])}</strong></div>`).join('')+`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">Participation Preference</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o.attendanceDays.join(', '))}</strong></div>`;
  window.ticketPayload=o; show('preview');
 }
 async function post(url,data){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const j=await r.json().catch(()=>({}));if(!r.ok){const error=new Error(j.message||j.error||'Request failed');error.status=r.status;error.retryAfter=Number(r.headers.get('Retry-After'))||0;throw error;}return j;}
@@ -280,7 +312,7 @@ $('#sendOtp').onclick=async()=>{
  if(emailVerified)return;
  let retryAfterSeconds=0;
  setLoading(btn,true);
- try{const result=await post(API.send,{fullName:name,email,phone,passType:'Tec-Verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;$('#verifyOtp').disabled=true;openOtpDialog('#emailOtpDialog');msg($('#emailOtpMsg'),'Sending OTP to your email…',true);m.textContent='';startTimer();$$('#emailOtpInputs input').forEach(input=>{input.value='';});$$('#emailOtpInputs input')[0]?.focus();pollEmailOtpDelivery(result.data?.requestId);}
+ try{const result=await post(API.send,{fullName:name,email,phone,passType:'Tec-Verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;$('#verifyOtp').disabled=false;openOtpDialog('#emailOtpDialog');msg($('#emailOtpMsg'),'OTP requested. You can verify as soon as it arrives.',true);m.textContent='';startTimer();$$('#emailOtpInputs input').forEach(input=>{input.value='';});$$('#emailOtpInputs input')[0]?.focus();pollEmailOtpDelivery(result.data?.requestId);}
  catch(e){msg(otpMessage,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,otpMessage);}
 };
@@ -295,7 +327,7 @@ function pollEmailOtpDelivery(requestId){
    const result=await response.json().catch(()=>({}));
    if(response.ok&&result.success){
     const status=result.data?.status;
-    if(status==='sent'){$('#verifyOtp').disabled=false;msg($('#emailOtpMsg'),'OTP sent. Please check your email.',true);return;}
+    if(status==='sent'){msg($('#emailOtpMsg'),'OTP sent. Please check your email.',true);return;}
     if(status==='failed'||status==='expired'){
      $('#verifyOtp').disabled=true;clearInterval(timer);$('#resendOtp').disabled=false;$('#resendOtp').textContent='Resend OTP';
      msg($('#emailOtpMsg'),status==='failed'?'Unable to deliver the OTP email. Please try again.':'OTP delivery status expired. Please resend the OTP.');return;
@@ -303,7 +335,7 @@ function pollEmailOtpDelivery(requestId){
    }
   }catch(_){/* Keep checking while the queued email is being delivered. */}
   if(Date.now()-startedAt>90000){$('#verifyOtp').disabled=true;msg($('#emailOtpMsg'),'Email delivery is taking longer than expected. Please wait or resend the OTP.');return;}
-  emailOtpDeliveryTimer=setTimeout(poll,2500);
+  emailOtpDeliveryTimer=setTimeout(poll,1000);
  };
  emailOtpDeliveryTimer=setTimeout(poll,900);
 }
@@ -374,6 +406,8 @@ otpInputs.forEach((input,index)=>{
    input.value=digits;
    if(digits&&otpInputs[index+1])otpInputs[index+1].focus();
   }
+  const submit=$(submitButton);
+  if(otpInputs.every(otpInput=>/^\d$/.test(otpInput.value))&&!submit.disabled)submit.click();
  };
  input.onkeydown=event=>{
   if(event.key==='Backspace'){
@@ -438,11 +472,11 @@ async function loadDetailsStep(){
  return true;
 }
 function bindDetailsStep(){
-$('#category').onchange=()=>{renderConditional();renderPassport();};$('#citizenship').onchange=renderPassport;
+$('#category').onchange=()=>{renderConditional();renderPassport();};$('#citizenship').onchange=()=>{renderConditional();renderPassport();};
 document.querySelector('#conditional').addEventListener('change',e=>{if(e.target.name==='academiaRole')updateAcademiaRoleFields();if(e.target.name==='organizationLocationChoice'){const other=e.target.value==='__OTHER__',wrap=$('#organizationLocationOtherWrap'),input=$('#organizationLocationOther');if(wrap&&input){wrap.hidden=!other;input.disabled=!other;input.required=other;if(!other)input.value='';}}});
 document.querySelector('#conditional').addEventListener('input',e=>{const rule=FREE_TEXT_VALIDATION[e.target.name];if(!rule)return;const value=e.target.value.trim();e.target.setCustomValidity(value&&!rule.pattern.test(value)?rule.message:'');if(e.target.hasAttribute('aria-invalid'))e.target.setAttribute('aria-invalid',String(!e.target.validity.valid));});
 $('#backVerify').onclick=()=>show('verify');
-$('#detailsForm').onsubmit=e=>{e.preventDefault();const days=$$('input[name="attendanceDays"]:checked');const m=$('#detailsMsg');if(!validateTicketFields(e.currentTarget))return;if(!$('#category').value){msg(m,'Choose your registration type.');return;}if(!days.length){msg(m,'Select Day 1, Day 2, or Both Days.');return;}if(days.length>1){msg(m,'Choose only one option: Day 1, Day 2, or Both Days.');days[0].focus();return;}preview();};
+$('#detailsForm').onsubmit=e=>{e.preventDefault();const days=$$('input[name="attendanceDays"]:checked');const m=$('#detailsMsg');if(!validateTicketFields(e.currentTarget))return;if(!$('#category').value){msg(m,'Choose your registration type.');return;}if($('#citizenship').value==='FOREIGNER'&&!$('#visaInformationAcknowledged').checked){msg(m,'Please acknowledge the visa information before continuing.');$('#visaInformationAcknowledged').focus();return;}if(!days.length){msg(m,'Select Day 1, Day 2, or Both Days.');return;}if(days.length>1){msg(m,'Choose only one option: Day 1, Day 2, or Both Days.');days[0].focus();return;}preview();};
 $$('input[name="attendanceDays"]').forEach(input=>input.addEventListener('change',()=>{
  if(!input.checked)return;
  $$('input[name="attendanceDays"]').forEach(other=>{if(other!==input)other.checked=false;});
@@ -450,6 +484,7 @@ $$('input[name="attendanceDays"]').forEach(input=>input.addEventListener('change
 }
 $('#editForm').onclick=()=>show('details');
 const categoryLabels={ACADEMIA:'Academia',CENTRAL_GOVERNMENT:'Central Government',STATE_GOVERNMENT:'State Government',INDUSTRY_STARTUP:'Industry / Startup',VIP_SPECIAL_INVITEE:'VIP / Special Invitee',SPEAKER:'Speaker',ORGANIZER:'Organizer'};
+const idCardCategoryClasses={ACADEMIA:'id-card--academia',CENTRAL_GOVERNMENT:'id-card--central-government',STATE_GOVERNMENT:'id-card--state-government',INDUSTRY_STARTUP:'id-card--industry-startup'};
 const dayLabels={DAY_1:'Day 1 · 26 Nov',DAY_2:'Day 2 · 27 Nov',BOTH:'Both Days · 26 & 27 Nov'};
 
 function renderRefDigits(ref){
@@ -481,6 +516,15 @@ function showRegistrationCelebration(){
  const message=document.createElement('p');
  message.textContent='Your registration has been submitted. We look forward to seeing you at Tec-Verse 2026.';
  message.style.cssText='margin:0 0 24px;color:#536174;font-size:16px;line-height:1.5';
+ let sessionReturnLink=null;
+ const sessionId=new URLSearchParams(window.location.search).get('sessionId');
+ if(sessionId&&/^[1-9]\d*$/.test(sessionId)){
+  sessionReturnLink=document.createElement('a');
+  const contextPath=(document.body.dataset.contextPath||'').replace(/\/$/,'');
+  sessionReturnLink.href=`${contextPath}/sessions?reserve=${encodeURIComponent(sessionId)}`;
+  sessionReturnLink.textContent='Return to your selected session';
+  sessionReturnLink.style.cssText='display:block;margin:0 0 18px;color:#d94c0b;font-size:15px;font-weight:750;text-decoration:none';
+ }
  const close=document.createElement('button');
  close.type='button';
  close.textContent='Continue';
@@ -488,7 +532,9 @@ function showRegistrationCelebration(){
  const dismiss=()=>{popup.remove();if(typeof window.celebrateRegistration==='function')window.celebrateRegistration();};
  close.addEventListener('click',dismiss);
  popup.addEventListener('click',event=>{if(event.target===popup)dismiss();});
- card.append(icon,title,message,close);
+ card.append(icon,title,message);
+ if(sessionReturnLink)card.appendChild(sessionReturnLink);
+ card.appendChild(close);
  popup.appendChild(card);
  document.body.appendChild(popup);
  close.focus();
@@ -499,6 +545,9 @@ function launchIdCard(data,payload){
  const fullName=(payload&&payload.officialName)||'YOUR NAME';
  const designation=(payload&&typeof payload.designation==='string'?payload.designation:'').trim();
  const category=(payload&&payload.category)||'';
+ const idCard=$('#idCard');
+ idCard.classList.remove(...Object.values(idCardCategoryClasses));
+ if(idCardCategoryClasses[category])idCard.classList.add(idCardCategoryClasses[category]);
  const organization=(payload&&payload.organizationName)
   || (category==='ACADEMIA'&&payload&&payload.universityName)
   || (category==='ACADEMIA'&&payload&&payload.collegeName)
@@ -522,7 +571,7 @@ function launchIdCard(data,payload){
  qr.onerror=()=>{qr.hidden=true;qrError.hidden=false;};
  qr.onload=()=>{qr.hidden=false;qrError.hidden=true;};
  qr.src=apiPath('/ticket/qr')+'?token='+encodeURIComponent(data.scanToken);
- const card=$('#idCard');
+ const card=idCard;
  card.classList.remove('is-in'); void card.offsetWidth;
  card.classList.add('is-in');
 }

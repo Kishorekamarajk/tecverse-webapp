@@ -41,6 +41,8 @@ public class TicketRegistration {
     @Column(length=150) private String designation;
     @Column(name="industry_or_startup",length=30) private String industryOrStartup;
     @Column(name="citizenship_status",nullable=false,length=20) private String citizenshipStatus;
+    @Column(name="country_name",length=100) private String countryName;
+    @Column(name="visa_information_acknowledged",nullable=false) private boolean visaInformationAcknowledged;
     @Column(name="passport_number",length=50) private String passportNumber;
     @Column(name="passport_valid_until",length=30) private String passportValidUntil;
     @Column(name="passport_name",length=150) private String passportName;
@@ -63,6 +65,7 @@ public class TicketRegistration {
     public String getApplicantState(){return applicantState;}
     public String getOrganizationLocation(){return organizationLocation;} public String getDesignation(){return designation;} public String getIndustryOrStartup(){return industryOrStartup;}
     public String getCitizenshipStatus(){return citizenshipStatus;} public String getPassportNumber(){return passportNumber;} public String getPassportValidUntil(){return passportValidUntil;}
+    public String getCountryName(){return countryName;} public boolean isVisaInformationAcknowledged(){return visaInformationAcknowledged;}
     public String getPassportName(){return passportName;} public String getAttendanceDays(){return attendanceDays;} public LocalDateTime getCreatedAt(){return createdAt;}
     public boolean isConfirmationEmailSent(){return confirmationEmailSent;} public int getConfirmationEmailAttempts(){return confirmationEmailAttempts;}
 
@@ -75,6 +78,7 @@ public class TicketRegistration {
     public void setApplicantState(String v){applicantState=v;}
     public void setOrganizationName(String v){organizationName=v;} public void setOrganizationLocation(String v){organizationLocation=v;} public void setDesignation(String v){designation=v;}
     public void setIndustryOrStartup(String v){industryOrStartup=v;} public void setCitizenshipStatus(String v){citizenshipStatus=v;} public void setPassportNumber(String v){passportNumber=v;}
+    public void setCountryName(String v){countryName=v;} public void setVisaInformationAcknowledged(boolean v){visaInformationAcknowledged=v;}
     public void setPassportValidUntil(String v){passportValidUntil=v;} public void setPassportName(String v){passportName=v;} public void setAttendanceDays(String v){attendanceDays=v;}
     public void setConfirmationEmailSent(boolean v){confirmationEmailSent=v;} public void setConfirmationEmailAttempts(int v){confirmationEmailAttempts=v;}
 }

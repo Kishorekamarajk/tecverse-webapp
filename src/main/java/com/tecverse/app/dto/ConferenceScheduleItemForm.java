@@ -23,6 +23,9 @@ public class ConferenceScheduleItemForm {
     @Size(max = 220)
     private String sessionTitle;
 
+    @Size(max = 1000, message = "Description must be 1000 characters or fewer.")
+    private String description;
+
     @NotBlank
     @Size(max = 20)
     @jakarta.validation.constraints.Pattern(regexp = "(?:[01]\\d|2[0-3]):[0-5]\\d", message = "Enter a valid start time in HH:mm format.")
@@ -62,6 +65,14 @@ public class ConferenceScheduleItemForm {
 
     public void setSessionTitle(String sessionTitle) {
         this.sessionTitle = sessionTitle;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getStartTime() {

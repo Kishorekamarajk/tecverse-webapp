@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 import com.tecverse.app.service.ContactEmailOtpService;
 import com.tecverse.app.service.MailDeliveryService;
-import com.tecverse.app.util.OtpConsoleLogger;
-import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class ContactEmailOtpServiceImpl implements ContactEmailOtpService {
@@ -27,9 +25,6 @@ public class ContactEmailOtpServiceImpl implements ContactEmailOtpService {
 
     private final Map<String, Entry> entries = new ConcurrentHashMap<>();
     private final MailDeliveryService mailDeliveryService;
-
-    @Value("${tecverse.otp.log-to-console:false}")
-    private boolean logOtpsToConsole;
 
     public ContactEmailOtpServiceImpl(MailDeliveryService mailDeliveryService) {
         this.mailDeliveryService = mailDeliveryService;
@@ -52,7 +47,6 @@ public class ContactEmailOtpServiceImpl implements ContactEmailOtpService {
                     "Contact enquiry email OTP")) {
                 throw new IllegalStateException("Unable to send the verification email right now. Please try again later.");
             }
-            OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "Contact enquiry email verification", otp);
         } catch (RuntimeException ex) {
             entries.remove(normalized, entry);
             throw ex;

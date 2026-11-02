@@ -53,6 +53,13 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label fw-semibold" for="description">Description</label>
+                    <textarea id="description" class="form-control" th:field="*{description}" maxlength="1000" rows="3" placeholder="Add a short description for this session"></textarea>
+                    <div class="form-text">Optional. This description appears inside the schedule card on the website.</div>
+                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label fw-semibold" for="imageFile">Schedule Image <span th:if="${mode != 'edit'}">*</span></label>
                     <input id="imageFile" name="imageFile" type="file" class="form-control form-control-lg"
                            accept="image/jpeg,image/png,image/webp,image/gif" data-max-file-bytes="1048576" th:required="${mode != 'edit'}">

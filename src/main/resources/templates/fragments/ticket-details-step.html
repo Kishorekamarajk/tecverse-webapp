@@ -24,16 +24,30 @@
                   <select class="form-select" name="citizenshipStatus" id="citizenship" required>
                     <option value="" th:text="#{ticketpage.details.selectStatus}">Select status</option>
                     <option value="INDIAN" th:text="#{ticketpage.details.cit.indian}">Indian National</option>
-                    <option value="NRI" th:text="#{ticketpage.details.cit.nri}">Non-Resident Indian (NRI)</option>
                     <option value="FOREIGNER" th:text="#{ticketpage.details.cit.foreign}">Foreign National</option>
                   </select></label></div>
-                <div class="col-12 col-md-6"><label class="rg-f" for="applicantState">State / Union Territory <span class="tr-required-star" aria-hidden="true">*</span>
+                <div id="applicantStateField" class="col-12 col-md-6"><label class="rg-f" for="applicantState">State / Union Territory <span class="tr-required-star" aria-hidden="true">*</span>
                   <select class="form-select" name="applicantState" id="applicantState" required>
                     <option value="">Select your state or union territory</option>
                   </select></label></div>
+                <div id="foreignCountryField" class="col-12 col-md-6" hidden>
+                    <label class="rg-f" for="countryName"><span th:text="#{ticketpage.details.country}">Country</span>
+                      <span class="tr-required-star" aria-hidden="true">*</span></label>
+                  <select class="form-select" name="countryName" id="countryName" disabled>
+                    <option value="" th:text="#{ticketpage.details.selectCountry}">Select your country</option>
+                    <option th:each="country : ${countries}" th:value="${country}" th:text="${country}">Country</option>
+                  </select>
+                </div>
               </div>
 
               <div id="conditional" class="mt-3"></div>
+              <div id="visaInformationField" class="alert alert-info mt-3" hidden>
+                <label class="d-flex align-items-start gap-2 mb-0" for="visaInformationAcknowledged">
+                  <input class="form-check-input mt-1" type="checkbox" name="visaInformationAcknowledged"
+                         id="visaInformationAcknowledged" value="true" disabled>
+                  <span th:text="#{ticketpage.details.visaAcknowledgement}">I understand that foreign nationals must contact tec-verse@cdac.in for visa-related information and assistance before attending Tec-Verse 2026.</span>
+                </label>
+              </div>
 
               <fieldset class="tr-fieldset">
                 <legend><span th:text="#{ticketpage.details.days}">Select the days you would like to attend</span> <span class="tr-required-star" aria-hidden="true">*</span></legend>

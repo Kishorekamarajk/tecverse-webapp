@@ -296,6 +296,7 @@ public class AdminNewsController {
         form.setDayNumber(item.getDayNumber());
         form.setScheduleDate(item.getScheduleDate());
         form.setSessionTitle(item.getSessionTitle());
+        form.setDescription(item.getDescription());
         form.setStartTime(toScheduleTimeInput(item.getTimeValue()));
         String[] range = item.getTimeLabel().split("\\s+-\\s+", 2);
         form.setEndTime(toScheduleTimeInput(range.length == 2 ? range[1] : item.getTimeValue()));
@@ -309,6 +310,8 @@ public class AdminNewsController {
         item.setDayNumber(form.getDayNumber());
         item.setScheduleDate(form.getScheduleDate());
         item.setSessionTitle(form.getSessionTitle().trim());
+        item.setDescription(form.getDescription() == null || form.getDescription().isBlank()
+                ? null : form.getDescription().trim());
         item.setImageUrl(imageUrl);
         item.setTimeLabel(toScheduleDisplayTime(form.getStartTime()) + " - " + toScheduleDisplayTime(form.getEndTime()));
         item.setTimeValue(form.getStartTime().trim());

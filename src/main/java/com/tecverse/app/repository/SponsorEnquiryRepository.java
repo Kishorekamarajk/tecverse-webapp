@@ -19,6 +19,8 @@ public interface SponsorEnquiryRepository extends JpaRepository<SponsorEnquiry, 
 
     boolean existsByPhone(String phone);
     Optional<SponsorEnquiry> findByPhone(String phone);
+    @Query(value = "SELECT * FROM sponsor_enquiries WHERE regexp_replace(phone, '[^0-9]', '', 'g') IN (:phone, '91' || :phone) ORDER BY created_at DESC LIMIT 1", nativeQuery = true)
+    Optional<SponsorEnquiry> findLatestByPhoneNormalized(@Param("phone") String normalizedPhone);
     @Query(value = "SELECT TO_CHAR(created_at, 'YYYY-MM') AS label, COUNT(*) AS \"totalCount\" FROM sponsor_enquiries WHERE created_at >= :start GROUP BY 1 ORDER BY 1", nativeQuery = true)
     List<AdminChartPoint> countMonthlySince(@Param("start") LocalDateTime start);
 }

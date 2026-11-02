@@ -171,6 +171,11 @@
             }
             .sponsor-page .sp-hero { min-height: 0 !important; padding: 84px 0 10px !important; }
             .sponsor-page .sp-hero { display: none !important; }
+            .sponsor-page main { display: flex; flex-direction: column; }
+            .sponsor-page .sponsor-short-banner { order: 0; }
+            .sponsor-page #sponsor-packages { order: 1; }
+            .sponsor-page #sponsor-contact { order: 2; }
+            .sponsor-page .sp-faq-section { order: 3; }
             .sponsor-page .sponsor-short-banner { position: relative; left: 50%; width: 100vw; margin: 0 0 0 -50vw; padding: 84px 0 10px; }
             .sponsor-page .sponsor-short-banner > .container { position: relative; left: 50%; width: 100vw !important; max-width: none !important; margin: 0 0 0 -50vw !important; padding: 0 !important; }
             .sponsor-page .sponsor-short-banner .ticket-hero { position: relative; display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,.95fr); width: 100%; min-height: clamp(112px,10vw,175px); max-height: 175px; margin: 0; overflow: hidden; background: linear-gradient(105deg,#fff 0%,#f8fbff 39%,#dceeff 62%,#fff 100%); box-shadow: 0 16px 36px rgba(22,58,96,.13); }
@@ -227,6 +232,16 @@
             .sponsor-page .sponsor-otp-dialog-heading { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; }
             .sponsor-page .sponsor-otp-dialog-close { width:32px; height:32px; border:0; border-radius:6px; background:#f2f4f7; color:#58677b; font-size:1.4rem; line-height:1; }
             .sponsor-page .sponsor-otp-dialog .sp-field { display:block; width:100%; margin:0; }
+            .sponsor-page dialog.sponsor-success-dialog { box-sizing:border-box; width:min(480px,calc(100vw - 32px)) !important; max-width:480px !important; margin:auto; padding:0; overflow:visible; border:0; border-radius:18px; background:transparent; color:#102b49; }
+            .sponsor-page .sponsor-success-dialog::backdrop { background:rgba(7,24,47,.58); backdrop-filter:blur(4px); }
+            .sponsor-page .sponsor-success-dialog__content { position:relative; padding:clamp(24px,5vw,38px); border:1px solid rgba(53,170,117,.32); border-radius:18px; background:linear-gradient(145deg,#fff,#effaf4); box-shadow:0 24px 70px rgba(7,24,47,.25); text-align:center; }
+            .sponsor-page .sponsor-success-dialog__close { position:absolute; top:12px; right:14px; width:36px; height:36px; border:0; border-radius:50%; background:#edf2f6; color:#52677d; font-size:1.5rem; line-height:1; }
+            .sponsor-page .sponsor-success-dialog__icon { display:grid; width:56px; height:56px; margin:0 auto 14px; place-items:center; border-radius:50%; background:#16834f; color:#fff; font-size:1.8rem; }
+            .sponsor-page .sponsor-success-dialog h2 { margin:0; color:#102b49; font-size:clamp(1.3rem,4vw,1.7rem); font-weight:850; }
+            .sponsor-page .sponsor-success-dialog p { margin:12px 0 0; color:#40566c; font-size:.98rem; line-height:1.55; }
+            .sponsor-page .sponsor-success-dialog .sponsor-success-dialog__login-prompt { margin:18px 0 14px; color:#102b49; font-weight:750; }
+            .sponsor-page .sponsor-success-dialog__done { display:block; width:100%; min-height:46px; margin-top:10px; border:1px solid #d5e0e8; border-radius:12px; background:#fff; color:#29445d; font-weight:800; }
+            .sponsor-page .sponsor-success-dialog__done:hover { background:#f4f8fa; }
             .sponsor-page .sponsor-otp-status { display:block; min-height:1.1em; margin-top:5px; color:#52677d; font-size:.74rem; line-height:1.35; }
             .sponsor-page #sponsorPhoneField .sp-client-error,
             .sponsor-page #sponsorPhoneField .sp-field-error,
@@ -260,6 +275,17 @@
             .sponsor-page .sp-contact-list a { color: #17639a; }
             @media (max-width: 850px) { .sponsor-page .sp-contact-grid { grid-template-columns: minmax(0,1fr) !important; } .sponsor-page .sp-contact-card { display: grid; grid-template-columns: minmax(130px,.65fr) minmax(0,1fr); gap: 14px; align-items: center; } .sponsor-page .sp-sponsor-process-visual { grid-row: span 2; margin: 0; } }
             @media (max-width: 575.98px) { .sponsor-page .sp-contact-grid { gap: 12px; } .sponsor-page .sponsor-step-grid { gap: 10px; } .sponsor-page .sp-form--simple { padding: 16px !important; } .sponsor-page .sponsor-step-dot { gap: 5px; font-size: .65rem; } .sponsor-page .sp-contact-card { display: block; } .sponsor-page .sp-sponsor-process-visual { margin-bottom: 12px; } .sponsor-page .sponsor-control > i { flex-basis: 38px; width: 38px; } .sponsor-page .sponsor-email-row button, .sponsor-page .sponsor-otp-row button { min-width: 82px; padding: 0 8px !important; font-size: .7rem; } .sponsor-page .sponsor-step-footer { align-items: stretch; flex-direction: column; } .sponsor-page .sponsor-step-footer .sponsor-consent-inline { width: 100%; } .sponsor-page .sponsor-step-footer [data-sponsor-next] { align-self: flex-end; min-width: 174px; } .sponsor-page #sponsorMobileOtpBlock,.sponsor-page #sponsorEmailField,.sponsor-page #otpBlock { grid-column:1/-1; grid-row:auto; } }
+            @media (max-width: 575.98px) {
+                .sponsor-page .sponsor-step-grid { grid-template-columns: minmax(0,1fr); }
+                .sponsor-page .sponsor-step-grid > * { grid-column: 1 / -1 !important; grid-row: auto !important; min-width: 0; }
+                .sponsor-page .sponsor-step-footer { width: 100%; }
+                .sponsor-page .sponsor-step-footer .sponsor-consent-inline { flex: 0 0 auto; }
+                .sponsor-page .sponsor-step-footer [data-sponsor-next] { align-self: stretch; width: 100%; min-width: 0; }
+                .sponsor-page .site-social-rail { display: none !important; }
+                .sponsor-page .tecverse-floating-actions { position: static !important; flex-direction: row !important; justify-content: center; gap: 10px; margin: 16px auto 24px; }
+                .sponsor-page .tecverse-floating-actions__button { width: 46px; height: 46px; }
+                .sponsor-page .tecverse-floating-actions__button i { font-size: 21px; }
+            }
         </style>
         <div class="container">
             <div class="sp-section-head" data-reveal="fade-up">
@@ -272,10 +298,12 @@
                     <figure class="sp-sponsor-process-visual">
                         <img th:src="@{/images/tieup.png}" alt="Tec-Verse sponsorship partnership" th:alt="#{sponsor.process.imageAlt}" loading="lazy">
                     </figure>
+                    <!-- Organization logo preview disabled on the sponsor page.
                     <figure class="sponsor-logo-preview" id="sponsorLogoPreviewWrap" hidden aria-label="Selected organization logo preview">
                         <img id="sponsorLogoPreview" alt="Selected organization logo preview">
                         <figcaption>Organization logo preview</figcaption>
                     </figure>
+                    -->
                     <div class="sp-sponsor-process-content">
                         <span class="sp-kicker d-inline-flex align-items-center gap-[0.55rem] font-[800] text-uppercase"><i class="bi bi-envelope-paper"></i> <th:block th:text="#{sponsor.process.kicker}">Sponsor Process</th:block></span>
                         <h3 th:text="#{sponsor.process.title}">What Happens Next?</h3>
@@ -294,7 +322,6 @@
                       th:data-error="${sponsorEnquiryError}"
                       th:data-alert-submitted="#{alert.formSubmitted}" th:data-alert-not-submitted="#{alert.formNotSubmitted}"
                       th:data-alert-check-details="#{alert.formCheckDetails}" th:data-alert-required-fields="#{alert.formRequiredFields}">
-                    <div th:if="${sponsorInquirySubmitted}" class="sp-form-success d-flex align-items-center gap-[0.65rem] min-h-[48px] text-[0.9rem] font-[900]" role="status" style="animation: slideDown 0.6s ease-out;"><i class="bi bi-check-circle-fill"></i><span th:text="#{sponsor.form.submittedMessage}">Your sponsorship interest has been received successfully. Our team will contact you soon.</span></div>
                     <div th:if="${sponsorEnquiryError}" class="sp-form-error d-flex align-items-center gap-[0.65rem] min-h-[48px] text-[0.9rem] font-[900]" role="alert"><i class="bi bi-exclamation-circle-fill"></i><span th:text="${sponsorEnquiryError}"></span></div>
 
                     <div class="sp-field"><label for="sponsorCompany" th:text="#{sponsor.field.company}">Organization / Company Name*</label><input id="sponsorCompany" name="company" type="text" required maxlength="200" placeholder="Organization / Company Name" th:placeholder="#{sponsor.placeholder.company}" th:value="${inquiry != null ? inquiry.company : ''}"><small class="sp-field-error" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></small></div>
@@ -308,23 +335,37 @@
                     <div class="sp-field"><label for="sponsorCity" th:text="#{sponsor.field.city}">City / Location</label><select id="sponsorCity" name="city" th:attr="data-selected-city=${inquiry != null ? inquiry.city : ''}"><option value="">Select a city</option></select></div>
                     <div class="sp-field"><label for="sponsorWebsite" th:text="#{sponsor.field.website}">Company Website</label><input id="sponsorWebsite" name="website" type="url" placeholder="https://example.com" th:value="${inquiry != null ? inquiry.website : ''}" maxlength="255"></div>
                     <div class="sp-field"><label for="sponsorIndustry" th:text="#{sponsor.field.industry}">Industry / Category</label><input id="sponsorIndustry" name="industry" type="text" placeholder="Industry / Category" th:placeholder="#{sponsor.placeholder.industry}" th:value="${inquiry != null ? inquiry.industry : ''}" maxlength="100"></div>
+                    <!-- Organization logo upload disabled on the sponsor page.
                     <div class="sp-field sp-field--full"><label for="sponsorLogoFile">Organization logo (optional)</label><input id="sponsorLogoFile" name="logoFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><small class="sponsor-otp-status">PNG, JPG, WEBP or GIF. Maximum file size: 1 MB.</small><small id="sponsorLogoError" class="sp-client-error" role="alert"></small></div>
+                    -->
                     <div class="sp-field sp-field--full"><label for="sponsorMessage" th:text="#{sponsor.field.message}">Message / Requirements</label><textarea id="sponsorMessage" name="message" rows="4" placeholder="Any message or sponsorship requirements" th:placeholder="#{sponsor.placeholder.requirements}" th:text="${inquiry != null ? inquiry.message : ''}" maxlength="5000"></textarea></div>
                     <div class="sp-field sp-field--full"><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" required style="margin-top:4px"> <span th:text="#{sponsor.consent}">I confirm that the above information is correct and agree to be contacted by the Tec-Verse organizing team regarding sponsorship, package confirmation, invoice and payment.</span></label></div>
                     <button type="submit" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="sponsorSubmit" th:text="#{sponsor.form.submitInterest}">Submit Sponsorship Interest</button>
                 </form>
             </div>
         </div>
+        <dialog id="sponsorSuccessDialog" class="sponsor-success-dialog" aria-labelledby="sponsorSuccessTitle">
+            <div class="sponsor-success-dialog__content" role="status">
+                <button type="button" class="sponsor-success-dialog__close" data-sponsor-success-close aria-label="Close">&times;</button>
+                <div class="sponsor-success-dialog__icon" aria-hidden="true"><i class="bi bi-check-lg"></i></div>
+                <h2 id="sponsorSuccessTitle" th:text="#{sponsor.success.title}">Sponsorship Interest Submitted</h2>
+                <p th:text="#{sponsor.form.submittedMessage}">Your sponsorship interest has been received. A confirmation email will be sent to your registered email address, and our team will contact you shortly.</p>
+                <p class="sponsor-success-dialog__login-prompt" th:text="#{sponsor.success.loginPrompt}">Proceed to sponsor login to follow your sponsorship enquiry.</p>
+                <button type="button" class="sp-submit" data-business-login-role="sponsor" th:text="#{sponsor.success.loginButton}">Proceed to Sponsor Login</button>
+                <button type="button" class="sponsor-success-dialog__done" data-sponsor-success-close th:text="#{sponsor.success.done}">Done</button>
+            </div>
+        </dialog>
     </section>
 
-    <section id="sponsor-packages" class="sp-section sp-packages" aria-labelledby="sponsor-packages-title" style="background: linear-gradient(135deg, #F8F9FB 0%, #EAF8F1 100%); position: relative; overflow: hidden;">
+    <section id="sponsor-packages" class="sp-section sp-packages" aria-labelledby="sponsor-packages-title" style="background: linear-gradient(135deg, #FFFFFF 0%, #F5FAF7 100%); position: relative; overflow: hidden;">
         <style>
             .sp-package {
                 transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
                 position: relative;
                 border: 2px solid rgba(221, 231, 239, 0.8);
-                background: white;
+                background: #F7FAFF;
             }
+            .sp-package--featured { background: #FFF9F2; }
             .sp-package::before {
                 content: '';
                 position: absolute;
@@ -558,9 +599,10 @@
     const sponsorSubmitted = sponsorForm.dataset.submitted === "true";
     const sponsorFailed = sponsorForm.dataset.failed === "true";
     const sponsorError = sponsorForm.dataset.error;
+    const sponsorSuccessDialog = document.getElementById("sponsorSuccessDialog");
     const sponsorFieldIdsByStep = [
         ["sponsorCompany", "sponsorName", "sponsorDesignation", "sponsorPhone", "sponsorEmail", "sponsorOtp", "sponsorMobileOtp"],
-        ["sponsorInterest", "sponsorCity", "sponsorWebsite", "sponsorIndustry", "sponsorMessage", "sponsorLogoFile"]
+        ["sponsorInterest", "sponsorCity", "sponsorWebsite", "sponsorIndustry", "sponsorMessage"]
     ];
     const sponsorSteps = [];
     const sponsorDots = [];
@@ -651,11 +693,22 @@
         }
     }
 
-    if (sponsorSubmitted) {
-        alert(sponsorForm.dataset.alertSubmitted);
-    } else if (sponsorError) {
+    if (sponsorSubmitted && sponsorSuccessDialog) {
+        sponsorSuccessDialog.showModal();
+    }
+    sponsorSuccessDialog?.querySelectorAll("[data-sponsor-success-close]").forEach(button => {
+        button.addEventListener("click", () => sponsorSuccessDialog.close());
+    });
+    sponsorSuccessDialog?.addEventListener("click", event => {
+        if (event.target === sponsorSuccessDialog) sponsorSuccessDialog.close();
+    });
+    sponsorSuccessDialog?.addEventListener("close", () => {
+          if (sponsorSubmitted && sponsorSuccessDialog.dataset.openingLogin !== "true") window.location.reload();
+    });
+
+    if (!sponsorSubmitted && sponsorError) {
         alert(sponsorForm.dataset.alertNotSubmitted + " " + sponsorError);
-    } else if (sponsorFailed) {
+    } else if (!sponsorSubmitted && sponsorFailed) {
         alert(sponsorForm.dataset.alertCheckDetails);
     }
 

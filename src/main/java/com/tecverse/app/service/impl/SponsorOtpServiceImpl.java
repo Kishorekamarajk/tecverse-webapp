@@ -2,8 +2,6 @@ package com.tecverse.app.service.impl;
 
 import com.tecverse.app.service.MailDeliveryService;
 import com.tecverse.app.service.SponsorOtpService;
-import com.tecverse.app.util.OtpConsoleLogger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -25,9 +23,6 @@ public class SponsorOtpServiceImpl implements SponsorOtpService {
     private final Map<String, Entry> codes = new ConcurrentHashMap<>();
     private final Map<String, LocalDateTime> verified = new ConcurrentHashMap<>();
     private final MailDeliveryService mailDeliveryService;
-
-    @Value("${tecverse.otp.log-to-console:false}")
-    private boolean logOtpsToConsole;
 
     public SponsorOtpServiceImpl(MailDeliveryService mailDeliveryService) {
         this.mailDeliveryService = mailDeliveryService;
@@ -56,7 +51,6 @@ public class SponsorOtpServiceImpl implements SponsorOtpService {
                     "Sponsor OTP"
             );
             if (!sent) throw new IllegalStateException("Unable to send sponsor OTP email.");
-            OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "Sponsor email verification", otp);
         } catch (IllegalStateException ex) {
             codes.remove(normalized);
             throw ex;

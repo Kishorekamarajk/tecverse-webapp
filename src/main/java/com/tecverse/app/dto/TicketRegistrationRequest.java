@@ -7,8 +7,19 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.AssertTrue;
 
 import java.util.List;
+import java.util.Set;
+
+import com.tecverse.app.util.CountryNames;
 
 public class TicketRegistrationRequest {
+    private static final Set<String> INDIAN_STATES_AND_UNION_TERRITORIES = Set.of(
+            "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
+            "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
+            "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan",
+            "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+            "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi",
+            "Jammu and Kashmir", "Ladakh", "Lakshadweep", "Puducherry");
+
     @NotBlank @Size(max=150, message="Name must be 150 characters or fewer.")
     @Pattern(regexp="^[\\p{L}\\p{M}][\\p{L}\\p{M} .,'’\\-]{0,149}$", message="Use letters, spaces, periods, apostrophes, commas, or hyphens for your name.")
     private String officialName;
@@ -44,14 +55,30 @@ public class TicketRegistrationRequest {
 
     @NotBlank @Pattern(regexp="INDIAN|NRI|FOREIGNER", message="Choose a valid citizenship status.")
     private String citizenshipStatus;
-    @NotBlank @Pattern(regexp="^(?:Andhra Pradesh|Arunachal Pradesh|Assam|Bihar|Chhattisgarh|Goa|Gujarat|Haryana|Himachal Pradesh|Jharkhand|Karnataka|Kerala|Madhya Pradesh|Maharashtra|Manipur|Meghalaya|Mizoram|Nagaland|Odisha|Punjab|Rajasthan|Sikkim|Tamil Nadu|Telangana|Tripura|Uttar Pradesh|Uttarakhand|West Bengal|Andaman and Nicobar Islands|Chandigarh|Dadra and Nagar Haveli and Daman and Diu|Delhi|Jammu and Kashmir|Ladakh|Lakshadweep|Puducherry)$", message="Select a valid state or union territory.")
+    @Size(max=100)
     private String applicantState;
+    @Size(max=100)
+    private String countryName;
+    private Boolean visaInformationAcknowledged;
     @Size(max=50) @Pattern(regexp="^(?:[A-Za-z0-9][A-Za-z0-9-]{0,49})?$", message="Passport number may contain letters, numbers, and hyphens.") private String passportNumber;
     @Size(max=10) private String passportValidUntil;
     @Size(max=150) @Pattern(regexp="^(?:[\\p{L}\\p{M}][\\p{L}\\p{M} .,'’\\-]{0,149})?$", message="Use letters, spaces, periods, apostrophes, commas, or hyphens for the passport name.") private String passportName;
 
     @jakarta.validation.constraints.NotEmpty(message="Select at least one attendance day.")
     private List<@Pattern(regexp="DAY_1|DAY_2|BOTH", message="Choose a valid attendance day.") String> attendanceDays;
+
+    @AssertTrue(message="Select a valid Indian state or select a country and acknowledge the visa information for foreign registrations.")
+    public boolean isLocationAndVisaInformationValid() {
+        if ("FOREIGNER".equals(citizenshipStatus)) {
+            return (applicantState == null || applicantState.isBlank())
+                    && CountryNames.containsEnglishName(countryName)
+                    && Boolean.TRUE.equals(visaInformationAcknowledged);
+        }
+        return applicantState != null
+                && INDIAN_STATES_AND_UNION_TERRITORIES.contains(applicantState)
+                && (countryName == null || countryName.isBlank())
+                && !Boolean.TRUE.equals(visaInformationAcknowledged);
+    }
 
     @AssertTrue(message="Password and confirm password must match.")
     public boolean isPasswordConfirmationValid() {
@@ -80,6 +107,8 @@ public class TicketRegistrationRequest {
     public String getIndustryOrStartup(){return industryOrStartup;} public void setIndustryOrStartup(String v){this.industryOrStartup=v;}
     public String getCitizenshipStatus(){return citizenshipStatus;} public void setCitizenshipStatus(String v){this.citizenshipStatus=v;}
     public String getApplicantState(){return applicantState;} public void setApplicantState(String v){this.applicantState=v;}
+    public String getCountryName(){return countryName;} public void setCountryName(String v){this.countryName=v;}
+    public Boolean getVisaInformationAcknowledged(){return visaInformationAcknowledged;} public void setVisaInformationAcknowledged(Boolean v){this.visaInformationAcknowledged=v;}
     public String getPassportNumber(){return passportNumber;} public void setPassportNumber(String v){this.passportNumber=v;}
     public String getPassportValidUntil(){return passportValidUntil;} public void setPassportValidUntil(String v){this.passportValidUntil=v;}
     public String getPassportName(){return passportName;} public void setPassportName(String v){this.passportName=v;}

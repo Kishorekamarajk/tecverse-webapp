@@ -19,6 +19,7 @@
   const resendButton = otpDialog.querySelector('[data-business-resend-otp]');
   let selectedRole = 'participant';
   let cooldown = null;
+  let refreshPageOnBusinessLoginClose = false;
 
   function contextPath() {
     return (document.body.dataset.contextPath || '').replace(/\/$/, '');
@@ -63,6 +64,20 @@
     if (!roleDialog.open) roleDialog.showModal();
   }
 
+  function openBusinessOtpLogin(role) {
+    selectedRole = role;
+    roleSelect.value = role;
+    otpDialog.querySelector('[data-business-role-label]').textContent = `${role.toUpperCase()} PORTAL LOGIN`;
+    phoneStep.hidden = false;
+    otpStep.hidden = true;
+    phone.value = '';
+    otp.value = '';
+    registerLink.hidden = true;
+    setMessage('');
+    if (!otpDialog.open) otpDialog.showModal();
+    window.setTimeout(() => phone.focus(), 0);
+  }
+
   if (rolePicker && rolePickerTrigger && rolePickerOptions && rolePickerCurrent) {
     const roleLabels = {
       participant: '<i class="bi bi-person-badge" aria-hidden="true"></i> Participant',
@@ -104,10 +119,24 @@
   }
 
   document.querySelectorAll('[data-role-login-open]').forEach(button => button.addEventListener('click', openRoleDialog));
+  document.querySelectorAll('[data-business-login-role]').forEach(button => button.addEventListener('click', () => {
+    const successDialog = button.closest('#sponsorSuccessDialog');
+    const exhibitorSuccessModal = button.closest('#successModal');
+    refreshPageOnBusinessLoginClose = Boolean(successDialog || exhibitorSuccessModal);
+    if (successDialog) successDialog.dataset.openingLogin = 'true';
+    button.closest('dialog')?.close();
+    exhibitorSuccessModal?.classList.add('hidden');
+    openBusinessOtpLogin(button.dataset.businessLoginRole);
+  }));
   roleDialog.querySelector('[data-role-login-close]').addEventListener('click', () => roleDialog.close());
   otpDialog.querySelector('[data-business-otp-close]').addEventListener('click', () => otpDialog.close());
   roleDialog.addEventListener('click', event => { if (event.target === roleDialog) roleDialog.close(); });
   otpDialog.addEventListener('click', event => { if (event.target === otpDialog) otpDialog.close(); });
+  otpDialog.addEventListener('close', () => {
+    if (!refreshPageOnBusinessLoginClose) return;
+    refreshPageOnBusinessLoginClose = false;
+    window.location.reload();
+  });
 
   roleDialog.querySelector('[data-role-login-continue]').addEventListener('click', () => {
     selectedRole = roleSelect.value;
@@ -116,15 +145,7 @@
       document.dispatchEvent(new Event('open-attendee-login'));
       return;
     }
-    otpDialog.querySelector('[data-business-role-label]').textContent = `${selectedRole.toUpperCase()} PORTAL LOGIN`;
-    phoneStep.hidden = false;
-    otpStep.hidden = true;
-    phone.value = '';
-    otp.value = '';
-    registerLink.hidden = true;
-    setMessage('');
-    if (!otpDialog.open) otpDialog.showModal();
-    window.setTimeout(() => phone.focus(), 0);
+    openBusinessOtpLogin(selectedRole);
   });
 
   async function sendOtp() {

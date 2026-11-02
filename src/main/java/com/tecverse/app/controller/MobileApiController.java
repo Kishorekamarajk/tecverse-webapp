@@ -676,6 +676,7 @@ public class MobileApiController {
                 "scheduleDate", item.getDateValue(),
                 "dayTitle", item.getDayTitle(),
                 "sessionTitle", item.getSessionTitle(),
+                "description", item.getDescription() == null ? "" : item.getDescription(),
                 "timeLabel", item.getTimeLabel(),
                 "timeValue", item.getTimeValue(),
                 "highlighted", item.isHighlighted(),

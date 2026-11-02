@@ -34,6 +34,9 @@ public class ConferenceScheduleItem {
     @Column(name = "session_title", nullable = false, length = 220)
     private String sessionTitle;
 
+    @Column(name = "description", length = 1000)
+    private String description;
+
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
@@ -100,6 +103,14 @@ public class ConferenceScheduleItem {
 
     public void setSessionTitle(String sessionTitle) {
         this.sessionTitle = sessionTitle;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getImageUrl() {

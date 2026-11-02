@@ -20,7 +20,7 @@
       exhibitor: '/exhibitor-registration',
       sponsor: '/become-sponsor'
     };
-    const contextPath = (document.body.dataset.contextPath || '').replace(/\/$/, '');
+    const contextPath = (dialog.dataset.contextPath || document.body.dataset.contextPath || '').replace(/\/$/, '');
     window.location.assign(contextPath + registrationPaths[role.value]);
   });
 })();

@@ -6,6 +6,7 @@ import com.tecverse.app.repository.ExhibitorRepository;
 import com.tecverse.app.repository.SponsorEnquiryRepository;
 import com.tecverse.app.service.BusinessConversationService;
 import com.tecverse.app.service.BusinessQueryNotificationService;
+import com.tecverse.app.service.MobileSessionService;
 import com.tecverse.app.service.RateLimitService;
 import com.tecverse.app.service.TicketOtpService;
 import com.tecverse.app.exception.RateLimitExceededException;
@@ -40,17 +41,20 @@ public class BusinessPortalController {
     private final RateLimitService rateLimits;
     private final BusinessConversationService conversations;
     private final BusinessQueryNotificationService queryNotifications;
+    private final MobileSessionService attendeeSessions;
 
     public BusinessPortalController(ExhibitorRepository exhibitors, SponsorEnquiryRepository sponsors,
                                     TicketOtpService otpService, RateLimitService rateLimits,
                                     BusinessConversationService conversations,
-                                    BusinessQueryNotificationService queryNotifications) {
+                                    BusinessQueryNotificationService queryNotifications,
+                                    MobileSessionService attendeeSessions) {
         this.exhibitors = exhibitors;
         this.sponsors = sponsors;
         this.otpService = otpService;
         this.rateLimits = rateLimits;
         this.conversations = conversations;
         this.queryNotifications = queryNotifications;
+        this.attendeeSessions = attendeeSessions;
     }
 
     @PostMapping("/business-login/{role}/send-otp")
@@ -72,7 +76,7 @@ public class BusinessPortalController {
 
         boolean registered = switch (role) {
             case "exhibitor" -> exhibitors.findLatestByPhoneNormalized(phone).isPresent();
-            case "sponsor" -> sponsors.findByPhone(phone).isPresent();
+            case "sponsor" -> sponsors.findLatestByPhoneNormalized(phone).isPresent();
             default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Choose a valid login type.");
         };
         if (!registered) {
@@ -106,7 +110,7 @@ public class BusinessPortalController {
                 0, Duration.ofMinutes(3), 180, Duration.ofMinutes(3));
         String contactName = role.equals("exhibitor")
                 ? exhibitors.findLatestByPhoneNormalized(phone).map(Exhibitor::getFullName).orElse(null)
-                : sponsors.findByPhone(phone).map(SponsorEnquiry::getName).orElse(null);
+                : sponsors.findLatestByPhoneNormalized(phone).map(SponsorEnquiry::getName).orElse(null);
         if (contactName == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Registration not found. Please register first.");
 
         otpService.verifyMobileOtp(phone, code);
@@ -116,6 +120,36 @@ public class BusinessPortalController {
         session.setAttribute(PORTAL_PHONE, phone);
         session.setAttribute(PORTAL_NAME, contactName);
         return ResponseEntity.ok(Map.of("success", true, "redirectUrl", "/" + role + "/dashboard"));
+    }
+
+    @PostMapping("/business-portal/switch/{role}")
+    public String switchFromAttendee(@PathVariable String role,
+                                     @CookieValue(value = "TECVERSE_ATTENDEE", required = false) String attendeeToken,
+                                     HttpServletRequest request) {
+        if (!role.equals("exhibitor") && !role.equals("sponsor")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Choose a valid business portal.");
+        }
+        if (attendeeToken == null || attendeeToken.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Please sign in as an attendee first.");
+        }
+
+        var attendee = attendeeSessions.requireToken(attendeeToken);
+        String phone = normalizePhone(attendee.getPhone());
+        String contactName;
+        if (role.equals("exhibitor")) {
+            contactName = exhibitors.findLatestByPhoneNormalized(phone).map(Exhibitor::getFullName)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "No exhibitor registration is linked to this attendee account."));
+        } else {
+            contactName = sponsors.findLatestByPhoneNormalized(phone).map(SponsorEnquiry::getName)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "No sponsor registration is linked to this attendee account."));
+        }
+
+        HttpSession session = request.getSession(true);
+        request.changeSessionId();
+        session.setAttribute(PORTAL_ROLE, role);
+        session.setAttribute(PORTAL_PHONE, phone);
+        session.setAttribute(PORTAL_NAME, contactName);
+        return "redirect:/" + role + "/dashboard";
     }
 
     @GetMapping("/exhibitor/dashboard")
@@ -135,7 +169,7 @@ public class BusinessPortalController {
     @GetMapping("/sponsor/dashboard")
     public String sponsorDashboard(HttpSession session, Model model, HttpServletResponse response) {
         String phone = requirePortalSession(session, "sponsor");
-        SponsorEnquiry sponsor = sponsors.findByPhone(phone)
+        SponsorEnquiry sponsor = sponsors.findLatestByPhoneNormalized(phone)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         response.setHeader("Cache-Control", "no-store");
         model.addAttribute("businessRole", "sponsor");
@@ -166,7 +200,7 @@ public class BusinessPortalController {
                 Exhibitor exhibitor = exhibitors.findLatestByPhoneNormalized(phone).orElseThrow();
                 name = exhibitor.getFullName(); company = exhibitor.getCompanyName();
             } else {
-                SponsorEnquiry sponsor = sponsors.findByPhone(phone).orElseThrow();
+                SponsorEnquiry sponsor = sponsors.findLatestByPhoneNormalized(phone).orElseThrow();
                 name = sponsor.getName(); company = sponsor.getCompany();
             }
             conversations.add(role, phone, name, company, "BUSINESS", query);

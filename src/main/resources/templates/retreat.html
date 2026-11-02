@@ -132,7 +132,7 @@
 
     <header class="tv-head" th:style="|--retreat-banner-image: url('@{/images/retreat-banner.png}')|">
         <!-- <span class="tv-kicker">AT A GLANCE</span> -->
-        <h1 id="roadmap-title" th:text="#{retreat.roadmap.title}">Event Roadmap</h1>
+        <h1 id="roadmap-title" th:text="#{retreat.roadmap.title}">Event Timeline</h1>
         <p class="tv-sub" th:text="#{retreat.roadmap.subtitle}">Tec-Verse 2026 · 26–27 November · Chennai Trade Centre</p>
         <div class="tv-mantra"><span th:text="#{retreat.mantra.connect}">Connect</span><span th:text="#{retreat.mantra.collaborate}">Collaborate</span><span th:text="#{retreat.mantra.innovate}">Innovate</span></div>
     </header>
@@ -186,7 +186,7 @@
                         <div class="tv-body">
                             <time th:text="${scheduleItem.timeLabel}">09:00 – 10:00 AM</time>
                             <h3 th:text="${#messages.msgOrNull('schedule.item.' + scheduleItem.title) ?: scheduleItem.title}">Registration</h3>
-                            <p th:if="${scheduleItem.highlighted}" th:text="${#messages.msgOrNull('schedule.description.' + scheduleItem.description) ?: scheduleItem.description}">Featured session</p>
+                            <p th:if="${!#strings.isEmpty(scheduleItem.description)}" th:text="${#messages.msgOrNull('schedule.description.' + scheduleItem.description) ?: scheduleItem.description}">Session description</p>
                         </div>
                     </div>
                 </div>

@@ -37,7 +37,7 @@ public class ThematicReservationService {
                     "description", Objects.toString(session.getDescription(), ""),
                     "date", displayDate(session.getSessionDate()), "time", displayTimeRange(session),
                     "availability", available ? "Available" : "Not Available",
-                    "reserved", reservations.existsByRegistrationIdAndSessionIdAndStatus(userId, session.getId(), "CONFIRMED"));
+                    "reserved", userId != null && reservations.existsByRegistrationIdAndSessionIdAndStatus(userId, session.getId(), "CONFIRMED"));
         }).toList();
     }
 
@@ -48,6 +48,7 @@ public class ThematicReservationService {
         if (!session.isPublished() || !session.isActive()) throw new IllegalArgumentException("This session is not open for reservations.");
         ThematicReservation reservation = reservations.findByRegistrationIdAndSessionId(userId, sessionId).orElse(null);
         if (reservation != null && "CONFIRMED".equals(reservation.getStatus())) throw new IllegalArgumentException("You have already reserved this session.");
+        ensureNoScheduleConflict(userId, session);
         if (reservations.countBySessionIdAndStatus(sessionId, "CONFIRMED") >= session.getTotalCapacity() - session.getReservedSeats()) {
             throw new IllegalArgumentException("This session is fully booked. Refresh the list to see current availability.");
         }
@@ -57,6 +58,37 @@ public class ThematicReservationService {
             reservation.setSessionId(sessionId);
         } else reservation.setStatus("CONFIRMED");
         reservations.save(reservation);
+    }
+
+    private void ensureNoScheduleConflict(Long userId, ThematicSession selectedSession) {
+        LocalDate selectedDate = parseDate(selectedSession.getSessionDate());
+        LocalTime selectedStart = parseTime(selectedSession.getTimeLabel());
+        LocalTime selectedEnd = parseTime(selectedSession.getEndTimeLabel());
+        if (selectedDate == null || selectedStart == null || selectedEnd == null) return;
+
+        for (ThematicReservation reservation : reservations.findByRegistrationIdAndStatus(userId, "CONFIRMED")) {
+            if (Objects.equals(reservation.getSessionId(), selectedSession.getId())) continue;
+            ThematicSession existingSession = sessions.findById(reservation.getSessionId()).orElse(null);
+            if (existingSession == null || !Objects.equals(selectedDate, parseDate(existingSession.getSessionDate()))) continue;
+
+            LocalTime existingStart = parseTime(existingSession.getTimeLabel());
+            LocalTime existingEnd = parseTime(existingSession.getEndTimeLabel());
+            if (existingStart != null && existingEnd != null
+                    && selectedStart.isBefore(existingEnd) && existingStart.isBefore(selectedEnd)) {
+                throw new IllegalArgumentException("You already have a reservation for \"" + existingSession.getTitle()
+                        + "\" during this time. To attend this session instead, cancel your current reservation and then reserve this one.");
+            }
+        }
+    }
+
+    private static LocalDate parseDate(String value) {
+        try { return value == null || value.isBlank() ? null : LocalDate.parse(value); }
+        catch (java.time.format.DateTimeParseException invalid) { return null; }
+    }
+
+    private static LocalTime parseTime(String value) {
+        try { return value == null || value.isBlank() ? null : LocalTime.parse(value); }
+        catch (java.time.format.DateTimeParseException invalid) { return null; }
     }
 
     @Transactional
@@ -70,7 +102,7 @@ public class ThematicReservationService {
     public List<Map<String, Object>> myReservations(Long userId) {
         return reservations.findByRegistrationIdAndStatus(userId, "CONFIRMED").stream()
                 .map(reservation -> sessions.findById(reservation.getSessionId()).map(session -> Map.<String, Object>of(
-                        "id", reservation.getId(), "sessionTitle", session.getTitle(),
+                        "id", reservation.getId(), "sessionId", reservation.getSessionId(), "sessionTitle", session.getTitle(),
                         "date", displayDate(session.getSessionDate()), "time", displayTimeRange(session))).orElse(null))
                 .filter(Objects::nonNull).toList();
     }

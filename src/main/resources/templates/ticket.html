@@ -246,6 +246,14 @@ body.ticket-page{background:#F6F8FC}
 .tr-confetti-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .tr-complete h2{font-size:1.6rem;font-weight:800}
 .tr-complete-intro p{color:var(--mut);font-size:.92rem}
+.tr-complete-next-steps{width:min(100%,560px);margin:18px auto 22px;padding:18px;border:1px solid #dfe5f0;border-radius:16px;background:linear-gradient(135deg,#fff,#f7f8ff);box-shadow:0 10px 24px rgba(28,34,62,.06)}
+.tr-complete-next-steps p{margin:0 auto 14px;color:#4b5563;font-size:.9rem;line-height:1.55}
+.tr-complete-next-steps__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.tr-complete-next-steps__actions a,.tr-complete-next-steps__actions button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 16px;border:1px solid #d6d9e8;border-radius:10px;background:#fff;color:#30246f;font-size:.88rem;font-weight:750;text-decoration:none}
+.tr-complete-next-steps__actions a{border-color:#138a5b;background:#138a5b;color:#fff}
+.tr-complete-next-steps__actions a:hover,.tr-complete-next-steps__actions a:focus{border-color:#0f6e48;background:#0f6e48;color:#fff}
+.tr-complete-next-steps__actions button:hover,.tr-complete-next-steps__actions button:focus{border-color:#6c63ff;background:#f5f4ff;color:#30246f}
+@media(max-width:480px){.tr-complete-next-steps{padding:15px}.tr-complete-next-steps__actions{flex-direction:column}.tr-complete-next-steps__actions a,.tr-complete-next-steps__actions button{width:100%}}
 .id-card-stage{display:flex;flex-direction:column;align-items:center;margin:8px 0 20px}
 .id-card{position:relative;width:100%;max-width:370px;min-height:0;overflow:hidden;background:#fff;border:1px solid rgba(92,79,186,.22);border-radius:22px;box-shadow:0 24px 44px -30px rgba(45,28,117,.45);transform:translateY(0)}
 .id-card__top-cap{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:78%;height:34px;border-radius:18px;background:linear-gradient(90deg,#f6f6f8,#dfe4f4,#f9f9fb);box-shadow:0 10px 18px rgba(18,23,46,.18);}
@@ -280,6 +288,22 @@ body.ticket-page{background:#F6F8FC}
 .id-card__footer{position:relative;z-index:2;display:flex;align-items:center;gap:8px;justify-content:center;padding:10px 10px 12px;background:#f8f7fc;color:#46516d;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;flex-wrap:wrap}
 .id-card__footer strong{font-size:.82rem;letter-spacing:.1em;color:#1d2d4d;overflow-wrap:anywhere}
 .id-card__shine,.id-card__glow{display:none}
+.id-card--central-government{--id-card-category-color:#1E3A8A;border-color:#1E3A8A}
+.id-card--state-government{--id-card-category-color:#0F766E;border-color:#0F766E}
+.id-card--academia{--id-card-category-color:#7C3AED;border-color:#7C3AED}
+.id-card--industry-startup{--id-card-category-color:#2563EB;border-color:#2563EB}
+.id-card--central-government .id-card__header,
+.id-card--state-government .id-card__header,
+.id-card--academia .id-card__header,
+.id-card--industry-startup .id-card__header{background:var(--id-card-category-color)}
+.id-card--central-government .id-card__badge-wrap,
+.id-card--state-government .id-card__badge-wrap,
+.id-card--academia .id-card__badge-wrap,
+.id-card--industry-startup .id-card__badge-wrap{background:var(--id-card-category-color)}
+.id-card--central-government .id-card__qr-shell,
+.id-card--state-government .id-card__qr-shell,
+.id-card--academia .id-card__qr-shell,
+.id-card--industry-startup .id-card__qr-shell{border-color:var(--id-card-category-color)}
 .id-card__hint{margin:14px 0 0;font-size:.8rem;color:var(--mut)}
 .id-card-notice{width:min(100%,470px);margin:20px auto 0;padding:24px 22px;border:1px solid #e4e5ed;border-radius:18px;background:#f8f8fc;color:#252631;box-shadow:0 8px 24px rgba(28,34,62,.06);text-align:left}
 .id-card-notice__title{display:flex;align-items:center;gap:10px;margin:0 0 18px;font-size:1.08rem;font-weight:800;color:#252631}
@@ -331,6 +355,26 @@ body.ticket-page{background:#F6F8FC}
 
 <main class="rg" th:style="|background-image:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,.22)),url('@{/images/registerback.png}');background-size:cover;background-position:center;background-repeat:no-repeat;|">
   <div class="rg-flag"></div>
+  <div class="container pt-4" th:if="${sessionReservationLoginRequired}">
+    <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start gap-3 mb-0" role="status">
+      <i class="bi bi-calendar-check fs-4" aria-hidden="true"></i>
+      <div>
+        <strong>Register or sign in to reserve a session</strong>
+        <p class="mb-2">Complete your Tec-Verse registration, then sign in to reserve your place in a session.</p>
+        <button type="button" class="btn btn-sm btn-outline-dark" data-role-login-open>Already registered? Sign in</button>
+      </div>
+      <div class="container pt-4" th:if="${sessionId != null}">
+        <div class="alert alert-info border-0 shadow-sm d-flex align-items-start gap-3 mb-0" role="status">
+          <i class="bi bi-calendar-check fs-4" aria-hidden="true"></i>
+          <div>
+            <strong>Your selected session is saved</strong>
+            <p class="mb-2">Complete registration, then return to your session to sign in and reserve your place.</p>
+            <a class="btn btn-sm btn-outline-dark" th:href="@{/sessions(reserve=${sessionId})}">Return to this session</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <section id="registration" class="rg-shell" aria-labelledby="registration-title">
     <div class="container">
@@ -412,6 +456,18 @@ body.ticket-page{background:#F6F8FC}
                 <h2 th:text="#{ticketpage.complete.title}">Registration Successful</h2>
                 <p><span id="confirmationEmailStatus" th:text="#{ticketpage.complete.emailPending}" th:data-email-sent="#{ticketpage.complete.emailSent}" th:data-email-pending="#{ticketpage.complete.emailPending}">A confirmation email with your digital entry pass will be sent to</span> <strong id="completeEmail"></strong></p>
               </div>
+
+              <section class="tr-complete-next-steps" aria-label="Next steps after registration">
+                <p>Your registration is complete. Download the Tec-Verse app for event updates, or sign in as a participant to choose your sessions.</p>
+                <div class="tr-complete-next-steps__actions">
+                  <a href="https://play.google.com/store/apps/details?id=in.cdac.tecverse.tec_app&amp;pcampaignid=web_share" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-google-play" aria-hidden="true"></i> Get it on Google Play
+                  </a>
+                  <button type="button" data-attendee-login-open>
+                    <i class="bi bi-person-check" aria-hidden="true"></i> Continue to participant login
+                  </button>
+                </div>
+              </section>
 
               <div class="id-card-stage" id="idCardStage">
                 <div class="id-card" id="idCard">
@@ -591,7 +647,7 @@ body.ticket-page{background:#F6F8FC}
 <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script defer th:src="@{/js/main.js}"></script>
 <script defer th:src="@{/js/celebration.js}"></script>
-<script defer th:src="@{/js/ticket-registration.js}"></script>
+<script defer th:src="@{/js/ticket-registration.js(v=20261102-fast-otp)}"></script>
 <script th:nonce="${cspNonce}" th:inline="none">
 /* Presentation only: scroll line, reveal, live pass, preview table. Does not touch your form logic. */
 (function () {

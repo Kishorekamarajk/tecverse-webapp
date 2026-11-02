@@ -64,8 +64,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         registration.setCompanyName(request.getCompanyName());
         registration.setWebsite(request.getWebsite());
         registration.setIndustry(request.getIndustry());
-        registration.setCity(request.getCity());
-        registration.setCountry(request.getCountry());
+        registration.setCity(optionalLocation(request.getCity()));
+        registration.setCountry(optionalLocation(request.getCountry()));
         registration.setGstNumber(request.getGst());
         registration.setCompanySize(request.getCompanySize() == null ? "Not specified" : request.getCompanySize());
         registration.setFullName(request.getFullName());
@@ -142,6 +142,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (request.getDocumentUrls() != null && !request.getDocumentUrls().isEmpty()) {
             exhibitor.setDocumentOnePath(request.getDocumentUrls().get(0));
         }
+
         if (request.getDocumentUrls() != null && request.getDocumentUrls().size() > 1) {
             exhibitor.setDocumentTwoPath(request.getDocumentUrls().get(1));
         }
@@ -155,6 +156,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         exhibitor.setCreatedAt(now);
         exhibitor.setUpdatedAt(now);
         exhibitorRepo.saveAndFlush(exhibitor);
+    }
+
+    private static String optionalLocation(String value) {
+        return value == null || value.isBlank() ? "Not provided" : value.trim();
     }
 
     @Override

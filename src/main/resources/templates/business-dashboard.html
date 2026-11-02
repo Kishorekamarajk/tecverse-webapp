@@ -18,6 +18,21 @@
             <h1>Welcome, <span th:text="${businessContactName}">Contact</span></h1>
             <p th:if="${businessRole == 'sponsor'}">For sponsorship assistance, contact our team on WhatsApp: <a href="https://wa.me/919566023706" target="_blank" rel="noopener noreferrer">+91 9566023706</a>.</p>
             <p th:unless="${businessRole == 'sponsor'}">Our team will get in touch with you at stalls-tecverse@cdac.in for any further assistance <a href="mailto:stalls-tecverse@cdac.in">stalls-tecverse@cdac.in</a>.</p></div>
+        <div class="business-account-actions">
+            <a class="btn btn-outline-primary" th:if="${attendeeSignedIn == true}" th:href="@{/sessions}"><i class="bi bi-calendar2-check" aria-hidden="true"></i> Attendee sessions</a>
+            <form th:if="${attendeeExhibitorRegistered == true and businessRole != 'exhibitor'}" method="post" th:action="@{/business-portal/switch/exhibitor}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="btn btn-outline-primary" type="submit"><i class="bi bi-shop-window" aria-hidden="true"></i> Exhibitor portal</button>
+            </form>
+            <form th:if="${attendeeSponsorRegistered == true and businessRole != 'sponsor'}" method="post" th:action="@{/business-portal/switch/sponsor}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="btn btn-outline-primary" type="submit"><i class="bi bi-award" aria-hidden="true"></i> Sponsor portal</button>
+            </form>
+            <form method="post" th:action="@{/business-portal/logout}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-box-arrow-right" aria-hidden="true"></i> Logout</button>
+            </form>
+        </div>
     </header>
     <div class="business-dashboard-grid">
         <section class="business-card business-registration-card" th:if="${businessRole == 'exhibitor'}" aria-labelledby="businessDetailsHeading">

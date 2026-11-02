@@ -157,20 +157,23 @@
     <div class="container home-app-promo__inner">
         <div class="home-app-promo__copy">
             <span class="home-app-promo__eyebrow"><i class="bi bi-stars" aria-hidden="true"></i> THE OFFICIAL <span class="text-capitalize">Tec-Verse</span> APP</span>
-            <h2 id="homeAppPromoTitle">Easy venue access <span>starts here.</span></h2>
+            <h2 id="homeAppPromoTitle">Your event. Your way. <span>All in one app.</span></h2>
             <p>Choose the thematic sessions you’re interested in on the Tec-Verse website or app, and keep event information close at hand.</p>
         </div>
         <div class="home-app-promo__visual" aria-hidden="true">
             <div class="home-app-promo__orbit"></div>
             <div class="home-app-promo__phone">
                 <div class="home-app-promo__phone-screen">
-                    <div class="home-app-promo__phone-top"><span>Tec-<b>Verse</b></span><i class="bi bi-bell-fill"></i></div>
-                    <div class="home-app-promo__phone-welcome">Welcome to <strong>Tec-Verse 2026</strong><small>Explore your event</small></div>
-                    <div class="home-app-promo__phone-grid">
-                        <span><i class="bi bi-calendar-event"></i><small>Schedule</small></span>
-                        <span><i class="bi bi-people-fill"></i><small>Speakers</small></span>
-                        <span><i class="bi bi-geo-alt-fill"></i><small>Venue</small></span>
-                        <span><i class="bi bi-shop-window"></i><small>Exhibitors</small></span>
+                    <div class="home-app-promo__phone-top"><span class="home-app-promo__phone-brand"><img th:src="@{/images/tecverselogo.png}" alt="">Tec-<b>Verse</b></span></div>
+                    <div class="home-app-promo__phone-welcome">Welcome to <strong>Tec-Verse 2026</strong></div>
+                    <div class="home-app-promo__phone-details">
+                        <div class="home-app-promo__phone-details-title"><i class="bi bi-stars"></i><span>Explore your event</span></div>
+                        <div class="home-app-promo__phone-grid">
+                            <span><i class="bi bi-calendar-event"></i><small>Schedule</small></span>
+                            <span><i class="bi bi-people-fill"></i><small>Speakers</small></span>
+                            <span><i class="bi bi-geo-alt-fill"></i><small>Venue</small></span>
+                            <span><i class="bi bi-shop-window"></i><small>Exhibitors</small></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -241,7 +244,8 @@
                     data-institution="cdac"
                     aria-controls="institution-domain-panel"
                     aria-expanded="false"
-                    aria-pressed="false">
+                    aria-pressed="false"
+                    aria-label="View C-DAC thematic sessions">
                 <span class="institution-node-glow position-absolute"></span>
                 <span class="institution-logo-wrap">
                     <img th:src="@{/images/1.svg}" alt="C-DAC logo" th:alt="#{page.home.logo.cdac}" />
@@ -253,7 +257,8 @@
                     data-institution="sameer"
                     aria-controls="institution-domain-panel"
                     aria-expanded="false"
-                    aria-pressed="false">
+                    aria-pressed="false"
+                    aria-label="View SAMEER thematic sessions">
                 <span class="institution-node-glow position-absolute"></span>
                 <span class="institution-logo-wrap">
                     <img th:src="@{/images/2.svg}" alt="SAMEER logo" th:alt="#{page.home.logo.sameer}" />
@@ -265,7 +270,8 @@
                     data-institution="cmet"
                     aria-controls="institution-domain-panel"
                     aria-expanded="false"
-                    aria-pressed="false">
+                    aria-pressed="false"
+                    aria-label="View C-MET thematic sessions">
                 <span class="institution-node-glow position-absolute"></span>
                 <span class="institution-logo-wrap" >
                     <img th:src="@{/images/3.svg}" alt="C-MET logo" th:alt="#{page.home.logo.cmet}" />
@@ -280,49 +286,41 @@
                 </span>
             </div>
 
-        </div>
-
-        <div id="institution-domain-panel"
-             class="institution-domain-panel"
-             data-active-institution="cdac"
-             role="dialog"
-             aria-modal="true"
-             aria-labelledby="institution-panel-title"
-             aria-live="polite"
-             tabindex="-1"
-             hidden>
-
-            <div class="institution-panel-head justify-content-between">
-                <div>
-                    <span class="institution-panel-kicker" th:text="#{institution.panel.selected}">Selected Institution</span>
-                    <h3 id="institution-panel-title">C-DAC</h3>
-                </div>
-
-                <button type="button"
-                        class="institution-panel-close"
-                        th:attr="aria-label=#{institution.panel.close}"
-                        data-institution-panel-close>
-                    <i class="bi bi-x-lg" aria-hidden="true"></i>
-                </button>
-            </div>
-
-            <div id="institution-domain-list"
-                 class="institution-domain-list"
-                 role="list"></div>
-
-            <div id="institution-content"
-                 class="institution-domain-content">
-                <div class="domain-content-placeholder">
-                    <span class="domain-content-icon">
-                        <i class="bi bi-stars"></i>
-                    </span>
+            <div id="institution-domain-panel"
+                 class="institution-domain-panel"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="institution-panel-title"
+                 tabindex="-1"
+                 hidden>
+                <div class="institution-panel-head justify-content-between">
                     <div>
-                        <strong th:text="#{institution.panel.selectDomain}">Select a domain</strong>
-                        <p th:text="#{institution.panel.chooseDomain}">Choose a thematic domain above to view its focus.</p>
+                        <span class="institution-panel-kicker" th:text="#{institution.panel.selected}">Selected Institution</span>
+                        <div class="institution-panel-title-row">
+                            <h3 id="institution-panel-title">C-DAC</h3>
+                            <a id="institution-official-website"
+                               class="institution-official-website"
+                               href="https://www.cdac.in/"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                <i class="bi bi-globe2" aria-hidden="true"></i>
+                               www.cdac.in
+                            </a>
+                        </div>
                     </div>
+                    <button type="button"
+                            class="institution-panel-close"
+                            th:attr="aria-label=#{institution.panel.close}"
+                            data-institution-panel-close>
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </button>
                 </div>
+                <div id="institution-domain-list" class="institution-domain-list" role="list"></div>
+                <div id="institution-content" class="institution-domain-content"></div>
             </div>
+
         </div>
+
     </div>
 </section>
 

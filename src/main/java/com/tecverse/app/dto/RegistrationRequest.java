@@ -15,9 +15,9 @@ public class RegistrationRequest {
     @NotBlank(message="Company type or industry is required.") @Size(max=100) @Pattern(regexp=Constants.TITLE_REGEX, message="Industry may contain letters, spaces, and & . , ' - / parentheses.") private String industry;
     @Pattern(regexp="^$|^https?://.+", message="Enter a valid website URL starting with http:// or https://.") @Size(max=255) private String website;
     @Size(max=500) @Pattern(regexp=Constants.ADDRESS_REGEX, message="Address may contain letters, numbers, spaces, and , . / # ( ) & ' : -.") private String companyAddress;
-    @NotBlank(message="City is required.") @Size(max=100) @Pattern(regexp=Constants.PLACE_REGEX, message="City may contain letters, spaces, and . , ' - / parentheses.") private String city;
-    @NotBlank(message="State is required.") @Size(max=100) @Pattern(regexp=Constants.PLACE_REGEX, message="State may contain letters, spaces, and . , ' - / parentheses.") private String state;
-    @NotBlank(message="Country is required.") @Size(max=100) @Pattern(regexp=Constants.PLACE_REGEX, message="Country may contain letters, spaces, and . , ' - / parentheses.") private String country;
+    @Size(max=100) @Pattern(regexp="^$|" + Constants.PLACE_REGEX, message="City may contain letters, spaces, and . , ' - / parentheses.") private String city;
+    @Size(max=100) @Pattern(regexp="^$|" + Constants.PLACE_REGEX, message="State may contain letters, spaces, and . , ' - / parentheses.") private String state;
+    @Size(max=100) @Pattern(regexp="^$|" + Constants.PLACE_REGEX, message="Country may contain letters, spaces, and . , ' - / parentheses.") private String country;
     @Pattern(regexp="^$|" + Constants.GSTIN_REGEX, message="Enter a valid 15-character GSTIN.") @Size(max=15) private String gst;
     @Size(max=100) @Pattern(regexp=Constants.REGISTRATION_NUMBER_REGEX, message="Registration number may contain letters, numbers, / and -.") private String companyRegistrationNumber;
     @Pattern(regexp=Constants.LINKEDIN_REGEX, message="Enter a valid LinkedIn URL.") @Size(max=255) private String linkedin;

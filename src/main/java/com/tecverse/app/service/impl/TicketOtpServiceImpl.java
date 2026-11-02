@@ -26,16 +26,12 @@ import com.tecverse.app.service.MailDeliveryService;
 import com.tecverse.app.service.TicketOtpEmailDeliveryService;
 import com.tecverse.app.service.TicketOtpService;
 import com.tecverse.app.util.SMSServices;
-import com.tecverse.app.util.OtpConsoleLogger;
 import com.tecverse.app.util.ValidationUtil;
 
 @Service
 public class TicketOtpServiceImpl implements TicketOtpService {
 
     private static final Logger log = LoggerFactory.getLogger(TicketOtpServiceImpl.class);
-
-    @Value("${tecverse.otp.log-to-console:false}")
-    private boolean logOtpsToConsole;
 
     private static final Duration OTP_VALIDITY = Duration.ofMinutes(5);
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -108,10 +104,9 @@ public class TicketOtpServiceImpl implements TicketOtpService {
         String msg = "Dear Patron, Use OTP " + otp + " to verify your mobile number and complete your registration on the Tec-Verse Portal. Please do not share this OTP with anyone. Team Tec-Verse";
         String output = smsServices.sendOtpSMS(smsUsername, smsPassword, msg, smsSenderId, mobile, smsSecureKey, smsTemplateId);
         if (output == null || !output.contains(SMSServices.SUCCESS_MARKER)) {
-            log.error("OTP SMS sending FAILED for mobile ending {}: {}", mobile.substring(Math.max(0, mobile.length() - 4)), output);
+            log.error("OTP SMS sending failed for mobile ending {}.", mobile.substring(Math.max(0, mobile.length() - 4)));
             throw new IllegalStateException("SMS Gateway error. Please try again later.");
         }
-        OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "Mobile number verification", otp);
         // Saving with the same mobile replaces any earlier OTP for that number (and resets attempts).
         mobileOtpRepository.save(new TicketMobileOtp(mobile, hashMobileOtp(mobile, otp), Instant.now().plus(OTP_VALIDITY)));
     }
@@ -200,7 +195,6 @@ public class TicketOtpServiceImpl implements TicketOtpService {
             ).whenComplete((ignored, failure) -> {
                 if (failure == null) {
                     delivery.status().set("sent");
-                    OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "Ticket email verification", otp);
                 } else {
                     delivery.status().set("failed");
                     otpStore.remove(email, entry);
@@ -282,7 +276,6 @@ public class TicketOtpServiceImpl implements TicketOtpService {
             passwordResetOtpAttempts.remove(normalizedEmail);
             throw new IllegalStateException("Unable to send email right now. Please try again later.");
         }
-        OtpConsoleLogger.printIfEnabled(logOtpsToConsole, "App password reset", otp);
     }
 
     public synchronized String verifyPasswordResetOtp(String email, String otp) {
