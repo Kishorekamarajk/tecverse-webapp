@@ -298,6 +298,7 @@ function preview(){
 async function post(url,data){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const j=await r.json().catch(()=>({}));if(!r.ok){const error=new Error(j.message||j.error||'Request failed');error.status=r.status;error.retryAfter=Number(r.headers.get('Retry-After'))||0;throw error;}return j;}
 
 $('#sendOtp').onclick=async()=>{
+ if(!$('#password').value.trim()){openOtpDialog('#passwordRequiredDialog');return;}
  if(window.jQuery && !window.jQuery('#ticketVerifyForm').valid())return;
  const btn=$('#sendOtp'); const name=$('#verifyName').value.trim(),email=$('#email').value.trim(),phone=$('#phone').value.trim(),password=$('#password').value,confirmPassword=$('#confirmPassword').value,m=$('#verifyMsg'),otpMessage=$('#otpBox').hidden?m:$('#emailOtpMsg');
  if(!name||!email||!phone||!password||!confirmPassword){msg(m,'Enter your name, email, phone number, and password.');return;}
@@ -316,6 +317,8 @@ $('#sendOtp').onclick=async()=>{
  catch(e){msg(otpMessage,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,otpMessage);}
 };
+$('#passwordRequiredClose').onclick=()=>$('#passwordRequiredDialog').close();
+$('#passwordRequiredDialog').addEventListener('close',()=>$('#password').focus());
 function startTimer(){let n=60;$('#resendOtp').disabled=true;clearInterval(timer);timer=setInterval(()=>{n--;$('#resendOtp').textContent=n>0?`Resend OTP (${n}s)`:'Resend OTP';if(n<=0){clearInterval(timer);$('#resendOtp').disabled=false;}},1000);$('#resendOtp').textContent='Resend OTP (60s)';}
 function pollEmailOtpDelivery(requestId){
  clearTimeout(emailOtpDeliveryTimer);
