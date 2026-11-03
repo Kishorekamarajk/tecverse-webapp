@@ -34,6 +34,7 @@ public class ThematicReservationService {
                     < session.getTotalCapacity() - session.getReservedSeats();
             return Map.<String, Object>of(
                     "id", session.getId(), "title", session.getTitle(),
+                    "sessionType", session.getSessionType(),
                     "description", Objects.toString(session.getDescription(), ""),
                     "date", displayDate(session.getSessionDate()), "time", displayTimeRange(session),
                     "availability", available ? "Available" : "Not Available",
@@ -113,6 +114,7 @@ public class ThematicReservationService {
             Map<String, Object> item = new LinkedHashMap<>();
             item.put("id", session.getId());
             item.put("title", session.getTitle());
+            item.put("sessionType", session.getSessionType());
             item.put("description", Objects.toString(session.getDescription(), ""));
             item.put("date", Objects.toString(session.getSessionDate(), ""));
             item.put("time", Objects.toString(session.getTimeLabel(), ""));
@@ -133,13 +135,14 @@ public class ThematicReservationService {
         ThematicSession session = id == null ? new ThematicSession() : sessions.findByIdForUpdate(id)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found."));
         String title = Objects.toString(form.get("title"), "").trim();
+        String sessionType = Objects.toString(form.get("sessionType"), "SESSION").trim().toUpperCase(Locale.ROOT);
         String description = Objects.toString(form.get("description"), "");
         String date = Objects.toString(form.get("date"), "");
         String fromTime = Objects.toString(form.get("time"), "");
         String toTime = Objects.toString(form.get("toTime"), "");
         int capacity = number(form.get("totalCapacity"), 300);
         int reserved = number(form.get("reservedSeats"), 10);
-        if (title.isBlank() || title.length() > 180 || description.length() > 3000 || capacity < 1 || reserved < 0 || reserved >= capacity) {
+        if (!List.of("SESSION", "TUTORIAL").contains(sessionType) || title.isBlank() || title.length() > 180 || description.length() > 3000 || capacity < 1 || reserved < 0 || reserved >= capacity) {
             throw new IllegalArgumentException("Enter a title, valid session details and capacity values; reserved seats must be less than total capacity.");
         }
         try {
@@ -155,6 +158,7 @@ public class ThematicReservationService {
         long confirmed = session.getId() == null ? 0 : reservations.countBySessionIdAndStatus(session.getId(), "CONFIRMED");
         if (capacity - reserved < confirmed) throw new IllegalArgumentException("General capacity cannot be reduced below confirmed reservations.");
         session.setTitle(title);
+        session.setSessionType(sessionType);
         session.setDescription(description);
         session.setSessionDate(date);
         session.setTimeLabel(fromTime);

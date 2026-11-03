@@ -54,12 +54,14 @@ public class TicketRegistrationReferenceService {
 
     static String referenceCode(TicketRegistrationRequest request) {
         return switch (request.getCategory()) {
-            case "ACADEMIA" -> switch (normalize(request.getAcademiaRole())) {
-                case "STUDENT" -> "AS";
-                case "FACULTY", "PROFESSOR / FACULTY", "PROFESSOR/FACULTY" -> "AP";
-                case "RESEARCH SCHOLAR" -> "AR";
-                default -> throw new IllegalArgumentException("Choose a valid Academia applicant role.");
-            };
+            case "ACADEMIA" -> "FOREIGNER".equals(request.getCitizenshipStatus())
+                    ? "AF"
+                    : switch (normalize(request.getAcademiaRole())) {
+                        case "STUDENT" -> "AS";
+                        case "FACULTY", "PROFESSOR / FACULTY", "PROFESSOR/FACULTY" -> "AP";
+                        case "RESEARCH SCHOLAR" -> "AR";
+                        default -> throw new IllegalArgumentException("Choose a valid Academia applicant role.");
+                    };
             case "STATE_GOVERNMENT" -> "SG";
             case "CENTRAL_GOVERNMENT" -> "CG";
             case "INDUSTRY_STARTUP" -> "ID";

@@ -49,16 +49,37 @@
     });
   });
 
-  registeredButton.addEventListener('click', () => {
+  function continueWithSessionReservation(destination) {
     const sessionId = selectedForm?.dataset.sessionReserve;
-    if (!sessionId) return;
-    window.location.assign(`${contextPath}/login?sessionId=${encodeURIComponent(sessionId)}`);
+    if (!sessionId || !/^[1-9]\d*$/.test(sessionId)) return;
+    const handoff = document.createElement('form');
+    handoff.method = 'post';
+    handoff.action = `${contextPath}/sessions/pending`;
+    const csrf = selectedForm.querySelector('input[name="_csrf"]');
+    if (csrf) {
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = csrf.name;
+      csrfInput.value = csrf.value;
+      handoff.appendChild(csrfInput);
+    }
+    for (const [name, value] of [['sessionId', sessionId], ['destination', destination]]) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      handoff.appendChild(input);
+    }
+    document.body.appendChild(handoff);
+    handoff.submit();
+  }
+
+  registeredButton.addEventListener('click', () => {
+    continueWithSessionReservation('login');
   });
 
   newUserButton.addEventListener('click', () => {
-    const sessionId = selectedForm?.dataset.sessionReserve;
-    if (!sessionId) return;
-    window.location.assign(`${contextPath}/registration?sessionId=${encodeURIComponent(sessionId)}`);
+    continueWithSessionReservation('registration');
   });
 
   closeButton.addEventListener('click', () => {

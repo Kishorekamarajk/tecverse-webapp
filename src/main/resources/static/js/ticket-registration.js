@@ -33,6 +33,18 @@ let verified=false, emailVerified=false, mobileVerified=false, timer=null, mobil
 function msg(el,text,ok=false){el.textContent=text;el.className='tr-msg small fw-semibold mt-3 '+(ok?'text-success':'text-danger');}
 function openOtpDialog(id){const dialog=$(id);if(dialog&&!dialog.open)dialog.showModal();}
 $$('[data-otp-dialog-close]').forEach(button=>button.addEventListener('click',()=>button.closest('dialog')?.close()));
+function setupOtpReopen(dialogSelector,triggerSelector,inputSelector){
+ const dialog=$(dialogSelector),trigger=$(triggerSelector),inputs=$$(inputSelector+' input');
+ if(!dialog||!trigger)return null;
+ const button=document.createElement('button');
+ button.type='button';button.className='tr-otp-reopen';button.textContent='Enter code';button.hidden=true;
+ button.setAttribute('aria-label','Enter verification code');
+ dialog.insertAdjacentElement('afterend',button);
+ button.addEventListener('click',()=>{openOtpDialog(dialogSelector);inputs.find(input=>!input.value)?.focus()||inputs[0]?.focus();});
+ return button;
+}
+const mobileOtpReopen=setupOtpReopen('#mobileOtpDialog','#sendMobileOtp','#mobileOtpInputs');
+const emailOtpReopen=setupOtpReopen('#emailOtpDialog','#sendOtp','#emailOtpInputs');
 
 function setLoading(btn,on,loadingLabel){
   if(!btn)return;
@@ -290,6 +302,17 @@ function validateTicketFields(form){
  if(!valid){firstInvalid.reportValidity();firstInvalid.focus();}
  return valid;
 }
+const passwordInput=$('#password'),passwordHint=$('.tr-password-hint');
+function updatePasswordHint(){
+ if(!passwordInput||!passwordHint)return;
+ const value=passwordInput.value;
+ const meetsRules=value.length>=8&&value.length<=64&&/[A-Z]/.test(value)&&/[0-9]/.test(value)&&/[\u0021-\u002f\u003a-\u0040\u005b-\u0060\u007b-\u007e]/.test(value);
+ const visible=value.length>0&&!meetsRules;
+ passwordHint.hidden=!visible;
+ passwordHint.classList.toggle('is-visible',visible);
+}
+passwordInput?.addEventListener('input',updatePasswordHint);
+passwordInput?.addEventListener('blur',updatePasswordHint);
 function preview(){
  const o=collect(); const labels={category:'Registration category',officialName:'Full name',email:'Email address',phone:'Mobile number',citizenshipStatus:'Citizenship / residency status',applicantState:'State / Union Territory',countryName:'Country',visaInformationAcknowledged:'Visa information acknowledgement',academiaType:'Academia type',collegeName:'Institution',collegeDistrict:'District',universityName:'University',academiaRole:'Participant role',registerNumber:'Student / staff ID number',centralMinistry:'Ministry / department',stateName:'Government state / union territory',stateDepartment:'Department',organizationName:'Organization / office',organizationLocation:'City / office location',designation:'Designation / job title',industryOrStartup:'Organization type',passportNumber:'Passport number',passportValidUntil:'Passport expiry date',passportName:'Name as shown on passport'};
  $('#preview').innerHTML=Object.entries(labels).filter(([k])=>o[k]).map(([k,l])=>`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">${esc(l)}</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(k==='visaInformationAcknowledged'?'Yes':o[k])}</strong></div>`).join('')+`<div class="col-12 col-md-6 border-bottom p-3"><span class="small text-secondary text-uppercase">Participation Preference</span><strong class="d-block mt-1 fw-semibold text-[#07182F]">${esc(o.attendanceDays.join(', '))}</strong></div>`;
@@ -313,7 +336,7 @@ $('#sendOtp').onclick=async()=>{
  if(emailVerified)return;
  let retryAfterSeconds=0;
  setLoading(btn,true);
- try{const result=await post(API.send,{fullName:name,email,phone,passType:'Tec-Verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;$('#verifyOtp').disabled=false;openOtpDialog('#emailOtpDialog');msg($('#emailOtpMsg'),'OTP requested. You can verify as soon as it arrives.',true);m.textContent='';startTimer();$$('#emailOtpInputs input').forEach(input=>{input.value='';});$$('#emailOtpInputs input')[0]?.focus();pollEmailOtpDelivery(result.data?.requestId);}
+ try{const result=await post(API.send,{fullName:name,email,phone,passType:'Tec-Verse 2026 Ticket'});$('#otpEmail').textContent=email;$('#otpBox').hidden=false;emailOtpReopen.hidden=false;$('#verifyOtp').disabled=false;openOtpDialog('#emailOtpDialog');msg($('#emailOtpMsg'),'OTP requested. You can verify as soon as it arrives.',true);m.textContent='';startTimer();$$('#emailOtpInputs input').forEach(input=>{input.value='';});$$('#emailOtpInputs input')[0]?.focus();pollEmailOtpDelivery(result.data?.requestId);}
  catch(e){msg(otpMessage,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,otpMessage);}
 };
@@ -373,7 +396,7 @@ $('#sendMobileOtp').onclick=async()=>{
  if(!/^(?:\+91[-\s]?)?[6-9]\d{9}$/.test(phone)){msg(m,'Enter a valid 10-digit Indian mobile number.');return;}
  let retryAfterSeconds=0;
  setLoading(btn,true,'Sending…');
- try{await post(API.sendMobile,{phone});$('#otpMobile').textContent=phone;$('#mobileOtpBox').hidden=false;openOtpDialog('#mobileOtpDialog');$$('#mobileOtpInputs input').forEach(i=>{i.value='';});msg($('#mobileOtpMsg'),'OTP sent to your mobile number by SMS.',true);m.textContent='';startMobileTimer();$$('#mobileOtpInputs input')[0]?.focus();}
+ try{await post(API.sendMobile,{phone});$('#otpMobile').textContent=phone;$('#mobileOtpBox').hidden=false;mobileOtpReopen.hidden=false;openOtpDialog('#mobileOtpDialog');$$('#mobileOtpInputs input').forEach(i=>{i.value='';});msg($('#mobileOtpMsg'),'OTP sent to your mobile number by SMS.',true);m.textContent='';startMobileTimer();$$('#mobileOtpInputs input')[0]?.focus();}
  catch(e){msg(otpMessage,e.message);if(e.status===429)retryAfterSeconds=e.retryAfter||60;}
  finally{setLoading(btn,false);if(retryAfterSeconds)startRateLimitCountdown(btn,retryAfterSeconds,otpMessage);}
 };
@@ -392,6 +415,7 @@ $('#verifyMobileOtp').onclick=async()=>{
 function setMobileVerifiedUi(on){
  const b=$('#sendMobileOtp');
  if(on&&$('#mobileOtpDialog').open)$('#mobileOtpDialog').close();
+ if(mobileOtpReopen)mobileOtpReopen.hidden=on;
  $('#phone').readOnly=on;$('#mobileOtpBox').hidden=true;clearInterval(mobileTimer);
  b.disabled=on;b.innerHTML=on?'<i class="bi bi-check-circle-fill"></i> Verified':'Verify Mobile';delete b.dataset.label;
 }
@@ -443,6 +467,7 @@ const sendOtpLabel=$('#sendOtp').innerHTML;
 function setEmailVerifiedUi(on){
  const b=$('#sendOtp');
  if(on&&$('#emailOtpDialog').open)$('#emailOtpDialog').close();
+ if(emailOtpReopen)emailOtpReopen.hidden=on;
  $('#email').readOnly=on;$('#otpBox').hidden=true;clearInterval(timer);
  b.disabled=on;b.innerHTML=on?'<i class="bi bi-check-circle-fill"></i> Verified':sendOtpLabel;delete b.dataset.label;
 }
@@ -520,12 +545,11 @@ function showRegistrationCelebration(){
  message.textContent='Your registration has been submitted. We look forward to seeing you at Tec-Verse 2026.';
  message.style.cssText='margin:0 0 24px;color:#536174;font-size:16px;line-height:1.5';
  let sessionReturnLink=null;
- const sessionId=new URLSearchParams(window.location.search).get('sessionId');
- if(sessionId&&/^[1-9]\d*$/.test(sessionId)){
+ if(document.body.dataset.sessionReservationPending==='true'){
   sessionReturnLink=document.createElement('a');
   const contextPath=(document.body.dataset.contextPath||'').replace(/\/$/,'');
-  sessionReturnLink.href=`${contextPath}/sessions?reserve=${encodeURIComponent(sessionId)}`;
-  sessionReturnLink.textContent='Return to your selected session';
+  sessionReturnLink.href=`${contextPath}/sessions`;
+  sessionReturnLink.textContent='Return to sessions';
   sessionReturnLink.style.cssText='display:block;margin:0 0 18px;color:#d94c0b;font-size:15px;font-weight:750;text-decoration:none';
  }
  const close=document.createElement('button');

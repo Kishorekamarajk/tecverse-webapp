@@ -106,6 +106,9 @@ body.ticket-page{background:#F6F8FC}
 @keyframes rgIn{from{opacity:0;transform:translateY(16px)}}
 /* Compact OTP panel shown directly under its field (simple portal style). */
 .rg .input-group .tr-primary{height:auto;padding:0 14px;font-size:.8rem;font-weight:600;box-shadow:none;white-space:nowrap}
+.ticket-page #sendOtp{background:#6C63FF!important;color:#fff!important;box-shadow:none!important}
+.ticket-page #sendOtp:hover{background:#574FE0!important;color:#fff!important}
+.ticket-page #sendOtp:focus-visible{outline:2px solid rgba(108,99,255,.35);outline-offset:2px}
 .tr-otp{min-width:0;margin-top:8px;padding:10px 12px;border-radius:6px;background:#F8FAFC;border:1px solid var(--bd)}
 .tr-otp-note{margin:0 0 8px;font-size:.78rem;font-weight:500;color:#475569;overflow-wrap:anywhere}
 .tr-otp-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
@@ -140,11 +143,17 @@ body.ticket-page{background:#F6F8FC}
 .tr-otp-dialog .tr-otp-btn{min-width:96px;height:40px;border:1px solid #e96819;border-radius:5px;background:#f47a20;color:#fff;font-size:.88rem;font-weight:700}
 .tr-otp-dialog .tr-otp-resend{margin-top:12px;color:#d95f12}
 .tr-otp-dialog .tr-msg{margin-top:10px}
+.tr-otp-reopen{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:0;border:0;background:none;color:#e87527;font-size:.78rem;font-weight:700;text-decoration:underline;cursor:pointer}
+.tr-otp-reopen:hover{color:#c85b12}
+.tr-otp-reopen:focus-visible{outline:2px solid rgba(232,117,39,.45);outline-offset:3px;border-radius:3px}
+.tr-otp-reopen[hidden]{display:none}
 @media(max-width:360px){.rg-card{padding:16px}.tr-otp-inputs{gap:4px}.tr-otp-inputs .form-control{width:32px;height:36px}}
 /* Keep the email and mobile verification controls aligned as each OTP panel opens. */
 .tr-verify-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px;row-gap:16px;align-items:start}
 .tr-verify-field{min-width:0}
-.rg .tr-password-hint{display:flex;align-items:flex-start;gap:6px;color:var(--err)!important;line-height:1.45}
+.rg .tr-password-hint{display:none;align-items:flex-start;gap:6px;color:var(--err)!important;line-height:1.45}
+.rg .tr-password-hint.is-visible{display:flex}
+.rg .tr-password-hint[hidden]{display:none!important}
 .tr-password-hint i{flex:none;margin-top:1px}
 .tr-verify-name{grid-column:1;grid-row:1}
 .tr-verify-mobile{grid-column:2;grid-row:1}
@@ -357,7 +366,7 @@ body.ticket-page{background:#F6F8FC}
 </style>
 </head>
 
-<body class="ticket-page no-hero" th:attr="data-context-path=@{/}">
+<body class="ticket-page no-hero" th:attr="data-context-path=@{/},data-session-reservation-pending=${sessionReservationPending}">
 <script th:nonce="${cspNonce}" th:inline="none">document.body.classList.add('js');</script>
 <div id="rgScroll"></div>
 <div th:replace="~{fragments/navbar :: navbar('ticket')}"></div>
@@ -372,13 +381,13 @@ body.ticket-page{background:#F6F8FC}
         <p class="mb-2">Complete your Tec-Verse registration, then sign in to reserve your place in a session.</p>
         <button type="button" class="btn btn-sm btn-outline-dark" data-role-login-open>Already registered? Sign in</button>
       </div>
-      <div class="container pt-4" th:if="${sessionId != null}">
+      <div class="container pt-4" th:if="${sessionReservationPending}">
         <div class="alert alert-info border-0 shadow-sm d-flex align-items-start gap-3 mb-0" role="status">
           <i class="bi bi-calendar-check fs-4" aria-hidden="true"></i>
           <div>
             <strong>Your selected session is saved</strong>
             <p class="mb-2">Complete registration, then return to your session to sign in and reserve your place.</p>
-            <a class="btn btn-sm btn-outline-dark" th:href="@{/sessions(reserve=${sessionId})}">Return to this session</a>
+            <a class="btn btn-sm btn-outline-dark" th:href="@{/sessions}">Return to sessions</a>
           </div>
         </div>
       </div>
@@ -437,7 +446,7 @@ body.ticket-page{background:#F6F8FC}
                   </div>
                   </dialog>
                 </div>
-                <div class="tr-verify-field tr-verify-password"><label class="rg-f"><span th:text="#{ticket.verify.createPassword}">Create Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="8+ characters" th:placeholder="#{ticket.verify.placeholder.password}" required><button class="btn password-toggle" type="button" data-password-target="password" aria-label="Show password" th:aria-label="#{ticketpage.password.show}" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span><small class="tr-password-hint fw-normal d-block mt-1"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i><span th:text="#{ticketpage.password.hint}">Use 8+ characters with an uppercase letter, a number, and a symbol.</span></small></label></div>
+                <div class="tr-verify-field tr-verify-password"><label class="rg-f"><span th:text="#{ticket.verify.createPassword}">Create Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="8+ characters" th:placeholder="#{ticket.verify.placeholder.password}" required><button class="btn password-toggle" type="button" data-password-target="password" aria-label="Show password" th:aria-label="#{ticketpage.password.show}" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span><small class="tr-password-hint fw-normal d-block mt-1" hidden><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i><span th:text="#{ticketpage.password.hint}">Use 8+ characters with an uppercase letter, a number, and a symbol.</span></small></label></div>
 
                 <div class="tr-verify-field tr-verify-confirm"><label class="rg-f"><span th:text="#{ticket.verify.confirmPassword}">Confirm Password</span><span class="tr-required-star" aria-hidden="true">*</span><span class="input-group"><input class="form-control" id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="64" th:placeholder="#{ticket.verify.placeholder.confirmPassword}" oncopy="return false" oncut="return false" onpaste="return false" required><button class="btn btn-outline-secondary password-toggle" type="button" data-password-target="confirmPassword" aria-label="Show password" th:aria-label="#{ticketpage.password.show}" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></span></label></div>
                 <div class="tr-verify-register"><button type="button" id="registerStart" class="btn tr-primary"><span th:text="#{ticketpage.verify.register}">Register</span> <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div>
@@ -663,7 +672,7 @@ body.ticket-page{background:#F6F8FC}
 <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script defer th:src="@{/js/main.js}"></script>
 <script defer th:src="@{/js/celebration.js}"></script>
-<script defer th:src="@{/js/ticket-registration.js(v=20261102-fast-otp)}"></script>
+<script defer th:src="@{/js/ticket-registration.js(v=20261103-password-hint-hidden)}"></script>
 <script th:nonce="${cspNonce}" th:inline="none">
 /* Presentation only: scroll line, reveal, live pass, preview table. Does not touch your form logic. */
 (function () {

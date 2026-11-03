@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.MediaType;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.tecverse.app.entity.ConferenceScheduleItem;
 import com.tecverse.app.entity.ContactUs;
@@ -388,8 +390,7 @@ public class PageController {
     );
 
     @GetMapping("/")
-    public String home(@RequestParam(required = false) Long sessionId, Model model) {
-        model.addAttribute("sessionId", sessionId != null && sessionId > 0 ? sessionId : null);
+    public String home(Model model) {
         model.addAttribute("thematicDomainItems", thematicDomainsForDisplay());
         model.addAttribute("chiefGuests", chiefGuestRepository.findByActiveTrueOrderByDisplayOrderAscIdAsc());
         model.addAttribute("importantDates", importantDateRepository.findByActiveTrueOrderByDisplayOrderAscIdAsc());
@@ -565,14 +566,24 @@ public class PageController {
     private static void prepareCaptcha(Model model, HttpSession session) {
         Integer answer = (Integer) session.getAttribute(CONTACT_CAPTCHA_ANSWER);
         if (answer == null) {
-            int first = CAPTCHA_RANDOM.nextInt(8) + 2;
-            int second = CAPTCHA_RANDOM.nextInt(8) + 2;
-            answer = first + second;
-            session.setAttribute(CONTACT_CAPTCHA_ANSWER, answer);
-            session.setAttribute(CONTACT_CAPTCHA_QUESTION, first + " + " + second + " = ?");
+            regenerateCaptcha(session);
         }
 
         model.addAttribute("captchaQuestion", session.getAttribute(CONTACT_CAPTCHA_QUESTION));
+    }
+
+    @GetMapping(value = "/inquiry/captcha", produces = MediaType.APPLICATION_JSON_VALUE)
+    @org.springframework.web.bind.annotation.ResponseBody
+    public Map<String, String> refreshInquiryCaptcha(HttpSession session) {
+        regenerateCaptcha(session);
+        return Map.of("question", (String) session.getAttribute(CONTACT_CAPTCHA_QUESTION));
+    }
+
+    private static void regenerateCaptcha(HttpSession session) {
+        int first = CAPTCHA_RANDOM.nextInt(8) + 2;
+        int second = CAPTCHA_RANDOM.nextInt(8) + 2;
+        session.setAttribute(CONTACT_CAPTCHA_ANSWER, first + second);
+        session.setAttribute(CONTACT_CAPTCHA_QUESTION, first + " + " + second + " = ?");
     }
 
     private static boolean isCaptchaValid(String captchaAnswer, HttpSession session) {
@@ -601,7 +612,8 @@ public class PageController {
 
     @PostMapping({"/become-sponsor", "/becomesponsor", "/become-sponsor.html", "/became-sponser", "/becamesponser", "/become-sponser"})
     public String submitSponsorInquiry(@Valid @ModelAttribute("inquiry") SponsorEnquiryForm inquiry, BindingResult bindingResult, Model model,
-                                       HttpServletRequest httpRequest, HttpServletResponse response) {
+                                       HttpServletRequest httpRequest, HttpServletResponse response,
+                                       RedirectAttributes redirectAttributes) {
         model.addAttribute("inquiry", inquiry);
         if (bindingResult.hasErrors()) {
             model.addAttribute("sponsorInquiryFailed", true);
@@ -683,9 +695,8 @@ public class PageController {
         OtpSessionVerification.consume(httpRequest, OtpSessionVerification.Purpose.SPONSOR);
         OtpSessionVerification.consume(httpRequest, OtpSessionVerification.Purpose.SPONSOR_MOBILE);
 
-        model.addAttribute("sponsorInquirySubmitted", true);
-        model.addAttribute("inquiry", new SponsorEnquiryForm());
-        return "become-sponsor";
+        redirectAttributes.addFlashAttribute("sponsorInquirySubmitted", true);
+        return "redirect:/become-sponsor";
     }
 
     @GetMapping({"/privacy-policy", "/privacy-policy/", "/privacy", "/privacy/", "/privacy-policy.html", "/privacy.html"})
@@ -713,11 +724,12 @@ public class PageController {
 
     @GetMapping({"/registration", "/ticket", "/ticket.html", "/book-your-ticket"})
     public String ticket(@RequestParam(name = "sessionReservation", required = false) String sessionReservation,
-                         @RequestParam(name = "sessionId", required = false) Long sessionId,
-                         Model model) {
+                         HttpServletRequest request, Model model) {
         model.addAttribute("ticketFaqs", faqService.activeFaqs(FaqService.TICKET));
         model.addAttribute("sessionReservationLoginRequired", "login-required".equals(sessionReservation));
-        model.addAttribute("sessionId", sessionId != null && sessionId > 0 ? sessionId : null);
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        model.addAttribute("sessionReservationPending", session != null
+                && session.getAttribute("TECVERSE_PENDING_SESSION_RESERVATION") instanceof Long);
         return "ticket";
     }
 
@@ -818,7 +830,7 @@ public class PageController {
             case "Dinner" -> new SchedulePresentation("egg-fried", "An evening of networking.");
             case "Welcome Address" -> new SchedulePresentation("person-fill", "Setting the tone for an inspiring day.");
             case "MoU Signing Inauguration" -> new SchedulePresentation("file-earmark-text-fill", "Strengthening collaborations.");
-            default -> new SchedulePresentation("calendar-event", "Tec-Verse 2026 event schedule.");
+            default -> new SchedulePresentation("calendar-event", "");
         };
     }
 

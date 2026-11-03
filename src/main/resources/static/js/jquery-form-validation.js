@@ -155,7 +155,7 @@
           // Keep validation text outside custom icon/action controls. Placing it
           // after the input itself makes it a grid child inside .simple-control,
           // which can displace the OTP button into a second row.
-          const container = element.closest('.simple-control, .form-check, .input-group');
+          const container = element.closest('.simple-control, .sponsor-control, .form-check, .input-group');
           error.insertAfter(container.length ? container : element);
         },
         highlight(element) {

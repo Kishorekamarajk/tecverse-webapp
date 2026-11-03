@@ -18015,6 +18015,8 @@ textarea { resize: vertical; }
 .compact-phone-input { display: flex; align-items: center; margin-top: 2px; border: 1px solid #cbdcf4; border-radius: 7px; background: #f9fbfe; }
 .compact-contact-form .compact-phone-input input { min-width: 0; min-height: 29px; margin: 0; border: 0; background: transparent; }
 .compact-contact-form .compact-phone-input .contact-otp-send { flex: 0 0 auto; width: auto; min-height: 29px; margin: 0; padding: 3px 9px; border-radius: 0 6px 6px 0; background: #102d62; white-space: nowrap; }
+.compact-contact-form .compact-email-input input { flex: 1 1 auto; width: 100%; }
+.compact-contact-form .compact-email-input .contact-otp-send { padding-inline: 6px; font-size: .62rem; }
 .compact-contact-form button:disabled { cursor: not-allowed; opacity: .55; }
 .contact-otp-status { display: block; min-height: 0; margin-top: 1px; color: #177451; font-size: .62rem; font-weight: 700; }
 .compact-contact-form .error:empty,.contact-otp-status:empty { display: none; min-height: 0; margin: 0; }
@@ -18034,9 +18036,20 @@ textarea { resize: vertical; }
 .phone-hint { display: block; margin-top: 1px; color: #647b9d; font-size: .58rem; font-weight: 500; line-height: 1.2; }
 .compact-captcha-row { display: flex; align-items: flex-end; gap: 6px; margin-top: 12px; padding-top: 0; }
 .compact-captcha { flex: 1 1 auto; min-width: 0; margin: 0; }
-.compact-captcha > span { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 3px; padding: 0; border: 0; background: transparent; }
+.compact-captcha-heading { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px; margin-top: 3px; }
+.compact-captcha-heading > span:first-child { flex: 1 1 auto; }
+.compact-captcha > .compact-captcha-challenge { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 3px; padding: 0; border: 0; background: transparent; }
 .compact-captcha strong,.compact-captcha input { display: grid; min-width: 0; min-height: 29px; place-items: center; margin: 0; border-radius: 6px; font-size: .66rem; }
 .compact-captcha strong { background: #092c62; color: #fff; }
+.compact-contact-form .compact-captcha input[name="captchaAnswer"] { display: block; padding: 3px 8px; appearance: textfield; -moz-appearance: textfield; text-align: center; color: #122b61; font-size: .7rem; }
+.compact-contact-form .compact-captcha input[name="captchaAnswer"]::-webkit-inner-spin-button,
+.compact-contact-form .compact-captcha input[name="captchaAnswer"]::-webkit-outer-spin-button { margin: 0; -webkit-appearance: none; }
+.compact-contact-form .compact-captcha input[name="captchaAnswer"]::placeholder { color: #718096; opacity: 1; }
+.compact-contact-form .compact-captcha-refresh { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; gap: 4px; width: auto; min-height: 24px; margin: 0; padding: 2px 7px; border: 1px solid #cbd9ec; border-radius: 6px; background: #fff; color: #234b80; font-size: .62rem; font-weight: 700; white-space: nowrap; }
+.compact-contact-form .compact-captcha-refresh:hover { border-color: #f47721; color: #d95f12; }
+.compact-contact-form .compact-captcha-refresh:disabled { opacity: .6; cursor: wait; }
+.compact-captcha-status { display: block; min-height: 0; margin-top: 2px; color: #b42318; font-size: .6rem; line-height: 1.2; }
+.compact-captcha-status:empty { display: none; }
 .compact-contact-form button { flex: 0 0 130px; width: 130px; min-height: 29px; margin: 0; padding: 3px 7px; border: 0; border-radius: 7px; background: linear-gradient(100deg,#ff9414,#ff4d13); color: #fff; font-size: .66rem; font-weight: 800; }
 .compact-contact-form .error { display: block; min-height: 0; margin-top: 1px; color: #b42318; font-size: .64rem; font-weight: 700; line-height: 1.15; overflow-wrap: anywhere; }
 .compact-contact-form .success { color: #177451; font-size: .7rem; font-weight: 800; }
@@ -18072,7 +18085,7 @@ textarea { resize: vertical; }
     .compact-contact-form input,.compact-contact-form textarea,.compact-contact-form select { min-height: 38px; font-size: .82rem; }
     .compact-contact-form textarea { min-height: 60px; }
     .compact-contact-form button { min-height: 38px; }
-    .compact-captcha > span { grid-template-columns: 1fr 1fr; }
+    .compact-captcha > .compact-captcha-challenge { grid-template-columns: 1fr 1fr; }
     .contact-reference-sidebar .compact-map { min-height: 150px; height: 150px; }
 }
 @media (max-width: 480px) {

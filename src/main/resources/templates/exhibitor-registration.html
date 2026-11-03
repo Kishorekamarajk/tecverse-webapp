@@ -568,7 +568,7 @@
         .ticket-page .simple-otp-dialog::backdrop { background:rgba(16,27,42,.5); }
         .ticket-page .simple-otp-dialog-heading { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; color:#102b49; }
         .ticket-page .simple-otp-dialog-close { width:32px; height:32px; border:0; border-radius:6px; background:#f2f4f7; color:#58677b; font-size:1.4rem; line-height:1; }
-        .ticket-page .simple-otp-reopen { display:inline-flex; align-items:center; gap:.35rem; margin:.25rem 0 .45rem; padding:0; border:0; background:transparent; color:#155f9a; font-size:.75rem; font-weight:750; text-decoration:underline; text-underline-offset:2px; }
+        .ticket-page .simple-otp-reopen { display:inline-flex; min-height:34px; align-items:center; gap:.4rem; margin:.3rem 0 .5rem; padding:0 .65rem; border:1px solid #b9d3eb; border-radius:7px; background:#f4f9ff; color:#155f9a; font-size:.9rem; font-weight:800; text-decoration:underline; text-underline-offset:2px; }
         .ticket-page .simple-otp-reopen[hidden] { display:none !important; }
         .ticket-page .simple-otp-reopen:focus-visible { outline:2px solid #ff6b1a; outline-offset:3px; border-radius:3px; }
         .ticket-page .simple-otp-dialog .simple-otp-label { display:grid; width:100%; }
@@ -895,7 +895,7 @@
     </script>
 
     <script th:src="@{/js/celebration.js}"></script>
-    <script th:src="@{/js/exhibitor-registration.js(v=20261029-location-search)}"></script>
+    <script th:src="@{/js/exhibitor-registration.js(v=20261103-otp-dialog-reopen)}"></script>
 </body>
 
 </html>

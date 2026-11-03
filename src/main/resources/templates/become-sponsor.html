@@ -21,7 +21,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha384-fgGyf7Mo7DURSOMnOy7ed+dkq5Job205Gnzu6QIg0BOHKaqt4D76Dt8VlDCzcMHV" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/jquery-validation@1.22.1/dist/jquery.validate.min.js" integrity="sha384-DIFfDxcYkhbAXYdxOYFZshXsis24zK4HtbU7qI30u9/eP7JtiRIGuOaLsoYL5QTs" crossorigin="anonymous"></script>
-    <script defer th:src="@{/js/jquery-form-validation.js}"></script>
+    <script defer th:src="@{/js/jquery-form-validation.js(v=20261103-sponsor-field-error-placement)}"></script>
 </head>
 <body class="sponsor-page">
 
@@ -232,6 +232,11 @@
             .sponsor-page .sponsor-otp-dialog-heading { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; }
             .sponsor-page .sponsor-otp-dialog-close { width:32px; height:32px; border:0; border-radius:6px; background:#f2f4f7; color:#58677b; font-size:1.4rem; line-height:1; }
             .sponsor-page .sponsor-otp-dialog .sp-field { display:block; width:100%; margin:0; }
+            .sponsor-page .sponsor-otp-resend { display:inline-flex; width:auto; min-height:28px; margin-top:8px; padding:2px 0; border:0; background:transparent; color:#17639a; font-size:.78rem; font-weight:700; text-decoration:underline; }
+            .sponsor-page .sponsor-otp-resend:disabled { color:#8393aa; text-decoration:none; cursor:default; }
+            .sponsor-page .sponsor-otp-reopen { flex:0 0 auto; min-height:42px; padding:0 14px; border:1px solid #d6e0e8; border-radius:10px; background:#f5f8fb; color:#173b60; font-size:.92rem; font-weight:800; white-space:nowrap; }
+            .sponsor-page .sponsor-otp-reopen:hover { border-color:#f47721; background:#fff5ed; color:#b94e10; }
+            .sponsor-page .sponsor-otp-reopen[hidden] { display:none !important; }
             .sponsor-page dialog.sponsor-success-dialog { box-sizing:border-box; width:min(480px,calc(100vw - 32px)) !important; max-width:480px !important; margin:auto; padding:0; overflow:visible; border:0; border-radius:18px; background:transparent; color:#102b49; }
             .sponsor-page .sponsor-success-dialog::backdrop { background:rgba(7,24,47,.58); backdrop-filter:blur(4px); }
             .sponsor-page .sponsor-success-dialog__content { position:relative; padding:clamp(24px,5vw,38px); border:1px solid rgba(53,170,117,.32); border-radius:18px; background:linear-gradient(145deg,#fff,#effaf4); box-shadow:0 24px 70px rgba(7,24,47,.25); text-align:center; }
@@ -327,10 +332,10 @@
                     <div class="sp-field"><label for="sponsorCompany" th:text="#{sponsor.field.company}">Organization / Company Name*</label><input id="sponsorCompany" name="company" type="text" required maxlength="200" placeholder="Organization / Company Name" th:placeholder="#{sponsor.placeholder.company}" th:value="${inquiry != null ? inquiry.company : ''}"><small class="sp-field-error" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></small></div>
                     <div class="sp-field"><label for="sponsorName" th:text="#{sponsor.field.contactName}">Contact Person Name*</label><input id="sponsorName" name="name" type="text" required maxlength="150" placeholder="Full Name" th:placeholder="#{register.field.fullName}" th:value="${inquiry != null ? inquiry.name : ''}"><small class="sp-field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small></div>
                     <div class="sp-field"><label for="sponsorDesignation" th:text="#{register.field.designation}">Designation</label><input id="sponsorDesignation" name="jobTitle" type="text" placeholder="Designation" th:placeholder="#{register.field.designation}" th:value="${inquiry != null ? inquiry.jobTitle : ''}" maxlength="100"></div>
-                    <div class="sp-field" id="sponsorPhoneField"><label for="sponsorPhone" th:text="#{sponsor.field.phone}">Mobile Number*</label><div style="display:flex;gap:8px"><input id="sponsorPhone" name="phone" type="tel" inputmode="tel" required maxlength="15" placeholder="Mobile Number" th:placeholder="#{ticket.verify.mobile}" th:value="${inquiry != null ? inquiry.phone : ''}"><button type="button" class="sp-submit" id="sendSponsorMobileOtp">Send OTP</button></div><small class="sp-field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small><small id="sponsorMobileStatus" class="sponsor-otp-status"></small></div>
-                    <div class="sp-field" id="sponsorEmailField"><label for="sponsorEmail" th:text="#{sponsor.field.email}">Official Email ID*</label><div style="display:flex;gap:8px"><input id="sponsorEmail" name="email" type="email" required maxlength="254" placeholder="Official Email ID" th:placeholder="#{sponsor.placeholder.email}" style="flex:1" th:value="${inquiry != null ? inquiry.email : ''}"><button type="button" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="sendSponsorOtp" style="width:auto;padding:0 18px">Send OTP</button></div><small class="sp-field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small><small id="otpStatus" style="display:block;margin-top:6px"></small></div>
-                    <div class="sp-field sp-field--full" id="otpBlock" style="display:none"><label for="sponsorOtp" th:text="#{sponsor.field.otp}">Enter Email OTP*</label><div style="display:flex;gap:8px"><input id="sponsorOtp" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit OTP" th:placeholder="#{sponsor.placeholder.otp}" style="flex:1"><button type="button" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="verifySponsorOtp" style="width:auto;padding:0 18px" th:text="#{sponsor.otp.confirm}">Confirm OTP</button></div></div>
-                    <div class="sp-field sp-field--full sponsor-mobile-otp-field" id="sponsorMobileOtpBlock" style="display:none"><label for="sponsorMobileOtp">Enter mobile OTP</label><div class="sponsor-control sponsor-control-action sponsor-otp-row"><i class="bi bi-lock" aria-hidden="true"></i><input id="sponsorMobileOtp" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit OTP"><button type="button" class="sp-submit" id="verifySponsorMobileOtp">Verify</button></div><small id="sponsorMobileOtpStatus" class="sponsor-otp-status"></small></div>
+                    <div class="sp-field" id="sponsorPhoneField"><label for="sponsorPhone" th:text="#{sponsor.field.phone}">Mobile Number*</label><div style="display:flex;gap:8px"><input id="sponsorPhone" name="phone" type="tel" inputmode="tel" required maxlength="15" placeholder="Mobile Number" th:placeholder="#{ticket.verify.mobile}" th:value="${inquiry != null ? inquiry.phone : ''}"><button type="button" class="sp-submit" id="sendSponsorMobileOtp">Send OTP</button><button type="button" class="sponsor-otp-reopen" id="reopenSponsorMobileOtp" hidden>Enter code</button></div><small class="sp-field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small><small id="sponsorMobileStatus" class="sponsor-otp-status"></small></div>
+                    <div class="sp-field" id="sponsorEmailField"><label for="sponsorEmail" th:text="#{sponsor.field.email}">Official Email ID*</label><div style="display:flex;gap:8px"><input id="sponsorEmail" name="email" type="email" required maxlength="254" placeholder="Official Email ID" th:placeholder="#{sponsor.placeholder.email}" style="flex:1" th:value="${inquiry != null ? inquiry.email : ''}"><button type="button" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="sendSponsorOtp" style="width:auto;padding:0 18px">Send OTP</button><button type="button" class="sponsor-otp-reopen" id="reopenSponsorEmailOtp" hidden>Enter code</button></div><small class="sp-field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small><small id="otpStatus" style="display:block;margin-top:6px"></small></div>
+                    <div class="sp-field sp-field--full" id="otpBlock" style="display:none"><label for="sponsorOtp" th:text="#{sponsor.field.otp}">Enter Email OTP*</label><div style="display:flex;gap:8px"><input id="sponsorOtp" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit OTP" th:placeholder="#{sponsor.placeholder.otp}" style="flex:1"><button type="button" class="sp-submit d-inline-flex align-items-center justify-content-center gap-[0.55rem] font-[900] overflow-hidden" id="verifySponsorOtp" style="width:auto;padding:0 18px" th:text="#{sponsor.otp.confirm}">Confirm OTP</button></div><button type="button" id="resendSponsorEmailOtp" class="sponsor-otp-resend" disabled>Resend OTP</button></div>
+                    <div class="sp-field sp-field--full sponsor-mobile-otp-field" id="sponsorMobileOtpBlock" style="display:none"><label for="sponsorMobileOtp">Enter mobile OTP</label><div class="sponsor-control sponsor-control-action sponsor-otp-row"><i class="bi bi-lock" aria-hidden="true"></i><input id="sponsorMobileOtp" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit OTP"><button type="button" class="sp-submit" id="verifySponsorMobileOtp">Verify</button></div><button type="button" id="resendSponsorMobileOtp" class="sponsor-otp-resend" disabled>Resend OTP</button><small id="sponsorMobileOtpStatus" class="sponsor-otp-status"></small></div>
                     <div class="sp-field"><label for="sponsorInterest" th:text="#{sponsor.field.package}">Sponsorship Package*</label><select id="sponsorInterest" name="sponsorshipInterest" required><option value="" disabled th:text="#{sponsor.option.select}">Select Sponsorship Package</option><option value="Platinum" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Platinum'}" th:text="#{sponsor.option.platinum}">Platinum — ₹15,00,000</option><option value="Gold" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Gold'}" th:text="#{sponsor.option.gold}">Gold — ₹10,00,000</option><option value="Silver" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Silver'}" th:text="#{sponsor.option.silver}">Silver — ₹5,00,000</option><option value="Copper" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Copper'}" th:text="#{sponsor.option.copper}">Copper — ₹2,50,000</option><option value="Bronze" th:selected="${inquiry != null and inquiry.sponsorshipInterest == 'Bronze'}" th:text="#{sponsor.option.bronze}">Bronze — ₹1,00,000</option></select><small class="sp-field-error" th:if="${#fields.hasErrors('sponsorshipInterest')}" th:errors="*{sponsorshipInterest}"></small></div>
                     <div class="sp-field"><label for="sponsorCity" th:text="#{sponsor.field.city}">City / Location</label><select id="sponsorCity" name="city" th:attr="data-selected-city=${inquiry != null ? inquiry.city : ''}"><option value="">Select a city</option></select></div>
                     <div class="sp-field"><label for="sponsorWebsite" th:text="#{sponsor.field.website}">Company Website</label><input id="sponsorWebsite" name="website" type="url" placeholder="https://example.com" th:value="${inquiry != null ? inquiry.website : ''}" maxlength="255"></div>
@@ -716,8 +721,24 @@
     const otpStatus = document.getElementById("otpStatus");
     const sponsorEmail = document.getElementById("sponsorEmail");
     const sponsorOtpButton = document.getElementById("sendSponsorOtp");
+    function ensureSponsorOtpReopen(id, trigger) {
+        let button = document.getElementById(id);
+        if (!button && trigger) {
+            button = document.createElement("button");
+            button.type = "button";
+            button.id = id;
+            button.className = "sponsor-otp-reopen";
+            button.textContent = "Enter code";
+            button.hidden = true;
+            trigger.insertAdjacentElement("afterend", button);
+        }
+        return button;
+    }
+    const sponsorEmailReopen = ensureSponsorOtpReopen("reopenSponsorEmailOtp", sponsorOtpButton);
     const sponsorOtpBlock = document.getElementById("otpBlock");
+    const sponsorEmailResendButton = document.getElementById("resendSponsorEmailOtp");
     const sponsorMobileOtpBlock = document.getElementById("sponsorMobileOtpBlock");
+    const sponsorMobileResendButton = document.getElementById("resendSponsorMobileOtp");
     const sponsorOtpDialog = document.createElement("dialog");
     sponsorOtpDialog.className = "sponsor-otp-dialog";
     const sponsorOtpHeading = document.createElement("div");
@@ -732,12 +753,23 @@
     sponsorOtpDialog.append(sponsorOtpHeading, sponsorOtpBlock, sponsorMobileOtpBlock);
     sponsorOtpDialog.addEventListener("click", event => { if (event.target === sponsorOtpDialog) sponsorOtpDialog.close(); });
     let sponsorResendTimer;
+    function openSponsorOtpDialog(channel) {
+        if (!sponsorOtpDialog.open) sponsorOtpDialog.showModal();
+        const input = document.getElementById(channel === "email" ? "sponsorOtp" : "sponsorMobileOtp");
+        input?.focus();
+    }
+
+    sponsorEmailReopen?.addEventListener("click", () => openSponsorOtpDialog("email"));
+    const sponsorMobileReopen = ensureSponsorOtpReopen("reopenSponsorMobileOtp", document.getElementById("sendSponsorMobileOtp"));
+    sponsorMobileReopen?.addEventListener("click", () => openSponsorOtpDialog("mobile"));
 
     function startSponsorOtpCooldown(seconds = 60) {
         window.clearInterval(sponsorResendTimer);
         let remaining = seconds;
         sponsorOtpButton.disabled = true;
+        if (sponsorEmailResendButton) sponsorEmailResendButton.disabled = true;
         sponsorOtpButton.textContent = `Resend in ${remaining}s`;
+        if (sponsorEmailResendButton) sponsorEmailResendButton.textContent = `Resend OTP (${remaining}s)`;
         sponsorResendTimer = window.setInterval(() => {
             remaining -= 1;
             if (remaining <= 0) {
@@ -745,9 +777,11 @@
                 sponsorResendTimer = null;
                 sponsorOtpButton.disabled = false;
                 sponsorOtpButton.textContent = "Resend OTP";
+                if (sponsorEmailResendButton) { sponsorEmailResendButton.disabled = false; sponsorEmailResendButton.textContent = "Resend OTP"; }
                 return;
             }
             sponsorOtpButton.textContent = `Resend in ${remaining}s`;
+            if (sponsorEmailResendButton) sponsorEmailResendButton.textContent = `Resend OTP (${remaining}s)`;
         }, 1000);
     }
 
@@ -782,7 +816,8 @@
             setSponsorOtpLoading(true);
             await sponsorOtpRequest(sponsorSendOtpUrl, { email, name: contactName, phone: document.getElementById("sponsorPhone").value.trim() });
             sponsorOtpBlock.style.display = "block";
-            sponsorOtpDialog.showModal();
+            if (sponsorEmailReopen) sponsorEmailReopen.hidden = false;
+            openSponsorOtpDialog("email");
             otpStatus.textContent = "OTP sent. Please check your email.";
             otpStatus.style.color = "#52677d";
             startSponsorOtpCooldown();
@@ -794,6 +829,7 @@
             if (error.retryAfter > 0) startSponsorOtpCooldown(error.retryAfter);
         }
     });
+    sponsorEmailResendButton?.addEventListener("click", () => sponsorOtpButton.click());
 
     document.getElementById("verifySponsorOtp")?.addEventListener("click", async () => {
         try {
@@ -803,6 +839,8 @@
             sponsorEmail.readOnly = true;
             window.clearInterval(sponsorResendTimer);
             sponsorResendTimer = null;
+            sponsorEmailResendButton.disabled = true;
+            sponsorEmailResendButton.textContent = "Verified";
             sponsorOtpButton.disabled = true;
             sponsorOtpButton.textContent = "Verified";
             sponsorOtpButton.classList.add("is-verified");
@@ -810,6 +848,7 @@
             otpStatus.style.color = "#16834f";
             otpStatus.textContent = "✓ Email verified successfully.";
             document.getElementById("otpBlock").style.display = "none";
+            if (sponsorEmailReopen) sponsorEmailReopen.hidden = true;
             if (!sponsorMobileOtpBlock || sponsorMobileOtpBlock.style.display === "none") sponsorOtpDialog.close();
         } catch (error) { otpStatus.textContent = error.message; otpStatus.style.color = "#b42318"; }
     });
@@ -820,11 +859,14 @@
         sponsorEmail.readOnly = false;
         window.clearInterval(sponsorResendTimer);
         sponsorResendTimer = null;
+        sponsorEmailResendButton.disabled = true;
+        sponsorEmailResendButton.textContent = "Resend OTP";
         sponsorOtpButton.disabled = false;
         sponsorOtpButton.textContent = "Send OTP";
         sponsorOtpButton.classList.remove("is-verified");
         sponsorOtpButton.removeAttribute("aria-label");
         sponsorOtpBlock.style.display = "none";
+        if (sponsorEmailReopen) sponsorEmailReopen.hidden = true;
         otpStatus.textContent = "";
     });
 
@@ -840,7 +882,9 @@
         window.clearInterval(sponsorMobileResendTimer);
         let remaining = seconds;
         sponsorMobileOtpButton.disabled = true;
+        sponsorMobileResendButton.disabled = true;
         sponsorMobileOtpButton.textContent = `Resend in ${remaining}s`;
+        sponsorMobileResendButton.textContent = `Resend OTP (${remaining}s)`;
         sponsorMobileResendTimer = window.setInterval(() => {
             remaining -= 1;
             if (remaining <= 0) {
@@ -848,9 +892,12 @@
                 sponsorMobileResendTimer = null;
                 sponsorMobileOtpButton.disabled = false;
                 sponsorMobileOtpButton.textContent = "Resend OTP";
+                sponsorMobileResendButton.disabled = false;
+                sponsorMobileResendButton.textContent = "Resend OTP";
                 return;
             }
             sponsorMobileOtpButton.textContent = `Resend in ${remaining}s`;
+            sponsorMobileResendButton.textContent = `Resend OTP (${remaining}s)`;
         }, 1000);
     }
 
@@ -868,7 +915,8 @@
             sponsorMobileStatus.textContent = "Sending OTP… Please wait.";
             await sponsorOtpRequest(sponsorSendMobileOtpUrl, { phone });
             sponsorMobileOtpBlock.style.display = "block";
-            sponsorOtpDialog.showModal();
+            if (sponsorMobileReopen) sponsorMobileReopen.hidden = false;
+            openSponsorOtpDialog("mobile");
             sponsorMobileStatus.textContent = "OTP sent. Please check your mobile.";
             sponsorMobileStatus.style.color = "#52677d";
             sponsorMobileOtpStatus.textContent = "";
@@ -881,6 +929,7 @@
             if (error.retryAfter > 0) startSponsorMobileCooldown(error.retryAfter);
         }
     });
+    sponsorMobileResendButton?.addEventListener("click", () => sponsorMobileOtpButton.click());
 
     document.getElementById("verifySponsorMobileOtp")?.addEventListener("click", async () => {
         const phone = sponsorPhone.value.trim();
@@ -893,12 +942,15 @@
             sponsorPhone.readOnly = true;
             window.clearInterval(sponsorMobileResendTimer);
             sponsorMobileResendTimer = null;
+            sponsorMobileResendButton.disabled = true;
+            sponsorMobileResendButton.textContent = "Verified";
             sponsorMobileOtpButton.disabled = true;
             sponsorMobileOtpButton.textContent = "Verified";
             sponsorMobileOtpButton.classList.add("is-verified");
             sponsorMobileStatus.textContent = "✓ Mobile number verified.";
             sponsorMobileStatus.style.color = "#16834f";
             sponsorMobileOtpBlock.style.display = "none";
+            if (sponsorMobileReopen) sponsorMobileReopen.hidden = true;
             if (sponsorOtpBlock.style.display === "none") sponsorOtpDialog.close();
         } catch (error) {
             sponsorMobileOtpStatus.textContent = error.message;
@@ -913,10 +965,13 @@
         sponsorPhone.readOnly = false;
         window.clearInterval(sponsorMobileResendTimer);
         sponsorMobileResendTimer = null;
+        sponsorMobileResendButton.disabled = true;
+        sponsorMobileResendButton.textContent = "Resend OTP";
         sponsorMobileOtpButton.disabled = false;
         sponsorMobileOtpButton.textContent = "Send OTP";
         sponsorMobileOtpButton.classList.remove("is-verified");
         sponsorMobileOtpBlock.style.display = "none";
+        if (sponsorMobileReopen) sponsorMobileReopen.hidden = true;
         sponsorMobileStatus.textContent = "";
     });
 

@@ -26,7 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class ChatbotFaqService {
 
     private static final String[] WORKBOOK_LOCATIONS = {
-            "classpath:/chatbot/Chatbot.xlsx"
+            "classpath:/chatbot/chatbot.xlsx"
     };
 
     private final ResourceLoader resourceLoader;
@@ -88,7 +88,7 @@ public class ChatbotFaqService {
                 return resource;
             }
         }
-        throw new IllegalStateException("Chatbot Excel file was not found in static/docs.");
+        throw new IllegalStateException("Chatbot FAQ workbook was not found on the classpath.");
     }
 
     private static Map<String, byte[]> readZipEntries(InputStream inputStream) throws IOException {

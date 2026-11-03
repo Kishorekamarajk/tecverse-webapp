@@ -19,10 +19,12 @@
   const resendButton = otpDialog.querySelector('[data-business-resend-otp]');
   let selectedRole = 'participant';
   let cooldown = null;
+  let sendCooldown = null;
+  let pendingOtpRole = null;
   let refreshPageOnBusinessLoginClose = false;
 
   function contextPath() {
-    return (document.body.dataset.contextPath || '').replace(/\/$/, '');
+    return (otpDialog.dataset.contextPath || document.body.dataset.contextPath || '').replace(/\/$/, '');
   }
 
   function apiPath(path) { return contextPath() + path; }
@@ -33,12 +35,22 @@
   }
 
   async function readResult(response) {
-    const data = await response.json().catch(() => ({}));
+    const contentType = response.headers.get('Content-Type') || '';
+    const data = contentType.includes('json')
+      ? await response.json().catch(() => ({}))
+      : {};
     if (!response.ok) {
-      const error = new Error(data.message || data.error || 'Unable to complete sign in. Please try again.');
+      const unregisteredPortalUser = (selectedRole === 'exhibitor' || selectedRole === 'sponsor') && response.status === 404;
+      const message = data.message || data.error || data.detail ||
+        (unregisteredPortalUser
+          ? `This mobile number is not registered as a ${selectedRole}. Please register to continue.`
+          : 'Unable to complete sign in. Please try again.');
+      const error = new Error(message);
       error.status = response.status;
       error.retryAfter = Number(response.headers.get('Retry-After')) || 0;
-      error.registrationUrl = data.registrationUrl;
+      error.registrationUrl = data.registrationUrl || (unregisteredPortalUser
+        ? (selectedRole === 'exhibitor' ? '/exhibitor-registration' : '/become-sponsor')
+        : null);
       throw error;
     }
     return data;
@@ -60,6 +72,29 @@
     }, 1000);
   }
 
+  function startSendCooldown(seconds) {
+    window.clearInterval(sendCooldown);
+    let left = Math.max(1, Math.ceil(seconds));
+    sendButton.disabled = true;
+    const update = () => {
+      sendButton.textContent = `Wait ${left}s`;
+      setMessage(`Too many requests. Please wait ${left} seconds before trying again.`, true);
+    };
+    update();
+    sendCooldown = window.setInterval(() => {
+      left -= 1;
+      if (left <= 0) {
+        window.clearInterval(sendCooldown);
+        sendCooldown = null;
+        sendButton.disabled = false;
+        sendButton.textContent = 'Send OTP';
+        setMessage('You can try sending the OTP again.');
+      } else {
+        update();
+      }
+    }, 1000);
+  }
+
   function openRoleDialog() {
     if (!roleDialog.open) roleDialog.showModal();
   }
@@ -68,14 +103,18 @@
     selectedRole = role;
     roleSelect.value = role;
     otpDialog.querySelector('[data-business-role-label]').textContent = `${role.toUpperCase()} PORTAL LOGIN`;
-    phoneStep.hidden = false;
-    otpStep.hidden = true;
-    phone.value = '';
-    otp.value = '';
+    const resumeVerification = pendingOtpRole === role;
+    phoneStep.hidden = resumeVerification;
+    otpStep.hidden = !resumeVerification;
+    if (!resumeVerification) {
+      pendingOtpRole = null;
+      phone.value = '';
+      otp.value = '';
+    }
     registerLink.hidden = true;
-    setMessage('');
+    setMessage(resumeVerification ? 'Continue entering the verification code sent to your mobile.' : '');
     if (!otpDialog.open) otpDialog.showModal();
-    window.setTimeout(() => phone.focus(), 0);
+    window.setTimeout(() => (resumeVerification ? otp : phone).focus(), 0);
   }
 
   if (rolePicker && rolePickerTrigger && rolePickerOptions && rolePickerCurrent) {
@@ -133,6 +172,10 @@
   roleDialog.addEventListener('click', event => { if (event.target === roleDialog) roleDialog.close(); });
   otpDialog.addEventListener('click', event => { if (event.target === otpDialog) otpDialog.close(); });
   otpDialog.addEventListener('close', () => {
+    if (pendingOtpRole) {
+      refreshPageOnBusinessLoginClose = false;
+      return;
+    }
     if (!refreshPageOnBusinessLoginClose) return;
     refreshPageOnBusinessLoginClose = false;
     window.location.reload();
@@ -165,6 +208,7 @@
         body: JSON.stringify({phone: cleanPhone})
       });
       const result = await readResult(response);
+      pendingOtpRole = selectedRole;
       phoneStep.hidden = true;
       otpStep.hidden = false;
       otp.value = '';
@@ -175,11 +219,12 @@
       setMessage(error.message, true);
       if (error.registrationUrl) {
         registerLink.href = apiPath(error.registrationUrl);
+        registerLink.textContent = selectedRole === 'exhibitor' ? 'Register as exhibitor' : 'Register now';
         registerLink.hidden = false;
       }
-      if (error.retryAfter) startCooldown(error.retryAfter);
+      if (error.retryAfter) startSendCooldown(error.retryAfter);
     } finally {
-      sendButton.disabled = false;
+      if (!sendCooldown) sendButton.disabled = false;
       if (!cooldown) resendButton.disabled = true;
     }
   }
@@ -203,6 +248,7 @@
         body: JSON.stringify({phone: phone.value.trim(), otp: otp.value.trim()})
       });
       const result = await readResult(response);
+      pendingOtpRole = null;
       window.location.assign(apiPath(result.redirectUrl));
     } catch (error) {
       setMessage(error.message, true);

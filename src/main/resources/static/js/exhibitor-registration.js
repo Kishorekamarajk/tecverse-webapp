@@ -93,7 +93,7 @@
     const reopen = document.createElement('button');
     reopen.type = 'button';
     reopen.className = 'simple-otp-reopen';
-    reopen.textContent = 'Continue verification';
+    reopen.textContent = 'Enter code';
     reopen.hidden = true;
     status.insertAdjacentElement('afterend', reopen);
     reopen.addEventListener('click', () => {

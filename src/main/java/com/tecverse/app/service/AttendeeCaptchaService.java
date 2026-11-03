@@ -14,7 +14,7 @@ public class AttendeeCaptchaService {
     private final Map<String, Challenge> challenges = new ConcurrentHashMap<>();
     public Map<String,String> issue() {
         cleanup(); int a=random.nextInt(9)+1, b=random.nextInt(9)+1; String id=UUID.randomUUID().toString();
-        challenges.put(id,new Challenge(Integer.toString(a+b),Instant.now().plusSeconds(300)));
+        challenges.put(id,new Challenge(Integer.toString(a+b),Instant.now().plusSeconds(180)));
         return Map.of("id",id,"question",a+" + "+b+" = ?");
     }
     public boolean consume(String id,String answer) {

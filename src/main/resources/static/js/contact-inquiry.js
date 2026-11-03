@@ -17,6 +17,9 @@
         const sendPhoneButton = form.querySelector("[data-contact-otp-send]");
         const sendEmailButton = form.querySelector("[data-contact-email-otp-send]");
         const submitButton = form.querySelector("[data-contact-submit]");
+        const captchaRefreshButton = form.querySelector("[data-contact-captcha-refresh]");
+        const captchaQuestion = form.querySelector("[data-contact-captcha-question]");
+        const captchaStatus = form.querySelector("[data-contact-captcha-status]");
         const dialog = form.querySelector("[data-contact-otp-dialog]");
         const dialogTitle = dialog.querySelector("#contact-otp-title");
         const dialogKicker = dialog.querySelector("[data-contact-otp-kicker]");
@@ -66,6 +69,30 @@
         }
         updateSubmitState();
 
+        captchaRefreshButton?.addEventListener("click", async () => {
+            captchaRefreshButton.disabled = true;
+            captchaStatus.textContent = "";
+            try {
+                const contextPath = (document.body.dataset.contextPath || "").replace(/\/$/, "");
+                const response = await fetch(contextPath + "/inquiry/captcha", {
+                    credentials: "same-origin", cache: "no-store", headers: { "Accept": "application/json" }
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || !result.question) throw new Error(result.message || "Could not refresh the security question. Please try again.");
+                captchaQuestion.textContent = result.question;
+                const answer = form.querySelector('[name="captchaAnswer"]');
+                answer.value = "";
+                answer.setCustomValidity("");
+                answer.removeAttribute("aria-invalid");
+                feedback.get(answer).textContent = "";
+                answer.focus();
+            } catch (error) {
+                captchaStatus.textContent = error.message;
+            } finally {
+                captchaRefreshButton.disabled = false;
+            }
+        });
+
         function updateCountry() {
             const code = country.selectedOptions[0]?.dataset.dialCode || "";
             phone.placeholder = "Phone number";
@@ -108,8 +135,8 @@
         }
 
         async function postOtp(path, payload) {
-            const contextPath = document.body.dataset.contextPath || "/";
-            const response = await fetch(contextPath.replace(/\/$/, "") + path, {
+            const contextPath = (document.body.dataset.contextPath || "/").replace(/\/$/, "");
+            const response = await fetch(contextPath + path, {
                 method: "POST", credentials: "same-origin",
                 headers: { "Content-Type": "application/json", "Accept": "application/json" },
                 body: JSON.stringify(payload)
