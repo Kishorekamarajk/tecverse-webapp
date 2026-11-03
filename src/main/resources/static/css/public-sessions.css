@@ -29,7 +29,7 @@
 .public-sessions__type-tag--tutorial{border-color:#f5d8b8;background:#fff3e8;color:#c65d14}
 .public-sessions__card-copy{flex:1;padding:16px 0}
 .public-sessions__card-copy h3{margin:0;color:#102b49;font-size:1.13rem;font-weight:800;line-height:1.35}
-.public-sessions__description{margin:9px 0 0;color:#5e7189;font-size:.9rem;line-height:1.6;white-space:pre-line;overflow-wrap:anywhere}
+.public-sessions__description{margin:9px 0 0;color:#5e7189;font-size:.9rem;line-height:1.6;white-space:normal;overflow-wrap:anywhere}
 .public-sessions__card-bottom{display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:14px;padding-top:13px;border-top:1px solid #edf1f5}
 .public-sessions__card-bottom>.public-sessions__time{flex:0 1 auto;min-width:0;white-space:nowrap}
 .public-sessions__card-bottom>.public-sessions__reserve-form{flex:0 0 auto;min-width:0;margin-left:0}
