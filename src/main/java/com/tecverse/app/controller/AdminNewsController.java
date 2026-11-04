@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -97,6 +98,12 @@ public class AdminNewsController {
 
     @GetMapping("/admin/thematic-sessions")
     public String thematicSessions(Model model) { model.addAttribute("sessions", thematicReservations.adminSessions()); return "admin/thematic-sessions"; }
+
+    @GetMapping("/admin/session-view")
+    public String sessionView(@RequestParam(defaultValue = "0") int page, Model model) {
+        model.addAttribute("reservationPage", thematicReservations.adminReservationRows(PageRequest.of(Math.max(0, page), 10)));
+        return "admin/session-view";
+    }
 
     @PostMapping("/admin/thematic-sessions")
     public String saveThematicSession(@RequestParam java.util.Map<String,Object> form, RedirectAttributes flash) {

@@ -612,7 +612,7 @@ class _PersonalizedHomeScreenState extends State<PersonalizedHomeScreen> {
 
                   // Tagline
                   const Text(
-                    'Your Gateway to an Extraordinary Tech Experience.',
+                    'Connect Collaborate Innovate',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,

@@ -2,14 +2,21 @@ package com.tecverse.app.service;
 
 import com.tecverse.app.entity.ThematicReservation;
 import com.tecverse.app.entity.ThematicSession;
+import com.tecverse.app.dto.AdminChartPoint;
+import com.tecverse.app.dto.AdminSessionParticipantSummary;
+import com.tecverse.app.dto.AdminSessionReservationGroup;
+import com.tecverse.app.dto.AdminSessionReservationRow;
 import com.tecverse.app.repository.ThematicReservationRepository;
 import com.tecverse.app.repository.ThematicSessionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -128,6 +135,31 @@ public class ThematicReservationService {
             item.put("active", session.isActive());
             return item;
         }).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AdminSessionReservationGroup> adminReservationRows(Pageable pageable) {
+        Page<AdminSessionParticipantSummary> participants = reservations.findAdminSessionParticipants(pageable);
+        if (participants.isEmpty()) return participants.map(participant -> new AdminSessionReservationGroup(
+                participant.registrationId(), participant.attendeeName(), participant.registrationReference(), List.of()));
+
+        List<Long> registrationIds = participants.getContent().stream()
+                .map(AdminSessionParticipantSummary::registrationId)
+                .toList();
+        Map<Long, List<AdminSessionReservationRow>> rowsByParticipant = new LinkedHashMap<>();
+        for (AdminSessionReservationRow row : reservations.findReservationRowsForParticipants(registrationIds)) {
+            rowsByParticipant.computeIfAbsent(row.registrationId(), ignored -> new ArrayList<>()).add(row);
+        }
+        return participants.map(participant -> new AdminSessionReservationGroup(
+                participant.registrationId(),
+                participant.attendeeName(),
+                participant.registrationReference(),
+                rowsByParticipant.getOrDefault(participant.registrationId(), List.of())));
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminChartPoint> topConfirmedSessions() {
+        return reservations.findTopConfirmedSessionsForDashboard();
     }
 
     @Transactional

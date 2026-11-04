@@ -275,15 +275,20 @@ public class MobileApiController {
                         .map(String::toLowerCase)
                         .toList();
 
-        return schedule.findByActiveTrueOrderByDayNumberAscDisplayOrderAscIdAsc()
+        return thematicReservations.publicSessions(null)
                 .stream()
                 .filter(item -> requested.isEmpty()
-                        || (item.getSessionTitle() != null
+                        || (item.get("title") != null
                                 && requested.stream().anyMatch(key ->
-                                        item.getSessionTitle()
+                                        item.get("title").toString()
                                                 .toLowerCase()
                                                 .contains(key))))
-                .map(this::scheduleItem)
+                .map(item -> {
+                    Map<String, Object> mobileItem = new LinkedHashMap<>(item);
+                    mobileItem.put("dayLabel", Objects.toString(item.get("date"), ""));
+                    mobileItem.put("timeLabel", Objects.toString(item.get("time"), ""));
+                    return mobileItem;
+                })
                 .toList();
     }
 

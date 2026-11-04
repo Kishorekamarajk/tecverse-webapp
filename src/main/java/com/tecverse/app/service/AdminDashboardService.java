@@ -18,6 +18,7 @@ import com.tecverse.app.repository.ContactUsRepository;
 import com.tecverse.app.repository.ExhibitorRepository;
 import com.tecverse.app.repository.SponsorEnquiryRepository;
 import com.tecverse.app.repository.TicketRegistrationRepository;
+import com.tecverse.app.repository.ThematicReservationRepository;
 
 @Service
 public class AdminDashboardService {
@@ -26,15 +27,18 @@ public class AdminDashboardService {
     private final ExhibitorRepository exhibitorRepository;
     private final SponsorEnquiryRepository sponsorEnquiryRepository;
     private final ContactUsRepository contactUsRepository;
+    private final ThematicReservationRepository thematicReservationRepository;
 
     public AdminDashboardService(TicketRegistrationRepository ticketRegistrationRepository,
                                  ExhibitorRepository exhibitorRepository,
                                  SponsorEnquiryRepository sponsorEnquiryRepository,
-                                 ContactUsRepository contactUsRepository) {
+                                 ContactUsRepository contactUsRepository,
+                                 ThematicReservationRepository thematicReservationRepository) {
         this.ticketRegistrationRepository = ticketRegistrationRepository;
         this.exhibitorRepository = exhibitorRepository;
         this.sponsorEnquiryRepository = sponsorEnquiryRepository;
         this.contactUsRepository = contactUsRepository;
+        this.thematicReservationRepository = thematicReservationRepository;
     }
 
     @Transactional(readOnly = true)
@@ -63,12 +67,26 @@ public class AdminDashboardService {
         List<String> keys = months.stream().map(YearMonth::toString).toList();
         List<AdminChartPoint> ticketCategories = ticketRegistrationRepository.countByCategoryForDashboard();
         List<AdminChartPoint> ticketStates = ticketRegistrationRepository.countByApplicantStateForDashboard();
+        List<AdminChartPoint> topSessions = thematicReservationRepository.findTopConfirmedSessionsForDashboard();
+        List<AdminChartPoint> leastBookedSessions = thematicReservationRepository.findLeastBookedConfirmedSessionForDashboard();
+        long totalConfirmedBookings = thematicReservationRepository.countConfirmedReservationsForDashboard();
+        long participantsWithBookings = thematicReservationRepository.countParticipantsWithConfirmedReservationsForDashboard();
+        long sessionsWithBookings = thematicReservationRepository.countSessionsWithConfirmedReservationsForDashboard();
+        AdminChartPoint mostBookedSession = topSessions.isEmpty() ? null : topSessions.get(0);
+        AdminChartPoint leastBookedSession = leastBookedSessions.isEmpty() ? null : leastBookedSessions.get(0);
         return new AdminDashboardAnalytics(monthLabels, values(keys, ticketCounts), values(keys, exhibitorCounts),
                 values(keys, sponsorCounts), values(keys, contactCounts),
                 ticketCategories.stream().map(AdminChartPoint::getLabel).toList(),
                 ticketCategories.stream().map(p -> p.getTotalCount() == null ? 0L : p.getTotalCount()).toList(),
                 ticketStates.stream().map(AdminChartPoint::getLabel).toList(),
-                ticketStates.stream().map(p -> p.getTotalCount() == null ? 0L : p.getTotalCount()).toList());
+                ticketStates.stream().map(p -> p.getTotalCount() == null ? 0L : p.getTotalCount()).toList(),
+                topSessions.stream().map(AdminChartPoint::getLabel).toList(),
+                topSessions.stream().map(p -> p.getTotalCount() == null ? 0L : p.getTotalCount()).toList(),
+                totalConfirmedBookings, participantsWithBookings, sessionsWithBookings,
+                mostBookedSession == null ? null : mostBookedSession.getLabel(),
+                mostBookedSession == null || mostBookedSession.getTotalCount() == null ? 0L : mostBookedSession.getTotalCount(),
+                leastBookedSession == null ? null : leastBookedSession.getLabel(),
+                leastBookedSession == null || leastBookedSession.getTotalCount() == null ? 0L : leastBookedSession.getTotalCount());
     }
 
     private static Map<String, Long> monthly(List<AdminChartPoint> points) {
