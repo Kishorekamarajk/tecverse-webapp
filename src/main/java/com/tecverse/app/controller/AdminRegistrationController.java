@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -76,12 +79,12 @@ public class AdminRegistrationController {
     }
 
     @GetMapping("/admin/registrations/{type}/fragment")
-    public String fragment(@PathVariable String type, @RequestParam(defaultValue = "0") int page, Model model) {
+    public String fragment(@PathVariable String type, @RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String category, Model model) {
         int pageNumber = Math.max(0, page);
         Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "createdAt").and(Sort.by(Sort.Direction.DESC, "id")));
         Page<RecordRow> result;
         switch (type) {
-            case "tickets" -> result = tickets.findAll(pageable).map(x -> new RecordRow(x.getId(), x.getReferenceNumber(), x.getOfficialName(), x.getEmail(), x.getPhone(), x.getCategory(), x.getApplicantState(), x.getCreatedAt()));
+            case "tickets" -> result = (category == null || category.isBlank() ? tickets.findAll(pageable) : tickets.findByCategory(validCategory(category), pageable)).map(x -> new RecordRow(x.getId(), x.getReferenceNumber(), x.getOfficialName(), x.getEmail(), x.getPhone(), x.getCategory(), x.getApplicantState(), x.getCreatedAt()));
             case "exhibitors" -> result = exhibitors.findAll(pageable).map(x -> new RecordRow(x.getId(), x.getReferenceNumber(), x.getFullName(), x.getEmail(), x.getPhone(), x.getCompanyName(), "", x.getCreatedAt()));
             case "sponsors" -> result = sponsors.findAll(pageable).map(x -> new RecordRow(x.getId(), x.getId().toString(), x.getName(), x.getEmail(), x.getPhone(), x.getStatus(), "", x.getCreatedAt()));
             case "contacts" -> result = contacts.findAll(pageable).map(x -> new RecordRow(x.getId(), x.getId().toString(), x.getFullName(), x.getEmail(), x.getPhoneNumber(), x.getCompanyName(), "", x.getCreatedAt()));
@@ -91,6 +94,56 @@ public class AdminRegistrationController {
         model.addAttribute("rows", result.getContent());
         model.addAttribute("page", result);
         return "admin/fragments/registration-rows :: rows";
+    }
+
+    @GetMapping("/admin/registrations/{type}/export")
+    public ResponseEntity<byte[]> export(@PathVariable String type) {
+        StringBuilder csv = new StringBuilder("\uFEFFReference,Name,Email,Phone,Category / details,State / Union Territory,Submitted\r\n");
+        switch (type) {
+            case "tickets" -> tickets.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).forEach(x -> csv.append(csv(x.getReferenceNumber())).append(',')
+                    .append(csv(x.getOfficialName())).append(',').append(csv(x.getEmail())).append(',').append(csv(x.getPhone())).append(',')
+                    .append(csv(x.getCategory())).append(',').append(csv(x.getApplicantState())).append(',').append(csv(date(x.getCreatedAt()))).append("\r\n"));
+            case "exhibitors" -> exhibitors.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).forEach(x -> csv.append(csv(x.getReferenceNumber())).append(',')
+                    .append(csv(x.getFullName())).append(',').append(csv(x.getEmail())).append(',').append(csv(x.getPhone())).append(',')
+                    .append(csv(x.getCompanyName())).append(",,").append(csv(date(x.getCreatedAt()))).append("\r\n"));
+            case "sponsors" -> sponsors.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).forEach(x -> csv.append(csv(x.getId().toString())).append(',')
+                    .append(csv(x.getName())).append(',').append(csv(x.getEmail())).append(',').append(csv(x.getPhone())).append(',')
+                    .append(csv(x.getStatus())).append(",,").append(csv(date(x.getCreatedAt()))).append("\r\n"));
+            case "contacts" -> contacts.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).forEach(x -> csv.append(csv(x.getId().toString())).append(',')
+                    .append(csv(x.getFullName())).append(',').append(csv(x.getEmail())).append(',').append(csv(x.getPhoneNumber())).append(',')
+                    .append(csv(x.getCompanyName())).append(",,").append(csv(date(x.getCreatedAt()))).append("\r\n"));
+            default -> throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + type + "-registrations.csv\"")
+                .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
+                .body(csv.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+
+    private static String date(java.time.LocalDateTime value) { return value == null ? "" : value.toString(); }
+
+    @GetMapping("/admin/registrations/tickets/category-export")
+    public ResponseEntity<byte[]> exportCategory(@RequestParam String category) {
+        String validCategory = validCategory(category);
+        StringBuilder csv = new StringBuilder("\uFEFFReference,Name,Email,Phone,Category,State / Union Territory,Submitted\r\n");
+        tickets.findByCategoryOrderByCreatedAtDesc(validCategory).forEach(x -> csv.append(csv(x.getReferenceNumber())).append(',')
+                .append(csv(x.getOfficialName())).append(',').append(csv(x.getEmail())).append(',').append(csv(x.getPhone())).append(',')
+                .append(csv(x.getCategory())).append(',').append(csv(x.getApplicantState())).append(',')
+                .append(csv(x.getCreatedAt() == null ? "" : x.getCreatedAt().toString())).append("\r\n"));
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + validCategory.toLowerCase(java.util.Locale.ROOT) + "-registrations.csv\"")
+                .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8")).body(csv.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+
+    private static String validCategory(String category) {
+        if (!java.util.Set.of("ACADEMIA", "CENTRAL_GOVERNMENT", "STATE_GOVERNMENT", "INDUSTRY_STARTUP").contains(category))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return category;
+    }
+    private static String csv(String value) {
+        String safe = value == null ? "" : value;
+        if (safe.matches("^[\\s]*[=+@-].*")) safe = "'" + safe;
+        return "\"" + safe.replace("\"", "\"\"") + "\"";
     }
 
     @GetMapping("/admin/registrations/{type}/{id}/edit")

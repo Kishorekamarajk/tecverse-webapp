@@ -1,6 +1,8 @@
 package com.tecverse.app.repository;
 import com.tecverse.app.entity.TicketRegistration;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.time.LocalDateTime;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +11,8 @@ import org.springframework.data.jpa.repository.Lock;
 import jakarta.persistence.LockModeType;
 import com.tecverse.app.dto.AdminChartPoint;
 public interface TicketRegistrationRepository extends JpaRepository<TicketRegistration,Long>{
+ Page<TicketRegistration> findByCategory(String category, Pageable pageable);
+ List<TicketRegistration> findByCategoryOrderByCreatedAtDesc(String category);
  long countBy();
  boolean existsByEmail(String email);
  boolean existsByPhone(String phone);

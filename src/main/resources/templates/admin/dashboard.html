@@ -29,11 +29,15 @@
         .admin-submission-count span { color: #748198; font-size: .88rem; font-weight: 650; }
         .admin-submission-count strong { color: #172b63; font-size: 2.15rem; font-weight: 850; line-height: 1; letter-spacing: -.04em; }
         .dash-session-kpi { min-height: 150px; padding: 20px; border: 1px solid #e3eaf4; border-radius: 17px; background: #fff; box-shadow: 0 5px 16px rgba(23,42,79,.035); }
+        button.dash-session-kpi { width: 100%; text-align: left; cursor: pointer; transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+        button.dash-session-kpi:hover, button.dash-session-kpi:focus-visible { border-color: #9eb8e3; transform: translateY(-3px); box-shadow: 0 14px 28px rgba(24,45,104,.1); }
         .dash-session-kpi-label { color: #748198; font-size: .88rem; font-weight: 650; }
         .dash-session-kpi-value { color: #172b63; font-size: 2.1rem; font-weight: 850; line-height: 1.08; letter-spacing: -.035em; }
         .dash-session-kpi-title { display: -webkit-box; overflow: hidden; color: #172b63; font-size: 1rem; font-weight: 750; line-height: 1.35; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
         .dash-session-kpi .dash-stat-icon { flex: 0 0 auto; }
         .dash-category-kpi { min-height: 142px; padding: 20px; border: 1px solid #e3eaf4; border-radius: 17px; background: #fff; box-shadow: 0 5px 16px rgba(23,42,79,.035); }
+        button.dash-category-kpi { width: 100%; text-align: left; cursor: pointer; transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+        button.dash-category-kpi:hover, button.dash-category-kpi:focus-visible { border-color: #9eb8e3; transform: translateY(-3px); box-shadow: 0 14px 28px rgba(24,45,104,.1); }
         .dash-ticket .dash-stat-icon { color: #3155a3; background: #edf2ff; }
         .dash-exhibitor .dash-stat-icon { color: #087f87; background: #e8f8f6; }
         .dash-sponsor .dash-stat-icon { color: #d86b24; background: #fff2e8; }
@@ -53,9 +57,12 @@
         .action-tile:hover { color: inherit; transform: translateY(-2px); box-shadow: 0 12px 26px rgba(23,42,79,.08); }
         .dash-action-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; color: #087f74; background: #e8f8f3; font-size: 1.15rem; }
         #registrationRecordsModal .modal-content { overflow: hidden; border: 0; border-radius: 18px; box-shadow: 0 24px 70px rgba(9,22,50,.25); }
-        #registrationRecordsModal .modal-header { padding: 18px 22px; color: #fff; background: #1d3476; }
+        #registrationRecordsModal .modal-header { display: flex; align-items: center; gap: 16px; padding: 18px 22px; color: #fff; background: #1d3476; }
         #registrationRecordsModal .modal-title { color: #fff; font-weight: 750; }
+        #registrationRecordsModal .modal-header-actions { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+        #registrationRecordsModal .modal-header .btn-close { flex: 0 0 auto; margin: 0; }
         #registrationRecordsModal .btn-close { filter: invert(1); }
+        @media (max-width: 575.98px) { #registrationRecordsModal .modal-header { padding: 14px 16px; } #registrationRecordsModal .modal-header-actions { gap: 9px; } #registrationRecordsExport { white-space: nowrap; } }
         @media (max-width: 575.98px) { .admin-dashboard-page .admin-workspace { padding: 12px; } .dash-hero { border-radius: 16px; } .admin-submission-count { min-height: 130px; } .dash-chart-card { padding: 18px 15px; } .dash-chart-card .admin-submission-chart-wrap { height: 300px; } }
     </style>
 </head>
@@ -76,28 +83,28 @@
                 <div class="dash-section-heading d-flex flex-wrap justify-content-between align-items-end gap-2"><div><h2>Submission overview</h2><p>Choose a category to review and edit its records.</p></div></div>
                 <div class="admin-submission-counts row g-3 mb-4">
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <a class="admin-submission-count dash-ticket h-100 d-flex flex-column text-decoration-none" href="#" data-record-type="tickets" data-record-title="Attendee registrations" th:attr="data-record-url=@{/admin/registrations/tickets/fragment}">
+                        <a class="admin-submission-count dash-ticket h-100 d-flex flex-column text-decoration-none" href="#" data-record-type="tickets" data-record-title="Attendee registrations" th:attr="data-record-url=@{/admin/registrations/tickets/fragment},data-export-url=@{/admin/registrations/tickets/export}">
                             <div class="dash-stat-top"><i class="dash-stat-icon bi bi-ticket-perforated"></i><i class="dash-stat-arrow bi bi-arrow-up-right"></i></div>
                             <span>Attendee registrations</span>
                             <strong th:text="${submissionCounts?.ticketRegistrations ?: 0}">0</strong>
                         </a>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <a class="admin-submission-count dash-exhibitor h-100 d-flex flex-column text-decoration-none" href="#" data-record-type="exhibitors" data-record-title="Exhibitors" th:attr="data-record-url=@{/admin/registrations/exhibitors/fragment}">
+                        <a class="admin-submission-count dash-exhibitor h-100 d-flex flex-column text-decoration-none" href="#" data-record-type="exhibitors" data-record-title="Exhibitors" th:attr="data-record-url=@{/admin/registrations/exhibitors/fragment},data-export-url=@{/admin/registrations/exhibitors/export}">
                             <div class="dash-stat-top"><i class="dash-stat-icon bi bi-buildings"></i><i class="dash-stat-arrow bi bi-arrow-up-right"></i></div>
                             <span>Exhibitors</span>
                             <strong th:text="${submissionCounts?.exhibitors ?: 0}">0</strong>
                         </a>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <a class="admin-submission-count dash-sponsor h-100 d-flex flex-column text-decoration-none" href="#" data-record-type="sponsors" data-record-title="Sponsor enquiries" th:attr="data-record-url=@{/admin/registrations/sponsors/fragment}">
+                        <a class="admin-submission-count dash-sponsor h-100 d-flex flex-column text-decoration-none" href="#" data-record-type="sponsors" data-record-title="Sponsor enquiries" th:attr="data-record-url=@{/admin/registrations/sponsors/fragment},data-export-url=@{/admin/registrations/sponsors/export}">
                             <div class="dash-stat-top"><i class="dash-stat-icon bi bi-chat-square-text"></i><i class="dash-stat-arrow bi bi-arrow-up-right"></i></div>
                             <span>Sponsor enquiries</span>
                             <strong th:text="${submissionCounts?.sponsors ?: 0}">0</strong>
                         </a>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <a class="admin-submission-count dash-contact h-100 d-flex flex-column text-decoration-none" href="#" data-record-type="contacts" data-record-title="Contact enquiries" th:attr="data-record-url=@{/admin/registrations/contacts/fragment}">
+                        <a class="admin-submission-count dash-contact h-100 d-flex flex-column text-decoration-none" href="#" data-record-type="contacts" data-record-title="Contact enquiries" th:attr="data-record-url=@{/admin/registrations/contacts/fragment},data-export-url=@{/admin/registrations/contacts/export}">
                             <div class="dash-stat-top"><i class="dash-stat-icon bi bi-envelope-paper"></i><i class="dash-stat-arrow bi bi-arrow-up-right"></i></div>
                             <span>Contact enquiries</span>
                             <strong th:text="${submissionCounts?.contactUs ?: 0}">0</strong>
@@ -108,16 +115,16 @@
                 <div class="dash-section-heading"><h2>Session reservation overview</h2><p>Confirmed participant bookings across thematic sessions.</p></div>
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <section class="dash-session-kpi h-100 d-flex flex-column justify-content-between gap-3">
+                        <button type="button" class="dash-session-kpi h-100 d-flex flex-column justify-content-between gap-3" data-record-title="Confirmed session bookings" th:attr="data-record-url=@{/admin/session-reservations/fragment(kind='bookings')},data-export-url=@{/admin/session-reservations/export(kind='bookings')}">
                             <div class="dash-stat-top"><span class="dash-session-kpi-label">Total session bookings</span><i class="dash-stat-icon bi bi-bookmark-check" style="color:#3155a3;background:#edf2ff"></i></div>
                             <strong class="dash-session-kpi-value" th:text="${dashboardAnalytics.totalConfirmedBookings}">0</strong>
-                        </section>
+                        </button>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <section class="dash-session-kpi h-100 d-flex flex-column justify-content-between gap-3">
+                        <button type="button" class="dash-session-kpi h-100 d-flex flex-column justify-content-between gap-3" data-record-title="Participants with confirmed bookings" th:attr="data-record-url=@{/admin/session-reservations/fragment(kind='participants')},data-export-url=@{/admin/session-reservations/export(kind='participants')}">
                             <div class="dash-stat-top"><span class="dash-session-kpi-label">Participants with bookings</span><i class="dash-stat-icon bi bi-people" style="color:#087f87;background:#e8f8f6"></i></div>
                             <strong class="dash-session-kpi-value" th:text="${dashboardAnalytics.participantsWithBookings}">0</strong>
-                        </section>
+                        </button>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
                         <section class="dash-session-kpi h-100 d-flex flex-column justify-content-between gap-3">
@@ -138,35 +145,35 @@
                 <div class="dash-section-heading"><h2>Participation by category</h2><p>Attendee registrations grouped by participation category.</p></div>
                 <div class="row g-3 mb-4">
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <section class="dash-category-kpi h-100 d-flex flex-column justify-content-between gap-3">
+                        <button type="button" class="dash-category-kpi h-100 d-flex flex-column justify-content-between gap-3" data-record-title="Academia registrations" th:attr="data-record-url=@{/admin/registrations/tickets/fragment(category='ACADEMIA')},data-export-url=@{/admin/registrations/tickets/category-export(category='ACADEMIA')}">
                             <div class="dash-stat-top"><span class="dash-session-kpi-label">Academia</span><i class="dash-stat-icon bi bi-mortarboard" style="color:#3155a3;background:#edf2ff"></i></div>
                             <strong class="dash-session-kpi-value" th:text="${dashboardAnalytics.academiaCount}">0</strong>
-                        </section>
+                        </button>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <section class="dash-category-kpi h-100 d-flex flex-column justify-content-between gap-3">
+                        <button type="button" class="dash-category-kpi h-100 d-flex flex-column justify-content-between gap-3" data-record-title="Central Government registrations" th:attr="data-record-url=@{/admin/registrations/tickets/fragment(category='CENTRAL_GOVERNMENT')},data-export-url=@{/admin/registrations/tickets/category-export(category='CENTRAL_GOVERNMENT')}">
                             <div class="dash-stat-top"><span class="dash-session-kpi-label">Central Government</span><i class="dash-stat-icon bi bi-bank" style="color:#087f87;background:#e8f8f6"></i></div>
                             <strong class="dash-session-kpi-value" th:text="${dashboardAnalytics.centralGovernmentCount}">0</strong>
-                        </section>
+                        </button>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <section class="dash-category-kpi h-100 d-flex flex-column justify-content-between gap-3">
+                        <button type="button" class="dash-category-kpi h-100 d-flex flex-column justify-content-between gap-3" data-record-title="State Government registrations" th:attr="data-record-url=@{/admin/registrations/tickets/fragment(category='STATE_GOVERNMENT')},data-export-url=@{/admin/registrations/tickets/category-export(category='STATE_GOVERNMENT')}">
                             <div class="dash-stat-top"><span class="dash-session-kpi-label">State Government</span><i class="dash-stat-icon bi bi-building" style="color:#d86b24;background:#fff2e8"></i></div>
                             <strong class="dash-session-kpi-value" th:text="${dashboardAnalytics.stateGovernmentCount}">0</strong>
-                        </section>
+                        </button>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <section class="dash-category-kpi h-100 d-flex flex-column justify-content-between gap-3">
+                        <button type="button" class="dash-category-kpi h-100 d-flex flex-column justify-content-between gap-3" data-record-title="Industry / Startup registrations" th:attr="data-record-url=@{/admin/registrations/tickets/fragment(category='INDUSTRY_STARTUP')},data-export-url=@{/admin/registrations/tickets/category-export(category='INDUSTRY_STARTUP')}">
                             <div class="dash-stat-top"><span class="dash-session-kpi-label">Industry / Startup</span><i class="dash-stat-icon bi bi-briefcase" style="color:#7651b5;background:#f3edff"></i></div>
                             <strong class="dash-session-kpi-value" th:text="${dashboardAnalytics.industryStartupCount}">0</strong>
-                        </section>
+                        </button>
                     </div>
                 </div>
 
                 <div class="modal fade" id="registrationRecordsModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-xl modal-dialog-scrollable">
                         <div class="modal-content">
-                            <div class="modal-header"><h2 class="modal-title fs-5" id="registrationRecordsTitle">Registrations</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                            <div class="modal-header"><h2 class="modal-title fs-5 mb-0" id="registrationRecordsTitle">Registrations</h2><div class="modal-header-actions"><a id="registrationRecordsExport" class="btn btn-sm btn-light" hidden><i class="bi bi-file-earmark-excel me-1"></i>Download Excel</a><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div></div>
                             <div class="modal-body" id="registrationRecordsBody"><div class="text-center py-4">Loading records...</div></div>
                         </div>
                     </div>
@@ -232,6 +239,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         const recordsModal = document.getElementById("registrationRecordsModal");
         const recordsBody = document.getElementById("registrationRecordsBody");
+        const recordsExport = document.getElementById("registrationRecordsExport");
         let activeRecordsUrl = "";
         const loadRegistrationPage = async (url) => {
             recordsBody.innerHTML = '<div class="text-center py-4">Loading records...</div>';
@@ -243,10 +251,11 @@
                 recordsBody.innerHTML = '<div class="alert alert-danger mb-0">Could not load records. Please try again.</div>';
             }
         };
-        document.querySelectorAll("[data-record-url]").forEach((card) => card.addEventListener("click", async (event) => {
-            event.preventDefault();
+        document.querySelectorAll("[data-record-url]").forEach((card) => card.addEventListener("click", async () => {
             activeRecordsUrl = card.dataset.recordUrl;
             document.getElementById("registrationRecordsTitle").textContent = card.dataset.recordTitle;
+            recordsExport.hidden = !card.dataset.exportUrl;
+            if (card.dataset.exportUrl) recordsExport.href = card.dataset.exportUrl;
             bootstrap.Modal.getOrCreateInstance(recordsModal).show();
             await loadRegistrationPage(activeRecordsUrl);
         }));

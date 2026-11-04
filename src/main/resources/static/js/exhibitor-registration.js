@@ -5,22 +5,21 @@
   const contextPath = ((document.body && document.body.dataset.contextPath) || '').replace(/\/$/, '');
   const apiPath = path => (contextPath === '/' ? '' : contextPath) + path;
   const stallSlides = [
-    { name: 'Signature', size: '6 × 3 m', price: '₹5,00,000', passes: '4 technical-session passes', image: '/images/exhibitor-stall-signature-footprint.png' },
-    { name: 'Standard', size: '3 × 3 m', price: '₹2,50,000', passes: '3 technical-session passes', image: '/images/exhibitor-stall-standard-footprint.png' },
-    { name: 'Compact', size: '3 × 2 m', price: '₹1,25,000', passes: '2 technical-session passes', image: '/images/exhibitor-stall-compact-footprint.png' },
-    { name: 'Showcase', size: '2 × 2 m', price: '₹50,000', passes: '0 technical-session passes', image: '/images/exhibitor-stall-showcase-footprint.png' }
+    { name: 'Signature', size: '6 × 3 m', passes: '4 technical-session passes', image: '/images/exhibitor-stall-signature-footprint.png' },
+    { name: 'Standard', size: '3 × 3 m', passes: '3 technical-session passes', image: '/images/exhibitor-stall-standard-footprint.png' },
+    { name: 'Compact', size: '3 × 2 m', passes: '2 technical-session passes', image: '/images/exhibitor-stall-compact-footprint.png' },
+    { name: 'Showcase', size: '2 × 2 m', passes: '0 technical-session passes', image: '/images/exhibitor-stall-showcase-footprint.png' }
   ];
   const adImage = document.getElementById('simpleAdImage');
   const adName = document.getElementById('simpleAdName');
   const adSize = document.getElementById('simpleAdSize');
-  const adPrice = document.getElementById('simpleAdPrice');
   const adPasses = document.getElementById('simpleAdPasses');
   const adDots = [...document.querySelectorAll('.simple-ad-dots [data-ad-slide]')];
   let activeAdSlide = 0;
   let adTimer;
 
   function showStallSlide(index) {
-    if (!adImage || !adName || !adSize || !adPrice || !adPasses) return;
+    if (!adImage || !adName || !adSize || !adPasses) return;
     activeAdSlide = (index + stallSlides.length) % stallSlides.length;
     const slide = stallSlides[activeAdSlide];
     adImage.style.opacity = '0';
@@ -31,7 +30,6 @@
     }, 120);
     adName.textContent = slide.name;
     adSize.textContent = slide.size;
-    adPrice.textContent = slide.price;
     adPasses.textContent = slide.passes;
     adDots.forEach((dot, dotIndex) => {
       const active = dotIndex === activeAdSlide;
@@ -338,6 +336,25 @@
     pages[number - 1]?.querySelector('input, select')?.focus({ preventScroll: true });
   }
 
+  function advancePage() {
+    const page = pages[currentPage - 1];
+    if (!page || !validatePage(page)) return;
+    if (currentPage === 1 && verifiedEmail !== email.value.trim()) {
+      otpStatus.textContent = 'Verify your official email with OTP to continue.';
+      otpStatus.style.color = '#b42318';
+      email.focus();
+      return;
+    }
+    if (currentPage === 1 && verifiedPhone !== normalizedPhone(phone.value)) {
+      phoneOtpStatus.textContent = 'Verify your mobile number with OTP to continue.';
+      phoneOtpStatus.style.color = '#b42318';
+      phone.focus();
+      return;
+    }
+    savedDraft = Object.fromEntries(new FormData(form).entries());
+    if (currentPage < pages.length) showPage(currentPage + 1);
+  }
+
   function showError(input, message) {
     input.setAttribute('aria-invalid', 'true');
     input.closest('.simple-control')?.setAttribute('aria-invalid', 'true');
@@ -604,22 +621,16 @@
   });
 
   form.querySelectorAll('[data-next]').forEach(button => {
-    button.addEventListener('click', () => {
-      const page = pages[currentPage - 1];
-      if (!validatePage(page)) return;
-      if (currentPage === 1 && verifiedEmail !== email.value.trim()) {
-        otpStatus.textContent = 'Verify your official email with OTP to continue.';
-        email.focus();
-        return;
-      }
-      if (currentPage === 1 && verifiedPhone !== normalizedPhone(phone.value)) {
-        phoneOtpStatus.textContent = 'Verify your mobile number with OTP to continue.';
-        phone.focus();
-        return;
-      }
-      savedDraft = Object.fromEntries(new FormData(form).entries());
-      if (currentPage < pages.length) showPage(currentPage + 1);
-    });
+    button.addEventListener('click', advancePage);
+  });
+
+  // Enter in a form field can trigger an implicit form submit instead of the
+  // guarded Save & Next click. Route it through the same step and OTP checks.
+  form.addEventListener('keydown', event => {
+    if (event.key !== 'Enter' || event.isComposing || event.target.matches('button, textarea, select')) return;
+    event.preventDefault();
+    if (currentPage < pages.length) advancePage();
+    else submitButton.click();
   });
 
   form.querySelectorAll('[data-back]').forEach(button => {
